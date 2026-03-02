@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Much House Can I Afford? — VestlyFi</title>
+<meta name="description" content="Find out how much home you can actually afford based on your income, debts, and down payment. Includes monthly payment breakdown.">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
+    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
+    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
+    --green:#4ade80; --red:#f87171; --amber:#fbbf24;
+    --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--navy); color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-weight:300; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Fraunces',serif; font-size:1.2rem; color:var(--gold); text-decoration:none; transition:opacity .15s; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+  .page { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:56px 24px 80px; }
+  .page-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .page h1 { font-family:'Fraunces',serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .page h1 em { font-style:italic; color:var(--gold-light); }
+  .page .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:40px; max-width:560px; }
+
+  .calc-panel { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:16px; padding:28px; margin-bottom:28px; }
+  .panel-section-title { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; font-weight:500; }
+  .divider { height:1px; background:var(--border-soft); margin:22px 0; }
+
+  .input-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:0; }
+  .input-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media(max-width:560px) { .input-grid,.input-grid-3{grid-template-columns:1fr 1fr;} }
+  @media(max-width:380px) { .input-grid,.input-grid-3{grid-template-columns:1fr;} }
+
+  .input-group label { display:block; font-size:0.73rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:8px; font-weight:500; }
+  .input-hint { font-size:0.75rem; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:300; margin-left:4px; }
+  .input-wrap { position:relative; }
+  .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.95rem; pointer-events:none; font-family:'Fraunces',serif; }
+  .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.8rem; pointer-events:none; }
+  input[type="number"], select { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input.has-prefix { padding-left:28px; }
+  input.has-suffix { padding-right:42px; }
+  input:focus,select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  select option { background:#111827; }
+
+  .calc-btn { width:100%; margin-top:22px; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .calc-btn:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+
+  .err { color:var(--red); font-size:0.8rem; margin-top:10px; display:none; }
+
+  /* Results */
+  .results-section { display:none; animation:fadeUp .4s cubic-bezier(.4,0,.2,1) forwards; }
+  .results-section.visible { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+  .result-banner { border-radius:14px; padding:28px; text-align:center; margin-bottom:24px; }
+  .result-banner.good { background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(74,222,128,0.03)); border:1px solid rgba(74,222,128,0.2); }
+  .result-banner.warn { background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.03)); border:1px solid rgba(251,191,36,0.2); }
+  .result-banner.bad { background:linear-gradient(135deg,rgba(248,113,113,0.08),rgba(248,113,113,0.03)); border:1px solid rgba(248,113,113,0.2); }
+  .result-badge { display:inline-block; padding:5px 14px; border-radius:100px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:14px; }
+  .badge-green{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);}
+  .badge-amber{background:rgba(251,191,36,0.12);color:var(--amber);border:1px solid rgba(251,191,36,0.25);}
+  .badge-red{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
+  .result-price { font-family:'Fraunces',serif; font-size:clamp(2.5rem,8vw,4.5rem); font-weight:600; line-height:1; margin-bottom:6px; }
+  .result-price.good{color:var(--green);} .result-price.warn{color:var(--amber);} .result-price.bad{color:var(--red);}
+  .result-label { font-size:0.88rem; color:var(--cream-dim); margin-bottom:10px; }
+  .result-sub { font-size:0.85rem; color:var(--muted); line-height:1.6; max-width:420px; margin:0 auto; }
+
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+  @media(max-width:460px) { .stat-grid{grid-template-columns:1fr;} }
+  .stat-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:12px; padding:18px; }
+  .stat-label { font-size:0.67rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:500; }
+  .stat-val { font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; }
+  .stat-val.gold{color:var(--gold-light);} .stat-val.green{color:var(--green);} .stat-val.red{color:var(--red);} .stat-val.amber{color:var(--amber);}
+  .stat-note { font-size:0.72rem; color:var(--muted); margin-top:3px; }
+
+  /* Payment breakdown bar */
+  .breakdown-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:22px; margin-bottom:24px; }
+  .breakdown-title { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; font-weight:500; }
+  .breakdown-bar { display:flex; height:10px; border-radius:10px; overflow:hidden; margin-bottom:12px; gap:2px; }
+  .bar-principal { background:#c9a84c; }
+  .bar-interest { background:#4ade80; }
+  .bar-tax { background:#60a5fa; }
+  .bar-insurance { background:#a78bfa; }
+  .breakdown-legend { display:flex; gap:16px; flex-wrap:wrap; }
+  .legend-item { display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--cream-dim); }
+  .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+  .insight-list { list-style:none; margin-bottom:24px; }
+  .insight-list li { display:flex; gap:13px; padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); align-items:flex-start; }
+  .insight-list li:last-child { border-bottom:none; }
+
+  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
+  .aff-section h3 { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
+  .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
+  .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
+  .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
+  .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
+
+  .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
+  .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
+  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  footer a { color:var(--muted); text-decoration:none; }
+  footer a:hover { color:var(--gold); }
+  .footer-links { display:flex; gap:18px; }
+  @media(max-width:600px) { footer{padding:20px;} .page{padding:40px 20px 60px;} }
+
+  /* Input alignment fix */
+  .input-group { display: flex; flex-direction: column; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-row { align-items: end; }
+  .input-row-3 { align-items: end; }
+  .input-grid { align-items: end; }
+  .input-grid-3 { align-items: end; }
+
+
+  /* Ensure all grids align inputs at baseline */
+  .input-grid > .input-group,
+  .input-grid-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="#" onclick="showModal('about'); return false;">About</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-tag">Home Affordability</div>
+  <h1>How much house can <em>you afford?</em></h1>
+  <p class="sub">Banks approve loans based on your debt-to-income ratio. This calculator shows what they'll offer — and what you can actually live comfortably with.</p>
+
+  <div class="calc-panel">
+    <div class="panel-section-title">Income & Debts</div>
+    <div class="input-grid" style="margin-bottom:16px;">
+      <div class="input-group">
+        <label>Annual Gross Income</label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="grossIncome" placeholder="80,000" min="0" class="has-prefix">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Monthly Debt Payments <span class="input-hint">(car, student loans, etc.)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="monthlyDebt" placeholder="300" min="0" class="has-prefix">
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="panel-section-title">Purchase Details</div>
+    <div class="input-grid" style="margin-bottom:16px;">
+      <div class="input-group">
+        <label>Down Payment</label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="downPayment" placeholder="60,000" min="0" class="has-prefix">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Mortgage Rate</label>
+        <div class="input-wrap">
+          <input type="number" id="mortgageRate" placeholder="7.0" min="1" max="20" step="0.1" class="has-suffix">
+          <span class="input-suffix">% / yr</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Loan Term</label>
+        <div class="input-wrap">
+          <select id="loanTerm">
+            <option value="30">30 years</option>
+            <option value="20">20 years</option>
+            <option value="15">15 years</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Annual Property Tax <span class="input-hint">(est.)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="propertyTax" placeholder="3,000" min="0" class="has-prefix">
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="panel-section-title">Monthly Costs</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Home Insurance <span class="input-hint">(annual)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="insurance" placeholder="1,200" min="0" class="has-prefix">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>HOA Fees <span class="input-hint">(monthly, 0 if none)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="hoa" placeholder="0" min="0" class="has-prefix">
+        </div>
+      </div>
+    </div>
+
+    <div id="calcErr" class="err">Please fill in your income, down payment, and mortgage rate.</div>
+    <button class="calc-btn" onclick="calculate()">Calculate My Budget →</button>
+  </div>
+
+  <div class="results-section" id="resultsSection">
+    <div id="resultBanner"></div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="breakdown-card" id="breakdownCard"></div>
+    <ul class="insight-list" id="insightList"></ul>
+
+    <div class="aff-section">
+      <h3>Ready to start the mortgage process?</h3>
+      <p>Compare rates and get pre-approved. Shopping multiple lenders can save tens of thousands over the life of a loan.</p>
+      <div class="aff-links">
+        <a class="aff-link" href="https://www.rocketmortgage.com" target="_blank">Rocket Mortgage ↗</a>
+        <a class="aff-link" href="https://www.bettermorgage.com" target="_blank">Better ↗</a>
+        <a class="aff-link" href="https://www.lendingtree.com" target="_blank">LendingTree ↗</a>
+      </div>
+    </div>
+
+    <button class="btn-recalc" onclick="document.getElementById('resultsSection').classList.remove('visible'); window.scrollTo({top:0,behavior:'smooth'})">← Adjust Inputs</button>
+    <p class="disclaimer">For educational purposes only. Not financial advice. Actual loan approval depends on credit score, employment history, and lender criteria. Consult a mortgage professional before making home buying decisions.</p>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="/">All Calculators</a>
+    <a href="#" onclick="showModal('privacy'); return false;">Privacy</a>
+  </div>
+</footer>
+
+
+<!-- About Modal -->
+<div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
+      <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+      <p>Questions? <span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function fmt(n) {
+  if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function calculate() {
+  const grossIncome = parseFloat(document.getElementById('grossIncome').value);
+  const monthlyDebt = parseFloat(document.getElementById('monthlyDebt').value) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const rate = parseFloat(document.getElementById('mortgageRate').value);
+  const term = parseInt(document.getElementById('loanTerm').value);
+  const propTax = parseFloat(document.getElementById('propertyTax').value) || 0;
+  const insurance = parseFloat(document.getElementById('insurance').value) || 1200;
+  const hoa = parseFloat(document.getElementById('hoa').value) || 0;
+
+  const err = document.getElementById('calcErr');
+  if (!grossIncome || !rate) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+
+  const monthlyIncome = grossIncome / 12;
+  const monthlyRate = rate / 100 / 12;
+  const n = term * 12;
+  const monthlyTax = propTax / 12;
+  const monthlyInsurance = insurance / 12;
+
+  // 28% front-end DTI (housing costs only)
+  const maxHousingPayment = monthlyIncome * 0.28;
+  // 36% back-end DTI (all debts)
+  const maxBackEnd = monthlyIncome * 0.36;
+  const maxHousingFromBackEnd = maxBackEnd - monthlyDebt;
+  const effectiveMaxHousing = Math.min(maxHousingPayment, maxHousingFromBackEnd);
+
+  // Available for P&I after taxes, insurance, HOA
+  const availableForPI = effectiveMaxHousing - monthlyTax - monthlyInsurance - hoa;
+
+  // Max loan amount from P&I payment
+  let maxLoan = 0;
+  if (monthlyRate > 0 && availableForPI > 0) {
+    maxLoan = availableForPI * (1 - Math.pow(1 + monthlyRate, -n)) / monthlyRate;
+  }
+  const maxHomePrice = maxLoan + downPayment;
+
+  // Comfortable = 25% of gross (more conservative)
+  const comfortableHousing = monthlyIncome * 0.25;
+  const comfortableAvailablePI = comfortableHousing - monthlyTax - monthlyInsurance - hoa;
+  let comfortableLoan = 0;
+  if (monthlyRate > 0 && comfortableAvailablePI > 0) {
+    comfortableLoan = comfortableAvailablePI * (1 - Math.pow(1 + monthlyRate, -n)) / monthlyRate;
+  }
+  const comfortablePrice = comfortableLoan + downPayment;
+
+  // Monthly payment for max home
+  const maxPI = availableForPI > 0 ? availableForPI : 0;
+  const maxMonthlyTotal = maxPI + monthlyTax + monthlyInsurance + hoa;
+
+  // DTI status
+  const backEndDTI = (monthlyDebt + maxHousingPayment) / monthlyIncome * 100;
+  const isHealthy = backEndDTI <= 36;
+  const isStretched = backEndDTI > 36 && backEndDTI <= 43;
+
+  const statusClass = maxHomePrice > 0 && isHealthy ? 'good' : isStretched ? 'warn' : 'bad';
+  const badgeClass = statusClass === 'good' ? 'badge-green' : statusClass === 'warn' ? 'badge-amber' : 'badge-red';
+  const badgeText = statusClass === 'good' ? '✓ Healthy Budget' : statusClass === 'warn' ? '◈ Stretched Budget' : '⚠ High Debt Load';
+
+  document.getElementById('resultBanner').innerHTML = `
+    <div class="result-banner ${statusClass}">
+      <div class="result-badge ${badgeClass}">${badgeText}</div>
+      <div class="result-price ${statusClass}">${fmt(maxHomePrice)}</div>
+      <div class="result-label">maximum home price (bank approval estimate)</div>
+      <p class="result-sub">For a more comfortable payment that leaves room for life, aim for <strong style="color:var(--cream)">${fmt(comfortablePrice)}</strong> or less.</p>
+    </div>
+  `;
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Max Monthly Payment</div>
+      <div class="stat-val gold">${fmt(maxMonthlyTotal)}</div>
+      <div class="stat-note">P&I + tax + insurance + HOA</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Comfortable Budget</div>
+      <div class="stat-val green">${fmt(comfortablePrice)}</div>
+      <div class="stat-note">at 25% of gross income</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Max Loan Amount</div>
+      <div class="stat-val">${fmt(maxLoan)}</div>
+      <div class="stat-note">before down payment</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Down Payment</div>
+      <div class="stat-val ${downPayment >= maxHomePrice * 0.2 ? 'green' : 'amber'}">${fmt(downPayment)}</div>
+      <div class="stat-note">${maxHomePrice > 0 ? ((downPayment/maxHomePrice)*100).toFixed(1) : 0}% of max price</div>
+    </div>
+  `;
+
+  // Payment breakdown bar
+  const totalMonthly = maxMonthlyTotal;
+  const piPct = totalMonthly > 0 ? (maxPI / totalMonthly * 100).toFixed(1) : 0;
+  const taxPct = totalMonthly > 0 ? (monthlyTax / totalMonthly * 100).toFixed(1) : 0;
+  const insPct = totalMonthly > 0 ? (monthlyInsurance / totalMonthly * 100).toFixed(1) : 0;
+  const hoaPct = totalMonthly > 0 ? (hoa / totalMonthly * 100).toFixed(1) : 0;
+
+  document.getElementById('breakdownCard').innerHTML = `
+    <div class="breakdown-title">Monthly Payment Breakdown — ${fmt(maxMonthlyTotal)}/mo</div>
+    <div class="breakdown-bar">
+      <div class="bar-principal" style="width:${piPct}%"></div>
+      <div class="bar-tax" style="width:${taxPct}%"></div>
+      <div class="bar-insurance" style="width:${insPct}%"></div>
+      ${hoa > 0 ? `<div class="bar-interest" style="width:${hoaPct}%"></div>` : ''}
+    </div>
+    <div class="breakdown-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div> Principal & Interest — ${fmt(maxPI)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Property Tax — ${fmt(monthlyTax)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Insurance — ${fmt(monthlyInsurance)}/mo</div>
+      ${hoa > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> HOA — ${fmt(hoa)}/mo</div>` : ''}
+    </div>
+  `;
+
+  const insights = [];
+  if (downPayment < maxHomePrice * 0.2) {
+    insights.push({ icon: '⚠️', text: `Your down payment is under 20% of the max price. This usually means you'll need to pay <strong>PMI (Private Mortgage Insurance)</strong> — typically $50–200/month added on top until you reach 20% equity.` });
+  }
+  insights.push({ icon: '💡', text: `Banks use two DTI rules: your housing costs should be under <strong>28% of gross income</strong>, and all debts combined should be under <strong>36%</strong>. Staying well below these thresholds gives you financial flexibility.` });
+  if (monthlyDebt > monthlyIncome * 0.1) {
+    insights.push({ icon: '📉', text: `Your existing debt payments of ${fmt(monthlyDebt)}/mo are reducing your home buying power. Paying these off first could increase your max home price significantly.` });
+  }
+  insights.push({ icon: '🏦', text: `This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.` });
+
+  document.getElementById('insightList').innerHTML = insights.map(i =>
+    `<li><span>${i.icon}</span><span>${i.text}</span></li>`
+  ).join('');
+
+  document.getElementById('resultsSection').classList.add('visible');
+  setTimeout(() => document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
+function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
