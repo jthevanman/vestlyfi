@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VestlyFi — When Can You Retire?</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NPZ7QVQQNS');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-mid: #111827;
+    --navy-light: #1a2540;
+    --navy-card: #141d35;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.13);
+    --cream: #f5f0e8;
+    --cream-dim: rgba(245,240,232,0.6);
+    --muted: rgba(245,240,232,0.35);
+    --green: #4ade80;
+    --red: #f87171;
+    --amber: #fbbf24;
+    --border: rgba(201,168,76,0.15);
+    --border-soft: rgba(255,255,255,0.07);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 5%, rgba(201,168,76,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 70% at 85% 90%, rgba(201,168,76,0.04) 0%, transparent 55%);
+    pointer-events: none; z-index: 0;
+  }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 700px; margin: 0 auto;
+    padding: 0 24px;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    padding: 28px 0 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.25rem; color: var(--gold); letter-spacing: 0.02em;
+    text-decoration: none; cursor: pointer; transition: opacity 0.15s;
+  }
+  .logo:hover { opacity: 0.8; }
+  .logo span { color: var(--cream-dim); font-style: italic; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .progress-wrap { width: 160px; height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+  .step-count { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+
+  /* WIZARD */
+  .wizard { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 44px 0 80px; }
+  .step { display: none; }
+  .step.active { display: block; animation: stepIn 0.42s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:translateY(0); } }
+
+  .step-tag { font-size: 0.68rem; letter-spacing: 0.17em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 500; }
+  .step h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.7rem, 5vw, 2.5rem);
+    font-weight: 400; line-height: 1.2; color: var(--cream); margin-bottom: 8px;
+  }
+  .step h2 em { font-style: italic; color: var(--gold-light); }
+  .step .sub { color: var(--muted); font-size: 0.92rem; line-height: 1.65; margin-bottom: 36px; max-width: 540px; }
+
+  /* INPUTS */
+  .input-group { margin-bottom: 22px; }
+  .input-group label {
+    display: block; font-size: 0.75rem; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--cream-dim); margin-bottom: 9px; font-weight: 500;
+  }
+  .label-hint { font-size: 0.78rem; color: var(--muted); text-transform: none; letter-spacing: 0; font-weight: 300; margin-left: 6px; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-prefix { position: absolute; left: 16px; color: var(--gold); font-size: 1rem; pointer-events: none; font-family: 'Fraunces', serif; }
+  .input-suffix { position: absolute; right: 16px; color: var(--muted); font-size: 0.82rem; pointer-events: none; }
+  input[type="number"], input[type="text"], select, textarea {
+    width: 100%; background: var(--navy-light);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 15px 16px; color: var(--cream);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 300;
+    outline: none; transition: border-color .2s, box-shadow .2s; appearance: none;
+  }
+  input.has-prefix { padding-left: 30px; }
+  input.has-suffix { padding-right: 48px; }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .input-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media(max-width:520px) { .input-row { grid-template-columns: 1fr; } .input-row-3 { grid-template-columns: 1fr 1fr; } }
+
+  /* PILLS */
+  .pill-group { display: flex; gap: 9px; flex-wrap: wrap; }
+  .pill {
+    padding: 9px 18px; border-radius: 100px;
+    border: 1px solid rgba(201,168,76,0.22);
+    background: transparent; color: var(--cream-dim);
+    cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.87rem; font-weight: 400;
+    transition: all 0.18s; white-space: nowrap; text-align: left;
+  }
+  .pill:hover { border-color: var(--gold); color: var(--cream); }
+  .pill.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); }
+
+  /* MODE CARDS (Simple/Advanced) */
+  .mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  @media(max-width:460px) { .mode-cards { grid-template-columns: 1fr; } }
+  .mode-card {
+    background: var(--navy-light); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 22px; cursor: pointer;
+    transition: all 0.2s; position: relative; text-align: left;
+  }
+  .mode-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .mode-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .mode-card .mc-icon { font-size: 1.6rem; margin-bottom: 12px; display: block; }
+  .mode-card .mc-title { font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--cream); margin-bottom: 6px; }
+  .mode-card .mc-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+  .mode-card .mc-steps { font-size: 0.72rem; color: var(--gold); margin-top: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+  .mode-card.selected .mc-check {
+    position: absolute; top: 14px; right: 14px;
+    width: 20px; height: 20px; background: var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; color: var(--navy); font-weight: 700;
+  }
+
+  /* LOCATION CARDS */
+  .location-cards { display: flex; flex-direction: column; gap: 10px; }
+  .loc-card {
+    background: var(--navy-light); border: 1px solid var(--border-soft);
+    border-radius: 12px; padding: 16px 18px; cursor: pointer;
+    transition: all 0.18s; display: flex; align-items: flex-start; gap: 14px;
+  }
+  .loc-card:hover { border-color: var(--border); transform: translateX(3px); }
+  .loc-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .loc-flag { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+  .loc-body { flex: 1; }
+  .loc-name { font-size: 0.95rem; color: var(--cream); font-weight: 500; margin-bottom: 2px; }
+  .loc-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+  .loc-cost {
+    font-family: 'Fraunces', serif; font-size: 1rem;
+    color: var(--gold-light); white-space: nowrap; flex-shrink: 0; text-align: right; margin-top: 3px;
+  }
+  .loc-cost small { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.68rem; color: var(--muted); text-align: right; font-style: normal; }
+
+  /* SPENDING BUILDER */
+  .spending-builder { background: var(--navy-card); border: 1px solid var(--border-soft); border-radius: 14px; padding: 22px; }
+  .spending-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .spending-row:last-child { margin-bottom: 0; }
+  .spending-label { flex: 1; font-size: 0.85rem; color: var(--cream-dim); display: flex; align-items: center; gap: 8px; }
+  .spending-icon { font-size: 1rem; }
+  .spending-input-wrap { width: 140px; flex-shrink: 0; position: relative; }
+  .spending-input-wrap .input-prefix { left: 12px; font-size: 0.9rem; }
+  .spending-input-wrap input { padding: 10px 10px 10px 26px; font-size: 0.92rem; border-radius: 8px; }
+  .spending-total {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-soft);
+  }
+  .spending-total-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .spending-total-val { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--gold-light); }
+  .spending-note { font-size: 0.75rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+
+  /* INVEST INPUT */
+  .invest-options { display: flex; flex-direction: column; gap: 10px; }
+  .invest-card {
+    background: var(--navy-light); border: 1px solid var(--border-soft);
+    border-radius: 11px; padding: 14px 18px; cursor: pointer;
+    transition: all 0.18s; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .invest-card:hover { border-color: var(--border); }
+  .invest-card.selected { border-color: var(--gold); background: var(--gold-dim); }
+  .invest-card .ic-left {}
+  .invest-card .ic-name { font-size: 0.92rem; color: var(--cream); font-weight: 500; }
+  .invest-card .ic-desc { font-size: 0.77rem; color: var(--muted); margin-top: 2px; }
+  .invest-card .ic-rate { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--gold-light); }
+  .invest-custom-wrap { margin-top: 14px; display: none; }
+  .invest-custom-label { font-size: 0.8rem; color: var(--cream-dim); margin-bottom: 8px; }
+
+  /* OTHER INCOME */
+  .other-income-wrap { background: var(--navy-card); border: 1px solid var(--border-soft); border-radius: 14px; padding: 20px; }
+  .income-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+  .income-chip {
+    padding: 6px 13px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
+    background: transparent; color: var(--muted); font-size: 0.77rem; cursor: default;
+  }
+  .income-note { font-size: 0.78rem; color: var(--muted); line-height: 1.55; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
+  .income-note strong { color: var(--amber); }
+
+  /* NAV */
+  .step-nav { display: flex; gap: 10px; margin-top: 36px; align-items: center; }
+  .btn-next {
+    padding: 14px 34px; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none; border-radius: 10px; color: var(--navy);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; font-size: 0.93rem;
+    cursor: pointer; letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.28); transition: transform .15s, box-shadow .2s;
+  }
+  .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:active { transform: translateY(0); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-back {
+    padding: 14px 22px; background: transparent;
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+    color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem; cursor: pointer; transition: all .15s;
+  }
+  .btn-back:hover { border-color: rgba(255,255,255,0.25); color: var(--cream-dim); }
+  .err { color: var(--red); font-size: 0.8rem; margin-top: 8px; display: none; }
+
+  /* RESULTS */
+  .result-hero {
+    text-align: center; padding: 36px 0 32px;
+    border-bottom: 1px solid var(--border); margin-bottom: 32px;
+  }
+  .result-badge {
+    display: inline-block; padding: 5px 14px; border-radius: 100px;
+    font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 16px;
+  }
+  .badge-green { background: rgba(74,222,128,0.12); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
+  .badge-gold { background: rgba(201,168,76,0.12); color: var(--gold-light); border: 1px solid rgba(201,168,76,0.25); }
+  .badge-red { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
+  .result-age {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(3.5rem, 12vw, 6rem); font-weight: 600;
+    line-height: 1; color: var(--gold-light); margin-bottom: 6px;
+  }
+  .result-age-label { font-size: 0.95rem; color: var(--cream-dim); margin-bottom: 12px; }
+  .result-sub { color: var(--muted); font-size: 0.9rem; line-height: 1.65; max-width: 480px; margin: 0 auto; }
+
+  /* STAT GRID */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  @media(max-width:460px) { .stat-grid { grid-template-columns: 1fr; } }
+  .stat-card { background: var(--navy-light); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .stat-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; font-weight: 500; }
+  .stat-val { font-family: 'Fraunces', serif; font-size: 1.55rem; font-weight: 600; color: var(--cream); }
+  .stat-val.gold { color: var(--gold-light); }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-note { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+  /* TIMELINE */
+  .section-title { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
+  .timeline-bar { height: 7px; background: rgba(255,255,255,0.06); border-radius: 7px; overflow: hidden; margin-bottom: 7px; }
+  .timeline-fill { height: 100%; border-radius: 7px; transition: width 1.1s cubic-bezier(.4,0,.2,1) .3s; width: 0%; }
+  .tf-green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+  .tf-gold { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .tf-red { background: linear-gradient(90deg, #ef4444, #f87171); }
+  .timeline-meta { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--muted); }
+
+  /* INSIGHTS */
+  .insight-list { list-style: none; margin-bottom: 24px; }
+  .insight-list li {
+    display: flex; gap: 13px; padding: 13px 0;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 0.88rem; line-height: 1.55; color: var(--cream-dim); align-items: flex-start;
+  }
+  .insight-list li:last-child { border-bottom: none; }
+  .ii { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* AFFILIATES */
+  .aff-section {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+    border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 22px;
+  }
+  .aff-section h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 5px; }
+  .aff-section p { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin-bottom: 18px; }
+  .aff-links { display: flex; gap: 9px; flex-wrap: wrap; }
+  .aff-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 9px 16px; border-radius: 8px; background: var(--navy-mid);
+    border: 1px solid var(--border); color: var(--gold-light);
+    text-decoration: none; font-size: 0.82rem; font-weight: 500; transition: all 0.18s;
+  }
+  .aff-link:hover { background: var(--gold-dim); border-color: var(--gold); transform: translateY(-1px); }
+
+  /* SHARE */
+  .share-bar { display: flex; gap: 9px; margin-bottom: 20px; flex-wrap: wrap; }
+  .btn-share {
+    flex: 1; min-width: 120px; padding: 11px 14px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.09); background: transparent;
+    color: var(--cream-dim); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem;
+    cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-share:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.18); }
+
+  /* UPGRADE PROMPT */
+  .upgrade-prompt {
+    background: var(--navy-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px; margin-bottom: 22px; text-align: center;
+  }
+  .upgrade-prompt h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 8px; }
+  .upgrade-prompt p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px; }
+  .upgrade-prompt .upgrade-items { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+  .upgrade-item { padding: 7px 14px; border-radius: 100px; background: rgba(201,168,76,0.08); border: 1px solid var(--border); font-size: 0.78rem; color: var(--gold-light); }
+  .btn-upgrade {
+    padding: 13px 32px; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none; border-radius: 10px; color: var(--navy);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; font-size: 0.9rem;
+    cursor: pointer; transition: all 0.18s; box-shadow: 0 4px 18px rgba(201,168,76,0.25);
+    margin-right: 10px;
+  }
+  .btn-upgrade:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,0.38); }
+  .btn-skip { background: transparent; border: none; color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; cursor: pointer; padding: 13px 16px; }
+  .btn-skip:hover { color: var(--cream-dim); }
+
+  .btn-restart {
+    width: 100%; padding: 13px; background: transparent;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+    color: var(--muted); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem;
+    cursor: pointer; transition: all 0.18s; margin-top: 6px;
+  }
+  .btn-restart:hover { border-color: rgba(255,255,255,0.2); color: var(--cream-dim); }
+
+  .disclaimer { font-size: 0.7rem; color: rgba(245,240,232,0.18); line-height: 1.6; text-align: center; padding: 16px 0 24px; }
+
+  footer {
+    padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.72rem; color: var(--muted);
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border-soft); margin: 24px 0; }
+
+  select option { background: var(--navy-mid); }
+
+  /* SHARED NAV */
+  .site-nav {
+    position: sticky; top: 0; z-index: 50;
+    padding: 0 40px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    background: rgba(10,15,30,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .site-nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem; color: #c9a84c;
+    text-decoration: none; letter-spacing: 0.02em; transition: opacity 0.15s;
+  }
+  .site-nav-logo:hover { opacity: 0.8; }
+  .site-nav-links { display: flex; gap: 24px; align-items: center; }
+  .site-nav-links a {
+    color: rgba(245,240,232,0.35); text-decoration: none;
+    font-size: 0.83rem; font-weight: 400; transition: color 0.15s;
+  }
+  .site-nav-links a:hover { color: #f5f0e8; }
+  .site-nav-links a.active { color: #c9a84c; }
+  @media(max-width:600px) { .site-nav-links { display: none; } .site-nav { padding: 0 20px; } }
+
+
+  /* Input alignment fix */
+  .input-group { display: flex; flex-direction: column; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-row { align-items: end; }
+  .input-row-3 { align-items: end; }
+  .input-grid { align-items: end; }
+  .input-grid-3 { align-items: end; }
+
+
+  /* Grid input alignment */
+  .input-row > .input-group,
+  .input-row-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
+
+</style>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+<link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="#" onclick="showModal('about'); return false;">About</a>
+  </div>
+</nav>
+<div class="container">
+
+  <header>
+    <a class="logo" href="#" onclick="restartWizard(); return false;">VestlyFi</a>
+    <div class="header-right">
+      <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="step-count" id="stepCount">—</div>
+    </div>
+  </header>
+
+  <div class="wizard">
+
+    <!-- ══ STEP 0: Simple vs Advanced ══ -->
+    <div class="step active" id="step-0">
+      <div class="step-tag">Getting Started</div>
+      <h2>How detailed do you want your <em>retirement plan?</em></h2>
+      <p class="sub">Both modes tell you when you can retire. Advanced just takes a few more minutes and gives a significantly more accurate picture.</p>
+
+      <div class="mode-cards">
+        <div class="mode-card" id="mode-simple" onclick="selectMode('simple')">
+          <span class="mc-icon">⚡</span>
+          <div class="mc-title">Quick Estimate</div>
+          <div class="mc-desc">Answer 4 questions. Get your retirement age in under 60 seconds. Great for a ballpark number.</div>
+          <div class="mc-steps">4 questions · ~1 min</div>
+          <div class="mc-check" style="display:none">✓</div>
+        </div>
+        <div class="mode-card selected" id="mode-advanced" onclick="selectMode('advanced')">
+          <span class="mc-icon">🔬</span>
+          <div class="mc-title">Full Analysis</div>
+          <div class="mc-desc">Includes spending breakdown, location, other income, and investment style. Much more accurate.</div>
+          <div class="mc-steps">8 questions · ~4 min</div>
+          <div class="mc-check">✓</div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-next" id="modeNextBtn" onclick="startWizard()">Begin →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 1: Current situation ══ -->
+    <div class="step" id="step-1">
+      <div class="step-tag">Your Finances</div>
+      <h2>Tell us where you <em>stand today</em></h2>
+      <p class="sub">We'll use this as the baseline to calculate exactly when you can stop working.</p>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Current Age</label>
+          <div class="input-wrap">
+            <input type="number" id="currentAge" placeholder="28" min="16" max="70" class="has-suffix">
+            <span class="input-suffix">yrs</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Current Savings &amp; Investments</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="currentSavings" placeholder="25,000" min="0" class="has-prefix">
+          </div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Gross Annual Income</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="annualIncome" placeholder="75,000" min="0" class="has-prefix">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Monthly Investment Contributions</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="monthlyContrib" placeholder="1,500" min="0" class="has-prefix">
+          </div>
+        </div>
+      </div>
+
+      <div id="err-1" class="err">Please fill in all fields with valid values.</div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep(0)">← Back</button>
+        <button class="btn-next" onclick="validateStep1()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2 SIMPLE: Annual spending (simple) ══ -->
+    <div class="step" id="step-2s">
+      <div class="step-tag">Retirement Spending</div>
+      <h2>How much will you spend <em>each year</em> in retirement?</h2>
+      <p class="sub">Think about what your life actually costs — not what you earn today. Most retirees need 70–80% of their pre-retirement income.</p>
+
+      <div class="input-group" style="margin-bottom:16px;">
+        <label>Pick a starting estimate</label>
+        <div class="pill-group" id="simpleSpendPills">
+          <button class="pill" data-val="30000" onclick="selectSimpleSpend(this)">$30k — Lean</button>
+          <button class="pill selected" data-val="50000" onclick="selectSimpleSpend(this)">$50k — Modest</button>
+          <button class="pill" data-val="75000" onclick="selectSimpleSpend(this)">$75k — Comfortable</button>
+          <button class="pill" data-val="100000" onclick="selectSimpleSpend(this)">$100k — Luxe</button>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Or enter your own <span class="label-hint">(annual, today's dollars)</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="number" id="simpleSpendCustom" placeholder="e.g. 60,000" class="has-prefix" oninput="onSimpleSpendInput(this)">
+        </div>
+      </div>
+
+      <div id="err-2s" class="err">Please enter a valid spending amount.</div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep(1)">← Back</button>
+        <button class="btn-next" onclick="validateStep2s()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2 ADVANCED: Spending builder ══ -->
+    <div class="step" id="step-2a">
+      <div class="step-tag">Retirement Spending</div>
+      <h2>Build your <em>retirement budget</em></h2>
+      <p class="sub">Breaking spending into categories gives a far more accurate picture than a single number. Fill in what applies — leave at $0 if not relevant. All figures are monthly.</p>
+
+      <div class="spending-builder">
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">🏠</span> Housing <span style="font-size:.75rem;color:var(--muted)">(rent/mortgage, HOA, repairs)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" placeholder="1,800" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">🚗</span> Transport <span style="font-size:.75rem;color:var(--muted)">(car, insurance, gas, transit)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" placeholder="500" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">🍽️</span> Food <span style="font-size:.75rem;color:var(--muted)">(groceries + dining out)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" placeholder="600" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">🏥</span> Healthcare <span style="font-size:.75rem;color:var(--muted)">(premiums, copays, dental)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" placeholder="400" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">✈️</span> Travel &amp; Leisure <span style="font-size:.75rem;color:var(--muted)">(vacations, hobbies, entertainment)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_travel" placeholder="300" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">🛍️</span> Personal &amp; Misc <span style="font-size:.75rem;color:var(--muted)">(clothing, subscriptions, gifts)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_misc" placeholder="300" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">👨‍👩‍👧</span> Family <span style="font-size:.75rem;color:var(--muted)">(dependents, college support, eldercare)</span></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_family" placeholder="0" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-row">
+          <div class="spending-label"><span class="spending-icon">📦</span> Other</div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_other" placeholder="0" min="0" oninput="updateSpendTotal()"></div>
+        </div>
+        <div class="spending-total">
+          <div class="spending-total-label">Estimated Monthly Total</div>
+          <div class="spending-total-val" id="spendTotalDisplay">$0</div>
+        </div>
+        <div class="spending-note" id="spendAnnualNote">Annual equivalent: <strong id="spendAnnualDisplay">$0</strong> — this is the number used in your retirement calculation.</div>
+      </div>
+
+      <div id="err-2a" class="err">Please enter at least one spending category.</div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep(1)">← Back</button>
+        <button class="btn-next" onclick="validateStep2a()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3A: Investment style (advanced) ══ -->
+    <div class="step" id="step-3a">
+      <div class="step-tag">Investment Strategy</div>
+      <h2>How will your money <em>grow?</em></h2>
+      <p class="sub">Select a preset or enter your own expected annual return. Historical US stock market average is ~10% nominal, ~7% after inflation.</p>
+
+      <div class="invest-options" id="investOptions">
+        <div class="invest-card" onclick="selectInvest(this, 4)">
+          <div class="ic-left">
+            <div class="ic-name">Conservative</div>
+            <div class="ic-desc">Bonds-heavy, CDs, money market. Minimal volatility.</div>
+          </div>
+          <div class="ic-rate">4%</div>
+        </div>
+        <div class="invest-card selected" onclick="selectInvest(this, 7)">
+          <div class="ic-left">
+            <div class="ic-name">Balanced — <span style="color:var(--gold);font-size:.8rem">Suggested</span></div>
+            <div class="ic-desc">60/40 stocks/bonds mix. Moderate growth, moderate risk.</div>
+          </div>
+          <div class="ic-rate">7%</div>
+        </div>
+        <div class="invest-card" onclick="selectInvest(this, 9)">
+          <div class="ic-left">
+            <div class="ic-name">Aggressive Growth</div>
+            <div class="ic-desc">Index funds, ETFs, equity-heavy. Long time horizon required.</div>
+          </div>
+          <div class="ic-rate">9%</div>
+        </div>
+        <div class="invest-card" onclick="selectInvest(this, 'custom')">
+          <div class="ic-left">
+            <div class="ic-name">Custom Rate</div>
+            <div class="ic-desc">Enter your own expected annual return.</div>
+          </div>
+          <div class="ic-rate" id="customRateDisplay">—</div>
+        </div>
+      </div>
+
+      <div class="invest-custom-wrap" id="investCustomWrap">
+        <div class="invest-custom-label">Enter your expected annual return (%)</div>
+        <div class="input-wrap" style="max-width:200px;">
+          <input type="number" id="customReturnRate" placeholder="e.g. 8" min="1" max="25" class="has-suffix" oninput="updateCustomRateDisplay()">
+          <span class="input-suffix">% / yr</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="input-group">
+        <label>Inflation Assumption</label>
+        <div class="pill-group" id="inflationPills">
+          <button class="pill" data-val="2" onclick="selectPill(this,'inflationPills')">2% — Low</button>
+          <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills')">3% — Typical</button>
+          <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills')">4% — High</button>
+        </div>
+      </div>
+
+      <div id="err-3a" class="err">Please select or enter a return rate.</div>
+
+      <div class="step-nav">
+        <button class="btn-back" id="back3a" onclick="showStep('2a')">← Back</button>
+        <button class="btn-next" onclick="validateStep3a()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 4A: Location ══ -->
+    <div class="step" id="step-4a">
+      <div class="step-tag">Where You'll Live</div>
+      <h2>Where do you plan to <em>retire?</em></h2>
+      <p class="sub">Location dramatically impacts how far your money goes. Listed from most affordable to most expensive.</p>
+
+      <div class="location-cards" id="locationCards">
+
+        <div class="loc-card" onclick="selectLocation(this, 0.45, 'Southeast Asia / Latin America (budget)')">
+          <div class="loc-flag">🌏</div>
+          <div class="loc-body">
+            <div class="loc-name">Southeast Asia or Latin America — Budget</div>
+            <div class="loc-detail">Thailand, Vietnam, Colombia, Mexico (non-tourist areas). Low cost of living, warm climate, growing expat communities. Healthcare is affordable and often high quality.</div>
+          </div>
+          <div class="loc-cost">~$20–30k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+        <div class="loc-card" onclick="selectLocation(this, 0.6, 'Eastern Europe / Central America')">
+          <div class="loc-flag">🌍</div>
+          <div class="loc-body">
+            <div class="loc-name">Eastern Europe or Central America</div>
+            <div class="loc-detail">Portugal, Hungary, Czech Republic, Costa Rica, Panama. Great infrastructure, EU access (Portugal), modern amenities. Popular with FIRE community for the balance of quality and cost.</div>
+          </div>
+          <div class="loc-cost">~$30–45k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+        <div class="loc-card" onclick="selectLocation(this, 0.8, 'US — Rural or Small Town')">
+          <div class="loc-flag">🏘️</div>
+          <div class="loc-body">
+            <div class="loc-name">US — Rural or Small Town</div>
+            <div class="loc-detail">Midwest, South, Appalachian region. Lower housing costs, no state income tax in some states (TX, FL, TN). Familiar systems, proximity to family. Less amenities than cities.</div>
+          </div>
+          <div class="loc-cost">~$40–55k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+        <div class="loc-card selected" onclick="selectLocation(this, 1.0, 'US — Mid-Size City')">
+          <div class="loc-flag">🇺🇸</div>
+          <div class="loc-body">
+            <div class="loc-name">US — Mid-Size City <span style="font-size:.72rem;color:var(--gold)">· Default</span></div>
+            <div class="loc-detail">Denver, Austin, Nashville, Phoenix, Raleigh. Urban amenities without coastal price tags. Strong job markets if semi-retired. Good baseline for calculation.</div>
+          </div>
+          <div class="loc-cost">~$55–75k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+        <div class="loc-card" onclick="selectLocation(this, 1.2, 'US — Major Metro')">
+          <div class="loc-flag">🏙️</div>
+          <div class="loc-body">
+            <div class="loc-name">US — Major Metro</div>
+            <div class="loc-detail">New York, Los Angeles, Chicago, Boston, Seattle, Miami. High housing costs, but world-class culture, healthcare, and transport. Requires a larger portfolio.</div>
+          </div>
+          <div class="loc-cost">~$75–110k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+        <div class="loc-card" onclick="selectLocation(this, 1.4, 'Western Europe / Australia / Japan')">
+          <div class="loc-flag">🗼</div>
+          <div class="loc-body">
+            <div class="loc-name">Western Europe, Australia or Japan</div>
+            <div class="loc-detail">UK, France, Germany, Switzerland, Australia, Japan. Strong social safety nets, universal healthcare in many countries, high quality of life. Higher taxes and cost of living.</div>
+          </div>
+          <div class="loc-cost">~$80–120k/yr<small>adjusted multiplier</small></div>
+        </div>
+
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep('3a')">← Back</button>
+        <button class="btn-next" onclick="showStep('5a')">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 5A: Other Income ══ -->
+    <div class="step" id="step-5a">
+      <div class="step-tag">Other Income Sources</div>
+      <h2>Will you have income <em>beyond your portfolio?</em></h2>
+      <p class="sub">Any income that reduces how much your investments need to cover. This is separate from your investment returns — it's money coming in from other sources.</p>
+
+      <div class="other-income-wrap">
+        <div class="income-chips">
+          <span class="income-chip">💼 Part-time work</span>
+          <span class="income-chip">🏠 Rental property</span>
+          <span class="income-chip">📈 Dividends</span>
+          <span class="income-chip">🏛️ Pension</span>
+          <span class="income-chip">🌐 Online business</span>
+          <span class="income-chip">👴 Social Security</span>
+          <span class="income-chip">🎨 Freelance / consulting</span>
+          <span class="income-chip">💸 Inheritance</span>
+        </div>
+
+        <div class="input-group" style="margin-bottom:0">
+          <label>Total estimated monthly income from other sources</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="otherIncome" placeholder="0" min="0" class="has-prefix">
+          </div>
+        </div>
+
+        <div class="income-note">
+          <strong>⚠ Important:</strong> Do not include returns from your investment portfolio here. This field is for income from completely separate sources — rental income, a pension, Social Security, part-time work, etc. Your investment portfolio withdrawals are calculated separately using the 4% rule.
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep('4a')">← Back</button>
+        <button class="btn-next" onclick="calculateResults()">Calculate My Retirement Age →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3S: Simple calculate ══ -->
+    <div class="step" id="step-3s">
+      <div class="step-tag">Final Step</div>
+      <h2>Almost there — <em>one last thing</em></h2>
+      <p class="sub">A simple investment assumption to complete your estimate. You can adjust this later.</p>
+
+      <div class="input-group">
+        <label>Expected Annual Return</label>
+        <div class="invest-options" id="simpleInvestOptions">
+          <div class="invest-card" onclick="selectSimpleInvest(this, 4)">
+            <div class="ic-left"><div class="ic-name">Conservative</div><div class="ic-desc">Bonds, CDs, low-risk assets</div></div>
+            <div class="ic-rate">4%</div>
+          </div>
+          <div class="invest-card selected" onclick="selectSimpleInvest(this, 7)">
+            <div class="ic-left"><div class="ic-name">Balanced <span style="color:var(--gold);font-size:.78rem">— Suggested</span></div><div class="ic-desc">Mix of stocks and bonds</div></div>
+            <div class="ic-rate">7%</div>
+          </div>
+          <div class="invest-card" onclick="selectSimpleInvest(this, 9)">
+            <div class="ic-left"><div class="ic-name">Aggressive</div><div class="ic-desc">Index funds, equity-heavy</div></div>
+            <div class="ic-rate">9%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-back" onclick="showStep('2s')">← Back</button>
+        <button class="btn-next" onclick="calculateResults()">Calculate My Retirement Age →</button>
+      </div>
+    </div>
+
+    <!-- ══ RESULTS ══ -->
+    <div class="step" id="step-results">
+      <div id="resultsContent"></div>
+    </div>
+
+  </div><!-- /wizard -->
+
+  <footer>
+    <span>© 2026 VestlyFi</span>
+    <div style="display:flex;gap:18px;">
+      <a href="#" onclick="showModal('methodology'); return false;">Methodology</a>
+      <a href="#" onclick="showModal('privacy'); return false;">Privacy</a>
+    </div>
+  </footer>
+
+</div><!-- /container -->
+
+<!-- Methodology Modal -->
+<div id="modal-methodology" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('methodology')">
+  <div style="max-width:580px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">How VestlyFi Calculates Your Retirement Age</div>
+      <button onclick="closeModal('methodology')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;flex-shrink:0;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">The Core Formula</strong><br>
+      VestlyFi uses compound interest and future value calculations to project your portfolio at every age from today onward. The first age at which your portfolio exceeds your FIRE number becomes your estimated retirement age.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">The 4% Safe Withdrawal Rule</strong><br>
+      Your FIRE number = Annual Retirement Spending ÷ 0.04 (i.e., 25× your annual expenses). This originates from the 1998 Trinity Study, which found a 4% annual withdrawal rate had a ~96% historical success rate over 30-year periods. For retirements longer than 30 years, a 3.5% rate is more conservative.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Real vs. Nominal Returns</strong><br>
+      All projections use inflation-adjusted (real) returns — your expected return minus the inflation rate you select. This means all dollar figures shown are in today's purchasing power.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Monthly Compounding</strong><br>
+      Contributions are compounded monthly to reflect how most people actually invest (payroll deductions, regular transfers), rather than a single annual lump sum.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Location Multipliers</strong><br>
+      Cost-of-living adjustments are based on regional spending research and widely referenced expat retirement data. These are directional estimates — actual costs vary by city, lifestyle, exchange rates, and year.</p>
+      <p style="margin-bottom:0;color:rgba(245,240,232,0.3);font-size:0.78rem;">This calculator is for educational and illustrative purposes only. It does not account for taxes, Social Security benefit timing, sequence-of-returns risk, healthcare cost inflation, or unexpected life events. Always consult a certified financial planner before making major retirement decisions.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Privacy Modal -->
+
+<!-- About Modal -->
+<div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
+      <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+      <p>Questions? <span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
+  <div style="max-width:580px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;flex-shrink:0;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Financial Data Is Collected</strong><br>
+      VestlyFi does not collect, store, or transmit any of the numbers you enter into this calculator. All calculations run entirely in your browser. When you close or refresh the page, your inputs are gone — we never see them.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Account Required</strong><br>
+      You do not need to create an account, provide an email address, or share any personal information to use VestlyFi.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Affiliate Links</strong><br>
+      The brokerage recommendations shown in your results (Fidelity, Vanguard, M1 Finance, Schwab) are affiliate links. If you open an account through one of these links, VestlyFi may receive a referral commission at no additional cost to you. We only recommend platforms we believe are genuinely useful for long-term investors.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Analytics</strong><br>
+      We use anonymous, aggregate analytics (page views and tool usage patterns) to improve the product. This data cannot identify you individually and contains no financial figures.</p>
+      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br>
+      Questions? Reach us at <span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+const S = {
+  mode: 'advanced',
+  currentAge: null,
+  currentSavings: null,
+  annualIncome: null,
+  monthlyContrib: null,
+  annualSpend: null,
+  investRate: 7,
+  inflationRate: 3,
+  locationMultiplier: 1.0,
+  locationName: 'US — Mid-Size City',
+  otherIncome: 0,
+  isCustomInvest: false
+};
+
+let currentStepId = '0';
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════
+function showStep(id) {
+  document.querySelector('.step.active')?.classList.remove('active');
+  document.getElementById(`step-${id}`).classList.add('active');
+  currentStepId = String(id);
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const SIMPLE_STEPS = ['0','1','2s','3s','results'];
+const ADVANCED_STEPS = ['0','1','2a','3a','4a','5a','results'];
+
+function updateProgress() {
+  const steps = S.mode === 'simple' ? SIMPLE_STEPS : ADVANCED_STEPS;
+  const idx = steps.indexOf(currentStepId);
+  if (idx <= 0 || currentStepId === '0') {
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('stepCount').textContent = 'Let\'s begin';
+    return;
+  }
+  if (currentStepId === 'results') {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('stepCount').textContent = 'Your Results';
+    return;
+  }
+  const pct = (idx / (steps.length - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepCount').textContent = `Step ${idx} of ${steps.length - 2}`;
+}
+
+// ═══════════════════════════════════════════════════
+// MODE SELECTION
+// ═══════════════════════════════════════════════════
+function selectMode(mode) {
+  S.mode = mode;
+  const simple = document.getElementById('mode-simple');
+  const adv = document.getElementById('mode-advanced');
+  if (mode === 'simple') {
+    simple.classList.add('selected'); adv.classList.remove('selected');
+    simple.querySelector('.mc-check').style.display = 'flex';
+    adv.querySelector('.mc-check').style.display = 'none';
+  } else {
+    adv.classList.add('selected'); simple.classList.remove('selected');
+    adv.querySelector('.mc-check').style.display = 'flex';
+    simple.querySelector('.mc-check').style.display = 'none';
+  }
+}
+
+function startWizard() { showStep(1); }
+
+// ═══════════════════════════════════════════════════
+// STEP 1 VALIDATION
+// ═══════════════════════════════════════════════════
+function validateStep1() {
+  const ca = parseInt(document.getElementById('currentAge').value);
+  const cs = parseFloat(document.getElementById('currentSavings').value);
+  const ai = parseFloat(document.getElementById('annualIncome').value);
+  const mc = parseFloat(document.getElementById('monthlyContrib').value);
+  const err = document.getElementById('err-1');
+
+  if (!ca || ca < 16 || ca > 80 || isNaN(cs) || cs < 0 || isNaN(ai) || ai < 0 || isNaN(mc) || mc < 0) {
+    err.style.display = 'block';
+    err.textContent = 'Please fill in all fields with valid values.';
+    return;
+  }
+  err.style.display = 'none';
+  S.currentAge = ca; S.currentSavings = cs; S.annualIncome = ai; S.monthlyContrib = mc;
+
+  if (S.mode === 'simple') showStep('2s');
+  else showStep('2a');
+}
+
+// ═══════════════════════════════════════════════════
+// STEP 2 SIMPLE
+// ═══════════════════════════════════════════════════
+function selectSimpleSpend(btn) {
+  document.querySelectorAll('#simpleSpendPills .pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('simpleSpendCustom').value = '';
+  S.annualSpend = parseInt(btn.dataset.val);
+}
+
+function onSimpleSpendInput(inp) {
+  document.querySelectorAll('#simpleSpendPills .pill').forEach(p => p.classList.remove('selected'));
+  S.annualSpend = parseFloat(inp.value) || null;
+}
+
+function validateStep2s() {
+  const custom = parseFloat(document.getElementById('simpleSpendCustom').value);
+  if (custom > 0) S.annualSpend = custom;
+  if (!S.annualSpend || S.annualSpend <= 0) {
+    document.getElementById('err-2s').style.display = 'block'; return;
+  }
+  document.getElementById('err-2s').style.display = 'none';
+  showStep('3s');
+}
+
+S.annualSpend = 50000; // default
+
+// ═══════════════════════════════════════════════════
+// STEP 2 ADVANCED: Spending builder
+// ═══════════════════════════════════════════════════
+function updateSpendTotal() {
+  const cats = document.querySelectorAll('.spend-cat');
+  let total = 0;
+  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  document.getElementById('spendTotalDisplay').textContent = '$' + Math.round(total).toLocaleString();
+  document.getElementById('spendAnnualDisplay').textContent = '$' + Math.round(total * 12).toLocaleString();
+}
+
+function validateStep2a() {
+  const cats = document.querySelectorAll('.spend-cat');
+  let total = 0;
+  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  if (total <= 0) { document.getElementById('err-2a').style.display = 'block'; return; }
+  document.getElementById('err-2a').style.display = 'none';
+  S.annualSpend = total * 12;
+  showStep('3a');
+}
+
+// ═══════════════════════════════════════════════════
+// STEP 3A: Investment
+// ═══════════════════════════════════════════════════
+function selectInvest(card, rate) {
+  document.querySelectorAll('#investOptions .invest-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  if (rate === 'custom') {
+    S.isCustomInvest = true;
+    document.getElementById('investCustomWrap').style.display = 'block';
+  } else {
+    S.isCustomInvest = false;
+    S.investRate = rate;
+    document.getElementById('investCustomWrap').style.display = 'none';
+    document.getElementById('customRateDisplay').textContent = '—';
+  }
+}
+
+function updateCustomRateDisplay() {
+  const v = parseFloat(document.getElementById('customReturnRate').value);
+  document.getElementById('customRateDisplay').textContent = v ? v + '%' : '—';
+  if (v) S.investRate = v;
+}
+
+function selectPill(btn, groupId) {
+  document.querySelectorAll(`#${groupId} .pill`).forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (groupId === 'inflationPills') S.inflationRate = parseFloat(btn.dataset.val);
+}
+
+function validateStep3a() {
+  if (S.isCustomInvest) {
+    const v = parseFloat(document.getElementById('customReturnRate').value);
+    if (!v || v < 0.5 || v > 30) { document.getElementById('err-3a').style.display = 'block'; return; }
+    S.investRate = v;
+  }
+  document.getElementById('err-3a').style.display = 'none';
+  showStep('4a');
+}
+
+// ═══════════════════════════════════════════════════
+// STEP 4A: Location
+// ═══════════════════════════════════════════════════
+function selectLocation(card, multiplier, name) {
+  document.querySelectorAll('.loc-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  S.locationMultiplier = multiplier;
+  S.locationName = name;
+}
+
+// ═══════════════════════════════════════════════════
+// STEP 3S: Simple invest
+// ═══════════════════════════════════════════════════
+function selectSimpleInvest(card, rate) {
+  document.querySelectorAll('#simpleInvestOptions .invest-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  S.investRate = rate;
+}
+
+// ═══════════════════════════════════════════════════
+// CALCULATION ENGINE
+// ═══════════════════════════════════════════════════
+function calculateResults() {
+  if (S.mode === 'advanced') {
+    S.otherIncome = (parseFloat(document.getElementById('otherIncome').value) || 0) * 12;
+  } else {
+    S.otherIncome = 0;
+    S.locationMultiplier = 1.0;
+    S.inflationRate = 3;
+  }
+
+  const { currentAge, currentSavings, monthlyContrib, annualSpend,
+          investRate, inflationRate, locationMultiplier, otherIncome } = S;
+
+  const realReturn = (investRate - inflationRate) / 100;
+  const monthlyReturn = Math.pow(1 + realReturn, 1/12) - 1;
+
+  // Adjusted spending for location
+  const adjAnnualSpend = annualSpend * locationMultiplier;
+  const netAnnualNeeded = Math.max(0, adjAnnualSpend - otherIncome);
+
+  // FIRE number (4% rule)
+  const fireNumber = netAnnualNeeded / 0.04;
+
+  // Find the retirement age
+  let retireAge = null;
+  let projAtTarget = null;
+
+  for (let age = currentAge + 1; age <= 100; age++) {
+    const years = age - currentAge;
+    const fvSavings = currentSavings * Math.pow(1 + realReturn, years);
+    const fvContrib = monthlyReturn > 0
+      ? monthlyContrib * ((Math.pow(1 + monthlyReturn, years * 12) - 1) / monthlyReturn)
+      : monthlyContrib * years * 12;
+    const total = fvSavings + fvContrib;
+    if (total >= fireNumber) {
+      retireAge = age;
+      projAtTarget = total;
+      break;
+    }
+  }
+
+  // If never, calc at 75 and show gap
+  if (!retireAge) {
+    const years = 75 - currentAge;
+    const fvSavings = currentSavings * Math.pow(1 + realReturn, years);
+    const fvContrib = monthlyReturn > 0
+      ? monthlyContrib * ((Math.pow(1 + monthlyReturn, years * 12) - 1) / monthlyReturn)
+      : monthlyContrib * years * 12;
+    projAtTarget = fvSavings + fvContrib;
+  }
+
+  const yearsToRetire = retireAge ? retireAge - currentAge : null;
+  const surplusOrGap = retireAge ? projAtTarget - fireNumber : projAtTarget - fireNumber;
+  const trackPct = Math.min(100, (projAtTarget / fireNumber) * 100);
+
+  // What monthly contrib would retire at 65?
+  const targetAge65 = 65;
+  const years65 = targetAge65 - currentAge;
+  let needed65 = 0;
+  if (years65 > 0 && monthlyReturn > 0) {
+    const fvExistingAt65 = currentSavings * Math.pow(1 + realReturn, years65);
+    const remaining65 = Math.max(0, fireNumber - fvExistingAt65);
+    needed65 = remaining65 / ((Math.pow(1 + monthlyReturn, years65 * 12) - 1) / monthlyReturn);
+  }
+
+  // What if they increased contributions by $500/mo?
+  let ageWith500More = null;
+  for (let age = currentAge + 1; age <= 100; age++) {
+    const years = age - currentAge;
+    const fvS = currentSavings * Math.pow(1 + realReturn, years);
+    const fvC = monthlyReturn > 0
+      ? (monthlyContrib + 500) * ((Math.pow(1 + monthlyReturn, years * 12) - 1) / monthlyReturn)
+      : (monthlyContrib + 500) * years * 12;
+    if (fvS + fvC >= fireNumber) { ageWith500More = age; break; }
+  }
+
+  renderResults({ retireAge, yearsToRetire, projAtTarget, fireNumber, surplusOrGap, trackPct, needed65, ageWith500More, adjAnnualSpend, netAnnualNeeded, otherIncome });
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function fmt(n) {
+  if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function renderResults(r) {
+  const { retireAge, yearsToRetire, projAtTarget, fireNumber, surplusOrGap,
+          trackPct, needed65, ageWith500More, adjAnnualSpend, netAnnualNeeded, otherIncome } = r;
+
+  const canRetire = !!retireAge;
+  const isEarly = retireAge && retireAge < 65;
+  const wr = netAnnualNeeded > 0 ? (netAnnualNeeded / projAtTarget) * 100 : 0;
+
+  let badgeClass = canRetire ? (isEarly ? 'badge-gold' : 'badge-green') : 'badge-red';
+  let badgeText = canRetire ? (isEarly ? '✦ Early Retirement Possible' : '✓ Traditional Retirement') : '⚠ Adjustments Needed';
+
+  const insights = [];
+
+  if (canRetire) {
+    insights.push({ icon: '🎯', text: `You'll hit your FIRE number of <strong>${fmt(fireNumber)}</strong> ${yearsToRetire > 0 ? `in <strong>${yearsToRetire} years</strong>` : 'now'} — enough to cover your adjusted annual spending of <strong>${fmt(adjAnnualSpend)}</strong>${otherIncome > 0 ? ` (after $${Math.round(otherIncome/12).toLocaleString()}/mo in other income)` : ''}.` });
+  } else {
+    insights.push({ icon: '📊', text: `At your current contribution rate, your portfolio won't reach your FIRE number of <strong>${fmt(fireNumber)}</strong> by age 100. You'll need to increase contributions, reduce planned spending, or both.` });
+  }
+
+  if (ageWith500More && ageWith500More < (retireAge || 100)) {
+    const diff = (retireAge || 100) - ageWith500More;
+    insights.push({ icon: '⚡', text: `Adding just <strong>$500/month</strong> to your contributions would let you retire <strong>${diff} year${diff !== 1 ? 's' : ''} earlier</strong> at age ${ageWith500More}.` });
+  }
+
+  if (needed65 > 0 && needed65 > S.monthlyContrib * 1.5) {
+    insights.push({ icon: '📅', text: `To retire at the traditional age of 65 without changing anything else, you'd need to contribute <strong>${fmt(needed65)}/month</strong> — compared to your current ${fmt(S.monthlyContrib)}/month.` });
+  }
+
+  if (wr > 0 && wr <= 3.5) {
+    insights.push({ icon: '🛡️', text: `Your projected withdrawal rate is <strong>${wr.toFixed(1)}%</strong> — well under the 4% safe withdrawal threshold. Your portfolio is very likely to last 30+ years.` });
+  } else if (wr > 4 && wr <= 5) {
+    insights.push({ icon: '⚠️', text: `Your withdrawal rate of <strong>${wr.toFixed(1)}%</strong> is slightly above the classic 4% rule. Consider building a small buffer or reducing planned spending by 10–15%.` });
+  } else if (wr > 5) {
+    insights.push({ icon: '🔴', text: `Your withdrawal rate of <strong>${wr.toFixed(1)}%</strong> is above safe thresholds. Your portfolio may run out before 30 years. Consider increasing contributions or reducing retirement spending.` });
+  }
+
+  if (S.mode === 'simple') {
+    insights.push({ icon: '🔬', text: `This is a <strong>simplified estimate</strong>. Factors like location, other income sources, healthcare costs, and a detailed spending breakdown could significantly change your retirement age. Run the Full Analysis for a more accurate picture.` });
+  }
+
+  const tf = trackPct >= 90 ? 'tf-green' : trackPct >= 60 ? 'tf-gold' : 'tf-red';
+
+  const upgradeBlock = S.mode === 'simple' ? `
+    <div class="upgrade-prompt">
+      <h3>Want a more accurate number?</h3>
+      <p>Your quick estimate is based on a few inputs. Adding more detail — like your spending breakdown, where you'll live, and other income — can shift your retirement age by 5–10 years.</p>
+      <div class="upgrade-items">
+        <span class="upgrade-item">🏠 Spending breakdown</span>
+        <span class="upgrade-item">🌍 Location adjustment</span>
+        <span class="upgrade-item">💼 Other income sources</span>
+        <span class="upgrade-item">📈 Investment strategy</span>
+      </div>
+      <button class="btn-upgrade" onclick="upgradeToFull()">Add More Detail →</button>
+      <button class="btn-skip" onclick="document.querySelector('.upgrade-prompt').style.display='none'">No thanks, this is enough</button>
+    </div>
+  ` : '';
+
+  const html = `
+    <div class="result-hero">
+      <div class="result-badge ${badgeClass}">${badgeText}</div>
+      <div class="result-age">${canRetire ? retireAge : '65+'}</div>
+      <div class="result-age-label">estimated retirement age</div>
+      <p class="result-sub">
+        ${canRetire
+          ? `Based on your inputs, you can stop working in <strong>${yearsToRetire} year${yearsToRetire !== 1 ? 's' : ''}</strong>. Here's everything behind that number.`
+          : `Your current contributions won't reach your FIRE number on any standard timeline. Here's what needs to change.`
+        }
+      </p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Your FIRE Number</div>
+        <div class="stat-val gold">${fmt(fireNumber)}</div>
+        <div class="stat-note">4% safe withdrawal rule</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Projected Portfolio</div>
+        <div class="stat-val ${surplusOrGap >= 0 ? 'green' : 'red'}">${fmt(projAtTarget)}</div>
+        <div class="stat-note">at age ${canRetire ? retireAge : '75 (projected)'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Annual Need in Retirement</div>
+        <div class="stat-val">${fmt(adjAnnualSpend)}</div>
+        <div class="stat-note">adjusted for location${otherIncome > 0 ? ' + other income' : ''}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${surplusOrGap >= 0 ? 'Portfolio Surplus' : 'Portfolio Gap'}</div>
+        <div class="stat-val ${surplusOrGap >= 0 ? 'green' : 'red'}">${fmt(Math.abs(surplusOrGap))}</div>
+        <div class="stat-note">${surplusOrGap >= 0 ? 'above FIRE number' : 'below FIRE number'}</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px;">
+      <div class="section-title">Progress to FIRE Number</div>
+      <div class="timeline-bar"><div class="timeline-fill ${tf}" id="tlFill"></div></div>
+      <div class="timeline-meta"><span>0%</span><span>${trackPct.toFixed(1)}% funded at target age</span><span>100%</span></div>
+    </div>
+
+    <ul class="insight-list">
+      ${insights.map(i => `<li><span class="ii">${i.icon}</span><span>${i.text}</span></li>`).join('')}
+    </ul>
+
+    ${upgradeBlock}
+
+    <div class="aff-section">
+      <h3>Ready to start building your portfolio?</h3>
+      <p>These platforms offer low-cost index fund access — the backbone of most early retirement strategies.</p>
+      <div class="aff-links">
+        <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
+        <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
+        <a class="aff-link" href="https://m1.com" target="_blank">M1 Finance ↗</a>
+        <a class="aff-link" href="https://www.schwab.com" target="_blank">Schwab ↗</a>
+      </div>
+    </div>
+
+    <div class="share-bar">
+      <button class="btn-share" onclick="shareResult(${canRetire ? retireAge : 0})">𝕏 Share on X</button>
+      <button class="btn-share" onclick="copyResult()">🔗 Copy Link</button>
+    </div>
+
+    <button class="btn-restart" onclick="restartWizard()">← Start Over with New Inputs</button>
+    <p class="disclaimer">For educational purposes only. Not financial advice. Projections use simplified assumptions — actual results vary. Consult a qualified financial advisor before making investment decisions.</p>
+  `;
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showStep('results');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const el = document.getElementById('tlFill');
+    if (el) el.style.width = trackPct.toFixed(1) + '%';
+  }));
+}
+
+// ═══════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════
+function upgradeToFull() {
+  S.mode = 'advanced';
+  // Pre-fill what we have from simple and jump to spending detail
+  showStep('2a');
+}
+
+function shareResult(age) {
+  const text = age
+    ? `I just calculated I can retire at age ${age} using the VestlyFi calculator. Find out when you can retire →`
+    : `I just mapped out my retirement plan using VestlyFi. Find out when you can retire →`;
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text + ' ' + window.location.href)}`, '_blank');
+}
+
+function copyResult() {
+  navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied!'));
+}
+
+function restartWizard() {
+  Object.assign(S, {
+    mode: 'advanced', currentAge: null, currentSavings: null, annualIncome: null,
+    monthlyContrib: null, annualSpend: 50000, investRate: 7, inflationRate: 3,
+    locationMultiplier: 1.0, locationName: 'US — Mid-Size City', otherIncome: 0, isCustomInvest: false
+  });
+  document.getElementById('resultsContent').innerHTML = '';
+  showStep(0);
+}
+
+function showModal(id) {
+  document.getElementById('modal-' + id).style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  if (id) {
+    document.getElementById('modal-' + id).style.display = 'none';
+  } else {
+    document.querySelectorAll('[id^="modal-"]').forEach(m => m.style.display = 'none');
+  }
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
