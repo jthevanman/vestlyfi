@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coast FIRE Calculator — VestlyFi</title>
+<meta name="description" content="Find out how much you need saved today so your investments grow on their own to fund your retirement — no more contributions needed.">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
+    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
+    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
+    --green:#4ade80; --red:#f87171; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--navy); color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-weight:300; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Fraunces',serif; font-size:1.2rem; color:var(--gold); text-decoration:none; transition:opacity .15s; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+  .container { position:relative; z-index:1; max-width:680px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
+  .wizard { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0 80px; }
+
+  .step { display:none; }
+  .step.active { display:block; animation:stepIn 0.42s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn { from{opacity:0;transform:translateY(26px);} to{opacity:1;transform:translateY(0);} }
+
+  .step-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .step h2 { font-family:'Fraunces',serif; font-size:clamp(1.7rem,5vw,2.5rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .step h2 em { font-style:italic; color:var(--gold-light); }
+  .step .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; max-width:540px; }
+
+  .input-group { margin-bottom:22px; }
+  .input-group label { display:block; font-size:0.75rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:9px; font-weight:500; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:16px; color:var(--gold); font-size:1rem; pointer-events:none; font-family:'Fraunces',serif; }
+  .input-suffix { position:absolute; right:16px; color:var(--muted); font-size:0.82rem; pointer-events:none; }
+  input[type="number"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input.has-prefix { padding-left:30px; }
+  input.has-suffix { padding-right:48px; }
+  input:focus,select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
+
+  .pill-group { display:flex; gap:9px; flex-wrap:wrap; }
+  .pill { padding:9px 18px; border-radius:100px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; font-size:0.87rem; transition:all .18s; }
+  .pill:hover { border-color:var(--gold); color:var(--cream); }
+  .pill.selected { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
+
+  .step-nav { display:flex; gap:10px; margin-top:36px; }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
+  .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
+  .err { color:var(--red); font-size:0.8rem; margin-top:8px; display:none; }
+
+  /* RESULTS */
+  .result-hero { text-align:center; padding:36px 0 32px; border-bottom:1px solid var(--border); margin-bottom:32px; }
+  .result-badge { display:inline-block; padding:5px 14px; border-radius:100px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:16px; }
+  .badge-green { background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.25); }
+  .badge-gold { background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.25); }
+  .badge-red { background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.25); }
+  .result-number { font-family:'Fraunces',serif; font-size:clamp(3rem,10vw,5.5rem); font-weight:600; line-height:1; color:var(--gold-light); margin-bottom:6px; }
+  .result-number-label { font-size:0.9rem; color:var(--cream-dim); margin-bottom:12px; }
+  .result-sub { color:var(--muted); font-size:0.9rem; line-height:1.65; max-width:480px; margin:0 auto; }
+
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+  @media(max-width:460px) { .stat-grid{grid-template-columns:1fr;} }
+  .stat-card { background:var(--navy-light); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .stat-label { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; font-weight:500; }
+  .stat-val { font-family:'Fraunces',serif; font-size:1.55rem; font-weight:600; }
+  .stat-val.gold{color:var(--gold-light);} .stat-val.green{color:var(--green);} .stat-val.red{color:var(--red);}
+  .stat-note { font-size:0.75rem; color:var(--muted); margin-top:3px; }
+
+  .insight-list { list-style:none; margin-bottom:24px; }
+  .insight-list li { display:flex; gap:13px; padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); align-items:flex-start; }
+  .insight-list li:last-child { border-bottom:none; }
+  .ii { flex-shrink:0; margin-top:1px; }
+
+  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
+  .aff-section h3 { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
+  .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
+  .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
+  .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
+  .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
+
+  .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
+  .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
+  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  footer a { color:var(--muted); text-decoration:none; }
+  footer a:hover { color:var(--gold); }
+  .footer-links { display:flex; gap:18px; }
+  @media(max-width:600px) { footer{padding:20px;} }
+
+  /* Progress */
+  .prog-wrap { width:160px; height:2px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; }
+  .prog-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; transition:width .5s cubic-bezier(.4,0,.2,1); }
+  .step-count { font-size:0.72rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; white-space:nowrap; }
+  .header-right { display:flex; align-items:center; gap:14px; }
+
+  /* Input alignment fix */
+  .input-group { display: flex; flex-direction: column; }
+  .input-wrap { position: relative; display: flex; align-items: center; }
+  .input-row { align-items: end; }
+  .input-row-3 { align-items: end; }
+  .input-grid { align-items: end; }
+  .input-grid-3 { align-items: end; }
+
+
+  /* Grid input alignment */
+  .input-row > .input-group,
+  .input-row-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="#" onclick="showModal('about'); return false;">About</a>
+  </div>
+</nav>
+
+<div class="container">
+<div class="wizard">
+
+  <!-- Step 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-tag">Coast FIRE</div>
+    <h2>What's your <em>retirement goal?</em></h2>
+    <p class="sub">Coast FIRE is when you've saved enough that — even if you never invest another dollar — your money will grow on its own to fund your retirement. Let's find your number.</p>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Current Age</label>
+        <div class="input-wrap">
+          <input type="number" id="currentAge" placeholder="28" min="16" max="70" class="has-suffix">
+          <span class="input-suffix">yrs</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Target Retirement Age</label>
+        <div class="input-wrap">
+          <input type="number" id="retireAge" placeholder="60" min="40" max="80" class="has-suffix">
+          <span class="input-suffix">yrs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Annual Spending in Retirement</label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="annualSpend" placeholder="50,000" min="0" class="has-prefix">
+      </div>
+    </div>
+
+    <div id="err-1" class="err">Please fill in all fields. Retirement age must be greater than current age.</div>
+    <div class="step-nav">
+      <button class="btn-next" onclick="validateStep1()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step-2">
+    <div class="step-tag">Your Investments</div>
+    <h2>How much do you have <em>saved so far?</em></h2>
+    <p class="sub">This is your current invested balance — 401k, IRA, brokerage accounts, anything invested in the market.</p>
+
+    <div class="input-group">
+      <label>Current Invested Balance</label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="number" id="currentSavings" placeholder="35,000" min="0" class="has-prefix">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Expected Annual Return</label>
+      <div class="pill-group" id="returnPills">
+        <button class="pill" data-val="4" onclick="selectPill(this,'returnPills',4)">Conservative — 4%</button>
+        <button class="pill selected" data-val="7" onclick="selectPill(this,'returnPills',7)">Balanced — 7% <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Suggested</span></button>
+        <button class="pill" data-val="9" onclick="selectPill(this,'returnPills',9)">Aggressive — 9%</button>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Inflation Assumption</label>
+      <div class="pill-group" id="inflationPills">
+        <button class="pill" data-val="2" onclick="selectPill(this,'inflationPills',2)">2%</button>
+        <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills',3)">3% — Typical</button>
+        <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills',4)">4% — High</button>
+      </div>
+    </div>
+
+    <div id="err-2" class="err">Please enter your current balance.</div>
+    <div class="step-nav">
+      <button class="btn-back" onclick="showStep(1)">← Back</button>
+      <button class="btn-next" onclick="validateStep2()">Calculate →</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="step" id="step-results">
+    <div id="resultsContent"></div>
+  </div>
+
+</div>
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="/">All Calculators</a>
+    <a href="#" onclick="showModal('privacy'); return false;">Privacy</a>
+  </div>
+</footer>
+
+
+<!-- About Modal -->
+<div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
+      <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+      <p>Questions? <span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = { returnRate: 7, inflationRate: 3 };
+let currentStep = 1;
+
+function showStep(n) {
+  document.getElementById('step-' + currentStep)?.classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + (n === 'results' ? 'results' : n)).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectPill(btn, groupId, val) {
+  document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (groupId === 'returnPills') S.returnRate = val;
+  if (groupId === 'inflationPills') S.inflationRate = val;
+}
+
+function validateStep1() {
+  const ca = parseInt(document.getElementById('currentAge').value);
+  const ra = parseInt(document.getElementById('retireAge').value);
+  const sp = parseFloat(document.getElementById('annualSpend').value);
+  const err = document.getElementById('err-1');
+  if (!ca || !ra || !sp || ra <= ca || sp <= 0) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  S.currentAge = ca; S.retireAge = ra; S.annualSpend = sp;
+  showStep(2);
+}
+
+function validateStep2() {
+  const cs = parseFloat(document.getElementById('currentSavings').value);
+  const err = document.getElementById('err-2');
+  if (isNaN(cs) || cs < 0) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  S.currentSavings = cs;
+  calculate();
+}
+
+function fmt(n) {
+  if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function calculate() {
+  const { currentAge, retireAge, annualSpend, currentSavings, returnRate, inflationRate } = S;
+  const yearsToRetire = retireAge - currentAge;
+  const realReturn = (returnRate - inflationRate) / 100;
+
+  // FIRE number at retirement
+  const fireNumber = annualSpend / 0.04;
+
+  // Coast FIRE number = fireNumber discounted back to today
+  const coastNumber = fireNumber / Math.pow(1 + realReturn, yearsToRetire);
+
+  const alreadyCoasted = currentSavings >= coastNumber;
+  const gap = coastNumber - currentSavings;
+  const pct = Math.min(100, (currentSavings / coastNumber) * 100);
+
+  // If already at coast, when could they have stopped?
+  let coastedAtAge = null;
+  if (alreadyCoasted) {
+    for (let age = currentAge; age >= 18; age--) {
+      const y = retireAge - age;
+      const cn = fireNumber / Math.pow(1 + realReturn, y);
+      if (currentSavings < cn) { coastedAtAge = age + 1; break; }
+    }
+  }
+
+  // Monthly contrib needed to reach coast in 1, 3, 5 years
+  const scenarios = [1, 3, 5].map(yrs => {
+    if (alreadyCoasted) return null;
+    const monthlyR = Math.pow(1 + realReturn, 1/12) - 1;
+    const fvCurrent = currentSavings * Math.pow(1 + realReturn, yrs);
+    const needed = coastNumber - fvCurrent;
+    if (needed <= 0) return { yrs, monthly: 0 };
+    const monthly = needed / ((Math.pow(1 + monthlyR, yrs * 12) - 1) / monthlyR);
+    return { yrs, monthly: Math.max(0, monthly) };
+  }).filter(Boolean);
+
+  const badgeClass = alreadyCoasted ? 'badge-green' : (pct > 70 ? 'badge-gold' : 'badge-red');
+  const badgeText = alreadyCoasted ? '✦ You\'ve Already Coasted' : (pct > 70 ? '◈ Almost There' : '⚠ Keep Building');
+
+  const html = `
+    <div class="result-hero">
+      <div class="result-badge ${badgeClass}">${badgeText}</div>
+      <div class="result-number">${fmt(coastNumber)}</div>
+      <div class="result-number-label">your Coast FIRE number</div>
+      <p class="result-sub">
+        ${alreadyCoasted
+          ? `You've already hit your Coast FIRE number${coastedAtAge ? ` — you actually crossed it around age ${coastedAtAge}` : ''}. Your current savings will grow on their own to fund retirement at ${retireAge}.`
+          : `Save ${fmt(coastNumber)} and you can stop contributing entirely. Your money will grow on its own to ${fmt(fireNumber)} by age ${retireAge}.`
+        }
+      </p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Coast FIRE Number</div>
+        <div class="stat-val gold">${fmt(coastNumber)}</div>
+        <div class="stat-note">save this, then coast</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Full FIRE Number</div>
+        <div class="stat-val">${fmt(fireNumber)}</div>
+        <div class="stat-note">what you need at age ${retireAge}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Current Balance</div>
+        <div class="stat-val ${alreadyCoasted ? 'green' : 'red'}">${fmt(currentSavings)}</div>
+        <div class="stat-note">${pct.toFixed(1)}% of coast number</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${alreadyCoasted ? 'Surplus' : 'Gap Remaining'}</div>
+        <div class="stat-val ${alreadyCoasted ? 'green' : 'red'}">${fmt(Math.abs(gap))}</div>
+        <div class="stat-note">${alreadyCoasted ? 'above coast number' : 'still needed'}</div>
+      </div>
+    </div>
+
+    ${!alreadyCoasted && scenarios.length > 0 ? `
+    <div class="stat-card" style="margin-bottom:24px;">
+      <div class="stat-label" style="margin-bottom:12px;">How fast can you get there?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${scenarios.map(s => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft);">
+            <span style="font-size:0.85rem;color:var(--cream-dim);">Reach coast in <strong style="color:var(--cream)">${s.yrs} year${s.yrs>1?'s':''}</strong></span>
+            <span style="font-family:'Fraunces',serif;font-size:1.1rem;color:var(--gold-light);">${s.monthly < 1 ? 'Already there' : fmt(s.monthly) + '/mo'}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
+
+    <ul class="insight-list">
+      <li><span class="ii">💡</span><span>Coast FIRE is popular with people who want to <strong>downshift their career</strong> — take a lower-paying job they enjoy, work part-time, or start a business — without worrying about retirement savings.</span></li>
+      <li><span class="ii">📈</span><span>This calculation uses a <strong>${returnRate - inflationRate}% real return</strong> (${returnRate}% investment return minus ${inflationRate}% inflation). Adjust these assumptions if your portfolio is more conservative or aggressive.</span></li>
+      ${alreadyCoasted ? `<li><span class="ii">🎉</span><span>You're already coasting. Any contributions you make from here are <strong>bonus runway</strong> — they either let you retire earlier or spend more in retirement.</span></li>` : `<li><span class="ii">⚡</span><span>Every dollar you save now is worth <strong>much more</strong> than a dollar saved later — because it has more time to compound. Getting to your coast number early is one of the highest-leverage financial moves you can make.</span></li>`}
+    </ul>
+
+    <div class="aff-section">
+      <h3>Start building your Coast number</h3>
+      <p>Low-cost index funds in tax-advantaged accounts (401k, IRA) are the most efficient way to reach Coast FIRE.</p>
+      <div class="aff-links">
+        <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
+        <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
+        <a class="aff-link" href="https://m1.com" target="_blank">M1 Finance ↗</a>
+        <a class="aff-link" href="https://www.schwab.com" target="_blank">Schwab ↗</a>
+      </div>
+    </div>
+
+    <button class="btn-restart" onclick="restartWizard()">← Recalculate with different inputs</button>
+    <p class="disclaimer">For educational purposes only. Not financial advice. Consult a certified financial planner before making major financial decisions.</p>
+  `;
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showStep('results');
+  document.getElementById('step-results').classList.add('active');
+}
+
+function restartWizard() {
+  document.getElementById('resultsContent').innerHTML = '';
+  document.getElementById('step-results').classList.remove('active');
+  currentStep = 0;
+  showStep(1);
+}
+
+function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
+function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
