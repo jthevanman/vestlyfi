@@ -591,26 +591,19 @@
       <p class="sub">Select a preset or enter your own expected annual return. Historical US stock market average is ~10% nominal, ~7% after inflation.</p>
 
       <div class="invest-options" id="investOptions">
-        <div class="invest-card" onclick="selectInvest(this, 4)">
+        <div class="invest-card" onclick="selectInvest(this, 6)">
           <div class="ic-left">
             <div class="ic-name">Conservative</div>
             <div class="ic-desc">Bonds-heavy, CDs, money market. Minimal volatility.</div>
           </div>
-          <div class="ic-rate">4%</div>
+          <div class="ic-rate">6%</div>
         </div>
-        <div class="invest-card selected" onclick="selectInvest(this, 7)">
+        <div class="invest-card selected" onclick="selectInvest(this, 10)">
           <div class="ic-left">
-            <div class="ic-name">Balanced — <span style="color:var(--gold);font-size:.8rem">Suggested</span></div>
-            <div class="ic-desc">60/40 stocks/bonds mix. Moderate growth, moderate risk.</div>
+            <div class="ic-name">Average — <span style="color:var(--gold);font-size:.8rem">Suggested</span></div>
+            <div class="ic-desc">Broad market index funds. Historical US average return.</div>
           </div>
-          <div class="ic-rate">7%</div>
-        </div>
-        <div class="invest-card" onclick="selectInvest(this, 9)">
-          <div class="ic-left">
-            <div class="ic-name">Aggressive Growth</div>
-            <div class="ic-desc">Index funds, ETFs, equity-heavy. Long time horizon required.</div>
-          </div>
-          <div class="ic-rate">9%</div>
+          <div class="ic-rate">10%</div>
         </div>
         <div class="invest-card" onclick="selectInvest(this, 'custom')">
           <div class="ic-left">
@@ -764,17 +757,13 @@
       <div class="input-group">
         <label>Expected Annual Return</label>
         <div class="invest-options" id="simpleInvestOptions">
-          <div class="invest-card" onclick="selectSimpleInvest(this, 4)">
+          <div class="invest-card" onclick="selectSimpleInvest(this, 6)">
             <div class="ic-left"><div class="ic-name">Conservative</div><div class="ic-desc">Bonds, CDs, low-risk assets</div></div>
-            <div class="ic-rate">4%</div>
+            <div class="ic-rate">6%</div>
           </div>
-          <div class="invest-card selected" onclick="selectSimpleInvest(this, 7)">
-            <div class="ic-left"><div class="ic-name">Balanced <span style="color:var(--gold);font-size:.78rem">— Suggested</span></div><div class="ic-desc">Mix of stocks and bonds</div></div>
-            <div class="ic-rate">7%</div>
-          </div>
-          <div class="invest-card" onclick="selectSimpleInvest(this, 9)">
-            <div class="ic-left"><div class="ic-name">Aggressive</div><div class="ic-desc">Index funds, equity-heavy</div></div>
-            <div class="ic-rate">9%</div>
+          <div class="invest-card selected" onclick="selectSimpleInvest(this, 10)">
+            <div class="ic-left"><div class="ic-name">Average <span style="color:var(--gold);font-size:.78rem">— Suggested</span></div><div class="ic-desc">Broad market index funds. Historical US average.</div></div>
+            <div class="ic-rate">10%</div>
           </div>
         </div>
       </div>
@@ -875,7 +864,7 @@ const S = {
   annualIncome: null,
   monthlyContrib: null,
   annualSpend: null,
-  investRate: 7,
+  investRate: 10,
   inflationRate: 3,
   locationMultiplier: 1.0,
   locationName: 'US — Mid-Size City',
@@ -1311,7 +1300,7 @@ function copyResult() {
 function restartWizard() {
   Object.assign(S, {
     mode: 'advanced', currentAge: null, currentSavings: null, annualIncome: null,
-    monthlyContrib: null, annualSpend: 50000, investRate: 7, inflationRate: 3,
+    monthlyContrib: null, annualSpend: 50000, investRate: 10, inflationRate: 3,
     locationMultiplier: 1.0, locationName: 'US — Mid-Size City', otherIncome: 0, isCustomInvest: false
   });
   document.getElementById('resultsContent').innerHTML = '';
