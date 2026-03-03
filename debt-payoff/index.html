@@ -10,7 +10,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
@@ -23,11 +23,11 @@
     --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--navy); color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-weight:300; min-height:100vh; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
   body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%); pointer-events:none; z-index:0; }
 
   .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
-  .site-nav-logo { font-family:'Fraunces',serif; font-size:1.2rem; color:var(--gold); text-decoration:none; transition:opacity .15s; }
+  .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
@@ -36,7 +36,7 @@
 
   .page { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:56px 24px 80px; }
   .page-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
-  .page h1 { font-family:'Fraunces',serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .page h1 { font-family:'Outfit',sans-serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
   .page h1 em { font-style:italic; color:var(--gold-light); }
   .page .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; max-width:560px; }
 
@@ -47,12 +47,12 @@
   .debt-row { display:grid; grid-template-columns:2fr 1fr 1fr 1fr 36px; gap:10px; align-items:center; margin-bottom:10px; }
   .debt-row:last-child { margin-bottom:0; }
 
-  input.debt-input { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; padding:10px 12px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; font-weight:300; outline:none; width:100%; transition:border-color .2s; }
+  input.debt-input { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; padding:10px 12px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:300; outline:none; width:100%; transition:border-color .2s; }
   input.debt-input:focus { border-color:var(--gold); }
   input.debt-input::placeholder { color:var(--muted); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
   .input-with-prefix { position:relative; }
-  .input-with-prefix .prefix { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.85rem; pointer-events:none; font-family:'Fraunces',serif; }
+  .input-with-prefix .prefix { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.85rem; pointer-events:none; font-family:'Outfit',sans-serif; }
   .input-with-prefix input { padding-left:22px; }
   .input-with-suffix { position:relative; }
   .input-with-suffix .suffix { position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.75rem; pointer-events:none; }
@@ -61,18 +61,18 @@
   .btn-remove { background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem; transition:color .15s; padding:4px; line-height:1; border-radius:4px; }
   .btn-remove:hover { color:var(--red); }
 
-  .btn-add { background:transparent; border:1px dashed rgba(201,168,76,0.25); border-radius:10px; padding:12px; width:100%; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.85rem; cursor:pointer; transition:all .18s; margin-bottom:20px; }
+  .btn-add { background:transparent; border:1px dashed rgba(201,168,76,0.25); border-radius:10px; padding:12px; width:100%; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.85rem; cursor:pointer; transition:all .18s; margin-bottom:20px; }
   .btn-add:hover { border-color:var(--gold); color:var(--cream); }
 
   .extra-payment-wrap { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:12px; padding:18px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
   .extra-payment-wrap label { font-size:0.8rem; color:var(--cream-dim); flex:1; min-width:200px; }
   .extra-payment-wrap label strong { color:var(--cream); display:block; font-size:0.85rem; margin-bottom:3px; }
   .extra-input-wrap { position:relative; width:160px; }
-  .extra-input-wrap .prefix { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--gold); pointer-events:none; font-family:'Fraunces',serif; }
-  .extra-input-wrap input { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:8px; padding:11px 12px 11px 26px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.95rem; outline:none; transition:border-color .2s; }
+  .extra-input-wrap .prefix { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--gold); pointer-events:none; font-family:'Outfit',sans-serif; }
+  .extra-input-wrap input { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:8px; padding:11px 12px 11px 26px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.95rem; outline:none; transition:border-color .2s; }
   .extra-input-wrap input:focus { border-color:var(--gold); }
 
-  .calc-btn { width:100%; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .calc-btn { width:100%; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
   .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
   .calc-btn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
 
@@ -86,12 +86,12 @@
   .method-toggle { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
   .method-btn { padding:16px; border-radius:12px; border:1px solid var(--border-soft); background:var(--navy-light); cursor:pointer; text-align:center; transition:all .18s; }
   .method-btn.active { border-color:var(--gold); background:var(--gold-dim); }
-  .method-btn .m-name { font-family:'Fraunces',serif; font-size:1rem; color:var(--cream); margin-bottom:4px; }
+  .method-btn .m-name { font-family:'Outfit',sans-serif; font-size:1rem; color:var(--cream); margin-bottom:4px; }
   .method-btn.active .m-name { color:var(--gold-light); }
   .method-btn .m-desc { font-size:0.75rem; color:var(--muted); line-height:1.4; }
 
   .result-hero { text-align:center; padding:28px; background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; margin-bottom:22px; }
-  .debt-free-date { font-family:'Fraunces',serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:600; color:var(--gold-light); margin-bottom:6px; }
+  .debt-free-date { font-family:'Outfit',sans-serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:600; color:var(--gold-light); margin-bottom:6px; }
   .debt-free-label { font-size:0.88rem; color:var(--cream-dim); margin-bottom:10px; }
   .result-sub-text { font-size:0.85rem; color:var(--muted); }
 
@@ -99,7 +99,7 @@
   @media(max-width:500px) { .stat-grid{grid-template-columns:1fr 1fr;} }
   .stat-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:12px; padding:16px; }
   .stat-label { font-size:0.67rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:500; }
-  .stat-val { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:600; }
+  .stat-val { font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:600; }
   .stat-val.gold{color:var(--gold-light);} .stat-val.green{color:var(--green);} .stat-val.red{color:var(--red);}
   .stat-note { font-size:0.72rem; color:var(--muted); margin-top:3px; }
 
@@ -112,27 +112,27 @@
   .payoff-info { flex:1; }
   .payoff-name { font-size:0.9rem; color:var(--cream); margin-bottom:2px; }
   .payoff-meta { font-size:0.75rem; color:var(--muted); }
-  .payoff-months { font-family:'Fraunces',serif; font-size:1rem; color:var(--gold-light); white-space:nowrap; }
+  .payoff-months { font-family:'Outfit',sans-serif; font-size:1rem; color:var(--gold-light); white-space:nowrap; }
 
   .comparison-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:22px; margin-bottom:22px; }
   .comparison-title { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; font-weight:500; }
   .comparison-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:0.87rem; }
   .comparison-row:last-child { border-bottom:none; }
   .comparison-method { color:var(--cream-dim); }
-  .comparison-savings { color:var(--green); font-family:'Fraunces',serif; font-size:1rem; }
+  .comparison-savings { color:var(--green); font-family:'Outfit',sans-serif; font-size:1rem; }
 
   .insight-list { list-style:none; margin-bottom:24px; }
   .insight-list li { display:flex; gap:13px; padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); align-items:flex-start; }
   .insight-list li:last-child { border-bottom:none; }
 
   .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
-  .aff-section h3 { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
+  .aff-section h3 { font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
   .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
   .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
   .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
   .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
 
-  .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
+  .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
 
@@ -226,14 +226,14 @@
 <div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
   <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -241,12 +241,12 @@
 <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
   <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Fraunces',serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
       <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
-      <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">hello@vestlyfi.com</span></p>
+      <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -467,18 +467,18 @@ function renderMethod(method) {
       <div class="comparison-title">Method Comparison</div>
       <div class="comparison-row">
         <span class="comparison-method">${methodLabel} — Interest Paid</span>
-        <span style="font-family:'Fraunces',serif;color:var(--green)">${fmt(result.totalInterest)}</span>
+        <span style="font-family:'Outfit',sans-serif;color:var(--green)">${fmt(result.totalInterest)}</span>
       </div>
       <div class="comparison-row">
         <span class="comparison-method">${altLabel} — Interest Paid</span>
-        <span style="font-family:'Fraunces',serif;color:var(--muted)">${fmt(resultAlt.totalInterest)}</span>
+        <span style="font-family:'Outfit',sans-serif;color:var(--muted)">${fmt(resultAlt.totalInterest)}</span>
       </div>
       ${interestSaved > 0 ? `<div class="comparison-row" style="padding-top:12px;">
         <span class="comparison-method" style="color:var(--cream)">${methodLabel} saves you</span>
         <span class="comparison-savings">${fmt(Math.abs(interestSaved))} ${Math.abs(monthsSaved) > 0 ? '· ' + Math.abs(monthsSaved) + ' months faster' : ''}</span>
       </div>` : interestSaved < 0 ? `<div class="comparison-row" style="padding-top:12px;">
         <span class="comparison-method" style="color:var(--cream)">${altLabel} would save you</span>
-        <span style="font-family:'Fraunces',serif;color:var(--amber)">${fmt(Math.abs(interestSaved))} more</span>
+        <span style="font-family:'Outfit',sans-serif;color:var(--amber)">${fmt(Math.abs(interestSaved))} more</span>
       </div>` : '<div class="comparison-row"><span style="color:var(--muted)">Both methods are equal for your debts.</span></div>'}
     </div>
 
