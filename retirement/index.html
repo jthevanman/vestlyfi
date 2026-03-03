@@ -61,18 +61,9 @@
   }
 
   /* HEADER */
-  header {
-    padding: 28px 0 0;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-size: 1.25rem; color: var(--gold); letter-spacing: 0.02em;
-    text-decoration: none; cursor: pointer; transition: opacity 0.15s;
-  }
-  .logo:hover { opacity: 0.8; }
-  .logo span { color: var(--cream-dim); font-style: italic; }
-  .header-right { display: flex; align-items: center; gap: 14px; }
+
+
+
   .progress-wrap { width: 160px; height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
   .step-count { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
@@ -396,6 +387,16 @@
   .input-row > .input-group,
   .input-row-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
 
+
+  .site-nav-center {
+    display: flex; align-items: center; gap: 10px;
+    position: absolute; left: 50%; transform: translateX(-50%);
+  }
+  .progress-wrap { width: 140px; height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .step-count { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+  @media(max-width:600px) { .site-nav-center { display: none; } }
+
 </style>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -407,21 +408,17 @@
 </head>
 <body>
 <nav class="site-nav">
-  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <a class="site-nav-logo" href="/" onclick="restartWizard(); return false;">VestlyFi</a>
+  <div class="site-nav-center">
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="step-count" id="stepCount">—</div>
+  </div>
   <div class="site-nav-links">
     <a href="/">Home</a>
     <a href="#" onclick="showModal('about'); return false;">About</a>
   </div>
 </nav>
 <div class="container">
-
-  <header>
-    <a class="logo" href="#" onclick="restartWizard(); return false;">VestlyFi</a>
-    <div class="header-right">
-      <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-      <div class="step-count" id="stepCount">—</div>
-    </div>
-  </header>
 
   <div class="wizard">
 
@@ -463,7 +460,7 @@
         <div class="input-group">
           <label>Current Age</label>
           <div class="input-wrap">
-            <input type="number" id="currentAge" placeholder="28" min="16" max="70" class="has-suffix">
+            <input type="number" id="currentAge" placeholder="Age" min="16" max="70" class="has-suffix" oninput="checkStep1()">
             <span class="input-suffix">yrs</span>
           </div>
         </div>
@@ -471,7 +468,7 @@
           <label>Current Savings &amp; Investments</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="currentSavings" placeholder="25,000" min="0" class="has-prefix">
+            <input type="number" id="currentSavings" placeholder="e.g. 25,000" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
       </div>
@@ -481,14 +478,14 @@
           <label>Gross Annual Income</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="annualIncome" placeholder="75,000" min="0" class="has-prefix">
+            <input type="number" id="annualIncome" placeholder="e.g. 75,000" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
         <div class="input-group">
           <label>Monthly Investment Contributions</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="monthlyContrib" placeholder="1,500" min="0" class="has-prefix">
+            <input type="number" id="monthlyContrib" placeholder="e.g. 1,500" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
       </div>
@@ -497,7 +494,7 @@
 
       <div class="step-nav">
         <button class="btn-back" onclick="showStep(0)">← Back</button>
-        <button class="btn-next" onclick="validateStep1()">Continue →</button>
+        <button class="btn-next" id="btn-step1" onclick="validateStep1()" disabled>Continue →</button>
       </div>
     </div>
 
@@ -529,7 +526,7 @@
 
       <div class="step-nav">
         <button class="btn-back" onclick="showStep(1)">← Back</button>
-        <button class="btn-next" onclick="validateStep2s()">Continue →</button>
+        <button class="btn-next" id="btn-step2s" onclick="validateStep2s()">Continue →</button>
       </div>
     </div>
 
@@ -542,19 +539,19 @@
       <div class="spending-builder">
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏠</span> Housing <span style="font-size:.75rem;color:var(--muted)">(rent/mortgage, HOA, repairs)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" placeholder="1,800" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" placeholder="e.g. 1,800" min="0" oninput="updateSpendTotal(); checkStep2a()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🚗</span> Transport <span style="font-size:.75rem;color:var(--muted)">(car, insurance, gas, transit)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" placeholder="500" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" placeholder="e.g. 500" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🍽️</span> Food <span style="font-size:.75rem;color:var(--muted)">(groceries + dining out)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" placeholder="600" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" placeholder="e.g. 600" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏥</span> Healthcare <span style="font-size:.75rem;color:var(--muted)">(premiums, copays, dental)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" placeholder="400" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" placeholder="e.g. 400" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">✈️</span> Travel &amp; Leisure <span style="font-size:.75rem;color:var(--muted)">(vacations, hobbies, entertainment)</span></div>
@@ -583,7 +580,7 @@
 
       <div class="step-nav">
         <button class="btn-back" onclick="showStep(1)">← Back</button>
-        <button class="btn-next" onclick="validateStep2a()">Continue →</button>
+        <button class="btn-next" id="btn-step2a" onclick="validateStep2a()" disabled>Continue →</button>
       </div>
     </div>
 
@@ -627,7 +624,7 @@
       <div class="invest-custom-wrap" id="investCustomWrap">
         <div class="invest-custom-label">Enter your expected annual return (%)</div>
         <div class="input-wrap" style="max-width:200px;">
-          <input type="number" id="customReturnRate" placeholder="e.g. 8" min="1" max="25" class="has-suffix" oninput="updateCustomRateDisplay()">
+          <input type="number" id="customReturnRate" placeholder="Enter %"  min="1" max="25" class="has-suffix" oninput="updateCustomRateDisplay()">
           <span class="input-suffix">% / yr</span>
         </div>
       </div>
@@ -647,7 +644,7 @@
 
       <div class="step-nav">
         <button class="btn-back" id="back3a" onclick="showStep('2a')">← Back</button>
-        <button class="btn-next" onclick="validateStep3a()">Continue →</button>
+        <button class="btn-next" id="btn-step3a" onclick="validateStep3a()">Continue →</button>
       </div>
     </div>
 
@@ -743,7 +740,7 @@
           <label>Total estimated monthly income from other sources</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="otherIncome" placeholder="0" min="0" class="has-prefix">
+            <input type="number" id="otherIncome" placeholder="e.g. 0" min="0" class="has-prefix">
           </div>
         </div>
 
@@ -1333,6 +1330,52 @@ function closeModal(id) {
   }
   document.body.style.overflow = '';
 }
+
+// ═══════════════════════════════════════════════════
+// LIVE BUTTON ENABLE / DISABLE
+// ═══════════════════════════════════════════════════
+function checkStep1() {
+  const ca = parseInt(document.getElementById('currentAge').value);
+  const cs = document.getElementById('currentSavings').value;
+  const ai = document.getElementById('annualIncome').value;
+  const mc = document.getElementById('monthlyContrib').value;
+  const btn = document.getElementById('btn-step1');
+  if (!btn) return;
+  const valid = ca >= 16 && ca <= 80 && cs !== '' && ai !== '' && mc !== '';
+  btn.disabled = !valid;
+}
+
+function checkStep2a() {
+  const cats = document.querySelectorAll('.spend-cat');
+  let total = 0;
+  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  const btn = document.getElementById('btn-step2a');
+  if (btn) btn.disabled = total <= 0;
+}
+
+// ═══════════════════════════════════════════════════
+// ENTER KEY → CONTINUE
+// ═══════════════════════════════════════════════════
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  // Don't fire if a modal is open
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+
+  const stepActions = {
+    '0':  () => { document.getElementById('modeNextBtn').click(); },
+    '1':  () => { const btn = document.getElementById('btn-step1'); if (!btn.disabled) validateStep1(); },
+    '2s': () => { validateStep2s(); },
+    '2a': () => { const btn = document.getElementById('btn-step2a'); if (!btn.disabled) validateStep2a(); },
+    '3a': () => { validateStep3a(); },
+    '4a': () => { showStep('5a'); },
+    '5a': () => { calculateResults(); },
+    '3s': () => { calculateResults(); },
+  };
+
+  const action = stepActions[currentStepId];
+  if (action) action();
+});
+
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
