@@ -66,7 +66,8 @@
 
   .step-nav { display:flex; gap:10px; margin-top:36px; }
   .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .btn-next:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
   .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
   .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
   .err { color:var(--red); font-size:0.8rem; margin-top:8px; display:none; }
@@ -145,8 +146,45 @@
 <div class="container">
 <div class="wizard">
 
+  <!-- Step 0: What is Coast FIRE -->
+  <div class="step active" id="step-0">
+    <div class="step-tag">Coast FIRE</div>
+    <h2>Save once.<br><em>Coast forever.</em></h2>
+    <p class="sub">Most people think you have to keep saving aggressively until retirement. Coast FIRE flips that idea.</p>
+
+    <div style="background:var(--navy-light);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:32px;">
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">🎯</div>
+          <div>
+            <div style="font-family:'Fraunces',serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">The idea</div>
+            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">If you save enough early, compound interest will do the rest of the work on its own. You hit a number — your Coast FIRE number — and then you can stop contributing entirely.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">💼</div>
+          <div>
+            <div style="font-family:'Fraunces',serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">What changes</div>
+            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">Once you've coasted, you only need to cover your current living expenses — not save for retirement on top of them. That opens the door to lower-stress jobs, part-time work, or passion projects.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">📐</div>
+          <div>
+            <div style="font-family:'Fraunces',serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">How it's calculated</div>
+            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">We take your full retirement number (25× your annual spending) and discount it back to today using your expected investment return. The result is how much you need saved <em>right now</em> to coast.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-next" onclick="showStep(1)">Let's calculate mine →</button>
+    </div>
+  </div>
+
   <!-- Step 1 -->
-  <div class="step active" id="step-1">
+  <div class="step" id="step-1">
     <div class="step-tag">Coast FIRE</div>
     <h2>What's your <em>retirement goal?</em></h2>
     <p class="sub">Coast FIRE is when you've saved enough that — even if you never invest another dollar — your money will grow on its own to fund your retirement. Let's find your number.</p>
@@ -155,14 +193,14 @@
       <div class="input-group">
         <label>Current Age</label>
         <div class="input-wrap">
-          <input type="number" id="currentAge" placeholder="28" min="16" max="70" class="has-suffix">
+          <input type="number" id="currentAge" placeholder="e.g. 28" min="16" max="70" class="has-suffix" oninput="checkStep1()">
           <span class="input-suffix">yrs</span>
         </div>
       </div>
       <div class="input-group">
         <label>Target Retirement Age</label>
         <div class="input-wrap">
-          <input type="number" id="retireAge" placeholder="60" min="40" max="80" class="has-suffix">
+          <input type="number" id="retireAge" placeholder="e.g. 60" min="40" max="80" class="has-suffix" oninput="checkStep1()">
           <span class="input-suffix">yrs</span>
         </div>
       </div>
@@ -172,13 +210,14 @@
       <label>Annual Spending in Retirement</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="annualSpend" placeholder="50,000" min="0" class="has-prefix">
+        <input type="number" id="annualSpend" placeholder="e.g. 50,000" min="0" class="has-prefix" oninput="checkStep1()">
       </div>
     </div>
 
     <div id="err-1" class="err">Please fill in all fields. Retirement age must be greater than current age.</div>
     <div class="step-nav">
-      <button class="btn-next" onclick="validateStep1()">Continue →</button>
+      <button class="btn-back" onclick="showStep(0)">← Back</button>
+      <button class="btn-next" id="btn-step1" onclick="validateStep1()" disabled>Continue →</button>
     </div>
   </div>
 
@@ -192,16 +231,16 @@
       <label>Current Invested Balance</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="currentSavings" placeholder="35,000" min="0" class="has-prefix">
+        <input type="number" id="currentSavings" placeholder="e.g. 35,000" min="0" class="has-prefix" oninput="checkStep2()">
       </div>
     </div>
 
     <div class="input-group">
       <label>Expected Annual Return</label>
       <div class="pill-group" id="returnPills">
-        <button class="pill" data-val="4" onclick="selectPill(this,'returnPills',4)">Conservative — 4%</button>
-        <button class="pill selected" data-val="7" onclick="selectPill(this,'returnPills',7)">Balanced — 7% <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Suggested</span></button>
-        <button class="pill" data-val="9" onclick="selectPill(this,'returnPills',9)">Aggressive — 9%</button>
+        <button class="pill" data-val="6" onclick="selectPill(this,'returnPills',6)">Conservative — 6%</button>
+        <button class="pill selected" data-val="10" onclick="selectPill(this,'returnPills',10)">Average — 10% <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Suggested</span></button>
+        <button class="pill" data-val="0" onclick="selectPill(this,'returnPills',0); showCustomRate()" style="display:none" id="customRatePill">Custom</button>
       </div>
     </div>
 
@@ -217,7 +256,7 @@
     <div id="err-2" class="err">Please enter your current balance.</div>
     <div class="step-nav">
       <button class="btn-back" onclick="showStep(1)">← Back</button>
-      <button class="btn-next" onclick="validateStep2()">Calculate →</button>
+      <button class="btn-next" id="btn-step2" onclick="validateStep2()" disabled>Calculate →</button>
     </div>
   </div>
 
@@ -268,8 +307,8 @@
 </div>
 
 <script>
-const S = { returnRate: 7, inflationRate: 3 };
-let currentStep = 1;
+const S = { returnRate: 10, inflationRate: 3 };
+let currentStep = 0;
 
 function showStep(n) {
   document.getElementById('step-' + currentStep)?.classList.remove('active');
@@ -428,8 +467,34 @@ function restartWizard() {
   document.getElementById('resultsContent').innerHTML = '';
   document.getElementById('step-results').classList.remove('active');
   currentStep = 0;
-  showStep(1);
+  showStep(0);
 }
+
+
+function checkStep1() {
+  const ca = document.getElementById('currentAge').value;
+  const ra = document.getElementById('retireAge').value;
+  const sp = document.getElementById('annualSpend').value;
+  const btn = document.getElementById('btn-step1');
+  if (btn) btn.disabled = !(ca && ra && sp && parseInt(ra) > parseInt(ca));
+}
+
+function checkStep2() {
+  const cs = document.getElementById('currentSavings').value;
+  const btn = document.getElementById('btn-step2');
+  if (btn) btn.disabled = cs === '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  const actions = {
+    0: () => showStep(1),
+    1: () => { const b = document.getElementById('btn-step1'); if (b && !b.disabled) validateStep1(); },
+    2: () => { const b = document.getElementById('btn-step2'); if (b && !b.disabled) validateStep2(); },
+  };
+  if (actions[currentStep] !== undefined) actions[currentStep]();
+});
 
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
