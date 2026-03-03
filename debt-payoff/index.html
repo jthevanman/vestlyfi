@@ -73,7 +73,8 @@
   .extra-input-wrap input:focus { border-color:var(--gold); }
 
   .calc-btn { width:100%; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .calc-btn:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
 
   .err { color:var(--red); font-size:0.8rem; margin-top:10px; display:none; }
 
@@ -190,12 +191,12 @@
     </label>
     <div class="extra-input-wrap">
       <span class="prefix">$</span>
-      <input type="number" id="extraPayment" placeholder="200" min="0">
+      <input type="number" id="extraPayment" placeholder="e.g. 200" min="0">
     </div>
   </div>
 
   <div id="calcErr" class="err">Please add at least one debt with a balance, rate, and minimum payment.</div>
-  <button class="calc-btn" onclick="calculate()">Build My Payoff Plan →</button>
+  <button class="calc-btn" id="calcBtn" onclick="calculate()" disabled>Build My Payoff Plan →</button>
 
   <div class="results-section" id="resultsSection">
     <div class="method-toggle">
@@ -257,9 +258,8 @@ let lastDebts = [];
 let lastExtra = 0;
 
 const PRESETS = [
-  { name: 'Credit Card', balance: 5000, rate: 22, min: 100 },
-  { name: 'Car Loan', balance: 12000, rate: 6.5, min: 250 },
-  { name: 'Student Loan', balance: 25000, rate: 5.5, min: 280 },
+  { name: 'Car Loan', balance: 10000, rate: 5, min: 189 },
+  { name: 'Credit Card', balance: 4000, rate: 18, min: 80 },
 ];
 
 function addDebtRow(preset = null) {
@@ -268,18 +268,20 @@ function addDebtRow(preset = null) {
   row.className = 'debt-row';
   row.id = 'debt-' + id;
   row.innerHTML = `
-    <div><input class="debt-input" type="text" placeholder="${preset?.name || 'e.g. Visa Card'}" id="name-${id}"></div>
-    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="number" placeholder="${preset?.balance ? '$' + preset.balance.toLocaleString() : '5,000'}" min="0" id="balance-${id}"></div>
-    <div class="input-with-suffix"><input class="debt-input" type="number" placeholder="${preset?.rate || '22'}" min="0" max="100" step="0.1" id="rate-${id}"><span class="suffix">%</span></div>
-    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="number" placeholder="${preset?.min || '100'}" min="0" id="min-${id}"></div>
+    <div><input class="debt-input" type="text" placeholder="e.g. Visa Card" id="name-${id}" value="${preset?.name || ''}"></div>
+    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" placeholder="e.g. 5,000" id="balance-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.balance ? Number(preset.balance).toLocaleString() : ''}"></div>
+    <div class="input-with-suffix"><input class="debt-input" type="number" placeholder="e.g. 22" min="0" max="100" step="0.1" id="rate-${id}" oninput="checkCalcBtn()" value="${preset?.rate || ''}"><span class="suffix">%</span></div>
+    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" placeholder="e.g. 100" id="min-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.min ? Number(preset.min).toLocaleString() : ''}"></div>
     <button class="btn-remove" onclick="removeDebt(${id})" title="Remove">×</button>
   `;
   document.getElementById('debtRows').appendChild(row);
+  checkCalcBtn();
 }
 
 function removeDebt(id) {
   const el = document.getElementById('debt-' + id);
   if (el) el.remove();
+  checkCalcBtn();
 }
 
 // Init with 3 preset rows
@@ -290,15 +292,36 @@ function fmt(n) {
   return '$' + Math.round(n).toLocaleString();
 }
 
+
+function formatDebtCommas(input) {
+  let raw = input.value.replace(/[^0-9.]/g, '');
+  const parts = raw.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+}
+
+function checkCalcBtn() {
+  const debts = getDebts();
+  const btn = document.getElementById('calcBtn');
+  if (btn) btn.disabled = debts.length === 0;
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  const btn = document.getElementById('calcBtn');
+  if (btn && !btn.disabled) calculate();
+});
+
 function getDebts() {
   const rows = document.querySelectorAll('.debt-row');
   const debts = [];
   rows.forEach(row => {
     const id = row.id.replace('debt-', '');
     const name = document.getElementById('name-' + id)?.value || 'Debt';
-    const balance = parseFloat(document.getElementById('balance-' + id)?.value);
+    const balance = parseFloat((document.getElementById('balance-' + id)?.value || '').replace(/,/g, ''));
     const rate = parseFloat(document.getElementById('rate-' + id)?.value);
-    const min = parseFloat(document.getElementById('min-' + id)?.value);
+    const min = parseFloat((document.getElementById('min-' + id)?.value || '').replace(/,/g, ''));
     if (balance > 0 && rate >= 0 && min > 0) {
       debts.push({ name, balance, rate, min });
     }
