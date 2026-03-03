@@ -47,14 +47,15 @@
   .input-wrap { position:relative; }
   .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.95rem; pointer-events:none; font-family:'Fraunces',serif; }
   .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.8rem; pointer-events:none; }
-  input[type="number"] { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input[type="number"], input[type="text"] { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
   input.has-prefix { padding-left:28px; }
   input.has-suffix { padding-right:42px; }
   input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
 
   .calc-btn { width:100%; margin-top:20px; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .calc-btn:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
 
   /* Results */
   .results-section { display:none; animation:fadeUp .4s cubic-bezier(.4,0,.2,1) forwards; }
@@ -129,7 +130,7 @@
 <div class="page">
   <div class="page-tag">Compound Interest</div>
   <h1>Watch your money <em>multiply</em></h1>
-  <p class="sub">Compounding is when your returns earn their own returns. Adjust the numbers below — they're pre-filled with an example to show you how the tool works.</p>
+  <p class="sub">Compounding is when your returns earn their own returns. Enter your numbers below to see what time and consistency actually do to a portfolio.</p>
 
   <div class="calc-panel">
     <div class="input-grid">
@@ -137,31 +138,33 @@
         <label>Starting Amount</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="principal" placeholder="10,000" min="0" class="has-prefix" oninput="liveCalc()">
+          <input type="text" id="principal" placeholder="e.g. 10,000" class="has-prefix" oninput="formatCommas(this); checkCalcBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Monthly Contributions</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="monthly" placeholder="500" min="0" class="has-prefix" oninput="liveCalc()">
+          <input type="text" id="monthly" placeholder="e.g. 500" class="has-prefix" oninput="formatCommas(this); checkCalcBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Annual Return Rate</label>
         <div class="input-wrap">
-          <input type="number" id="rate" placeholder="7" min="0" max="30" class="has-suffix" oninput="liveCalc()">
+          <input type="number" id="rate" placeholder="e.g. 8" min="0" max="30" class="has-suffix" oninput="checkCalcBtn()">
           <span class="input-suffix">% / yr</span>
         </div>
       </div>
       <div class="input-group">
         <label>Time Period</label>
         <div class="input-wrap">
-          <input type="number" id="years" placeholder="30" min="1" max="60" class="has-suffix" oninput="liveCalc()">
+          <input type="number" id="years" placeholder="e.g. 30" min="1" max="60" class="has-suffix" oninput="checkCalcBtn()">
           <span class="input-suffix">years</span>
         </div>
       </div>
     </div>
+  <button class="calc-btn" id="calcBtn" onclick="runCalc()" disabled>Calculate →</button>
+
   </div>
 
   <div class="results-section" id="resultsSection">
@@ -259,21 +262,40 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 let chart = null;
-let calcTimeout = null;
 
 function fmt(n) {
   if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
   return '$' + Math.round(n).toLocaleString();
 }
 
-function liveCalc() {
-  clearTimeout(calcTimeout);
-  calcTimeout = setTimeout(runCalc, 300);
+
+function checkCalcBtn() {
+  const p = document.getElementById('principal').value.replace(/,/g,'');
+  const r = document.getElementById('rate').value;
+  const y = document.getElementById('years').value;
+  const btn = document.getElementById('calcBtn');
+  if (btn) btn.disabled = !(parseFloat(p) >= 0 && parseFloat(r) > 0 && parseInt(y) > 0);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  const btn = document.getElementById('calcBtn');
+  if (btn && !btn.disabled) runCalc();
+});
+
+function formatCommas(input) {
+  // Strip non-numeric except decimal
+  let raw = input.value.replace(/[^0-9.]/g, '');
+  // Only one decimal point
+  const parts = raw.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
 }
 
 function runCalc() {
-  const principal = parseFloat(document.getElementById('principal').value) || 0;
-  const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+  const principal = parseFloat(document.getElementById('principal').value.replace(/,/g, '')) || 0;
+  const monthly = parseFloat(document.getElementById('monthly').value.replace(/,/g, '')) || 0;
   const rate = parseFloat(document.getElementById('rate').value);
   const years = parseInt(document.getElementById('years').value);
 
@@ -406,13 +428,11 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 
 // Auto-calculate on load with defaults
 window.addEventListener('load', () => {
-  // Start with defaults so users immediately see the tool working
-  // All values are fully editable
-  document.getElementById('principal').value = 10000;
-  document.getElementById('monthly').value = 500;
-  document.getElementById('rate').value = 7;
-  document.getElementById('years').value = 30;
-  runCalc();
+  document.getElementById('principal').value = '10,000';
+  document.getElementById('monthly').value = '500';
+  document.getElementById('rate').value = '8';
+  document.getElementById('years').value = '30';
+  checkCalcBtn();
 });
 </script>
 </body>
