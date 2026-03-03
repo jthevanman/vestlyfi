@@ -48,21 +48,11 @@
   .input-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
   @media(max-width:560px) { .input-grid,.input-grid-3{grid-template-columns:1fr 1fr;} }
   @media(max-width:380px) { .input-grid,.input-grid-3{grid-template-columns:1fr;} }
-
-  .input-group label { display:block; font-size:0.73rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:8px; font-weight:500; }
-  .input-hint { font-size:0.75rem; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:300; margin-left:4px; }
   .input-wrap { position:relative; }
-  .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.95rem; pointer-events:none; font-family:'Fraunces',serif; }
-  .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.8rem; pointer-events:none; }
-  input[type="number"], select { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
-  input.has-prefix { padding-left:28px; }
-  input.has-suffix { padding-right:42px; }
-  input:focus,select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
-  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
-  select option { background:#111827; }
 
   .calc-btn { width:100%; margin-top:22px; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .calc-btn:hover { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
 
   .err { color:var(--red); font-size:0.8rem; margin-top:10px; display:none; }
 
@@ -125,18 +115,44 @@
   .footer-links { display:flex; gap:18px; }
   @media(max-width:600px) { footer{padding:20px;} .page{padding:40px 20px 60px;} }
 
-  /* Input alignment fix */
-  .input-group { display: flex; flex-direction: column; }
-  .input-wrap { position: relative; display: flex; align-items: center; }
-  .input-row { align-items: end; }
-  .input-row-3 { align-items: end; }
-  .input-grid { align-items: end; }
-  .input-grid-3 { align-items: end; }
 
 
-  /* Ensure all grids align inputs at baseline */
-  .input-grid > .input-group,
-  .input-grid-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
+  .divider { height:1px; background:var(--border-soft); margin:22px 0; }
+  .input-group label { display:block; font-size:0.73rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:8px; font-weight:500; }
+  .input-hint { font-size:0.75rem; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:300; margin-left:4px; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.95rem; pointer-events:none; font-family:'Fraunces',serif; }
+  .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.8rem; pointer-events:none; }
+  input[type="number"], input[type="text"], select { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Plus Jakarta Sans',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  .has-prefix { padding-left:36px; }
+  .has-suffix { padding-right:48px; }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  select option { background:#111827; }
+
+
+  /* ── Input system ── */
+  .input-group { display:flex; flex-direction:column; justify-content:flex-end; }
+  .input-group label { display:block; font-size:0.73rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:8px; font-weight:500; }
+  .input-hint { font-size:0.72rem; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:300; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.9rem; pointer-events:none; font-family:'Fraunces',serif; z-index:1; }
+  .input-suffix { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.78rem; pointer-events:none; }
+  input[type="text"], input[type="number"], select {
+    width:100%; background:var(--navy-card); border:1px solid var(--border-soft);
+    border-radius:9px; padding:12px 14px; color:var(--cream);
+    font-family:'Plus Jakarta Sans',sans-serif; font-size:0.93rem; font-weight:300;
+    outline:none; transition:border-color .2s,box-shadow .2s; -webkit-appearance:none; appearance:none;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input.has-prefix { padding-left:30px; }
+  input.has-suffix { padding-right:52px; }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  select option { background:#111827; }
+  .input-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:end; }
+  .input-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:end; }
+  @media(max-width:560px) { .input-grid,.input-grid-3 { grid-template-columns:1fr 1fr; } }
+  @media(max-width:380px) { .input-grid,.input-grid-3 { grid-template-columns:1fr; } }
 
 </style>
 </head>
@@ -162,14 +178,14 @@
         <label>Annual Gross Income</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="grossIncome" placeholder="80,000" min="0" class="has-prefix">
+          <input type="text" id="grossIncome" placeholder="e.g. 80,000" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Monthly Debt Payments <span class="input-hint">(car, student loans, etc.)</span></label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="monthlyDebt" placeholder="300" min="0" class="has-prefix">
+          <input type="text" id="monthlyDebt" placeholder="e.g. 300" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
     </div>
@@ -181,15 +197,16 @@
         <label>Down Payment</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="downPayment" placeholder="60,000" min="0" class="has-prefix">
+          <input type="text" id="downPayment" placeholder="e.g. 60,000" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Mortgage Rate</label>
         <div class="input-wrap">
-          <input type="number" id="mortgageRate" placeholder="7.0" min="1" max="20" step="0.1" class="has-suffix">
+          <input type="number" id="mortgageRate" placeholder="e.g. 6.0" min="1" max="20" step="0.1" class="has-suffix" oninput="checkBtn()" value="6">
           <span class="input-suffix">% / yr</span>
         </div>
+
       </div>
       <div class="input-group">
         <label>Loan Term</label>
@@ -201,36 +218,12 @@
           </select>
         </div>
       </div>
-      <div class="input-group">
-        <label>Annual Property Tax <span class="input-hint">(est.)</span></label>
-        <div class="input-wrap">
-          <span class="input-prefix">$</span>
-          <input type="number" id="propertyTax" placeholder="3,000" min="0" class="has-prefix">
-        </div>
-      </div>
     </div>
 
-    <div class="divider"></div>
-    <div class="panel-section-title">Monthly Costs</div>
-    <div class="input-grid">
-      <div class="input-group">
-        <label>Home Insurance <span class="input-hint">(annual)</span></label>
-        <div class="input-wrap">
-          <span class="input-prefix">$</span>
-          <input type="number" id="insurance" placeholder="1,200" min="0" class="has-prefix">
-        </div>
-      </div>
-      <div class="input-group">
-        <label>HOA Fees <span class="input-hint">(monthly, 0 if none)</span></label>
-        <div class="input-wrap">
-          <span class="input-prefix">$</span>
-          <input type="number" id="hoa" placeholder="0" min="0" class="has-prefix">
-        </div>
-      </div>
-    </div>
+    
 
     <div id="calcErr" class="err">Please fill in your income, down payment, and mortgage rate.</div>
-    <button class="calc-btn" onclick="calculate()">Calculate My Budget →</button>
+    <button class="calc-btn" id="calcBtn" onclick="calculate()" disabled>Calculate My Budget →</button>
   </div>
 
   <div class="results-section" id="resultsSection">
@@ -298,15 +291,36 @@ function fmt(n) {
   return '$' + Math.round(n).toLocaleString();
 }
 
+function fmtComma(input) {
+  let raw = input.value.replace(/[^0-9.]/g, '');
+  const parts = raw.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+}
+
+function checkBtn() {
+  const income = document.getElementById('grossIncome').value.replace(/,/g,'');
+  const down = document.getElementById('downPayment').value.replace(/,/g,'');
+  const rate = document.getElementById('mortgageRate').value;
+  const btn = document.getElementById('calcBtn');
+  if (btn) btn.disabled = !(parseFloat(income) > 0 && parseFloat(down) >= 0 && parseFloat(rate) > 0);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  const btn = document.getElementById('calcBtn');
+  if (btn && !btn.disabled) calculate();
+});
+
 function calculate() {
-  const grossIncome = parseFloat(document.getElementById('grossIncome').value);
-  const monthlyDebt = parseFloat(document.getElementById('monthlyDebt').value) || 0;
-  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const grossIncome = parseFloat(document.getElementById('grossIncome').value.replace(/,/g,''));
+  const monthlyDebt = parseFloat((document.getElementById('monthlyDebt').value || '0').replace(/,/g,'')) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value.replace(/,/g,'')) || 0;
   const rate = parseFloat(document.getElementById('mortgageRate').value);
   const term = parseInt(document.getElementById('loanTerm').value);
-  const propTax = parseFloat(document.getElementById('propertyTax').value) || 0;
-  const insurance = parseFloat(document.getElementById('insurance').value) || 1200;
-  const hoa = parseFloat(document.getElementById('hoa').value) || 0;
+  // Estimated automatically on results page
+  const hoa = 0;
 
   const err = document.getElementById('calcErr');
   if (!grossIncome || !rate) { err.style.display = 'block'; return; }
@@ -315,6 +329,11 @@ function calculate() {
   const monthlyIncome = grossIncome / 12;
   const monthlyRate = rate / 100 / 12;
   const n = term * 12;
+  // Estimate tax at 1.1% of home price and insurance at 0.5% — recalculated after price found
+  // Initial estimates based on typical values, refined below
+  const estimatedHomePrice = (grossIncome * 0.28 / 12 + (downPayment * rate/100/12)) / (rate/100/12 + rate/100/12 * 0.015);
+  const propTax = estimatedHomePrice * 0.011; // ~1.1% average US property tax
+  const insurance = estimatedHomePrice * 0.005; // ~0.5% home insurance
   const monthlyTax = propTax / 12;
   const monthlyInsurance = insurance / 12;
 
@@ -420,7 +439,8 @@ function calculate() {
   if (monthlyDebt > monthlyIncome * 0.1) {
     insights.push({ icon: '📉', text: `Your existing debt payments of ${fmt(monthlyDebt)}/mo are reducing your home buying power. Paying these off first could increase your max home price significantly.` });
   }
-  insights.push({ icon: '🏦', text: `This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.` });
+  insights.push({ icon: '📊', text: `Property tax and home insurance are estimated at <strong>1.1% and 0.5%</strong> of the home price respectively — close to US averages. Your actual costs will vary by location.` });
+    insights.push({ icon: '🏦', text: `This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.` });
 
   document.getElementById('insightList').innerHTML = insights.map(i =>
     `<li><span>${i.icon}</span><span>${i.text}</span></li>`
@@ -429,6 +449,8 @@ function calculate() {
   document.getElementById('resultsSection').classList.add('visible');
   setTimeout(() => document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 }
+
+window.addEventListener("load", () => checkBtn());
 
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
