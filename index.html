@@ -48,6 +48,18 @@
     --gold: #c9a84c;
     --gold-light: #e8c97a;
     --gold-dim: rgba(201,168,76,0.13);
+    --cat-fire: rgba(251,146,60,0.12);
+    --cat-fire-text: #fb923c;
+    --cat-fire-border: rgba(251,146,60,0.25);
+    --cat-invest: rgba(74,222,128,0.1);
+    --cat-invest-text: #4ade80;
+    --cat-invest-border: rgba(74,222,128,0.22);
+    --cat-mortgage: rgba(96,165,250,0.1);
+    --cat-mortgage-text: #60a5fa;
+    --cat-mortgage-border: rgba(96,165,250,0.22);
+    --cat-debt: rgba(251,191,36,0.1);
+    --cat-debt-text: #fbbf24;
+    --cat-debt-border: rgba(251,191,36,0.22);
     --cream: #f5f0e8;
     --cream-dim: rgba(245,240,232,0.6);
     --muted: rgba(245,240,232,0.35);
@@ -91,11 +103,11 @@
   .nav-logo:hover { opacity: 0.8; }
 
 
-  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
   .nav-links a {
     color: var(--muted); text-decoration: none;
-    font-size: 0.85rem; font-weight: 400;
-    transition: color 0.15s; letter-spacing: 0.02em;
+    font-size: 0.83rem; font-weight: 300;
+    transition: color 0.15s;
   }
   .nav-links a:hover { color: var(--cream); }
   @media(max-width: 600px) { .nav-links { display: none; } }
@@ -185,6 +197,7 @@
   .tool-card:nth-child(3) { animation-delay: 0.15s; }
   .tool-card:nth-child(4) { animation-delay: 0.2s; }
   .tool-card:nth-child(5) { animation-delay: 0.25s; }
+  .tool-card:nth-child(6) { animation-delay: 0.3s; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -231,9 +244,13 @@
   }
 
   .card-tag {
-    font-size: 0.7rem; color: var(--muted);
-    letter-spacing: 0.08em; text-transform: uppercase;
+    font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 100px; font-weight: 500;
   }
+  .tag-fire    { color: var(--cat-fire-text);    background: var(--cat-fire);    border: 1px solid var(--cat-fire-border); }
+  .tag-invest  { color: var(--cat-invest-text);  background: var(--cat-invest);  border: 1px solid var(--cat-invest-border); }
+  .tag-mortgage{ color: var(--cat-mortgage-text);background: var(--cat-mortgage);border: 1px solid var(--cat-mortgage-border); }
+  .tag-debt    { color: var(--cat-debt-text);    background: var(--cat-debt);    border: 1px solid var(--cat-debt-border); }
 
   .card-arrow {
     width: 28px; height: 28px; border-radius: 50%;
@@ -282,7 +299,7 @@
 
   <div class="hero">
     <h1>Make smarter<br><em>financial decisions</em></h1>
-    <p>Calculators that give you real answers to real money questions — without the jargon.</p>
+    <p>VestlyFi gives you the tools to understand your money, plan for your future, and make decisions with confidence.</p>
 
   </div>
 
@@ -290,67 +307,71 @@
 
   <div class="tool-grid">
 
-    <a class="tool-card featured" href="/retirement/">
+    <a class="tool-card" href="/retirement/">
       <div class="card-top">
-        <div class="card-icon">🎯</div>
-        <span class="card-badge badge-popular">Most Popular</span>
       </div>
       <div class="card-title">Retirement Age Calculator</div>
       <div class="card-desc">Tell us your income and savings — we calculate the exact age you can stop working for good.</div>
       <div class="card-footer">
-        <span class="card-tag">FIRE · Retirement</span>
+        <span class="card-tag tag-fire">FIRE · Retirement</span>
         <div class="card-arrow">→</div>
       </div>
     </a>
 
     <a class="tool-card" href="/coast-fire/">
       <div class="card-top">
-        <div class="card-icon">🌊</div>
         
       </div>
       <div class="card-title">Coast FIRE Calculator</div>
       <div class="card-desc">Find out how much to save now so your money grows on its own — no more contributions needed.</div>
       <div class="card-footer">
-        <span class="card-tag">FIRE · Investing</span>
+        <span class="card-tag tag-fire">FIRE · Investing</span>
         <div class="card-arrow">→</div>
       </div>
     </a>
 
     <a class="tool-card" href="/compound-interest/">
       <div class="card-top">
-        <div class="card-icon">📈</div>
         
       </div>
       <div class="card-title">Compound Interest Calculator</div>
       <div class="card-desc">See how money grows when returns stack on top of returns. Small amounts early beat large amounts late.</div>
       <div class="card-footer">
-        <span class="card-tag">Investing · Savings</span>
+        <span class="card-tag tag-invest">Investing · Savings</span>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="tool-card" href="/mortgage-payoff/">
+      <div class="card-top">
+      </div>
+      <div class="card-title">Mortgage Payoff Calculator</div>
+      <div class="card-desc">See exactly how much interest you'll pay over your loan, and how extra payments can shave years off your mortgage.</div>
+      <div class="card-footer">
+        <span class="card-tag tag-mortgage">Mortgage · Real Estate</span>
         <div class="card-arrow">→</div>
       </div>
     </a>
 
     <a class="tool-card" href="/house-affordability/">
       <div class="card-top">
-        <div class="card-icon">🏠</div>
-        
       </div>
       <div class="card-title">How Much House Can I Afford?</div>
       <div class="card-desc">Enter your income and debts — we show what monthly payment you can handle and how big a home loan you can get.</div>
       <div class="card-footer">
-        <span class="card-tag">Mortgage · Real Estate</span>
+        <span class="card-tag tag-mortgage">Mortgage · Real Estate</span>
         <div class="card-arrow">→</div>
       </div>
     </a>
 
     <a class="tool-card" href="/debt-payoff/">
       <div class="card-top">
-        <div class="card-icon">💳</div>
         
       </div>
       <div class="card-title">Debt Payoff Optimizer</div>
       <div class="card-desc">List your debts and we build a payoff plan that saves the most in interest — and shows when you'll be completely debt-free.</div>
       <div class="card-footer">
-        <span class="card-tag">Debt · Budgeting</span>
+        <span class="card-tag tag-debt">Debt · Budgeting</span>
         <div class="card-arrow">→</div>
       </div>
     </a>
