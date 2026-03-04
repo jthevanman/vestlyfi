@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Payoff Calculator — VestlyFi</title>
+<meta name="description" content="See how much interest you'll pay over your mortgage life, and how extra payments can save you thousands.">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-mid: #111827;
+    --navy-light: #1a2540;
+    --navy-card: #131c2e;
+    --border: rgba(201,168,76,0.15);
+    --border-soft: rgba(255,255,255,0.07);
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.1);
+    --cream: #f5f0e8;
+    --cream-dim: rgba(245,240,232,0.7);
+    --muted: rgba(245,240,232,0.35);
+    --green: #4ade80;
+    --red: #f87171;
+    --amber: #fbbf24;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--navy); color: var(--cream); font-family: 'Outfit', sans-serif; font-weight: 300; min-height: 100vh; }
+
+  /* NAV */
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+  /* WIZARD */
+  .wizard { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+  .step { display: none; }
+  .step.active { display: block; animation: stepIn 0.38s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+
+  .step-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .step h2 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,2.4rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .step h2 em { font-style:italic; color:var(--gold-light); }
+  .step .sub { color:var(--muted); font-size:0.9rem; line-height:1.7; margin-bottom:32px; max-width:520px; }
+
+  /* INTRO CARDS */
+  .intro-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:32px; }
+  @media(max-width:480px) { .intro-cards { grid-template-columns:1fr; } }
+  .intro-card { background:var(--navy-light); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .intro-card-icon { font-size:1.4rem; margin-bottom:10px; }
+  .intro-card-title { font-size:0.85rem; font-weight:500; color:var(--cream); margin-bottom:4px; }
+  .intro-card-text { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+
+  /* INPUTS */
+  .input-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  .input-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:520px) { .input-grid,.input-grid-3 { grid-template-columns:1fr; } }
+  .input-group { display:flex; flex-direction:column; justify-content:flex-end; }
+  .input-group label { font-size:0.72rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:8px; font-weight:500; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.9rem; pointer-events:none; z-index:1; }
+  .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.78rem; pointer-events:none; }
+  input[type="number"], input[type="text"], select {
+    width:100%; background:var(--navy-card); border:1px solid var(--border-soft);
+    border-radius:9px; padding:12px 14px; color:var(--cream);
+    font-family:'Outfit',sans-serif; font-size:0.93rem; font-weight:300;
+    outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; -webkit-appearance:none;
+  }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input.has-prefix { padding-left:30px; }
+  input.has-suffix { padding-right:48px; }
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  select option { background:#111827; }
+
+  .divider { height:1px; background:var(--border-soft); margin:24px 0; }
+  .section-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; font-weight:500; }
+
+  .input-note { font-size:0.72rem; color:var(--muted); margin-top:5px; }
+
+  /* BUTTONS */
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
+  .btn-back { background:none; border:1px solid var(--border-soft); color:var(--muted); padding:14px 24px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; transition:all .15s; }
+  .btn-back:hover { border-color:var(--gold); color:var(--cream); }
+  .step-nav { display:flex; gap:12px; align-items:center; margin-top:28px; }
+
+  /* RESULTS */
+  #step-results { display:none; }
+  #step-results.active { display:block; animation:stepIn .4s ease forwards; }
+
+  .results-header { margin-bottom:32px; }
+  .results-header .step-tag { margin-bottom:8px; }
+  .results-header h2 { font-size:clamp(1.5rem,4vw,2rem); font-weight:400; }
+
+  /* STAT GRID */
+  .stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:28px; }
+  @media(max-width:480px) { .stat-grid { grid-template-columns:1fr; } }
+  .stat-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:20px 22px; }
+  .stat-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .stat-val { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:600; color:var(--cream); }
+  .stat-val.gold { color:var(--gold-light); }
+  .stat-val.green { color:var(--green); }
+  .stat-val.red { color:var(--red); }
+  .stat-note { font-size:0.72rem; color:var(--muted); margin-top:4px; }
+
+  /* EXTRA PAYMENT SECTION */
+  .extra-section { background:var(--navy-light); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:28px; }
+  .extra-section h3 { font-size:1rem; font-weight:500; color:var(--cream); margin-bottom:6px; }
+  .extra-section p { font-size:0.82rem; color:var(--muted); margin-bottom:18px; line-height:1.6; }
+  .extra-input-row { display:flex; gap:12px; align-items:flex-end; }
+  .extra-input-row .input-group { flex:1; }
+  .btn-apply { padding:12px 22px; background:var(--gold-dim); border:1px solid var(--border); color:var(--gold-light); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .18s; white-space:nowrap; }
+  .btn-apply:hover { background:rgba(201,168,76,0.2); }
+
+  /* SAVINGS BANNER */
+  .savings-banner { display:none; background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(74,222,128,0.03)); border:1px solid rgba(74,222,128,0.2); border-radius:14px; padding:22px 24px; margin-bottom:28px; }
+  .savings-banner.visible { display:block; animation:stepIn .3s ease forwards; }
+  .savings-banner h3 { font-size:0.85rem; font-weight:500; color:var(--green); margin-bottom:14px; letter-spacing:0.05em; text-transform:uppercase; }
+  .savings-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  @media(max-width:560px) { .savings-grid { grid-template-columns:1fr 1fr; } }
+  .savings-item-label { font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+  .savings-item-val { font-size:1.05rem; font-weight:600; color:var(--green); }
+
+  /* CHART */
+  .chart-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:24px; margin-bottom:28px; }
+  .chart-card h3 { font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:20px; }
+  .chart-wrap { position:relative; height:260px; }
+  .chart-legend { display:flex; gap:20px; flex-wrap:wrap; margin-top:16px; }
+  .legend-item { display:flex; align-items:center; gap:7px; font-size:0.77rem; color:var(--cream-dim); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  /* AMORTIZATION TABLE */
+  .amort-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:24px; margin-bottom:28px; }
+  .amort-card h3 { font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; }
+  .amort-controls { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .amort-filter { padding:7px 16px; background:var(--navy-light); border:1px solid var(--border-soft); border-radius:7px; color:var(--muted); font-size:0.8rem; cursor:pointer; transition:all .15s; font-family:'Outfit',sans-serif; }
+  .amort-filter.active { background:var(--gold-dim); border-color:var(--border); color:var(--gold-light); }
+  .amort-table-wrap { overflow-x:auto; max-height:320px; overflow-y:auto; }
+  .amort-table-wrap::-webkit-scrollbar { width:4px; height:4px; }
+  .amort-table-wrap::-webkit-scrollbar-track { background:transparent; }
+  .amort-table-wrap::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+  table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+  thead th { position:sticky; top:0; background:var(--navy-mid); padding:10px 12px; text-align:right; color:var(--muted); font-weight:500; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; }
+  thead th:first-child { text-align:left; }
+  tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background .12s; }
+  tbody tr:hover { background:rgba(255,255,255,0.03); }
+  tbody td { padding:9px 12px; text-align:right; color:var(--cream-dim); }
+  tbody td:first-child { text-align:left; color:var(--muted); }
+  tbody td.principal { color:var(--gold-light); }
+  tbody td.interest { color:var(--red); opacity:0.8; }
+  tbody td.balance { color:var(--cream-dim); }
+  .year-row td { background:rgba(201,168,76,0.04); color:var(--cream); font-weight:500; }
+
+  /* AFFILIATE */
+  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
+  .aff-section h3 { font-size:1.05rem; font-weight:500; margin-bottom:5px; }
+  .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
+  .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
+  .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-light); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
+  .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
+
+  .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
+  .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
+  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
+
+  /* MODAL */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; backdrop-filter:blur(4px); }
+  .modal-backdrop.open { display:flex; align-items:center; justify-content:center; padding:24px; }
+  .modal { background:var(--navy-mid); border:1px solid var(--border); border-radius:18px; padding:32px; max-width:480px; width:100%; max-height:80vh; overflow-y:auto; }
+  .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .modal-close { background:none; border:none; color:rgba(245,240,232,0.4); font-size:1.5rem; cursor:pointer; line-height:1; }
+  .modal p { color:var(--muted); font-size:0.87rem; line-height:1.7; margin-bottom:14px; }
+
+  footer { border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  footer a { color:var(--muted); text-decoration:none; }
+  footer a:hover { color:var(--gold); }
+  .footer-links { display:flex; gap:18px; }
+  @media(max-width:600px) { footer{padding:20px;} .wizard{padding:32px 16px 60px;} }
+</style>
+</head>
+<body>
+
+<!-- MODALS -->
+<div class="modal-backdrop" id="modal-about">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;color:#e8c97a;">About VestlyFi</div>
+      <button class="modal-close" onclick="closeModal('about')">×</button>
+    </div>
+    <p>VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+    <p>Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+    <p>Questions? <span style="color:var(--gold);">VestlyFi@gmail.com</span></p>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-privacy">
+  <div class="modal">
+    <div class="modal-header">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;color:#e8c97a;">Privacy Policy</div>
+      <button class="modal-close" onclick="closeModal('privacy')">×</button>
+    </div>
+    <p><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+    <p><strong style="color:#f5f0e8;">Affiliate Links</strong><br>Some links are affiliate links. If you open an account through them, VestlyFi may receive a commission at no cost to you.</p>
+    <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:var(--gold);">VestlyFi@gmail.com</span></p>
+  </div>
+</div>
+
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="#" onclick="showModal('about'); return false;">About</a>
+  </div>
+</nav>
+
+<div class="wizard">
+
+  <!-- STEP 1: INPUTS -->
+  <div class="step active" id="step-1">
+    <div class="step-tag">Mortgage Payoff</div>
+    <h2>Mortgage Payoff <em>Calculator</em></h2>
+    <p class="sub">Most of your early payments go almost entirely to interest, not your home. Enter your details below to see exactly where every dollar goes and how much you could save.</p>
+
+    <div class="section-label">Loan Details</div>
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Remaining Balance</label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="balance" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Interest Rate</label>
+        <div class="input-wrap">
+          <input type="number" id="rate" min="0.1" max="20" step="0.01" class="has-suffix" oninput="checkBtn()">
+          <span class="input-suffix">% / yr</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-grid-3">
+      <div class="input-group">
+        <label>Years Remaining</label>
+        <div class="input-wrap">
+          <input type="number" id="yearsRemaining" min="0" max="50" oninput="checkBtn()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Months Remaining</label>
+        <div class="input-wrap">
+          <input type="number" id="monthsRemaining" min="0" max="11" oninput="checkBtn()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>&nbsp;</label>
+      </div>
+    </div>
+
+    <div id="payoffPreview" style="display:none;font-size:0.85rem;color:var(--gold);margin-bottom:12px;margin-top:6px;font-weight:500;"></div>
+    <div id="calcErr" style="display:none;color:var(--red);font-size:0.82rem;margin-bottom:12px;">Please fill in balance, rate, and years remaining.</div>
+
+    <div class="step-nav">
+      
+      <button class="btn-next" id="calcBtn" onclick="calculate()" disabled>Calculate →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="step-results">
+    <div class="results-header">
+      <div class="step-tag">Your Results</div>
+      <h2 id="resultsTitle">Mortgage Breakdown</h2>
+    </div>
+
+    <!-- SUMMARY STATS -->
+    <div class="stat-grid" id="statGrid"></div>
+
+    <!-- EXTRA PAYMENT -->
+    <div class="extra-section">
+      <h3>What would happen if you paid more?</h3>
+      <p>Add a recurring monthly amount, a one-time lump sum, or both. Hit Apply to see the impact on your payoff date and total interest.</p>
+      <div class="extra-input-row">
+        <div class="input-group">
+          <label>Extra Monthly Payment</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" id="extraPayment" class="has-prefix" oninput="fmtComma(this)">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Lump Sum Today</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" id="lumpSum" class="has-prefix" oninput="fmtComma(this)">
+          </div>
+        </div>
+        <button class="btn-apply" onclick="applyExtra()">Apply →</button>
+      </div>
+    </div>
+
+
+    <!-- SAVINGS BANNER -->
+    <div class="savings-banner" id="savingsBanner">
+      <h3>With these changes you would...</h3>
+      <div class="savings-grid">
+        <div>
+          <div class="savings-item-label">Interest Saved</div>
+          <div class="savings-item-val" id="sv-interest">—</div>
+        </div>
+        <div>
+          <div class="savings-item-label">Time Saved</div>
+          <div class="savings-item-val" id="sv-time">—</div>
+        </div>
+        <div>
+          <div class="savings-item-label">New Payoff Date</div>
+          <div class="savings-item-val" id="sv-date">—</div>
+        </div>
+        <div>
+          <div class="savings-item-label">Original Payoff</div>
+          <div class="savings-item-val" id="sv-origdate" style="color:var(--muted);">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-card">
+      <h3>Balance Over Time</h3>
+      <div class="chart-wrap">
+        <canvas id="amortChart"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#c9a84c;"></div> Remaining Balance</div>
+        <div class="legend-item" id="legendExtra" style="display:none;"><div class="legend-dot" style="background:#4ade80;"></div> With Extra Payment</div>
+      </div>
+    </div>
+
+    <!-- AMORTIZATION TABLE -->
+    <div class="amort-card">
+      <h3>Amortization Schedule</h3>
+      <div class="amort-controls">
+        <button class="amort-filter active" onclick="setView('monthly', this)">Monthly</button>
+        <button class="amort-filter" onclick="setView('yearly', this)">Yearly Summary</button>
+      </div>
+      <div class="amort-table-wrap" id="amortTableWrap"></div>
+    </div>
+
+    <!-- AFFILIATE -->
+    <div class="aff-section">
+      <h3>Looking to refinance?</h3>
+      <p>A lower rate could save you thousands. Compare current rates and get pre-approved in minutes.</p>
+      <div class="aff-links">
+        <a class="aff-link" href="https://www.rocketmortgage.com" target="_blank">Rocket Mortgage ↗</a>
+        <a class="aff-link" href="https://www.better.com" target="_blank">Better ↗</a>
+        <a class="aff-link" href="https://www.lendingtree.com" target="_blank">LendingTree ↗</a>
+      </div>
+    </div>
+
+    <button class="btn-recalc" onclick="goToStep(1)">← Edit my mortgage details</button>
+    <div class="disclaimer">For informational purposes only. Not financial advice. Calculations are estimates based on the inputs provided.</div>
+  </div>
+
+</div><!-- /wizard -->
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="#" onclick="showModal('privacy'); return false;">Privacy</a>
+    <a href="/">Home</a>
+  </div>
+</footer>
+
+<script>
+let currentStep = 1;
+let amortData = [];
+let amortView = 'monthly';
+let chartInstance = null;
+
+// ── Navigation ──
+function goToStep(n) {
+  if (currentStep === 'results') {
+    const res = document.getElementById('step-results');
+    res.classList.remove('active');
+    res.style.display = 'none';
+  } else {
+    const el = document.getElementById('step-' + currentStep);
+    if (el) el.classList.remove('active');
+  }
+  if (n === 'results') {
+    const res = document.getElementById('step-results');
+    res.style.display = 'block';
+    res.classList.add('active');
+  } else {
+    const el = document.getElementById('step-' + n);
+    if (el) el.classList.add('active');
+  }
+  currentStep = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Formatting ──
+function fmtComma(input) {
+  let raw = input.value.replace(/[^0-9.]/g, '');
+  const parts = raw.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  input.value = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+}
+
+function parseMoney(str) {
+  return parseFloat((str || '').replace(/,/g, '')) || 0;
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtDec(n) {
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── Button enable ──
+function checkBtn() {
+  const b = parseMoney(document.getElementById('balance').value);
+  const r = parseFloat(document.getElementById('rate').value);
+  const y = parseInt(document.getElementById('yearsRemaining').value) || 0;
+  const mo = parseInt(document.getElementById('monthsRemaining').value) || 0;
+  const total = y * 12 + mo;
+  const btn = document.getElementById('calcBtn');
+  if (btn) btn.disabled = !(b > 0 && r > 0 && total > 0);
+  const preview = document.getElementById('payoffPreview');
+  if (preview) {
+    if (total > 0) {
+      preview.textContent = total + ' months  ·  payoff ' + getPayoffDate(total);
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  }
+}
+
+// ── Amortize ──
+function buildAmort(principal, annualRate, months, extra = 0, lumpSum = 0) {
+  const monthlyRate = annualRate / 100 / 12;
+  // Apply lump sum immediately to reduce balance before calculating payment
+  const adjustedPrincipal = Math.max(principal - lumpSum, 0);
+  const basePayment = principal * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
+  const payment = basePayment + extra;
+  let balance = adjustedPrincipal;
+  const rows = [];
+  let totalInterest = 0;
+  let totalPrincipal = 0;
+  let m = 0;
+
+  while (balance > 0.01 && m < months + 1) {
+    m++;
+    const interestPmt = balance * monthlyRate;
+    let principalPmt = payment - interestPmt;
+    if (principalPmt > balance) principalPmt = balance;
+    balance -= principalPmt;
+    totalInterest += interestPmt;
+    totalPrincipal += principalPmt;
+    rows.push({
+      month: m,
+      payment: principalPmt + interestPmt,
+      principal: principalPmt,
+      interest: interestPmt,
+      balance: Math.max(balance, 0),
+      cumInterest: totalInterest,
+      cumPrincipal: totalPrincipal,
+    });
+    if (balance <= 0.01) break;
+  }
+  return { rows, totalInterest, totalPrincipal, basePayment, months: m };
+}
+
+function getPayoffDate(months) {
+  const start = new Date();
+  start.setMonth(start.getMonth() + months);
+  return start.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+// ── Main Calculate ──
+function calculate() {
+  const balance = parseMoney(document.getElementById('balance').value);
+  const rate = parseFloat(document.getElementById('rate').value);
+  const years = parseInt(document.getElementById('yearsRemaining').value) || 0;
+  const extraMonths = parseInt(document.getElementById('monthsRemaining').value) || 0;
+  const months = years * 12 + extraMonths;
+
+  if (!balance || !rate || !months) {
+    document.getElementById('calcErr').style.display = 'block'; return;
+  }
+  document.getElementById('calcErr').style.display = 'none';
+
+  const result = buildAmort(balance, rate, months);
+  amortData = result.rows;
+
+  const totalPaid = balance + result.totalInterest;
+  const interestPct = (result.totalInterest / totalPaid * 100).toFixed(1);
+  const payoffDate = getPayoffDate(result.months);
+
+  // Stats
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Monthly Payment</div>
+      <div class="stat-val gold">${fmt(result.basePayment)}</div>
+      <div class="stat-note">Principal + interest only</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Interest Paid</div>
+      <div class="stat-val red">${fmt(result.totalInterest)}</div>
+      <div class="stat-note">${interestPct}% of total amount paid</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Amount Paid</div>
+      <div class="stat-val">${fmt(totalPaid)}</div>
+      <div class="stat-note">Principal + all interest</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Payoff Date</div>
+      <div class="stat-val gold" style="font-size:1.2rem;">${payoffDate}</div>
+      <div class="stat-note">${years > 0 ? years + "y " : ""}${extraMonths > 0 ? extraMonths + "mo" : ""} from now</div>
+    </div>
+  `;
+
+  // Reset extra
+  document.getElementById('extraPayment').value = '';
+  document.getElementById('lumpSum').value = '';
+  const prev = document.getElementById('payoffPreview'); if (prev) prev.style.display = 'none';
+  document.getElementById('savingsBanner').classList.remove('visible');
+  document.getElementById('legendExtra').style.display = 'none';
+
+  renderChart(result.rows, null);
+  renderTable('monthly');
+  goToStep('results');
+}
+
+// ── Extra Payment ──
+function applyExtra() {
+  const extra = parseMoney(document.getElementById('extraPayment').value) || 0;
+  const lump = parseMoney(document.getElementById('lumpSum').value) || 0;
+  if (extra <= 0 && lump <= 0) return;
+
+  const balance = parseMoney(document.getElementById('balance').value);
+  const rate = parseFloat(document.getElementById('rate').value);
+  const years = parseInt(document.getElementById('yearsRemaining').value) || 0;
+  const extraMonths = parseInt(document.getElementById('monthsRemaining').value) || 0;
+  const months = years * 12 + extraMonths;
+
+  const base = buildAmort(balance, rate, months, 0, 0);
+  const withExtra = buildAmort(balance, rate, months, extra, lump);
+
+  const interestSaved = base.totalInterest - withExtra.totalInterest;
+  const monthsSaved = base.months - withExtra.months;
+  const yearsSaved = Math.floor(monthsSaved / 12);
+  const moSaved = monthsSaved % 12;
+
+  let timeSavedStr = '';
+  if (yearsSaved > 0) timeSavedStr += `${yearsSaved}yr `;
+  if (moSaved > 0) timeSavedStr += `${moSaved}mo`;
+  if (!timeSavedStr) timeSavedStr = '< 1mo';
+
+  document.getElementById('sv-interest').textContent = fmt(interestSaved);
+  document.getElementById('sv-time').textContent = timeSavedStr.trim();
+  document.getElementById('sv-date').textContent = getPayoffDate(withExtra.months);
+  document.getElementById('sv-origdate').textContent = getPayoffDate(base.months);
+  const hasExtra = extra > 0;
+  const hasLump = lump > 0;
+  const bannerTitle = hasExtra && hasLump ? 'With extra payments + lump sum you would...' :
+                      hasLump ? 'With a lump sum payment you would...' :
+                      'With extra payments you would...';
+  document.querySelector('#savingsBanner h3').textContent = bannerTitle;
+  document.getElementById('savingsBanner').classList.add('visible');
+  document.getElementById('legendExtra').style.display = 'flex';
+
+  renderChart(base.rows, withExtra.rows);
+}
+
+// ── Chart ──
+function renderChart(baseRows, extraRows) {
+  const ctx = document.getElementById('amortChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  // Yearly data points
+  const labels = [], baseBalances = [], extraBalances = [];
+  const nowYear = new Date().getFullYear();
+  for (let y = 0; y < baseRows.length; y += 12) {
+    const yr = Math.floor(y / 12);
+    labels.push(yr === 0 ? String(nowYear) : String(nowYear + yr));
+    baseBalances.push(Math.round(baseRows[y]?.balance ?? 0));
+    if (extraRows) extraBalances.push(Math.round(extraRows[y]?.balance ?? 0));
+  }
+  const finalYr = Math.floor(baseRows.length / 12);
+  labels.push(String(nowYear + finalYr));
+  baseBalances.push(0);
+  if (extraRows) extraBalances.push(0);
+
+  const datasets = [{
+    label: 'Remaining Balance',
+    data: baseBalances,
+    borderColor: '#c9a84c',
+    backgroundColor: 'rgba(201,168,76,0.08)',
+    fill: true,
+    tension: 0.4,
+    pointRadius: 3,
+    pointBackgroundColor: '#c9a84c',
+  }];
+
+  if (extraRows && extraRows.length) {
+    datasets.push({
+      label: 'With Extra Payment',
+      data: extraBalances,
+      borderColor: '#4ade80',
+      backgroundColor: 'rgba(74,222,128,0.06)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointBackgroundColor: '#4ade80',
+    });
+  }
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false }, tooltip: {
+        backgroundColor: '#1a2540', titleColor: '#f5f0e8', bodyColor: '#8899aa',
+        borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1,
+        callbacks: { label: ctx => ' ' + fmt(ctx.raw) }
+      }},
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8899aa', font: { size: 10, family: 'Outfit' }, maxRotation: 0, maxTicksLimit: 8 } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8899aa', font: { size: 10, family: 'Outfit' }, callback: v => '$' + (v/1000).toFixed(0) + 'k' } }
+      }
+    }
+  });
+}
+
+// ── Table ──
+function setView(view, btn) {
+  amortView = view;
+  document.querySelectorAll('.amort-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable(view);
+}
+
+function renderTable(view) {
+  const wrap = document.getElementById('amortTableWrap');
+  if (!amortData.length) return;
+
+  if (view === 'monthly') {
+    let html = `<table>
+      <thead><tr>
+        <th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th>
+      </tr></thead><tbody>`;
+    const now = new Date();
+    amortData.forEach(r => {
+      const d = new Date(now.getFullYear(), now.getMonth() + r.month - 1, 1);
+      const label = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      html += `<tr>
+        <td>${label}</td>
+        <td>${fmt(r.payment)}</td>
+        <td class="principal">${fmt(r.principal)}</td>
+        <td class="interest">${fmt(r.interest)}</td>
+        <td class="balance">${fmt(r.balance)}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  } else {
+    // Yearly summary
+    let html = `<table>
+      <thead><tr>
+        <th>Year</th><th>Total Paid</th><th>Principal</th><th>Interest</th><th>Balance</th>
+      </tr></thead><tbody>`;
+    const curYear = new Date().getFullYear();
+    for (let y = 1; y <= Math.ceil(amortData.length / 12); y++) {
+      const yearRows = amortData.slice((y - 1) * 12, y * 12);
+      const totPayment = yearRows.reduce((s, r) => s + r.payment, 0);
+      const totPrincipal = yearRows.reduce((s, r) => s + r.principal, 0);
+      const totInterest = yearRows.reduce((s, r) => s + r.interest, 0);
+      const lastBalance = yearRows[yearRows.length - 1]?.balance ?? 0;
+      html += `<tr class="year-row">
+        <td>${curYear + y - 1}</td>
+        <td>${fmt(totPayment)}</td>
+        <td class="principal">${fmt(totPrincipal)}</td>
+        <td class="interest">${fmt(totInterest)}</td>
+        <td class="balance">${fmt(lastBalance)}</td>
+      </tr>`;
+    }
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+}
+
+// ── Modal ──
+function showModal(id) { document.getElementById('modal-' + id).classList.add('open'); }
+function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
+
+// ── Enter key ──
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('.modal-backdrop.open')) return;
+  if (currentStep === 1) { const b = document.getElementById('calcBtn'); if (b && !b.disabled) calculate(); }
+  else if (currentStep === 'results') applyExtra();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open')); });
+</script>
+</body>
+</html>
