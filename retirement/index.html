@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="description" content="Find out exactly what age you can retire based on your savings rate, current balance, and expected returns. Free retirement age calculator.">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VestlyFi — When Can You Retire?</title>
+<title>Retirement Age Calculator — Find Out When You Can Retire | VestlyFi</title>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>
@@ -54,7 +55,7 @@
   }
   .container {
     position: relative; z-index: 1;
-    max-width: 700px; margin: 0 auto;
+    max-width: 720px; margin: 0 auto;
     padding: 0 24px;
     min-height: 100vh;
     display: flex; flex-direction: column;
@@ -69,7 +70,7 @@
   .step-count { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
 
   /* WIZARD */
-  .wizard { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 44px 0 80px; }
+  .wizard { flex: 1; display: flex; flex-direction: column; padding: 56px 0 80px; }
   .step { display: none; }
   .step.active { display: block; animation: stepIn 0.42s cubic-bezier(.4,0,.2,1) forwards; }
   @keyframes stepIn { from { opacity:0; transform:translateY(26px); } to { opacity:1; transform:translateY(0); } }
@@ -172,7 +173,7 @@
   .spending-label { flex: 1; font-size: 0.85rem; color: var(--cream-dim); display: flex; align-items: center; gap: 8px; }
   .spending-icon { font-size: 1rem; }
   .spending-input-wrap { width: 140px; flex-shrink: 0; position: relative; }
-  .spending-input-wrap .input-prefix { left: 12px; font-size: 0.9rem; }
+  .spending-input-wrap .input-prefix { left: 12px; font-size: 0.9rem; top: 50%; transform: translateY(-50%); position: absolute; pointer-events: none; color: var(--gold); }
   .spending-input-wrap input { padding: 10px 10px 10px 26px; font-size: 0.92rem; border-radius: 8px; }
   .spending-total {
     display: flex; justify-content: space-between; align-items: center;
@@ -336,6 +337,16 @@
 
   .disclaimer { font-size: 0.7rem; color: rgba(245,240,232,0.18); line-height: 1.6; text-align: center; padding: 16px 0 24px; }
 
+  /* SEO CONTENT */
+  .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   footer {
     padding: 20px 0; border-top: 1px solid rgba(255,255,255,0.05);
     display: flex; justify-content: space-between; align-items: center;
@@ -387,6 +398,47 @@
 
 </style>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/retirement/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much do I need to retire?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A common rule of thumb is the 25x rule: multiply your expected annual expenses in retirement by 25. That gives you the portfolio size needed to sustain a 4% annual withdrawal indefinitely. If you plan to spend $60,000 a year in retirement, you would need around $1.5 million saved."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the 4% rule?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 4% rule is a guideline that says you can withdraw 4% of your portfolio in year one of retirement and adjust for inflation each year after, with a high probability your money lasts 30 years. It comes from research on historical market returns and is widely used as a retirement planning benchmark."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does savings rate affect retirement age?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dramatically. Saving 10% of your income might mean retiring at 65. Saving 30% could mean retiring in your late 40s. A higher savings rate does two things at once: it builds your portfolio faster and it reduces the income you need to replace in retirement, since you are already living on less."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What return rate should I use for retirement planning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most planners use 6-7% annually as a conservative estimate after inflation for a diversified index fund portfolio. Using a lower number gives you a more realistic floor. If the market does better, you retire earlier. If it does worse, you have a cushion built in."
+      }
+    }
+  ]
+}
+</script>
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -456,7 +508,7 @@
           <label>Current Savings &amp; Investments</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="currentSavings" placeholder="e.g. 25,000" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="number" id="currentSavings" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
       </div>
@@ -466,14 +518,14 @@
           <label>Gross Annual Income</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="annualIncome" placeholder="e.g. 75,000" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="number" id="annualIncome" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
         <div class="input-group">
           <label>Monthly Investment Contributions</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="monthlyContrib" placeholder="e.g. 1,500" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="number" id="monthlyContrib" min="0" class="has-prefix" oninput="checkStep1()">
           </div>
         </div>
       </div>
@@ -506,7 +558,7 @@
         <label>Or enter your own <span class="label-hint">(annual, today's dollars)</span></label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="simpleSpendCustom" placeholder="e.g. 60,000" class="has-prefix" oninput="onSimpleSpendInput(this)">
+          <input type="number" id="simpleSpendCustom" class="has-prefix" oninput="onSimpleSpendInput(this)">
         </div>
       </div>
 
@@ -527,35 +579,35 @@
       <div class="spending-builder">
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏠</span> Housing <span style="font-size:.75rem;color:var(--muted)">(rent/mortgage, HOA, repairs)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" placeholder="e.g. 1,800" min="0" oninput="updateSpendTotal(); checkStep2a()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" min="0" oninput="updateSpendTotal(); checkStep2a()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🚗</span> Transport <span style="font-size:.75rem;color:var(--muted)">(car, insurance, gas, transit)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" placeholder="e.g. 500" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🍽️</span> Food <span style="font-size:.75rem;color:var(--muted)">(groceries + dining out)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" placeholder="e.g. 600" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏥</span> Healthcare <span style="font-size:.75rem;color:var(--muted)">(premiums, copays, dental)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" placeholder="e.g. 400" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">✈️</span> Travel &amp; Leisure <span style="font-size:.75rem;color:var(--muted)">(vacations, hobbies, entertainment)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_travel" placeholder="e.g. 300" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_travel" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🛍️</span> Personal &amp; Misc <span style="font-size:.75rem;color:var(--muted)">(clothing, subscriptions, gifts)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_misc" placeholder="e.g. 300" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_misc" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">👨‍👩‍👧</span> Family <span style="font-size:.75rem;color:var(--muted)">(dependents, college support, eldercare)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_family" placeholder="e.g. 0" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_family" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">📦</span> Other</div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_other" placeholder="e.g. 0" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_other" min="0" oninput="updateSpendTotal()"></div>
         </div>
         <div class="spending-total">
           <div class="spending-total-label">Estimated Monthly Total</div>
@@ -721,7 +773,7 @@
           <label>Total estimated monthly income from other sources</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="otherIncome" placeholder="e.g. 0" min="0" class="has-prefix">
+            <input type="number" id="otherIncome" min="0" class="has-prefix">
           </div>
         </div>
 
@@ -769,7 +821,38 @@
 
   </div><!-- /wizard -->
 
-  <footer>
+
+
+</div><!-- /container -->
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Most people think about retirement in terms of age, not numbers. The reality is that retirement has nothing to do with how old you are. It happens when your savings can generate enough income to cover your expenses indefinitely. Get there at 40 or at 70 — the math is the same either way.</p>
+    <p>Your savings rate is the single biggest lever you have. It determines both how fast your portfolio grows and how much income you need to replace when you stop working. Small increases in your savings rate can shave years off your retirement timeline in ways that feel counterintuitive until you run the numbers.</p>
+  </div>
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">How much do I need to retire?</div>
+      <div class="faq-a">A common rule of thumb is the 25x rule: multiply your expected annual expenses in retirement by 25. That gives you the portfolio size needed to sustain a 4% annual withdrawal indefinitely. If you plan to spend $60,000 a year in retirement, you need around $1.5 million saved.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the 4% rule?</div>
+      <div class="faq-a">The 4% rule is a guideline that says you can withdraw 4% of your portfolio in year one of retirement and adjust for inflation each year after, with a high probability your money lasts 30 years. It comes from research on historical market returns and is widely used as a retirement planning benchmark.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does savings rate affect retirement age?</div>
+      <div class="faq-a">Dramatically. Saving 10% of your income might mean retiring at 65. Saving 30% could mean retiring in your late 40s. A higher savings rate does two things at once: it builds your portfolio faster and it reduces the income you need to replace in retirement, since you are already living on less.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What return rate should I use for retirement planning?</div>
+      <div class="faq-a">Most planners use 6-7% annually as a conservative estimate after inflation for a diversified index fund portfolio. Using a lower number gives you a more realistic floor. If the market does better, you retire earlier. If it does worse, you have a cushion built in.</div>
+    </div>
+  </div>
+</div>
+
+
+<footer>
     <span>© 2026 VestlyFi</span>
     <div style="display:flex;gap:18px;">
       <a href="#" onclick="showModal('methodology'); return false;">Methodology</a>
@@ -777,7 +860,7 @@
     </div>
   </footer>
 
-</div><!-- /container -->
+
 
 <!-- Methodology Modal -->
 <div id="modal-methodology" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('methodology')">
