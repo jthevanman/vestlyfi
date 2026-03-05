@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coast FIRE Calculator — VestlyFi</title>
-<meta name="description" content="Find out how much you need saved today so your investments grow on their own to fund your retirement — no more contributions needed.">
+<title>Coast FIRE Calculator — Find Your Coasting Number | VestlyFi</title>
+<meta name="description" content="Calculate your Coast FIRE number. Find out how much you need saved today so your investments can grow to fund retirement without another contribution.">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
@@ -13,6 +13,47 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/coast-fire/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Coast FIRE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Coast FIRE is the point where you have saved enough that your investments will grow to fund your retirement on their own, without any additional contributions. You still need to cover your living expenses until retirement, but you no longer need to save specifically for retirement."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How is Coast FIRE different from regular FIRE?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Regular FIRE means your portfolio is large enough to fund your retirement right now. Coast FIRE means your portfolio is large enough that it will get there by retirement age on its own. Coast FIRE is achievable much earlier and gives you flexibility to work less, change careers, or take a lower paying job you enjoy more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I do after I hit my Coast FIRE number?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You only need to earn enough to cover your current expenses. You can stop contributing to retirement accounts, shift to a lower paying or more enjoyable career, reduce your hours, or simply enjoy more financial breathing room knowing retirement is taken care of."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What return rate should I use for Coast FIRE calculations?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most people use 7% annually as a conservative real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected."
+      }
+    }
+  ]
+}
+</script>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
@@ -34,7 +75,7 @@
   .site-nav-links a:hover { color:var(--cream); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
-  .container { position:relative; z-index:1; max-width:680px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
+  .container { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
   .wizard { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0 80px; }
 
   .step { display:none; }
@@ -105,6 +146,16 @@
   .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
   .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+
+  /* SEO CONTENT */
+  .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
 
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   footer a { color:var(--muted); text-decoration:none; }
@@ -193,14 +244,14 @@
       <div class="input-group">
         <label>Current Age</label>
         <div class="input-wrap">
-          <input type="number" id="currentAge" placeholder="e.g. 28" min="16" max="70" class="has-suffix" oninput="checkStep1()">
+          <input type="number" id="currentAge" min="16" max="70" class="has-suffix" oninput="checkStep1()">
           <span class="input-suffix">yrs</span>
         </div>
       </div>
       <div class="input-group">
         <label>Target Retirement Age</label>
         <div class="input-wrap">
-          <input type="number" id="retireAge" placeholder="e.g. 60" min="40" max="80" class="has-suffix" oninput="checkStep1()">
+          <input type="number" id="retireAge" min="40" max="80" class="has-suffix" oninput="checkStep1()">
           <span class="input-suffix">yrs</span>
         </div>
       </div>
@@ -210,7 +261,7 @@
       <label>Annual Spending in Retirement</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="annualSpend" placeholder="e.g. 50,000" min="0" class="has-prefix" oninput="checkStep1()">
+        <input type="number" id="annualSpend" min="0" class="has-prefix" oninput="checkStep1()">
       </div>
     </div>
 
@@ -231,7 +282,7 @@
       <label>Current Invested Balance</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="currentSavings" placeholder="e.g. 35,000" min="0" class="has-prefix" oninput="checkStep2()">
+        <input type="number" id="currentSavings" min="0" class="has-prefix" oninput="checkStep2()">
       </div>
     </div>
 
@@ -266,6 +317,33 @@
   </div>
 
 </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Coast FIRE is one of the most liberating milestones in personal finance. Once you hit your number, you have effectively taken retirement off the table as a financial worry. Your invested money will do the work from that point forward, growing on its own until you are ready to stop working.</p>
+    <p>The math behind it is straightforward. You need a large enough balance today that, given a reasonable rate of return and enough time, it compounds to your retirement target by the age you want to stop working. The earlier you start, the smaller that number is, because time is doing most of the heavy lifting.</p>
+  </div>
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is Coast FIRE?</div>
+      <div class="faq-a">Coast FIRE is the point where you have saved enough that your investments will grow to fund your retirement on their own, without any additional contributions. You still need to cover your living expenses until retirement, but you no longer need to save specifically for retirement.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is Coast FIRE different from regular FIRE?</div>
+      <div class="faq-a">Regular FIRE means your portfolio is large enough to fund your retirement right now. Coast FIRE means your portfolio is large enough that it will get there by retirement age on its own. Coast FIRE is achievable much earlier and gives you flexibility to work less, change careers, or take a lower paying job you enjoy more.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What do I do after I hit my Coast FIRE number?</div>
+      <div class="faq-a">You only need to earn enough to cover your current expenses. You can stop contributing to retirement accounts, shift to a lower paying or more enjoyable career, reduce your hours, or simply enjoy more financial breathing room knowing retirement is taken care of.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What return rate should I use for Coast FIRE calculations?</div>
+      <div class="faq-a">Most people use 7% annually as a conservative real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected.</div>
+    </div>
+  </div>
 </div>
 
 <footer>
