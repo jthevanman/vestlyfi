@@ -2,16 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Debt Payoff Optimizer — VestlyFi</title>
-<meta name="description" content="Enter your debts and see a personalized payoff plan. Compares avalanche vs snowball method and shows when you'll be debt-free.">
+<title>Debt Payoff Calculator — Avalanche vs Snowball Comparison | VestlyFi</title>
+<meta name="description" content="See exactly when you'll be debt free and how much interest you'll pay. Compare the avalanche and snowball payoff methods across all your debts.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/debt-payoff/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the debt avalanche method?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You put any extra money toward the debt with the highest interest rate while making minimum payments on everything else. Once that is paid off you roll that payment into the next highest rate debt. It minimizes the total interest you pay over time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the debt snowball method?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You target your smallest balance first regardless of interest rate. Paying off a debt completely gives you a psychological win that keeps you motivated to keep going. Once it is gone you roll that payment into the next smallest balance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which method saves more money?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The avalanche almost always saves more in total interest. But research shows the snowball method leads to higher payoff rates because the early wins keep people engaged. The right answer depends on whether you are more motivated by math or momentum."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I pay off debt or invest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generally, if your debt interest rate is higher than what you would earn investing, typically 7-10% for index funds, pay off the debt first. High interest debt like credit cards almost always gets paid off before investing. Lower rate debt like student loans or a mortgage is more of a judgment call."
+      }
+    }
+  ]
+}
+</script>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
@@ -136,6 +177,16 @@
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
 
+  /* SEO CONTENT */
+  .seo-section { max-width:720px; margin:0 auto; padding:40px 24px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--gold); }
@@ -210,6 +261,33 @@
       </div>
     </div>
     <div id="resultContent"></div>
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Most people know they should pay off debt but don't have a clear picture of what that actually looks like month to month. The interest adds up faster than expected, and without a plan it's easy to feel like you're making payments without making progress.</p>
+    <p>The two most common strategies are the avalanche and the snowball. The avalanche method targets your highest interest debt first and saves the most money mathematically. The snowball method pays off your smallest balance first and builds momentum that keeps people motivated. Neither is wrong. The best method is the one you'll actually stick to.</p>
+  </div>
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is the debt avalanche method?</div>
+      <div class="faq-a">You put any extra money toward the debt with the highest interest rate while making minimum payments on everything else. Once that's paid off you roll that payment into the next highest rate debt. It minimizes the total interest you pay over time.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the debt snowball method?</div>
+      <div class="faq-a">You target your smallest balance first regardless of interest rate. Paying off a debt completely gives you a psychological win that keeps you motivated to keep going. Once it's gone you roll that payment into the next smallest balance.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Which method saves more money?</div>
+      <div class="faq-a">The avalanche almost always saves more in total interest. But research shows the snowball method leads to higher payoff rates because the early wins keep people engaged. The right answer depends on whether you're more motivated by math or momentum.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Should I pay off debt or invest?</div>
+      <div class="faq-a">Generally, if your debt interest rate is higher than what you'd earn investing, typically 7-10% for index funds, pay off the debt first. High interest debt like credit cards almost always gets paid off before investing. Lower rate debt like student loans or a mortgage is more of a judgment call.</div>
+    </div>
   </div>
 </div>
 
