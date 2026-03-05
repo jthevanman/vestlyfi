@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mortgage Payoff Calculator — VestlyFi</title>
-<meta name="description" content="See how much interest you'll pay over your mortgage life, and how extra payments can save you thousands.">
+<title>Mortgage Payoff Calculator — See How Extra Payments Save You Thousands | VestlyFi</title>
+<meta name="description" content="Calculate exactly how much interest you'll pay over your mortgage and see how extra monthly payments or a lump sum can shave years off your loan.">
 <link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -81,6 +81,8 @@
 
   .divider { height:1px; background:var(--border-soft); margin:24px 0; }
   .section-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; font-weight:500; }
+  .input-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:16px; padding:24px 24px 4px; margin-bottom:20px; }
+  .input-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:16px; padding:24px 24px 8px; margin-bottom:20px; }
 
   .input-note { font-size:0.72rem; color:var(--muted); margin-top:5px; }
 
@@ -180,6 +182,17 @@
   .modal-close { background:none; border:none; color:rgba(245,240,232,0.4); font-size:1.5rem; cursor:pointer; line-height:1; }
   .modal p { color:var(--muted); font-size:0.87rem; line-height:1.7; margin-bottom:14px; }
 
+
+  /* SEO CONTENT */
+  .seo-section { max-width:680px; margin:0 auto; padding:40px 24px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   footer { border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--gold); }
@@ -230,43 +243,40 @@
     <h2>Mortgage Payoff <em>Calculator</em></h2>
     <p class="sub">Most of your early payments go almost entirely to interest, not your home. Enter your details below to see exactly where every dollar goes and how much you could save.</p>
 
-    <div class="section-label">Loan Details</div>
-    <div class="input-grid">
-      <div class="input-group">
-        <label>Remaining Balance</label>
-        <div class="input-wrap">
-          <span class="input-prefix">$</span>
-          <input type="text" id="balance" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+    <div class="input-card">
+      <div class="section-label">Loan Details</div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Remaining Balance</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" id="balance" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Interest Rate</label>
+          <div class="input-wrap">
+            <input type="number" id="rate" min="0.1" max="20" step="0.01" class="has-suffix" oninput="checkBtn()">
+            <span class="input-suffix">% / yr</span>
+          </div>
         </div>
       </div>
-      <div class="input-group">
-        <label>Interest Rate</label>
-        <div class="input-wrap">
-          <input type="number" id="rate" min="0.1" max="20" step="0.01" class="has-suffix" oninput="checkBtn()">
-          <span class="input-suffix">% / yr</span>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>Years Remaining</label>
+          <div class="input-wrap">
+            <input type="number" id="yearsRemaining" min="0" max="50" oninput="checkBtn()">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Months Remaining</label>
+          <div class="input-wrap">
+            <input type="number" id="monthsRemaining" min="0" max="11" oninput="checkBtn()">
+          </div>
         </div>
       </div>
+      <div id="payoffPreview" style="display:none;font-size:0.85rem;color:var(--gold);margin-bottom:16px;margin-top:2px;font-weight:500;"></div>
     </div>
-
-    <div class="input-grid-3">
-      <div class="input-group">
-        <label>Years Remaining</label>
-        <div class="input-wrap">
-          <input type="number" id="yearsRemaining" min="0" max="50" oninput="checkBtn()">
-        </div>
-      </div>
-      <div class="input-group">
-        <label>Months Remaining</label>
-        <div class="input-wrap">
-          <input type="number" id="monthsRemaining" min="0" max="11" oninput="checkBtn()">
-        </div>
-      </div>
-      <div class="input-group">
-        <label>&nbsp;</label>
-      </div>
-    </div>
-
-    <div id="payoffPreview" style="display:none;font-size:0.85rem;color:var(--gold);margin-bottom:12px;margin-top:6px;font-weight:500;"></div>
     <div id="calcErr" style="display:none;color:var(--red);font-size:0.82rem;margin-bottom:12px;">Please fill in balance, rate, and years remaining.</div>
 
     <div class="step-nav">
@@ -370,6 +380,37 @@
   </div>
 
 </div><!-- /wizard -->
+  <!-- SEO CONTENT -->
+  <div class="seo-section">
+    <div class="seo-body">
+      <p>Most homeowners focus on the monthly payment when they buy a house. The number that actually matters is the total interest — and for most 30 year mortgages, that number is startling. On a $350,000 loan at 7%, you'll pay over $490,000 by the time it's done. Almost half a million dollars for a house that costs $350,000.</p>
+      <p>The good news is that extra payments hit harder than most people expect. An extra $200 a month on that same loan cuts over 5 years off the payoff date and saves around $70,000 in interest. A lump sum payment early in the loan has an even bigger effect because it reduces the principal before years of interest can compound on top of it.</p>
+    </div>
+
+    <div class="faq-section">
+      <h2 class="faq-title">Common Questions</h2>
+
+      <div class="faq-item">
+        <div class="faq-q">How does a mortgage payoff calculator work?</div>
+        <div class="faq-a">It takes your remaining balance, interest rate, and years left on the loan and calculates your monthly payment, total interest, and payoff date. It then lets you model what happens if you add extra monthly payments or make a one-time lump sum payment toward the principal.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Should I pay extra on my mortgage or invest?</div>
+        <div class="faq-a">It depends on your interest rate. If your mortgage rate is higher than what you'd reasonably expect to earn investing — historically around 7-10% in index funds — paying down the mortgage is the safer bet. If your rate is low, investing the difference often wins mathematically. Most people do a mix of both.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What is amortization?</div>
+        <div class="faq-a">Amortization is how your mortgage payments are split between principal and interest over time. Early in your loan the majority of each payment goes to interest. As your balance drops, more of each payment goes toward the actual principal. The amortization schedule shows you this breakdown month by month.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What's the difference between extra monthly payments and a lump sum?</div>
+        <div class="faq-a">Extra monthly payments reduce your balance gradually and consistently. A lump sum payment reduces your balance all at once, which can have a bigger immediate impact on interest since interest is calculated on your remaining balance. Both strategies save money — a lump sum just front-loads the benefit.</div>
+      </div>
+    </div>
+  </div>
 
 <footer>
   <span>© 2026 VestlyFi</span>
