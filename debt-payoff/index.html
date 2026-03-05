@@ -242,7 +242,7 @@
     </label>
     <div class="extra-input-wrap">
       <span class="prefix">$</span>
-      <input type="number" id="extraPayment" placeholder="e.g. 200" min="0">
+      <input type="number" id="extraPayment" min="0">
     </div>
   </div>
 
@@ -346,10 +346,10 @@ function addDebtRow(preset = null) {
   row.className = 'debt-row';
   row.id = 'debt-' + id;
   row.innerHTML = `
-    <div><input class="debt-input" type="text" placeholder="e.g. Visa Card" id="name-${id}" value="${preset?.name || ''}"></div>
-    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" placeholder="e.g. 5,000" id="balance-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.balance ? Number(preset.balance).toLocaleString() : ''}"></div>
-    <div class="input-with-suffix"><input class="debt-input" type="number" placeholder="e.g. 22" min="0" max="100" step="0.1" id="rate-${id}" oninput="checkCalcBtn()" value="${preset?.rate || ''}"><span class="suffix">%</span></div>
-    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" placeholder="e.g. 100" id="min-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.min ? Number(preset.min).toLocaleString() : ''}"></div>
+    <div><input class="debt-input" type="text" id="name-${id}" value="${preset?.name || ''}"></div>
+    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" id="balance-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.balance ? Number(preset.balance).toLocaleString() : ''}"></div>
+    <div class="input-with-suffix"><input class="debt-input" type="number" min="0" max="100" step="0.1" id="rate-${id}" oninput="checkCalcBtn()" value="${preset?.rate || ''}"><span class="suffix">%</span></div>
+    <div class="input-with-prefix"><span class="prefix">$</span><input class="debt-input" type="text" id="min-${id}" oninput="formatDebtCommas(this); checkCalcBtn()" value="${preset?.min ? Number(preset.min).toLocaleString() : ''}"></div>
     <button class="btn-remove" onclick="removeDebt(${id})" title="Remove">×</button>
   `;
   document.getElementById('debtRows').appendChild(row);
