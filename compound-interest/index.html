@@ -2,16 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compound Interest Calculator — VestlyFi</title>
-<meta name="description" content="See exactly how your money grows over time. Visualize compounding returns with or without monthly contributions.">
+<title>Compound Interest Calculator — See How Your Money Grows Over Time | VestlyFi</title>
+<meta name="description" content="See how compound interest grows your money over time. Model different contribution amounts, interest rates, and time horizons to plan your investments.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/compound-interest/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is compound interest?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Compound interest means you earn returns not just on your original investment but on the returns themselves. Over time this creates exponential growth. The longer your money compounds, the more dramatic the effect becomes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does interest compound?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on the account or investment. Savings accounts often compound daily or monthly. Investment accounts that track index funds compound effectively every time the market moves. The more frequently interest compounds, the faster your balance grows."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does starting early matter so much?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because compounding is exponential. Someone who invests $5,000 a year from age 25 to 35 and then stops will often end up with more money at retirement than someone who invests $5,000 a year from age 35 to 65. Time in the market is more valuable than the amount invested."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a realistic rate of return to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The S&P 500 has historically returned around 10% annually before inflation, or roughly 7% after inflation. Most financial planners use 6-7% as a conservative long term estimate. Using a lower number gives you a more realistic floor for planning purposes."
+      }
+    }
+  ]
+}
+</script>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
@@ -101,6 +142,16 @@
 
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
 
+  /* SEO CONTENT */
+  .seo-section { max-width:720px; margin:0 auto; padding:40px 24px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--gold); }
@@ -151,7 +202,7 @@
       <div class="input-group">
         <label>Annual Return Rate</label>
         <div class="input-wrap">
-          <input type="number" id="rate" placeholder="e.g. 8" min="0" max="30" class="has-suffix" oninput="checkCalcBtn()">
+          <input type="number" id="rate" min="0" max="30" class="has-suffix" oninput="checkCalcBtn()" value="7">
           <span class="input-suffix">% / yr</span>
         </div>
       </div>
@@ -218,6 +269,33 @@
     </div>
 
     <p class="disclaimer">For educational purposes only. Not financial advice. Returns are not guaranteed.</p>
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Compound interest is the reason small amounts invested early can grow into life-changing sums. Most people understand the concept but underestimate how powerful it is in practice. The math is straightforward: your returns generate their own returns, and that cycle repeats for as long as your money stays invested.</p>
+    <p>The two variables that matter most are time and consistency. A higher interest rate helps, but starting early and contributing regularly will outperform a great rate started late almost every time. This calculator lets you model exactly how those variables interact so you can see the impact of your decisions before you make them.</p>
+  </div>
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is compound interest?</div>
+      <div class="faq-a">Compound interest means you earn returns not just on your original investment but on the returns themselves. Over time this creates exponential growth. The longer your money compounds, the more dramatic the effect becomes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How often does interest compound?</div>
+      <div class="faq-a">It depends on the account or investment. Savings accounts often compound daily or monthly. Investment accounts that track index funds compound effectively every time the market moves. The more frequently interest compounds, the faster your balance grows.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why does starting early matter so much?</div>
+      <div class="faq-a">Because compounding is exponential. Someone who invests $5,000 a year from age 25 to 35 and then stops will often end up with more money at retirement than someone who invests $5,000 a year from age 35 to 65. Time in the market is more valuable than the amount invested.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is a realistic rate of return to use?</div>
+      <div class="faq-a">The S&amp;P 500 has historically returned around 10% annually before inflation, or roughly 7% after inflation. Most financial planners use 6-7% as a conservative long term estimate. Using a lower number gives you a more realistic floor for planning purposes.</div>
+    </div>
   </div>
 </div>
 
@@ -430,7 +508,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 window.addEventListener('load', () => {
   document.getElementById('principal').value = '10,000';
   document.getElementById('monthly').value = '500';
-  document.getElementById('rate').value = '8';
+  document.getElementById('rate').value = '7';
   document.getElementById('years').value = '30';
   checkCalcBtn();
 });
