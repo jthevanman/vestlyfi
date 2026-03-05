@@ -2,16 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="impact-site-verification" value="1d007de5-5f51-4bd4-afb9-cb6f5a0ceb33">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How Much House Can I Afford? — VestlyFi</title>
-<meta name="description" content="Find out how much home you can actually afford based on your income, debts, and down payment. Includes monthly payment breakdown.">
+<title>How Much House Can I Afford? — Free Home Affordability Calculator | VestlyFi</title>
+<meta name="description" content="Find out how much house you can afford based on your income, debts, and down payment. See your max home price, monthly payment, and debt-to-income ratio instantly.">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/house-affordability/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a debt-to-income ratio and why does it matter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your debt-to-income ratio (DTI) is your total monthly debt payments divided by your gross monthly income. Most lenders want to see a DTI below 43% to approve a mortgage. The lower it is, the better your chances of getting approved and the better rate you will likely qualify for."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much should I put down on a house?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "20% is the traditional target because it eliminates private mortgage insurance (PMI), which adds to your monthly payment. But plenty of people buy with less — FHA loans allow as little as 3.5% down. The tradeoff is a higher monthly payment and extra PMI costs until you build enough equity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does interest rate affect how much house I can afford?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Significantly. A 1% increase in mortgage rate on a $400,000 loan adds roughly $250 to your monthly payment. That same $250 could have qualified you for about $50,000 more house at a lower rate. Running the numbers at a few different rates is worth doing before you start shopping."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between pre-qualified and pre-approved?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pre-qualification is a quick estimate based on self-reported information and does not carry much weight with sellers. Pre-approval means a lender has verified your income, assets, and credit, and is a real commitment to lend up to a certain amount. In a competitive market pre-approval is essentially required."
+      }
+    }
+  ]
+}
+</script>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
@@ -109,6 +150,16 @@
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
 
+  /* SEO CONTENT */
+  .seo-section { max-width:720px; margin:0 auto; padding:40px 24px 60px; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--gold); }
@@ -178,14 +229,14 @@
         <label>Annual Gross Income</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="text" id="grossIncome" placeholder="e.g. 80,000" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+          <input type="text" id="grossIncome" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Monthly Debt Payments <span class="input-hint">(car, student loans, etc.)</span></label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="text" id="monthlyDebt" placeholder="e.g. 300" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+          <input type="text" id="monthlyDebt" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
     </div>
@@ -197,13 +248,13 @@
         <label>Down Payment</label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="text" id="downPayment" placeholder="e.g. 60,000" class="has-prefix" oninput="fmtComma(this); checkBtn()">
+          <input type="text" id="downPayment" class="has-prefix" oninput="fmtComma(this); checkBtn()">
         </div>
       </div>
       <div class="input-group">
         <label>Mortgage Rate</label>
         <div class="input-wrap">
-          <input type="number" id="mortgageRate" placeholder="e.g. 6.0" min="1" max="20" step="0.1" class="has-suffix" oninput="checkBtn()" value="6">
+          <input type="number" id="mortgageRate" min="1" max="20" step="0.1" class="has-suffix" oninput="checkBtn()" value="6">
           <span class="input-suffix">% / yr</span>
         </div>
 
@@ -244,6 +295,33 @@
 
     <button class="btn-recalc" onclick="document.getElementById('resultsSection').classList.remove('visible'); window.scrollTo({top:0,behavior:'smooth'})">← Adjust Inputs</button>
     <p class="disclaimer">For educational purposes only. Not financial advice. Actual loan approval depends on credit score, employment history, and lender criteria. Consult a mortgage professional before making home buying decisions.</p>
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Figuring out how much house you can actually afford is more complicated than most people expect. Lenders look at your debt-to-income ratio, your down payment, your credit score, and current mortgage rates — and the number they approve you for isn't always the number you should spend.</p>
+    <p>A good rule of thumb is to keep your total housing costs under 28% of your gross monthly income. That includes your mortgage payment, property taxes, and insurance. Going above that threshold doesn't mean you can't afford the house — it just means less breathing room if something changes.</p>
+  </div>
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is a debt-to-income ratio and why does it matter?</div>
+      <div class="faq-a">Your debt-to-income ratio (DTI) is your total monthly debt payments divided by your gross monthly income. Most lenders want to see a DTI below 43% to approve a mortgage. The lower it is, the better your chances of getting approved and the better rate you'll likely qualify for.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much should I put down on a house?</div>
+      <div class="faq-a">20% is the traditional target because it eliminates private mortgage insurance (PMI), which adds to your monthly payment. But plenty of people buy with less — FHA loans allow as little as 3.5% down. The tradeoff is a higher monthly payment and extra PMI costs until you build enough equity.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does interest rate affect how much house I can afford?</div>
+      <div class="faq-a">Significantly. A 1% increase in mortgage rate on a $400,000 loan adds roughly $250 to your monthly payment. That same $250 could have qualified you for about $50,000 more house at a lower rate. Running the numbers at a few different rates is worth doing before you start shopping.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's the difference between pre-qualified and pre-approved?</div>
+      <div class="faq-a">Pre-qualification is a quick estimate based on self-reported information — it doesn't carry much weight with sellers. Pre-approval means a lender has verified your income, assets, and credit, and is a real commitment to lend up to a certain amount. In a competitive market pre-approval is essentially required.</div>
+    </div>
   </div>
 </div>
 
