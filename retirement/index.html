@@ -9,6 +9,18 @@
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>
+
+function fmtComma(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  el.value = raw ? Number(raw).toLocaleString() : '';
+}
+
+function parseDollar(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return parseFloat((el.value || '').replace(/,/g, '')) || 0;
+}
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -509,7 +521,7 @@
           <label>Current Savings &amp; Investments</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="currentSavings" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="text" id="currentSavings" class="has-prefix" oninput="fmtComma(this); checkStep1()">
           </div>
         </div>
       </div>
@@ -519,14 +531,14 @@
           <label>Gross Annual Income</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="annualIncome" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="text" id="annualIncome" class="has-prefix" oninput="fmtComma(this); checkStep1()">
           </div>
         </div>
         <div class="input-group">
           <label>Monthly Investment Contributions</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="monthlyContrib" min="0" class="has-prefix" oninput="checkStep1()">
+            <input type="text" id="monthlyContrib" class="has-prefix" oninput="fmtComma(this); checkStep1()">
           </div>
         </div>
       </div>
@@ -559,7 +571,7 @@
         <label>Or enter your own <span class="label-hint">(annual, today's dollars)</span></label>
         <div class="input-wrap">
           <span class="input-prefix">$</span>
-          <input type="number" id="simpleSpendCustom" class="has-prefix" oninput="onSimpleSpendInput(this)">
+          <input type="text" id="simpleSpendCustom" class="has-prefix" oninput="fmtComma(this); onSimpleSpendInput(this)">
         </div>
       </div>
 
@@ -580,35 +592,35 @@
       <div class="spending-builder">
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏠</span> Housing <span style="font-size:.75rem;color:var(--muted)">(rent/mortgage, HOA, repairs)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_housing" min="0" oninput="updateSpendTotal(); checkStep2a()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_housing" oninput="fmtComma(this); updateSpendTotal(); checkStep2a()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🚗</span> Transport <span style="font-size:.75rem;color:var(--muted)">(car, insurance, gas, transit)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_transport" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_transport" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🍽️</span> Food <span style="font-size:.75rem;color:var(--muted)">(groceries + dining out)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_food" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_food" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🏥</span> Healthcare <span style="font-size:.75rem;color:var(--muted)">(premiums, copays, dental)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_health" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_health" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">✈️</span> Travel &amp; Leisure <span style="font-size:.75rem;color:var(--muted)">(vacations, hobbies, entertainment)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_travel" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_travel" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">🛍️</span> Personal &amp; Misc <span style="font-size:.75rem;color:var(--muted)">(clothing, subscriptions, gifts)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_misc" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_misc" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">👨‍👩‍👧</span> Family <span style="font-size:.75rem;color:var(--muted)">(dependents, college support, eldercare)</span></div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_family" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_family" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-row">
           <div class="spending-label"><span class="spending-icon">📦</span> Other</div>
-          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="number" class="spend-cat has-prefix" id="sp_other" min="0" oninput="updateSpendTotal()"></div>
+          <div class="spending-input-wrap"><span class="input-prefix">$</span><input type="text" class="spend-cat has-prefix" id="sp_other" oninput="fmtComma(this); updateSpendTotal()"></div>
         </div>
         <div class="spending-total">
           <div class="spending-total-label">Estimated Monthly Total</div>
@@ -774,7 +786,7 @@
           <label>Total estimated monthly income from other sources</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="otherIncome" min="0" class="has-prefix">
+            <input type="text" id="otherIncome" class="has-prefix" oninput="fmtComma(this)">
           </div>
         </div>
 
@@ -806,6 +818,15 @@
             <div class="ic-left"><div class="ic-name">Average <span style="color:var(--gold);font-size:.78rem">— Suggested</span></div><div class="ic-desc">Broad market index funds. Historical US average.</div></div>
             <div class="ic-rate">10%</div>
           </div>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-top:22px;">
+        <label>Expected Inflation Rate</label>
+        <div class="pill-group" id="simpleInflationPills">
+          <button class="pill" data-val="2" onclick="selectSimpleInflation(this)">2% — Low</button>
+          <button class="pill selected" data-val="3" onclick="selectSimpleInflation(this)">3% — Typical</button>
+          <button class="pill" data-val="4" onclick="selectSimpleInflation(this)">4% — High</button>
         </div>
       </div>
 
@@ -1003,9 +1024,9 @@ function startWizard() { showStep(1); }
 // ═══════════════════════════════════════════════════
 function validateStep1() {
   const ca = parseInt(document.getElementById('currentAge').value);
-  const cs = parseFloat(document.getElementById('currentSavings').value);
-  const ai = parseFloat(document.getElementById('annualIncome').value);
-  const mc = parseFloat(document.getElementById('monthlyContrib').value);
+  const cs = parseDollar('currentSavings');
+  const ai = parseDollar('annualIncome');
+  const mc = parseDollar('monthlyContrib');
   const err = document.getElementById('err-1');
 
   if (!ca || ca < 16 || ca > 80 || isNaN(cs) || cs < 0 || isNaN(ai) || ai < 0 || isNaN(mc) || mc < 0) {
@@ -1036,7 +1057,7 @@ function onSimpleSpendInput(inp) {
 }
 
 function validateStep2s() {
-  const custom = parseFloat(document.getElementById('simpleSpendCustom').value);
+  const custom = parseDollar('simpleSpendCustom');
   if (custom > 0) S.annualSpend = custom;
   if (!S.annualSpend || S.annualSpend <= 0) {
     document.getElementById('err-2s').style.display = 'block'; return;
@@ -1053,7 +1074,7 @@ S.annualSpend = 50000; // default
 function updateSpendTotal() {
   const cats = document.querySelectorAll('.spend-cat');
   let total = 0;
-  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  cats.forEach(c => { total += parseFloat((c.value || '').replace(/,/g, '')) || 0; });
   document.getElementById('spendTotalDisplay').textContent = '$' + Math.round(total).toLocaleString();
   document.getElementById('spendAnnualDisplay').textContent = '$' + Math.round(total * 12).toLocaleString();
 }
@@ -1061,7 +1082,7 @@ function updateSpendTotal() {
 function validateStep2a() {
   const cats = document.querySelectorAll('.spend-cat');
   let total = 0;
-  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  cats.forEach(c => { total += parseFloat((c.value || '').replace(/,/g, '')) || 0; });
   if (total <= 0) { document.getElementById('err-2a').style.display = 'block'; return; }
   document.getElementById('err-2a').style.display = 'none';
   S.annualSpend = total * 12;
@@ -1126,16 +1147,22 @@ function selectSimpleInvest(card, rate) {
   S.investRate = rate;
 }
 
+function selectSimpleInflation(btn) {
+  document.querySelectorAll('#simpleInflationPills .pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  S.inflationRate = parseFloat(btn.dataset.val);
+}
+
 // ═══════════════════════════════════════════════════
 // CALCULATION ENGINE
 // ═══════════════════════════════════════════════════
 function calculateResults() {
   if (S.mode === 'advanced') {
-    S.otherIncome = (parseFloat(document.getElementById('otherIncome').value) || 0) * 12;
+    S.otherIncome = (parseDollar('otherIncome') || 0) * 12;
   } else {
     S.otherIncome = 0;
     S.locationMultiplier = 1.0;
-    S.inflationRate = 3;
+    // inflationRate set by selectSimpleInflation, defaults to 3
   }
 
   const { currentAge, currentSavings, monthlyContrib, annualSpend,
@@ -1397,9 +1424,9 @@ function closeModal(id) {
 // ═══════════════════════════════════════════════════
 function checkStep1() {
   const ca = parseInt(document.getElementById('currentAge').value);
-  const cs = document.getElementById('currentSavings').value;
-  const ai = document.getElementById('annualIncome').value;
-  const mc = document.getElementById('monthlyContrib').value;
+  const cs = parseDollar('currentSavings');
+  const ai = parseDollar('annualIncome');
+  const mc = parseDollar('monthlyContrib');
   const btn = document.getElementById('btn-step1');
   if (!btn) return;
   const valid = ca >= 16 && ca <= 80 && cs !== '' && ai !== '' && mc !== '';
@@ -1409,7 +1436,7 @@ function checkStep1() {
 function checkStep2a() {
   const cats = document.querySelectorAll('.spend-cat');
   let total = 0;
-  cats.forEach(c => { total += parseFloat(c.value) || 0; });
+  cats.forEach(c => { total += parseFloat((c.value || '').replace(/,/g, '')) || 0; });
   const btn = document.getElementById('btn-step2a');
   if (btn) btn.disabled = total <= 0;
 }
