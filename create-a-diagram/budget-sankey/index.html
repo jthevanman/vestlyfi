@@ -185,18 +185,18 @@
 
   <div class="page-tag">Create a Diagram</div>
   <h1>Budget <em>Sankey Chart</em></h1>
-  <p class="sub">Enter your monthly income and where it goes. We'll generate a flow diagram you can download and share.</p>
+  <p class="sub">Enter your income and where it goes. We'll generate a flow diagram you can download and share.</p>
 
   <!-- INCOME -->
   <div class="input-card">
-    <div class="section-label">Monthly Income</div>
+    <div class="section-label">Income</div>
     <div id="incomeList"></div>
     <button class="btn-add-income" onclick="addIncomeRow()">+ Add income source</button>
   </div>
 
   <!-- EXPENSES -->
   <div class="input-card">
-    <div class="section-label">Monthly Expenses</div>
+    <div class="section-label">Expenses</div>
     <div class="expense-list" id="expenseList"></div>
     <button class="btn-add-row" onclick="addRow()">+ Add category</button>
 
@@ -240,11 +240,13 @@ const COLORS = [
 ];
 
 const DEFAULT_ROWS = [
-  { name: 'Housing', val: '' },
-  { name: 'Food', val: '' },
-  { name: 'Transportation', val: '' },
-  { name: 'Savings', val: '' },
-  { name: 'Other', val: '' },
+  { name: 'Mortgage or rent payment here', val: '2500' },
+  { name: 'Groceries and dining out costs', val: '800' },
+  { name: 'Transportation and car expenses', val: '450' },
+  { name: '401k and investment savings', val: '1200' },
+  { name: 'Utilities electric gas water', val: '95' },
+  { name: 'Health insurance and medical', val: '300' },
+  { name: 'Entertainment and subscriptions', val: '150' },
 ];
 
 let rowId = 0;
@@ -260,7 +262,8 @@ function parseMoney(val) {
 }
 
 const DEFAULT_INCOME_ROWS = [
-  { name: 'Take-home pay' },
+  { name: 'Primary job take home pay', val: '5000' },
+  { name: 'Side income freelance work', val: '495' },
 ];
 
 function addIncomeRow(preset = {}) {
@@ -270,7 +273,7 @@ function addIncomeRow(preset = {}) {
   div.id = `inc-${id}`;
   const isFirst = id === 0;
   div.innerHTML = `
-    <input type="text" class="no-prefix" id="iname-${id}" value="${preset.name || ''}" oninput="updateTotals()">
+    <input type="text" class="no-prefix" id="iname-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()">
     <div class="input-wrap">
       <span class="input-prefix">$</span>
       <input type="text" id="ival-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
@@ -302,7 +305,7 @@ function addRow(preset = {}) {
   div.className = 'expense-row';
   div.id = `row-${id}`;
   div.innerHTML = `
-    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" oninput="updateTotals()" placeholder="">
+    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()" placeholder="">
     <div class="input-wrap">
       <span class="input-prefix">$</span>
       <input type="text" id="val-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
@@ -373,6 +376,7 @@ function generate() {
   document.getElementById('diagramOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+
 function drawSankey(totalIncome, incRows, rows) {
   const canvas = document.getElementById('sankeyCanvas');
 
@@ -386,7 +390,7 @@ function drawSankey(totalIncome, incRows, rows) {
 
   // Nodes scale by sqrt. Each row gets a SLOT = max(scaledH, LABEL_BLOCK) so thin nodes
   // still have space for their label. The node bar is centered inside the slot.
-  const LABEL_BLOCK = 70; // name line + amount line + padding
+  const LABEL_BLOCK = 100; // name line (up to 2) + amount line + padding
   const TOTAL_EXPENSE_H = 600;
   const totalExpVal = rows.reduce((s, r) => s + r.val, 0);
   const sqrtTotal = rows.reduce((s, r) => s + Math.sqrt(r.val), 0);
@@ -527,25 +531,36 @@ function drawSankey(totalIncome, incRows, rows) {
     const labelX = RIGHT_NODE_X + NODE_W + 20;
     const labelY = labelPositions[i];
 
-    // Name
+    // Name — word wrap up to 2 lines
     ctx.fillStyle = color;
     ctx.font = '500 22px Outfit, sans-serif';
-    ctx.fillText(row.name, labelX, labelY);
+    const maxLabelW = 190;
+    const words = row.name.split(' ');
+    let line1 = '', line2 = '';
+    for (const word of words) {
+      const test = line1 ? line1 + ' ' + word : word;
+      if (ctx.measureText(test).width <= maxLabelW) { line1 = test; }
+      else { line2 = line2 ? line2 + ' ' + word : word; }
+    }
+    ctx.fillText(line1, labelX, labelY);
+    if (line2) ctx.fillText(line2, labelX, labelY + 26);
 
-    // Amount always directly below name
+    // Amount — push down extra line if name wrapped
+    const nameLineCount = line2 ? 2 : 1;
+    const amountY = labelY + LABEL_LINE_H + (nameLineCount > 1 ? 26 : 0);
     ctx.fillStyle = 'rgba(245,240,232,0.55)';
     ctx.font = '300 18px Outfit, sans-serif';
-    ctx.fillText('$' + row.val.toLocaleString(), labelX, labelY + LABEL_LINE_H);
+    ctx.fillText('$' + row.val.toLocaleString(), labelX, amountY);
 
-    // Percentage pill
+    // Percentage pill — aligned with amount
     const pct = Math.round((row.val / income) * 100);
     const pillX = labelX + 170;
     if (pillX + 70 < W - 10) {
       ctx.fillStyle = color + '22';
-      ctx.beginPath(); ctx.roundRect(pillX, labelY - 16, 62, 24, 12); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(pillX, amountY - 16, 62, 24, 12); ctx.fill();
       ctx.fillStyle = color + 'cc';
       ctx.font = '500 15px Outfit, sans-serif';
-      ctx.fillText(pct + '%', pillX + 12, labelY + 2);
+      ctx.fillText(pct + '%', pillX + 12, amountY + 2);
     }
 
     rightY += nodeH + NODE_GAP;
