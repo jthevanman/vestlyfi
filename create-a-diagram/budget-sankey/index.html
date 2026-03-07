@@ -607,29 +607,30 @@ function drawSankey(totalIncome, incRows, rows) {
 
 async function downloadChart() {
   const canvas = document.getElementById('sankeyCanvas');
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   canvas.toBlob(async blob => {
     const file = new File([blob], 'vestlyfi-budget-sankey.png', { type: 'image/png' });
 
     // Mobile: Web Share API prompts "Save to Photos" on iOS/Android
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], title: 'My Budget Sankey' });
         return;
       } catch (e) {
-        // User cancelled or share failed — fall through to direct download
+        // fall through
       }
     }
 
-    // Desktop: blob URL reliably triggers file explorer save dialog
-    const url = URL.createObjectURL(blob);
+    // Desktop: use a real anchor tag in the document with toDataURL for max compatibility
+    const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.download = 'vestlyfi-budget-sankey.png';
-    link.href = url;
+    link.href = dataUrl;
+    link.style.display = 'none';
     document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    setTimeout(() => document.body.removeChild(link), 100);
   });
 }
 
