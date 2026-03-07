@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VestlyFi — Financial Calculators and Diagrams</title>
+<title>VestlyFi: Financial Calculators and Diagrams</title>
 <meta name="description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
 <link rel="canonical" href="https://vestlyfi.com/">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
@@ -136,19 +136,13 @@
 
   /* ── HERO RIGHT — stat cards ── */
   .hero-right {
-    display: grid; grid-template-columns: 1fr 1fr;
+    display: grid; grid-template-columns: 1fr;
     gap: 12px;
     animation: fadeUp 0.6s cubic-bezier(.4,0,.2,1) 0.1s both;
   }
 
-  .stat-card {
-    background: var(--navy-card);
-    border: 1px solid var(--border-soft);
-    border-radius: 14px; padding: 20px;
-    transition: border-color .2s, transform .2s;
-  }
-  .stat-card:hover { border-color: var(--border); transform: translateY(-2px); }
-  .stat-card:first-child { grid-column: span 2; }
+  .stat-card { padding: 4px 0 16px; border-bottom: 1px solid var(--border-soft); }
+  .stat-card:last-child { border-bottom: none; }
 
   .stat-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
   .stat-value { font-size: 1.9rem; font-weight: 400; color: var(--cream); line-height: 1; margin-bottom: 4px; }
@@ -157,13 +151,11 @@
 
   @media(max-width: 860px) {
     .hero { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 40px; }
-    .hero-right { grid-template-columns: 1fr 1fr; }
-    .stat-card:first-child { grid-column: span 2; }
-  }
+    .hero-right { grid-template-columns: 1fr; }
+    }
   @media(max-width: 480px) {
     .hero-right { grid-template-columns: 1fr; }
-    .stat-card:first-child { grid-column: span 1; }
-  }
+    }
 
   /* ── DIVIDER ── */
   .divider {
@@ -332,11 +324,7 @@
       <div class="stat-value">Calculators <em>&</em> diagrams</div>
       <div class="stat-desc">Tools for mortgages, retirement, debt, and investing. Plus diagrams that make your numbers visual.</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Diagrams</div>
-      <div class="stat-value"><em>Visual</em></div>
-      <div class="stat-desc">Turn your numbers into shareable charts.</div>
-    </div>
+
     <div class="stat-card">
       <div class="stat-label">Built for</div>
       <div class="stat-value"><em>Real</em> answers</div>
