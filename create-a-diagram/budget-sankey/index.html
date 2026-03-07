@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Budget Sankey Chart — Visualize Where Your Money Goes | VestlyFi</title>
+<meta name="description" content="Create a shareable Sankey diagram of your budget. Enter your income and expenses and download a chart showing exactly where your money flows.">
+<link rel="canonical" href="https://vestlyfi.com/create-a-diagram/budget-sankey/">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-mid: #111827;
+    --navy-light: #1a2540;
+    --navy-card: #141d35;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.13);
+    --cream: #f5f0e8;
+    --cream-dim: rgba(245,240,232,0.6);
+    --muted: rgba(245,240,232,0.35);
+    --border: rgba(201,168,76,0.15);
+    --border-soft: rgba(255,255,255,0.07);
+    --red: #f87171;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy); color: var(--cream);
+    font-family: 'Outfit', sans-serif; font-weight: 300; min-height: 100vh;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 0%, rgba(201,168,76,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 60% at 90% 100%, rgba(201,168,76,0.04) 0%, transparent 55%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50; padding: 0 40px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border-soft);
+    background: rgba(10,15,30,0.85); backdrop-filter: blur(12px);
+  }
+  .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; }
+  .nav-logo:hover { opacity:.8; }
+  .nav-links { display:flex; gap:24px; align-items:center; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; font-weight:300; transition:color .15s; }
+  .nav-links a:hover { color:var(--cream); }
+  @media(max-width:600px) { .nav-links{display:none;} nav{padding:0 20px;} }
+
+  /* PAGE */
+  .page { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:56px 24px 80px; }
+  .page-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .page h1 { font-family:'Outfit',sans-serif; font-size:clamp(1.8rem,5vw,2.6rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .page h1 em { font-style:italic; color:var(--gold-light); }
+  .page .sub { color:var(--muted); font-size:0.9rem; line-height:1.65; margin-bottom:40px; max-width:520px; }
+
+  /* INPUT CARD */
+  .input-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:16px; padding:24px; margin-bottom:20px; }
+  .section-label { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; font-weight:500; }
+
+  .income-row { display:grid; grid-template-columns:1fr 140px 32px; gap:10px; align-items:center; margin-bottom:10px; }
+  .btn-add-income { margin-top:4px; padding:8px; width:100%; background:none; border:1px dashed var(--border-soft); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.83rem; cursor:pointer; transition:all .18s; }
+  .btn-add-income:hover { border-color:var(--gold); color:var(--gold); }
+  .btn-remove-income { width:32px; height:32px; border-radius:8px; background:none; border:1px solid var(--border-soft); color:var(--muted); cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:all .15s; flex-shrink:0; }
+  .btn-remove-income:hover { border-color:var(--red); color:var(--red); }
+  .income-row label { font-size:0.85rem; color:var(--cream-dim); width:120px; flex-shrink:0; }
+  .input-wrap { position:relative; flex:1; }
+  .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.9rem; pointer-events:none; z-index:1; }
+  input[type="text"], input[type="number"] {
+    width:100%; background:var(--navy-mid); border:1px solid var(--border-soft);
+    border-radius:10px; padding:11px 14px 11px 36px; color:var(--cream);
+    font-family:'Outfit',sans-serif; font-size:0.92rem; outline:none; transition:border-color .15s;
+  }
+  input[type="text"]:focus, input[type="number"]:focus { border-color:var(--gold); }
+  input[type="text"].no-prefix, input[type="number"].no-prefix { padding-left:14px; }
+
+  /* EXPENSE ROWS */
+  .expense-list { display:flex; flex-direction:column; gap:10px; }
+  .expense-row {
+    display:grid; grid-template-columns:1fr 140px 32px;
+    gap:10px; align-items:center;
+  }
+  .expense-row input[type="text"].no-prefix { padding-left:14px; }
+  .btn-remove {
+    width:32px; height:32px; border-radius:8px; background:none;
+    border:1px solid var(--border-soft); color:var(--muted);
+    cursor:pointer; font-size:1rem; display:flex; align-items:center;
+    justify-content:center; transition:all .15s; flex-shrink:0;
+  }
+  .btn-remove:hover { border-color:var(--red); color:var(--red); }
+
+  .btn-add-row {
+    margin-top:12px; padding:10px; width:100%;
+    background:none; border:1px dashed var(--border-soft);
+    border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif;
+    font-size:0.83rem; cursor:pointer; transition:all .18s;
+  }
+  .btn-add-row:hover { border-color:var(--gold); color:var(--gold); }
+
+  /* TOTALS */
+  .totals-bar {
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--navy-mid); border-radius:10px; padding:12px 16px;
+    margin-top:16px; font-size:0.85rem;
+  }
+  .totals-bar span { color:var(--muted); }
+  .totals-bar .total-val { color:var(--cream); font-weight:500; }
+  .totals-bar .surplus { color:var(--green); }
+  .totals-bar .deficit { color:var(--red); }
+
+  /* GENERATE BTN */
+  .btn-generate {
+    width:100%; margin-top:24px; padding:14px;
+    background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    border:none; border-radius:10px; color:var(--navy);
+    font-family:'Outfit',sans-serif; font-weight:500; font-size:0.95rem;
+    cursor:pointer; transition:transform .15s,box-shadow .2s;
+    box-shadow:0 4px 20px rgba(201,168,76,0.28);
+  }
+  .btn-generate:hover { transform:translateY(-1px); box-shadow:0 6px 28px rgba(201,168,76,0.38); }
+  .btn-generate:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+  /* DIAGRAM OUTPUT */
+  #diagramOutput { display:none; margin-top:32px; }
+  .diagram-card-wrap {
+    background:var(--navy-card); border:1px solid var(--border-soft);
+    border-radius:16px; padding:28px; margin-bottom:16px;
+  }
+  .diagram-title { font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  #sankeyCanvas { width:100%; border-radius:10px; display:block; }
+
+  .share-row { display:flex; gap:10px; margin-top:16px; }
+  .btn-download {
+    flex:1; padding:12px; border-radius:10px;
+    background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    border:none; color:var(--navy); font-family:'Outfit',sans-serif;
+    font-weight:500; font-size:0.88rem; cursor:pointer; transition:all .18s;
+  }
+  .btn-download:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(201,168,76,0.3); }
+  .btn-copy {
+    padding:12px 20px; border-radius:10px;
+    background:var(--navy-light); border:1px solid var(--border-soft);
+    color:var(--cream-dim); font-family:'Outfit',sans-serif;
+    font-size:0.88rem; cursor:pointer; transition:all .18s;
+  }
+  .btn-copy:hover { border-color:var(--gold); color:var(--gold); }
+  .share-note { font-size:0.75rem; color:var(--muted); text-align:center; margin-top:8px; }
+
+  /* FOOTER */
+  footer {
+    position:relative; z-index:1; border-top:1px solid var(--border-soft);
+    padding:28px 40px; display:flex; justify-content:space-between;
+    align-items:center; font-size:0.75rem; color:var(--muted); flex-wrap:wrap; gap:12px;
+  }
+  footer a { color:var(--muted); text-decoration:none; transition:color .15s; }
+  footer a:hover { color:var(--gold); }
+  .footer-links { display:flex; gap:20px; }
+  @media(max-width:600px) { footer{padding:24px 20px;} .page{padding:40px 20px 60px;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">VestlyFi</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-tag">Create a Diagram</div>
+  <h1>Budget <em>Sankey Chart</em></h1>
+  <p class="sub">Enter your monthly income and where it goes. We'll generate a flow diagram you can download and share.</p>
+
+  <!-- INCOME -->
+  <div class="input-card">
+    <div class="section-label">Monthly Income</div>
+    <div id="incomeList"></div>
+    <button class="btn-add-income" onclick="addIncomeRow()">+ Add income source</button>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="input-card">
+    <div class="section-label">Monthly Expenses</div>
+    <div class="expense-list" id="expenseList"></div>
+    <button class="btn-add-row" onclick="addRow()">+ Add category</button>
+
+    <div class="totals-bar">
+      <span>Total expenses</span>
+      <span class="total-val" id="totalExp">$0</span>
+      <span id="surplusLabel" class="surplus"></span>
+    </div>
+  </div>
+
+  <button class="btn-generate" id="genBtn" onclick="generate()" disabled>Generate Diagram →</button>
+
+  <!-- OUTPUT -->
+  <div id="diagramOutput">
+    <div class="diagram-card-wrap">
+      <div class="diagram-title">Your Budget Flow</div>
+      <canvas id="sankeyCanvas"></canvas>
+    </div>
+    <div class="share-row">
+      <button class="btn-download" onclick="downloadChart()">Download Image</button>
+      <button class="btn-copy" onclick="copyChart()">Copy</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="/">All Calculators</a>
+    <a href="/create-a-diagram/">All Diagrams</a>
+  </div>
+</footer>
+
+<script>
+// ── Palette ──
+const COLORS = [
+  '#4ade80', '#60a5fa', '#fb923c', '#f472b6',
+  '#a78bfa', '#fbbf24', '#34d399', '#38bdf8',
+  '#f87171', '#c084fc'
+];
+
+const DEFAULT_ROWS = [
+  { name: 'Housing', val: '' },
+  { name: 'Food', val: '' },
+  { name: 'Transport', val: '' },
+  { name: 'Savings', val: '' },
+  { name: 'Other', val: '' },
+];
+
+let rowId = 0;
+let incomeRowId = 0;
+
+function fmtComma(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  el.value = raw ? Number(raw).toLocaleString() : '';
+}
+
+function parseMoney(val) {
+  return parseFloat((val || '').replace(/,/g, '')) || 0;
+}
+
+const DEFAULT_INCOME_ROWS = [
+  { name: 'Take-home pay' },
+];
+
+function addIncomeRow(preset = {}) {
+  const id = incomeRowId++;
+  const div = document.createElement('div');
+  div.className = 'income-row';
+  div.id = `inc-${id}`;
+  const isFirst = id === 0;
+  div.innerHTML = `
+    <input type="text" class="no-prefix" id="iname-${id}" value="${preset.name || ''}" oninput="updateTotals()">
+    <div class="input-wrap">
+      <span class="input-prefix">$</span>
+      <input type="text" id="ival-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
+    </div>
+    ${isFirst ? '<div style="width:32px;flex-shrink:0;"></div>' : `<button class="btn-remove-income" onclick="removeIncomeRow(${id})">×</button>`}
+  `;
+  document.getElementById('incomeList').appendChild(div);
+  updateTotals();
+}
+
+function removeIncomeRow(id) {
+  document.getElementById(`inc-${id}`)?.remove();
+  updateTotals();
+}
+
+function getIncomeRows() {
+  return [...document.querySelectorAll('.income-row')].map(row => {
+    const id = row.id.replace('inc-', '');
+    return {
+      name: document.getElementById(`iname-${id}`)?.value || 'Income',
+      val: parseMoney(document.getElementById(`ival-${id}`)?.value)
+    };
+  }).filter(r => r.val > 0);
+}
+
+function addRow(preset = {}) {
+  const id = rowId++;
+  const div = document.createElement('div');
+  div.className = 'expense-row';
+  div.id = `row-${id}`;
+  div.innerHTML = `
+    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" oninput="updateTotals()" placeholder="">
+    <div class="input-wrap">
+      <span class="input-prefix">$</span>
+      <input type="text" id="val-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
+    </div>
+    <button class="btn-remove" onclick="removeRow(${id})">×</button>
+  `;
+  document.getElementById('expenseList').appendChild(div);
+  updateTotals();
+}
+
+function removeRow(id) {
+  document.getElementById(`row-${id}`)?.remove();
+  updateTotals();
+}
+
+function getRows() {
+  return [...document.querySelectorAll('.expense-row')].map(row => {
+    const id = row.id.replace('row-', '');
+    return {
+      name: document.getElementById(`name-${id}`)?.value || 'Other',
+      val: parseMoney(document.getElementById(`val-${id}`)?.value)
+    };
+  }).filter(r => r.val > 0);
+}
+
+function updateTotals() {
+  const incRows = getIncomeRows();
+  const income = incRows.reduce((s, r) => s + r.val, 0);
+  const rows = getRows();
+  const total = rows.reduce((s, r) => s + r.val, 0);
+  const surplus = income - total;
+
+  document.getElementById('totalExp').textContent = '$' + total.toLocaleString();
+
+  const lbl = document.getElementById('surplusLabel');
+  if (income > 0) {
+    if (surplus >= 0) {
+      lbl.textContent = `$${surplus.toLocaleString()} unallocated`;
+      lbl.className = 'surplus';
+    } else {
+      lbl.textContent = `$${Math.abs(surplus).toLocaleString()} over budget`;
+      lbl.className = 'deficit';
+    }
+  } else {
+    lbl.textContent = '';
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = !(income > 0 && rows.length > 0);
+}
+
+// ── Sankey renderer ──
+function generate() {
+  const incRows = getIncomeRows();
+  const income = incRows.reduce((s, r) => s + r.val, 0);
+  const rows = getRows();
+  if (!income || !rows.length) return;
+
+  const totalExp = rows.reduce((s, r) => s + r.val, 0);
+  const surplus = income - totalExp;
+  const allRows = surplus > 0.5
+    ? [...rows, { name: 'Unallocated', val: surplus }]
+    : rows;
+
+  drawSankey(income, incRows, allRows);
+
+  document.getElementById('diagramOutput').style.display = 'block';
+  document.getElementById('diagramOutput').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function drawSankey(totalIncome, incRows, rows) {
+  const canvas = document.getElementById('sankeyCanvas');
+
+  const EXPORT_W = 1200;
+  const NODE_W = 28;
+  const NODE_GAP = 12;
+  const PAD_V = 48;
+  const PAD_H = 40;
+  const LABEL_AREA_LEFT = 200;
+  const LABEL_AREA_RIGHT = 220;
+
+  // Nodes scale by sqrt. Each row gets a SLOT = max(scaledH, LABEL_BLOCK) so thin nodes
+  // still have space for their label. The node bar is centered inside the slot.
+  const LABEL_BLOCK = 70; // name line + amount line + padding
+  const TOTAL_EXPENSE_H = 600;
+  const totalExpVal = rows.reduce((s, r) => s + r.val, 0);
+  const sqrtTotal = rows.reduce((s, r) => s + Math.sqrt(r.val), 0);
+  const rawHeights = rows.map(r => (Math.sqrt(r.val) / sqrtTotal) * TOTAL_EXPENSE_H);
+  const slotHeights = rawHeights.map(h => Math.max(h, LABEL_BLOCK));
+  const rawTotal = slotHeights.reduce((s, h) => s + h, 0) + (rows.length - 1) * NODE_GAP;
+  const expensesH = rawTotal;
+
+  // Income bars scale proportionally by value, with same slot system as expenses
+  const INC_GAP = 10;
+  const INC_LABEL_BLOCK = 70;
+  const INC_TOTAL_H = 300; // total scaled height for income side
+  const incSqrtTotal = incRows.reduce((s, r) => s + Math.sqrt(r.val), 0);
+  const incRawHeights = incRows.map(r => incSqrtTotal > 0 ? (Math.sqrt(r.val) / incSqrtTotal) * INC_TOTAL_H : INC_TOTAL_H);
+  const incSlotHeights = incRawHeights.map(h => Math.max(h, INC_LABEL_BLOCK));
+  const incomeBarH = incSlotHeights.reduce((s, h) => s + h, 0) + (incRows.length - 1) * INC_GAP;
+
+  const H = Math.max(expensesH + PAD_V * 2, incomeBarH + PAD_V * 2);
+  const W = EXPORT_W;
+
+  canvas.width = W;
+  canvas.height = H;
+
+  const displayW = canvas.parentElement.clientWidth - 56;
+  canvas.style.width = displayW + 'px';
+  canvas.style.height = Math.round(H * (displayW / W)) + 'px';
+
+  const ctx = canvas.getContext('2d');
+
+  // ── Background ──
+  ctx.fillStyle = '#080e1d';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, W, H, 16);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+  ctx.lineWidth = 1;
+  for (let y = PAD_V; y < H - PAD_V; y += 40) {
+    ctx.beginPath(); ctx.moveTo(PAD_H, y); ctx.lineTo(W - PAD_H, y); ctx.stroke();
+  }
+
+  // ── Layout ──
+  const LEFT_NODE_X = PAD_H + LABEL_AREA_LEFT;
+  const RIGHT_NODE_X = W - PAD_H - LABEL_AREA_RIGHT - NODE_W;
+
+  const income = totalIncome;
+
+  // ── Income nodes — centered vertically, compact ──
+  const incX = LEFT_NODE_X;
+  const incTotalH = incomeBarH;
+  let incCurY = (H - incTotalH) / 2;
+
+  incRows.forEach((src, si) => {
+    const slot = incSlotHeights[si];
+    const srcH = incRawHeights[si];
+    const nodeTop = incCurY + (slot - srcH) / 2; // center node in slot
+    const slotMid = incCurY + slot / 2;
+
+    const incGlow = ctx.createRadialGradient(incX + NODE_W/2, nodeTop + srcH/2, 0, incX + NODE_W/2, nodeTop + srcH/2, 60);
+    incGlow.addColorStop(0, 'rgba(201,168,76,0.15)');
+    incGlow.addColorStop(1, 'rgba(201,168,76,0)');
+    ctx.fillStyle = incGlow;
+    ctx.fillRect(incX - 50, nodeTop, NODE_W + 100, srcH);
+
+    ctx.fillStyle = si === 0 ? '#c9a84c' : '#e8c97a';
+    ctx.beginPath(); ctx.roundRect(incX, nodeTop, NODE_W, srcH, 6); ctx.fill();
+
+    // Label centered in slot
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(201,168,76,1)';
+    ctx.font = '600 22px Outfit, sans-serif';
+    ctx.fillText(src.name || 'Income', incX - 16, slotMid - 4);
+    ctx.fillStyle = 'rgba(245,240,232,0.55)';
+    ctx.font = '300 18px Outfit, sans-serif';
+    ctx.fillText('$' + src.val.toLocaleString(), incX - 16, slotMid + 22);
+    ctx.textAlign = 'left';
+
+    incCurY += slot + INC_GAP;
+  });
+
+  // ── Expense nodes + flows — centered vertically ──
+  const expStartY = (H - expensesH) / 2;
+
+  const incBarStartY = (H - incTotalH) / 2;
+  const incBarEndY = incBarStartY + incTotalH;
+
+  let rightY = expStartY;
+
+  const LABEL_LINE_H = 28;
+  // Each node is centered in its slot. Label is centered in the slot too — always aligned.
+  const nodePositions = [];
+  let tempY = expStartY;
+  rows.forEach((row, i) => {
+    const slot = slotHeights[i];
+    const nodeH = rawHeights[i];
+    const nodeTop = tempY + (slot - nodeH) / 2; // center node within slot
+    const slotMid = tempY + slot / 2;
+    nodePositions.push({ slotTop: tempY, slot, nodeTop, h: nodeH, mid: slotMid });
+    tempY += slot + NODE_GAP;
+  });
+  // Labels centered in slot — guaranteed no overlap since slots never overlap
+  const labelPositions = nodePositions.map(n => n.slotTop + (n.slot / 2) - LABEL_LINE_H + 6);
+
+  rows.forEach((row, i) => {
+    const color = COLORS[i % COLORS.length];
+    const nodeH = nodePositions[i].h;
+    const rightTop = nodePositions[i].nodeTop;
+    const rightBot = rightTop + nodeH;
+    const nodeMidY = nodePositions[i].mid;
+
+    // Left side flow: proportional spread across total income bar height
+    const cumRatioBefore = rows.slice(0, i).reduce((s, r) => s + r.val, 0) / income;
+    const cumRatioAfter = rows.slice(0, i + 1).reduce((s, r) => s + r.val, 0) / income;
+    const leftTop = incBarStartY + incTotalH * Math.min(cumRatioBefore, 1);
+    const leftBot = incBarStartY + incTotalH * Math.min(cumRatioAfter, 1);
+
+    // Flow filled bezier
+    const cp = (RIGHT_NODE_X - (LEFT_NODE_X + NODE_W)) * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(LEFT_NODE_X + NODE_W, leftTop);
+    ctx.bezierCurveTo(LEFT_NODE_X + NODE_W + cp, leftTop, RIGHT_NODE_X - cp, rightTop, RIGHT_NODE_X, rightTop);
+    ctx.lineTo(RIGHT_NODE_X, rightBot);
+    ctx.bezierCurveTo(RIGHT_NODE_X - cp, rightBot, LEFT_NODE_X + NODE_W + cp, leftBot, LEFT_NODE_X + NODE_W, leftBot);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(LEFT_NODE_X + NODE_W, 0, RIGHT_NODE_X, 0);
+    grad.addColorStop(0, color + '55');
+    grad.addColorStop(0.5, color + '30');
+    grad.addColorStop(1, color + '50');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Right node
+    ctx.fillStyle = color + 'dd';
+    ctx.beginPath(); ctx.roundRect(RIGHT_NODE_X, rightTop, NODE_W, nodeH, 6); ctx.fill();
+
+    // Label placement — use collision-free position
+    const labelX = RIGHT_NODE_X + NODE_W + 20;
+    const labelY = labelPositions[i];
+
+    // Name
+    ctx.fillStyle = color;
+    ctx.font = '500 22px Outfit, sans-serif';
+    ctx.fillText(row.name, labelX, labelY);
+
+    // Amount always directly below name
+    ctx.fillStyle = 'rgba(245,240,232,0.55)';
+    ctx.font = '300 18px Outfit, sans-serif';
+    ctx.fillText('$' + row.val.toLocaleString(), labelX, labelY + LABEL_LINE_H);
+
+    // Percentage pill
+    const pct = Math.round((row.val / income) * 100);
+    const pillX = labelX + 170;
+    if (pillX + 70 < W - 10) {
+      ctx.fillStyle = color + '22';
+      ctx.beginPath(); ctx.roundRect(pillX, labelY - 16, 62, 24, 12); ctx.fill();
+      ctx.fillStyle = color + 'cc';
+      ctx.font = '500 15px Outfit, sans-serif';
+      ctx.fillText(pct + '%', pillX + 12, labelY + 2);
+    }
+
+    rightY += nodeH + NODE_GAP;
+  });
+
+  // ── Watermark ──
+  ctx.fillStyle = 'rgba(201,168,76,0.3)';
+  ctx.font = '600 20px "Exo 2", sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('VestlyFi.com', W - PAD_H, H - 16);
+  ctx.textAlign = 'left';
+}
+
+function downloadChart() {
+  const canvas = document.getElementById('sankeyCanvas');
+  const link = document.createElement('a');
+  link.download = 'vestlyfi-budget-sankey.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+async function copyChart() {
+  const canvas = document.getElementById('sankeyCanvas');
+  canvas.toBlob(async blob => {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      const btn = document.querySelector('.btn-copy');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    } catch {
+      downloadChart();
+    }
+  });
+}
+
+// Init default rows
+DEFAULT_INCOME_ROWS.forEach(r => addIncomeRow(r));
+DEFAULT_ROWS.forEach(r => addRow(r));
+</script>
+
+</body>
+</html>
