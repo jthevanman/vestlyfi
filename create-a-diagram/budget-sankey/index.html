@@ -609,29 +609,25 @@ async function downloadChart() {
   const canvas = document.getElementById('sankeyCanvas');
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  canvas.toBlob(async blob => {
-    const file = new File([blob], 'vestlyfi-budget-sankey.png', { type: 'image/png' });
-
-    // Mobile: Web Share API prompts "Save to Photos" on iOS/Android
-    if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: 'My Budget Sankey' });
-        return;
-      } catch (e) {
-        // fall through
-      }
-    }
-
-    // Desktop: use a real anchor tag in the document with toDataURL for max compatibility
+  if (isMobile) {
+    // Mobile: open image in new tab — user can long-press to "Save to Photos" (iOS & Android)
     const dataUrl = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = 'vestlyfi-budget-sankey.png';
-    link.href = dataUrl;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-    setTimeout(() => document.body.removeChild(link), 100);
-  });
+    const win = window.open();
+    win.document.write('<img src="' + dataUrl + '" style="max-width:100%;display:block;" />');
+    win.document.title = 'Save to Photos — long press the image';
+  } else {
+    // Desktop: anchor click with dataURL triggers file explorer save dialog
+    canvas.toBlob(blob => {
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'vestlyfi-budget-sankey.png';
+      link.href = dataUrl;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      setTimeout(() => document.body.removeChild(link), 100);
+    });
+  }
 }
 
 async function copyChart() {
