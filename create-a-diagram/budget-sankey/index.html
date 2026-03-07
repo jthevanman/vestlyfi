@@ -176,6 +176,7 @@
   <a class="nav-logo" href="/">VestlyFi</a>
   <div class="nav-links">
     <a href="/">Home</a>
+    <a href="/calculators/">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
   </div>
 </nav>
@@ -241,7 +242,7 @@ const COLORS = [
 const DEFAULT_ROWS = [
   { name: 'Housing', val: '' },
   { name: 'Food', val: '' },
-  { name: 'Transport', val: '' },
+  { name: 'Transportation', val: '' },
   { name: 'Savings', val: '' },
   { name: 'Other', val: '' },
 ];
@@ -558,12 +559,37 @@ function drawSankey(totalIncome, incRows, rows) {
   ctx.textAlign = 'left';
 }
 
-function downloadChart() {
+async function downloadChart() {
   const canvas = document.getElementById('sankeyCanvas');
-  const link = document.createElement('a');
-  link.download = 'vestlyfi-budget-sankey.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+
+  // On mobile, use Web Share API with file — prompts save to photos on iOS/Android
+  if (navigator.canShare) {
+    canvas.toBlob(async blob => {
+      const file = new File([blob], 'vestlyfi-budget-sankey.png', { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'My Budget Sankey',
+          });
+          return;
+        } catch (e) {
+          // User cancelled or share failed — fall through to direct download
+        }
+      }
+      // Fallback: direct download
+      const link = document.createElement('a');
+      link.download = 'vestlyfi-budget-sankey.png';
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    });
+  } else {
+    // Desktop fallback
+    const link = document.createElement('a');
+    link.download = 'vestlyfi-budget-sankey.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
 }
 
 async function copyChart() {
