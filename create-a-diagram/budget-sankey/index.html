@@ -240,13 +240,11 @@ const COLORS = [
 ];
 
 const DEFAULT_ROWS = [
-  { name: 'Mortgage or rent payment here', val: '2500' },
-  { name: 'Groceries and dining out costs', val: '800' },
-  { name: 'Transportation and car expenses', val: '450' },
-  { name: '401k and investment savings', val: '1200' },
-  { name: 'Utilities electric gas water', val: '95' },
-  { name: 'Health insurance and medical', val: '300' },
-  { name: 'Entertainment and subscriptions', val: '150' },
+  { name: '', val: '' },
+  { name: '', val: '' },
+  { name: '', val: '' },
+  { name: '', val: '' },
+  { name: '', val: '' },
 ];
 
 let rowId = 0;
@@ -262,8 +260,7 @@ function parseMoney(val) {
 }
 
 const DEFAULT_INCOME_ROWS = [
-  { name: 'Primary job take home pay', val: '5000' },
-  { name: 'Side income freelance work', val: '495' },
+  { name: '', val: '' },
 ];
 
 function addIncomeRow(preset = {}) {
@@ -305,7 +302,7 @@ function addRow(preset = {}) {
   div.className = 'expense-row';
   div.id = `row-${id}`;
   div.innerHTML = `
-    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()" placeholder="">
+    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()" placeholder=" ">
     <div class="input-wrap">
       <span class="input-prefix">$</span>
       <input type="text" id="val-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
@@ -401,7 +398,7 @@ function drawSankey(totalIncome, incRows, rows) {
 
   // Income bars scale proportionally by value, with same slot system as expenses
   const INC_GAP = 10;
-  const INC_LABEL_BLOCK = 70;
+  const INC_LABEL_BLOCK = 100;
   const INC_TOTAL_H = 300; // total scaled height for income side
   const incSqrtTotal = incRows.reduce((s, r) => s + Math.sqrt(r.val), 0);
   const incRawHeights = incRows.map(r => incSqrtTotal > 0 ? (Math.sqrt(r.val) / incSqrtTotal) * INC_TOTAL_H : INC_TOTAL_H);
@@ -458,14 +455,25 @@ function drawSankey(totalIncome, incRows, rows) {
     ctx.fillStyle = si === 0 ? '#c9a84c' : '#e8c97a';
     ctx.beginPath(); ctx.roundRect(incX, nodeTop, NODE_W, srcH, 6); ctx.fill();
 
-    // Label centered in slot
+    // Label centered in slot — word wrap up to 2 lines (right-aligned)
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(201,168,76,1)';
     ctx.font = '600 22px Outfit, sans-serif';
-    ctx.fillText(src.name || 'Income', incX - 16, slotMid - 4);
+    const incMaxLabelW = 175;
+    const incWords = (src.name || 'Income').split(' ');
+    let incLine1 = '', incLine2 = '';
+    for (const word of incWords) {
+      const test = incLine1 ? incLine1 + ' ' + word : word;
+      if (ctx.measureText(test).width <= incMaxLabelW) { incLine1 = test; }
+      else { incLine2 = incLine2 ? incLine2 + ' ' + word : word; }
+    }
+    const incNameLineCount = incLine2 ? 2 : 1;
+    const incLabelBaseY = slotMid - (incNameLineCount > 1 ? 17 : 4);
+    ctx.fillText(incLine1, incX - 16, incLabelBaseY);
+    if (incLine2) ctx.fillText(incLine2, incX - 16, incLabelBaseY + 26);
     ctx.fillStyle = 'rgba(245,240,232,0.55)';
     ctx.font = '300 18px Outfit, sans-serif';
-    ctx.fillText('$' + src.val.toLocaleString(), incX - 16, slotMid + 22);
+    ctx.fillText('$' + src.val.toLocaleString(), incX - 16, incLabelBaseY + (incNameLineCount > 1 ? 52 : 26));
     ctx.textAlign = 'left';
 
     incCurY += slot + INC_GAP;
