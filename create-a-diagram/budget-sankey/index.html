@@ -270,7 +270,7 @@ function addIncomeRow(preset = {}) {
   div.id = `inc-${id}`;
   const isFirst = id === 0;
   div.innerHTML = `
-    <input type="text" class="no-prefix" id="iname-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()">
+    <input type="text" class="no-prefix" id="iname-${id}" value="${preset.name || ''}" maxlength="28" oninput="updateTotals()">
     <div class="input-wrap">
       <span class="input-prefix">$</span>
       <input type="text" id="ival-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
@@ -302,7 +302,7 @@ function addRow(preset = {}) {
   div.className = 'expense-row';
   div.id = `row-${id}`;
   div.innerHTML = `
-    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" maxlength="38" oninput="updateTotals()" placeholder=" ">
+    <input type="text" class="no-prefix" id="name-${id}" value="${preset.name || ''}" maxlength="28" oninput="updateTotals()" placeholder=" ">
     <div class="input-wrap">
       <span class="input-prefix">$</span>
       <input type="text" id="val-${id}" value="${preset.val || ''}" oninput="fmtComma(this); updateTotals()">
@@ -460,14 +460,23 @@ function drawSankey(totalIncome, incRows, rows) {
     ctx.fillStyle = 'rgba(201,168,76,1)';
     ctx.font = '600 22px Outfit, sans-serif';
     const incMaxLabelW = 175;
-    const incWords = (src.name || 'Income').split(' ');
-    let incLine1 = '', incLine2 = '';
-    if (incWords.length === 1 || ctx.measureText(src.name || 'Income').width <= incMaxLabelW) {
-      incLine1 = src.name || 'Income';
-    } else {
-      const incMid = Math.ceil(incWords.length / 2);
-      incLine1 = incWords.slice(0, incMid).join(' ');
-      incLine2 = incWords.slice(incMid).join(' ');
+    const incName = src.name || 'Income';
+    const incWords = incName.split(' ');
+    let incLine1 = incName, incLine2 = '';
+    if (incWords.length > 1 && ctx.measureText(incName).width > incMaxLabelW) {
+      let bestSplit = 1, bestMax = Infinity;
+      for (let s = 1; s < incWords.length; s++) {
+        const l1 = incWords.slice(0, s).join(' ');
+        const l2 = incWords.slice(s).join(' ');
+        const maxW = Math.max(ctx.measureText(l1).width, ctx.measureText(l2).width);
+        if (maxW < bestMax) { bestMax = maxW; bestSplit = s; }
+      }
+      incLine1 = incWords.slice(0, bestSplit).join(' ');
+      incLine2 = incWords.slice(bestSplit).join(' ');
+      while (incLine1.length > 1 && ctx.measureText(incLine1).width > incMaxLabelW) incLine1 = incLine1.slice(0,-1).trimEnd();
+      while (incLine2.length > 1 && ctx.measureText(incLine2).width > incMaxLabelW) incLine2 = incLine2.slice(0,-1).trimEnd();
+    } else if (ctx.measureText(incLine1).width > incMaxLabelW) {
+      while (incLine1.length > 1 && ctx.measureText(incLine1).width > incMaxLabelW) incLine1 = incLine1.slice(0,-1).trimEnd();
     }
     const incNameLineCount = incLine2 ? 2 : 1;
     const incLabelBaseY = slotMid - (incNameLineCount > 1 ? 17 : 4);
@@ -541,18 +550,28 @@ function drawSankey(totalIncome, incRows, rows) {
     const labelX = RIGHT_NODE_X + NODE_W + 20;
     const labelY = labelPositions[i];
 
-    // Name — split at natural midpoint to preserve word order
+    // Name — find best split point that keeps both lines within maxLabelW
     ctx.fillStyle = color;
     ctx.font = '500 22px Outfit, sans-serif';
     const maxLabelW = 190;
     const words = row.name.split(' ');
-    let line1 = '', line2 = '';
-    if (words.length === 1 || ctx.measureText(row.name).width <= maxLabelW) {
-      line1 = row.name;
-    } else {
-      const mid = Math.ceil(words.length / 2);
-      line1 = words.slice(0, mid).join(' ');
-      line2 = words.slice(mid).join(' ');
+    let line1 = row.name, line2 = '';
+    if (words.length > 1 && ctx.measureText(row.name).width > maxLabelW) {
+      // Try every split point, pick the one where both lines fit best
+      let bestSplit = 1, bestMax = Infinity;
+      for (let s = 1; s < words.length; s++) {
+        const l1 = words.slice(0, s).join(' ');
+        const l2 = words.slice(s).join(' ');
+        const maxW = Math.max(ctx.measureText(l1).width, ctx.measureText(l2).width);
+        if (maxW < bestMax) { bestMax = maxW; bestSplit = s; }
+      }
+      line1 = words.slice(0, bestSplit).join(' ');
+      line2 = words.slice(bestSplit).join(' ');
+      // Last resort: if a line still overflows, truncate it
+      while (line1.length > 1 && ctx.measureText(line1).width > maxLabelW) line1 = line1.slice(0,-1).trimEnd();
+      while (line2.length > 1 && ctx.measureText(line2).width > maxLabelW) line2 = line2.slice(0,-1).trimEnd();
+    } else if (ctx.measureText(line1).width > maxLabelW) {
+      while (line1.length > 1 && ctx.measureText(line1).width > maxLabelW) line1 = line1.slice(0,-1).trimEnd();
     }
     ctx.fillText(line1, labelX, labelY);
     if (line2) ctx.fillText(line2, labelX, labelY + 26);
