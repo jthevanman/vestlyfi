@@ -462,10 +462,12 @@ function drawSankey(totalIncome, incRows, rows) {
     const incMaxLabelW = 175;
     const incWords = (src.name || 'Income').split(' ');
     let incLine1 = '', incLine2 = '';
-    for (const word of incWords) {
-      const test = incLine1 ? incLine1 + ' ' + word : word;
-      if (ctx.measureText(test).width <= incMaxLabelW) { incLine1 = test; }
-      else { incLine2 = incLine2 ? incLine2 + ' ' + word : word; }
+    if (incWords.length === 1 || ctx.measureText(src.name || 'Income').width <= incMaxLabelW) {
+      incLine1 = src.name || 'Income';
+    } else {
+      const incMid = Math.ceil(incWords.length / 2);
+      incLine1 = incWords.slice(0, incMid).join(' ');
+      incLine2 = incWords.slice(incMid).join(' ');
     }
     const incNameLineCount = incLine2 ? 2 : 1;
     const incLabelBaseY = slotMid - (incNameLineCount > 1 ? 17 : 4);
@@ -539,16 +541,18 @@ function drawSankey(totalIncome, incRows, rows) {
     const labelX = RIGHT_NODE_X + NODE_W + 20;
     const labelY = labelPositions[i];
 
-    // Name — word wrap up to 2 lines
+    // Name — split at natural midpoint to preserve word order
     ctx.fillStyle = color;
     ctx.font = '500 22px Outfit, sans-serif';
     const maxLabelW = 190;
     const words = row.name.split(' ');
     let line1 = '', line2 = '';
-    for (const word of words) {
-      const test = line1 ? line1 + ' ' + word : word;
-      if (ctx.measureText(test).width <= maxLabelW) { line1 = test; }
-      else { line2 = line2 ? line2 + ' ' + word : word; }
+    if (words.length === 1 || ctx.measureText(row.name).width <= maxLabelW) {
+      line1 = row.name;
+    } else {
+      const mid = Math.ceil(words.length / 2);
+      line1 = words.slice(0, mid).join(' ');
+      line2 = words.slice(mid).join(' ');
     }
     ctx.fillText(line1, labelX, labelY);
     if (line2) ctx.fillText(line2, labelX, labelY + 26);
@@ -585,34 +589,29 @@ function drawSankey(totalIncome, incRows, rows) {
 async function downloadChart() {
   const canvas = document.getElementById('sankeyCanvas');
 
-  // On mobile, use Web Share API with file — prompts save to photos on iOS/Android
-  if (navigator.canShare) {
-    canvas.toBlob(async blob => {
-      const file = new File([blob], 'vestlyfi-budget-sankey.png', { type: 'image/png' });
-      if (navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            files: [file],
-            title: 'My Budget Sankey',
-          });
-          return;
-        } catch (e) {
-          // User cancelled or share failed — fall through to direct download
-        }
+  canvas.toBlob(async blob => {
+    const file = new File([blob], 'vestlyfi-budget-sankey.png', { type: 'image/png' });
+
+    // Mobile: Web Share API prompts "Save to Photos" on iOS/Android
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: 'My Budget Sankey' });
+        return;
+      } catch (e) {
+        // User cancelled or share failed — fall through to direct download
       }
-      // Fallback: direct download
-      const link = document.createElement('a');
-      link.download = 'vestlyfi-budget-sankey.png';
-      link.href = URL.createObjectURL(blob);
-      link.click();
-    });
-  } else {
-    // Desktop fallback
+    }
+
+    // Desktop: blob URL reliably triggers file explorer save dialog
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = 'vestlyfi-budget-sankey.png';
-    link.href = canvas.toDataURL('image/png');
+    link.href = url;
+    document.body.appendChild(link);
     link.click();
-  }
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
 }
 
 async function copyChart() {
