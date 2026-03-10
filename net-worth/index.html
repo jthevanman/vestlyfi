@@ -118,10 +118,15 @@
   .nw-change.down { color:var(--red); }
   .nw-tiles { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
   .nw-tile { background:var(--navy-light); border-radius:10px; padding:16px; }
-  .nw-tile-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+  .nw-tile-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; display:flex; align-items:center; gap:5px; }
   .nw-tile-val { font-size:1.25rem; font-weight:500; }
   .nw-tile-val.asset { color:var(--green); }
   .nw-tile-val.liability { color:var(--red); }
+  .nw-tile.debt-ratio-tile { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:10px 16px; }
+  .nw-tile.debt-ratio-tile .nw-tile-val { font-size:0.95rem; }
+  .info-icon { display:inline-flex; align-items:center; justify-content:center; width:13px; height:13px; border-radius:50%; border:1px solid var(--muted); color:var(--muted); font-size:0.55rem; font-style:normal; cursor:default; position:relative; flex-shrink:0; }
+  .info-icon:hover .info-tooltip { display:block; }
+  .info-tooltip { display:none; position:absolute; left:18px; top:-4px; width:200px; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:0.72rem; color:var(--cream-dim); line-height:1.5; z-index:50; letter-spacing:0; text-transform:none; font-weight:300; pointer-events:none; }
 
   /* ── CHART ── */
   .chart-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:16px; padding:24px; margin-bottom:24px; }
@@ -150,11 +155,31 @@
   .btn-log:hover { background:var(--gold-light); }
 
   /* ── HISTORY ── */
-  .history-section { margin-bottom:28px; }
-  .history-section-header { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; font-weight:500; display:flex; justify-content:space-between; align-items:center; }
-  .history-section-total { font-size:0.78rem; font-weight:500; }
+  .history-section { margin-bottom:20px; }
+  .history-section-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 14px; border-radius:10px; cursor:pointer; user-select:none;
+    transition:background .15s;
+  }
+  .history-section-header:hover { background:rgba(255,255,255,0.03); }
+  .history-section-header-left { display:flex; align-items:center; gap:10px; }
+  .history-section-label { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+  .history-section-total { font-size:1rem; font-weight:600; }
   .history-section-total.asset { color:var(--green); }
   .history-section-total.liability { color:var(--red); }
+  .history-section-chevron { color:var(--muted); font-size:0.75rem; transition:transform .2s; }
+  .history-section-chevron.open { transform:rotate(90deg); }
+  .history-section-body { overflow:hidden; }
+  .history-section-inner { padding-top:6px; }
+
+  .btn-add-section {
+    padding:5px 12px; border-radius:7px; border:none; font-family:'Outfit',sans-serif;
+    font-size:0.75rem; font-weight:600; cursor:pointer; transition:all .15s; white-space:nowrap;
+  }
+  .btn-add-asset { background:rgba(76,175,125,0.15); color:var(--green); }
+  .btn-add-asset:hover { background:rgba(76,175,125,0.25); }
+  .btn-add-liability { background:rgba(224,92,92,0.15); color:var(--red); }
+  .btn-add-liability:hover { background:rgba(224,92,92,0.25); }
 
   .cat-card {
     display:flex; justify-content:space-between; align-items:center;
@@ -375,8 +400,8 @@
             <div class="nw-tile-label">Total Liabilities</div>
             <div class="nw-tile-val liability" id="totalLiabilities">$0</div>
           </div>
-          <div class="nw-tile" style="grid-column:1/-1">
-            <div class="nw-tile-label">Debt-to-Asset Ratio</div>
+          <div class="nw-tile debt-ratio-tile">
+            <div class="nw-tile-label">Debt-to-Asset Ratio <span class="info-icon">i<span class="info-tooltip">Liabilities ÷ Assets. Under 30% is healthy (green), 30–60% is moderate (yellow), above 60% is high (red).</span></span></div>
             <div class="nw-tile-val" id="debtRatio">—</div>
           </div>
         </div>
@@ -404,9 +429,8 @@
       </div>
 
       <!-- LOG BUTTONS -->
-      <div class="log-btns">
-        <button class="btn-log-new" onclick="openLogModal()">+ Add New Entry</button>
-        <button class="btn-log-update" onclick="openUpdateModal()">↻ Update Existing</button>
+      <div class="log-btns" style="grid-template-columns:1fr">
+        <button class="btn-log-update" onclick="openUpdateModal()">↻ Update Valuations</button>
       </div>
 
       <!-- COPY BANNER -->
@@ -437,7 +461,31 @@
       </div>
       <button class="btn-drawer-close" onclick="closeDrawer()">×</button>
     </div>
+    <div style="margin-bottom:14px;">
+      <button id="drawerAddValBtn" class="btn-add-section btn-add-asset" onclick="openValuationFromDrawer()" style="width:100%; padding:9px;">+ Log New Value</button>
+    </div>
     <div class="drawer-history" id="drawerHistory"></div>
+  </div>
+</div>
+
+<!-- ── QUICK VALUATION MODAL ── -->
+<div class="modal-overlay" id="valuationModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title" id="valuationTitle">Update Value</div>
+    <div class="modal-sub" id="valuationSub"></div>
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="valuationDate">
+    </div>
+    <div class="modal-field">
+      <label>New Value</label>
+      <input type="text" id="valuationValue" placeholder="$0" oninput="fmtModalComma(this)">
+    </div>
+    <div class="modal-err" id="valuationErr"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeValuationModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveValuation()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -610,6 +658,8 @@ function switchTab(tab) {
 }
 
 // ── ENTER KEY TO SIGN IN ──
+document.getElementById('entryValue').addEventListener('keydown', e => { if (e.key === 'Enter') saveEntry(); });
+document.getElementById('entryCategory').addEventListener('keydown', e => { if (e.key === 'Enter') saveEntry(); });
 document.getElementById('siEmail').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
 document.getElementById('siPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
 document.getElementById('suEmail').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
@@ -685,35 +735,38 @@ sb.auth.onAuthStateChange(async (event, session) => {
   }
 });
 
-// Only reload if genuinely stuck showing the loading spinner — never on normal tab return
-document.addEventListener('visibilitychange', async () => {
+// Silently refresh when tab regains focus (no spinner, no flash)
+document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible' && currentUser && !isLoadingEntries) {
-    const loadingShowing = document.getElementById('loadingState').style.display === 'block';
-    if (loadingShowing) await loadEntries();
+    loadEntries(true);
   }
 });
 
 // ── LOAD ENTRIES ──
-async function loadEntries() {
+async function loadEntries(silent = false) {
   if (isLoadingEntries) return;
   isLoadingEntries = true;
 
-  document.getElementById('loadingState').style.display = 'block';
-  document.getElementById('mainContent').style.display = 'none';
+  if (!silent) {
+    document.getElementById('loadingState').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+  }
 
-  // Safety net: force-show content after 5s no matter what
-  const timeout = setTimeout(() => {
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'block';
-    isLoadingEntries = false;
-  }, 5000);
+  // Safety net only for non-silent loads
+  let timeout;
+  if (!silent) {
+    timeout = setTimeout(() => {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      isLoadingEntries = false;
+    }, 5000);
+  }
 
   try {
     const { data, error } = await sb
       .from('net_worth_entries')
       .select('*')
       .order('date', { ascending: true });
-
     if (error) throw error;
     allEntries = data || [];
   } catch(e) {
@@ -721,7 +774,7 @@ async function loadEntries() {
     allEntries = [];
   }
 
-  clearTimeout(timeout);
+  if (timeout) clearTimeout(timeout);
   isLoadingEntries = false;
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
@@ -1039,16 +1092,6 @@ function renderShareCanvas(snapshots) {
   });
   ctx.textAlign = 'left';
 
-  // Bottom divider + vestlyfi.com
-  ctx.strokeStyle = 'rgba(201,168,76,0.15)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(60, H - 48); ctx.lineTo(W - 60, H - 48);
-  ctx.stroke();
-  ctx.font = '300 18px Outfit, sans-serif';
-  ctx.fillStyle = 'rgba(245,240,232,0.25)';
-  ctx.fillText('vestlyfi.com/net-worth', 60, H - 22);
-
   // Show preview
   const dataUrl = canvas.toDataURL('image/png');
   document.getElementById('shareGenerating').style.display = 'none';
@@ -1088,15 +1131,16 @@ document.getElementById('shareModal').addEventListener('click', e => {
 });
 
 // ── RENDER HISTORY ──
+const sectionCollapsed = { asset: false, liability: false };
+
 function renderHistory() {
   const container = document.getElementById('historyList');
   if (!allEntries.length) {
-    container.innerHTML = '<div class="history-empty">No entries yet. Log your first snapshot above.</div>';
+    container.innerHTML = '<div class="history-empty">No entries yet. Add your first asset or liability above.</div>';
     return;
   }
 
-  // Build latest value per category + type
-  const catMap = {}; // category -> {type, latestEntry}
+  const catMap = {};
   for (const e of allEntries) {
     if (!catMap[e.category] || e.date > catMap[e.category].latestEntry.date) {
       catMap[e.category] = { type: e.type, latestEntry: e };
@@ -1111,8 +1155,26 @@ function renderHistory() {
   }
 
   function renderSection(items, type) {
+    if (!items.length && type === 'asset') return `
+      <div class="history-section">
+        <div class="history-section-header" onclick="toggleSection('${type}')">
+          <div class="history-section-header-left">
+            <span class="history-section-chevron ${sectionCollapsed[type] ? '' : 'open'}">›</span>
+            <span class="history-section-label">Assets</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn-add-section btn-add-asset" onclick="event.stopPropagation();openLogModalTyped('asset')">+ Add Asset</button>
+            <span class="history-section-total asset">$0</span>
+          </div>
+        </div>
+        <div class="history-section-body" id="section-body-${type}" style="${sectionCollapsed[type] ? 'display:none' : ''}">
+          <div class="history-section-inner"><div class="history-empty" style="padding:16px 0">No assets yet.</div></div>
+        </div>
+      </div>`;
     if (!items.length) return '';
     const label = type === 'asset' ? 'Assets' : 'Liabilities';
+    const btnClass = type === 'asset' ? 'btn-add-asset' : 'btn-add-liability';
+    const btnLabel = type === 'asset' ? '+ Add Asset' : '+ Add Liability';
     const total = totalOf(items);
     const cards = items.map(([cat, v]) => {
       const e = v.latestEntry;
@@ -1130,15 +1192,31 @@ function renderHistory() {
     }).join('');
     return `
       <div class="history-section">
-        <div class="history-section-header">
-          <span>${label}</span>
-          <span class="history-section-total ${type}">${fmtMoney(total)}</span>
+        <div class="history-section-header" onclick="toggleSection('${type}')">
+          <div class="history-section-header-left">
+            <span class="history-section-chevron ${sectionCollapsed[type] ? '' : 'open'}">›</span>
+            <span class="history-section-label">${label}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn-add-section ${btnClass}" onclick="event.stopPropagation();openLogModalTyped('${type}')">${btnLabel}</button>
+            <span class="history-section-total ${type}">${fmtMoney(total)}</span>
+          </div>
         </div>
-        ${cards}
+        <div class="history-section-body" id="section-body-${type}" style="${sectionCollapsed[type] ? 'display:none' : ''}">
+          <div class="history-section-inner">${cards}</div>
+        </div>
       </div>`;
   }
 
   container.innerHTML = renderSection(assets, 'asset') + renderSection(liabilities, 'liability');
+}
+
+function toggleSection(type) {
+  sectionCollapsed[type] = !sectionCollapsed[type];
+  const body = document.getElementById(`section-body-${type}`);
+  const chevron = body?.previousElementSibling?.querySelector('.history-section-chevron');
+  if (body) body.style.display = sectionCollapsed[type] ? 'none' : '';
+  if (chevron) chevron.classList.toggle('open', !sectionCollapsed[type]);
 }
 
 // ── CATEGORY DRAWER ──
@@ -1158,6 +1236,11 @@ function openCategoryDrawer(category) {
   typeEl.textContent = type;
   typeEl.className = 'drawer-type ' + type;
 
+  // Color the add button by type
+  const addBtn = document.getElementById('drawerAddValBtn');
+  addBtn.className = `btn-add-section ${type === 'asset' ? 'btn-add-asset' : 'btn-add-liability'}`;
+  addBtn.style.width = '100%'; addBtn.style.padding = '9px';
+
   const rows = entries.map((e, i) => {
     const prev = entries[i + 1];
     let changeHtml = '';
@@ -1165,7 +1248,10 @@ function openCategoryDrawer(category) {
       const diff = Number(e.value) - Number(prev.value);
       if (diff !== 0) {
         const sign = diff > 0 ? '+' : '';
-        const cls = diff > 0 ? 'up' : 'down';
+        // For liabilities: going DOWN is good (green), going UP is bad (red)
+        const cls = type === 'liability'
+          ? (diff < 0 ? 'up' : 'down')
+          : (diff > 0 ? 'up' : 'down');
         changeHtml = `<span class="drawer-row-change ${cls}">${sign}${fmtMoney(diff)}</span>`;
       }
     }
@@ -1208,8 +1294,14 @@ function closeDrawer() {
   document.getElementById('categoryDrawer').classList.remove('open');
 }
 
+// Prevent drawer from closing when user drags selection outside the drawer
+let mouseDownInDrawer = false;
+document.getElementById('categoryDrawer').addEventListener('mousedown', e => {
+  mouseDownInDrawer = e.target === document.getElementById('categoryDrawer');
+});
 document.getElementById('categoryDrawer').addEventListener('click', e => {
-  if (e.target === document.getElementById('categoryDrawer')) closeDrawer();
+  if (e.target === document.getElementById('categoryDrawer') && mouseDownInDrawer) closeDrawer();
+  mouseDownInDrawer = false;
 });
 
 // ── COPY BANNER ──
@@ -1283,6 +1375,68 @@ function openLogModal() {
   setType('asset');
   document.getElementById('entryModal').classList.add('open');
 }
+
+function openLogModalTyped(type) {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = type === 'asset' ? 'Add Asset' : 'Add Liability';
+  document.getElementById('entryDate').value = currentDateStr();
+  document.getElementById('entryCategory').value = '';
+  document.getElementById('entryValue').value = '';
+  document.getElementById('modalErr').textContent = '';
+  setType(type);
+  document.getElementById('entryModal').classList.add('open');
+}
+
+// ── VALUATION MODAL ──
+let valuationCategory = null;
+let valuationEntryType = null;
+
+function openValuationFromDrawer() {
+  if (!activeDrawerCategory) return;
+  const entries = allEntries.filter(e => e.category === activeDrawerCategory);
+  if (!entries.length) return;
+  const latest = entries.sort((a,b) => b.date.localeCompare(a.date))[0];
+  valuationCategory = activeDrawerCategory;
+  valuationEntryType = latest.type;
+  document.getElementById('valuationTitle').textContent = activeDrawerCategory;
+  document.getElementById('valuationSub').textContent = `Current value: ${fmtMoney(Number(latest.value))}`;
+  document.getElementById('valuationDate').value = currentDateStr();
+  document.getElementById('valuationValue').value = Number(latest.value).toLocaleString();
+  document.getElementById('valuationErr').textContent = '';
+  document.getElementById('valuationModal').classList.add('open');
+}
+
+function closeValuationModal() {
+  document.getElementById('valuationModal').classList.remove('open');
+}
+
+async function saveValuation() {
+  const date = document.getElementById('valuationDate').value;
+  const value = parseMoney(document.getElementById('valuationValue').value);
+  const errEl = document.getElementById('valuationErr');
+  if (!date) { errEl.textContent = 'Please select a date.'; return; }
+  if (!value || value <= 0) { errEl.textContent = 'Please enter a value greater than 0.'; return; }
+  errEl.textContent = '';
+  const { error } = await sb.from('net_worth_entries').insert([{
+    user_id: currentUser.id,
+    date,
+    type: valuationEntryType,
+    category: valuationCategory,
+    value
+  }]);
+  if (error) { errEl.textContent = 'Error saving. Please try again.'; return; }
+  closeValuationModal();
+  await loadEntries(true);
+  if (valuationCategory && allEntries.some(e => e.category === valuationCategory)) {
+    openCategoryDrawer(valuationCategory);
+  }
+}
+
+document.getElementById('valuationModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('valuationModal')) closeValuationModal();
+});
+document.getElementById('valuationDate').addEventListener('keydown', e => { if (e.key === 'Enter') saveValuation(); });
+document.getElementById('valuationValue').addEventListener('keydown', e => { if (e.key === 'Enter') saveValuation(); });
 
 function openEditModal(id) {
   const entry = allEntries.find(e => e.id === id);
