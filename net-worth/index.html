@@ -342,7 +342,7 @@
       <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
 
-    <div id="loadingState" class="loading">Loading your data…</div>
+    <div id="loadingState" class="loading" style="display:none">Loading your data…</div>
 
     <div id="mainContent" style="display:none">
 
@@ -558,6 +558,12 @@ function switchTab(tab) {
   document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
 }
 
+// ── ENTER KEY TO SIGN IN ──
+document.getElementById('siEmail').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
+document.getElementById('siPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
+document.getElementById('suEmail').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
+document.getElementById('suPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
+
 async function signIn() {
   const email = document.getElementById('siEmail').value.trim();
   const password = document.getElementById('siPassword').value;
@@ -582,26 +588,45 @@ async function signOut() {
   await sb.auth.signOut();
 }
 
-// ── AUTH STATE LISTENER ──
-sb.auth.onAuthStateChange(async (event, session) => {
+// ── AUTH INIT ──
+function showAuth() {
+  document.getElementById('authScreen').style.display = 'block';
+  document.getElementById('appScreen').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appScreen').style.display = 'block';
+}
+
+// Initialize: check existing session first, then listen for changes
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
   if (session?.user) {
     currentUser = session.user;
-    document.getElementById('authScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'block';
+    showApp();
     await loadEntries();
   } else {
+    showAuth();
+  }
+})();
+
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' && session?.user) {
+    currentUser = session.user;
+    showApp();
+    await loadEntries();
+  } else if (event === 'SIGNED_OUT') {
     currentUser = null;
-    document.getElementById('authScreen').style.display = 'block';
-    document.getElementById('appScreen').style.display = 'none';
+    showAuth();
   }
 });
 
-// Fix: reload data when tab becomes visible again (prevents "stuck loading" on tab return)
+// Fix: reload if tab returns and content is still hidden
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'visible' && currentUser) {
-    // Only reload if stuck on loading state
-    const loadingVisible = document.getElementById('loadingState').style.display !== 'none';
-    if (loadingVisible) await loadEntries();
+    const contentHidden = document.getElementById('mainContent').style.display === 'none';
+    if (contentHidden) await loadEntries();
   }
 });
 
