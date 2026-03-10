@@ -139,27 +139,55 @@
   .btn-log:hover { background:var(--gold-light); }
 
   /* ── HISTORY ── */
-  .history-title { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; font-weight:500; }
-  .month-group { margin-bottom:20px; }
-  .month-header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--navy-light); border-radius:8px; margin-bottom:8px; cursor:pointer; }
-  .month-header-left { font-size:0.88rem; font-weight:500; color:var(--cream-dim); }
-  .month-header-right { font-size:0.88rem; font-weight:500; }
-  .month-header-right.positive { color:var(--green); }
-  .month-header-right.negative { color:var(--red); }
-  .month-entries { display:flex; flex-direction:column; gap:6px; }
-  .entry-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; }
-  .entry-left { display:flex; flex-direction:column; gap:2px; }
-  .entry-name { font-size:0.88rem; color:var(--cream-dim); }
-  .entry-type { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; }
-  .entry-type.asset { color:var(--green); }
-  .entry-type.liability { color:var(--red); }
-  .entry-right { display:flex; align-items:center; gap:10px; }
-  .entry-val { font-size:0.92rem; font-weight:500; }
-  .btn-entry-edit { background:none; border:1px solid var(--border-soft); color:var(--muted); padding:4px 10px; border-radius:6px; font-family:'Outfit',sans-serif; font-size:0.72rem; cursor:pointer; transition:all .15s; }
-  .btn-entry-edit:hover { border-color:var(--border); color:var(--cream); }
-  .btn-entry-del { background:none; border:none; color:var(--muted); font-size:1rem; cursor:pointer; padding:4px 6px; transition:color .15s; }
-  .btn-entry-del:hover { color:var(--red); }
+  .history-section { margin-bottom:28px; }
+  .history-section-header { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; font-weight:500; display:flex; justify-content:space-between; align-items:center; }
+  .history-section-total { font-size:0.78rem; font-weight:500; }
+  .history-section-total.asset { color:var(--green); }
+  .history-section-total.liability { color:var(--red); }
+
+  .cat-card {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:13px 16px; background:var(--navy-card); border:1px solid var(--border-soft);
+    border-radius:10px; margin-bottom:7px; cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .cat-card:hover { border-color:var(--border); background:var(--navy-light); }
+  .cat-card-left { display:flex; flex-direction:column; gap:3px; }
+  .cat-card-name { font-size:0.9rem; color:var(--cream-dim); }
+  .cat-card-updated { font-size:0.72rem; color:var(--muted); }
+  .cat-card-right { display:flex; align-items:center; gap:10px; }
+  .cat-card-val { font-size:1rem; font-weight:500; }
+  .cat-card-arrow { color:var(--muted); font-size:0.85rem; }
   .history-empty { text-align:center; padding:32px 0; color:var(--muted); font-size:0.88rem; }
+
+  /* ── CATEGORY HISTORY DRAWER ── */
+  .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; justify-content:center; }
+  .drawer-overlay.open { display:flex; }
+  .drawer {
+    background:var(--navy-mid); border:1px solid var(--border); border-radius:16px 16px 0 0;
+    padding:24px 24px 36px; width:100%; max-width:520px; max-height:80vh;
+    display:flex; flex-direction:column;
+  }
+  .drawer-handle { width:40px; height:4px; background:var(--border-soft); border-radius:2px; margin:0 auto 20px; }
+  .drawer-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .drawer-title { font-size:1.1rem; font-weight:500; }
+  .drawer-type { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:16px; }
+  .drawer-type.asset { color:var(--green); }
+  .drawer-type.liability { color:var(--red); }
+  .btn-drawer-close { background:none; border:none; color:var(--muted); font-size:1.4rem; cursor:pointer; padding:0 4px; line-height:1; }
+  .btn-drawer-close:hover { color:var(--cream); }
+  .drawer-history { flex:1; overflow-y:auto; }
+  .drawer-row { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--border-soft); }
+  .drawer-row:last-child { border-bottom:none; }
+  .drawer-row-date { font-size:0.85rem; color:var(--cream-dim); }
+  .drawer-row-right { display:flex; align-items:center; gap:10px; }
+  .drawer-row-val { font-size:0.92rem; font-weight:500; }
+  .drawer-row-change { font-size:0.75rem; }
+  .drawer-row-change.up { color:var(--green); }
+  .drawer-row-change.down { color:var(--red); }
+  .btn-drawer-edit { background:none; border:1px solid var(--border-soft); color:var(--muted); padding:4px 10px; border-radius:6px; font-family:'Outfit',sans-serif; font-size:0.72rem; cursor:pointer; transition:all .15s; }
+  .btn-drawer-edit:hover { border-color:var(--border); color:var(--cream); }
+  .btn-drawer-del { background:none; border:none; color:var(--muted); font-size:1rem; cursor:pointer; padding:4px 6px; transition:color .15s; }
+  .btn-drawer-del:hover { color:var(--red); }
 
   /* ── MODAL ── */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; padding:20px; }
@@ -187,6 +215,49 @@
   .btn-modal-cancel { padding:12px 18px; background:none; border:1px solid var(--border-soft); color:var(--muted); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; transition:all .15s; }
   .btn-modal-cancel:hover { border-color:var(--border); color:var(--cream); }
   .modal-err { font-size:0.8rem; color:var(--red); margin-top:8px; min-height:18px; }
+
+  /* ── QUICK PICKS ── */
+  .quick-picks { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
+  .qpick {
+    padding:5px 12px; border-radius:20px; border:1px solid var(--border-soft);
+    background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.78rem;
+    cursor:pointer; transition:all .15s;
+  }
+  .qpick:hover { border-color:var(--border); color:var(--cream); }
+  .qpick.selected.asset { border-color:var(--green); background:rgba(76,175,125,0.12); color:var(--green); }
+  .qpick.selected.liability { border-color:var(--red); background:rgba(224,92,92,0.12); color:var(--red); }
+  .modal-field-or { font-size:0.72rem; color:var(--muted); margin-bottom:8px; letter-spacing:0.05em; }
+
+  /* ── LOG BUTTONS ── */
+  .log-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px; }
+  .btn-log-new {
+    padding:13px; background:var(--gold); color:var(--navy); border:none; border-radius:12px;
+    font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600;
+    cursor:pointer; transition:background .15s;
+  }
+  .btn-log-new:hover { background:var(--gold-light); }
+  .btn-log-update {
+    padding:13px; background:none; color:var(--gold); border:1px solid var(--gold);
+    border-radius:12px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:500;
+    cursor:pointer; transition:all .15s;
+  }
+  .btn-log-update:hover { background:rgba(201,168,76,0.08); }
+
+  /* ── UPDATE MODAL ── */
+  .update-entry-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border-soft); }
+  .update-entry-row:last-child { border-bottom:none; }
+  .update-entry-info { flex:1; }
+  .update-entry-name { font-size:0.88rem; color:var(--cream-dim); }
+  .update-entry-type { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; margin-top:2px; }
+  .update-entry-type.asset { color:var(--green); }
+  .update-entry-type.liability { color:var(--red); }
+  .update-entry-input { width:120px; padding:8px 10px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.85rem; outline:none; transition:border-color .15s; text-align:right; }
+  .update-entry-input:focus { border-color:var(--gold); }
+  .update-modal-date { margin-bottom:16px; }
+  .update-modal-date label { display:block; font-size:0.75rem; color:var(--muted); margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; }
+  .update-modal-date input { width:100%; padding:11px 14px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; outline:none; transition:border-color .15s; }
+  .update-modal-date input:focus { border-color:var(--gold); }
+  .update-entries-list { max-height:320px; overflow-y:auto; margin-bottom:16px; }
 
   /* ── COPY BANNER ── */
   .copy-banner { background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:20px; display:none; }
@@ -301,8 +372,11 @@
         </div>
       </div>
 
-      <!-- LOG BUTTON -->
-      <button class="btn-log" onclick="openLogModal()">+ Log This Month's Numbers</button>
+      <!-- LOG BUTTONS -->
+      <div class="log-btns">
+        <button class="btn-log-new" onclick="openLogModal()">+ Add New Entry</button>
+        <button class="btn-log-update" onclick="openUpdateModal()">↻ Update Existing</button>
+      </div>
 
       <!-- COPY BANNER -->
       <div class="copy-banner" id="copyBanner">
@@ -314,25 +388,37 @@
       </div>
 
       <!-- HISTORY -->
-      <div class="history-title">History</div>
-      <div id="historyList">
-        <div class="history-empty">No entries yet. Log your first snapshot above.</div>
-      </div>
+      <div id="historyList"></div>
 
     </div><!-- /mainContent -->
   </div><!-- /appScreen -->
 
 </div><!-- /container -->
 
+<!-- ── CATEGORY HISTORY DRAWER ── -->
+<div class="drawer-overlay" id="categoryDrawer">
+  <div class="drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-header">
+      <div>
+        <div class="drawer-title" id="drawerTitle"></div>
+        <div class="drawer-type" id="drawerType"></div>
+      </div>
+      <button class="btn-drawer-close" onclick="closeDrawer()">×</button>
+    </div>
+    <div class="drawer-history" id="drawerHistory"></div>
+  </div>
+</div>
+
 <!-- ── ENTRY MODAL ── -->
 <div class="modal-overlay" id="entryModal">
   <div class="modal">
-    <div class="modal-title" id="modalTitle">Log Entry</div>
-    <div class="modal-sub">Add an asset or liability for a specific month.</div>
+    <div class="modal-title" id="modalTitle">Add New Entry</div>
+    <div class="modal-sub">Log an asset or liability for a specific date.</div>
 
     <div class="modal-field">
-      <label>Month & Year</label>
-      <input type="month" id="entryDate">
+      <label>Date</label>
+      <input type="date" id="entryDate">
     </div>
 
     <div class="modal-field">
@@ -345,15 +431,9 @@
 
     <div class="modal-field">
       <label>Category</label>
-      <input type="text" id="entryCategory" placeholder="e.g. 401k, Home, Mortgage" list="categorySuggestions">
-      <datalist id="categorySuggestions">
-        <option value="401k"><option value="Roth IRA"><option value="Traditional IRA">
-        <option value="Brokerage"><option value="Cash & Savings"><option value="Home">
-        <option value="Investment Property"><option value="Car"><option value="Crypto">
-        <option value="Other Asset"><option value="Mortgage"><option value="Home Equity Loan">
-        <option value="Auto Loan"><option value="Student Loan"><option value="Credit Card">
-        <option value="Personal Loan"><option value="Other Liability">
-      </datalist>
+      <div class="quick-picks" id="quickPicks"></div>
+      <div class="modal-field-or">or type your own:</div>
+      <input type="text" id="entryCategory" placeholder="e.g. 401k, Home, Mortgage">
     </div>
 
     <div class="modal-field">
@@ -366,6 +446,28 @@
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-modal-save" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPDATE MODAL ── -->
+<div class="modal-overlay" id="updateModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title">Update Numbers</div>
+    <div class="modal-sub">Re-log your existing entries with a new date and updated values.</div>
+
+    <div class="update-modal-date">
+      <label>Date for these updates</label>
+      <input type="date" id="updateDate">
+    </div>
+
+    <div class="update-entries-list" id="updateEntriesList"></div>
+
+    <div class="modal-err" id="updateModalErr"></div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeUpdateModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveUpdates()">Save All</button>
     </div>
   </div>
 </div>
@@ -400,9 +502,7 @@ function fmtMoney(n) {
   const abs = Math.abs(n);
   const fmt = abs >= 1000000
     ? '$' + (abs/1000000).toFixed(2) + 'M'
-    : abs >= 1000
-    ? '$' + Math.round(abs).toLocaleString()
-    : '$' + Math.round(abs).toLocaleString();
+    : '$' + Math.round(abs).toLocaleString()
   return n < 0 ? '-' + fmt : fmt;
 }
 
@@ -415,16 +515,41 @@ function parseMoney(val) {
   return parseFloat((val || '').replace(/,/g, '')) || 0;
 }
 
+function currentDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
 function currentMonthStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
 }
 
+function dateToMonthStr(dateStr) {
+  // "2025-03-15" → "2025-03"
+  return dateStr ? dateStr.slice(0, 7) : '';
+}
+
 function fmtMonthLabel(str) {
-  const [y, m] = str.split('-');
+  const parts = str.split('-');
+  const y = parts[0], m = parts[1];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${months[parseInt(m)-1]} ${y}`;
 }
+
+function fmtDateLabel(str) {
+  if (!str) return '';
+  const parts = str.split('-');
+  if (parts.length === 3) {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[parseInt(parts[1])-1]} ${parseInt(parts[2])}, ${parts[0]}`;
+  }
+  return fmtMonthLabel(str);
+}
+
+// ── QUICK PICK DATA ──
+const QUICK_ASSETS = ['401k / 403b', 'Roth IRA', 'Brokerage', 'Cash & Savings', 'Home'];
+const QUICK_LIABILITIES = ['Mortgage', 'Auto Loan', 'Student Loan', 'Credit Card', 'Personal Loan'];
 
 // ── AUTH TABS ──
 function switchTab(tab) {
@@ -471,22 +596,35 @@ sb.auth.onAuthStateChange(async (event, session) => {
   }
 });
 
+// Fix: reload data when tab becomes visible again (prevents "stuck loading" on tab return)
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && currentUser) {
+    // Only reload if stuck on loading state
+    const loadingVisible = document.getElementById('loadingState').style.display !== 'none';
+    if (loadingVisible) await loadEntries();
+  }
+});
+
 // ── LOAD ENTRIES ──
 async function loadEntries() {
   document.getElementById('loadingState').style.display = 'block';
   document.getElementById('mainContent').style.display = 'none';
 
-  const { data, error } = await sb
-    .from('net_worth_entries')
-    .select('*')
-    .order('date', { ascending: true });
+  try {
+    const { data, error } = await sb
+      .from('net_worth_entries')
+      .select('*')
+      .order('date', { ascending: true });
 
-  if (error) { console.error(error); return; }
+    if (error) throw error;
+    allEntries = data || [];
+  } catch(e) {
+    console.error(e);
+    allEntries = [];
+  }
 
-  allEntries = data || [];
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
-
   renderAll();
   checkCopyBanner();
 }
@@ -502,12 +640,10 @@ function renderAll() {
 function buildMonthlySnapshots() {
   if (!allEntries.length) return [];
 
-  // Get all months from first entry to current month
-  const allMonths = [...new Set(allEntries.map(e => e.date))].sort();
+  const allMonths = [...new Set(allEntries.map(e => dateToMonthStr(e.date)))].sort();
   const firstMonth = allMonths[0];
   const now = currentMonthStr();
 
-  // Build full month range
   const months = [];
   let cur = firstMonth;
   while (cur <= now) {
@@ -517,17 +653,14 @@ function buildMonthlySnapshots() {
     cur = next;
   }
 
-  // For each month, carry forward last known value per category
   const snapshots = [];
-  const lastKnown = {}; // category -> {value, type}
+  const lastKnown = {};
 
   for (const month of months) {
-    // Update with this month's actual entries
-    const monthEntries = allEntries.filter(e => e.date === month);
+    const monthEntries = allEntries.filter(e => dateToMonthStr(e.date) === month);
     for (const e of monthEntries) {
       lastKnown[e.category] = { value: e.value, type: e.type };
     }
-    // Compute net worth from all known categories
     let assets = 0, liabilities = 0;
     for (const cat of Object.values(lastKnown)) {
       if (cat.type === 'asset') assets += cat.value;
@@ -615,6 +748,8 @@ function renderChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
+          mode: 'index',
+          intersect: false,
           callbacks: {
             label: ctx => ' Net Worth: ' + fmtMoney(ctx.raw)
           },
@@ -626,6 +761,7 @@ function renderChart() {
           padding: 10,
         }
       },
+      hover: { mode: 'index', intersect: false },
       scales: {
         x: {
           grid: { color: 'rgba(255,255,255,0.04)' },
@@ -652,61 +788,112 @@ function renderHistory() {
     return;
   }
 
-  // Group by month, most recent first
-  const byMonth = {};
+  // Build latest value per category + type
+  const catMap = {}; // category -> {type, latestEntry}
   for (const e of allEntries) {
-    if (!byMonth[e.date]) byMonth[e.date] = [];
-    byMonth[e.date].push(e);
+    if (!catMap[e.category] || e.date > catMap[e.category].latestEntry.date) {
+      catMap[e.category] = { type: e.type, latestEntry: e };
+    }
   }
-  const months = Object.keys(byMonth).sort().reverse();
 
-  const snapshots = buildMonthlySnapshots();
-  const snapshotMap = {};
-  for (const s of snapshots) snapshotMap[s.month] = s;
+  const assets = Object.entries(catMap).filter(([,v]) => v.type === 'asset');
+  const liabilities = Object.entries(catMap).filter(([,v]) => v.type === 'liability');
 
-  container.innerHTML = months.map(month => {
-    const entries = byMonth[month];
-    const snap = snapshotMap[month];
-    const nw = snap ? snap.netWorth : 0;
-    const nwClass = nw >= 0 ? 'positive' : 'negative';
+  function totalOf(items) {
+    return items.reduce((sum, [,v]) => sum + Number(v.latestEntry.value), 0);
+  }
 
-    const rows = entries.map(e => `
-      <div class="entry-row">
-        <div class="entry-left">
-          <div class="entry-name">${e.category}</div>
-          <div class="entry-type ${e.type}">${e.type}</div>
-        </div>
-        <div class="entry-right">
-          <div class="entry-val">${fmtMoney(e.value)}</div>
-          <button class="btn-entry-edit" onclick="openEditModal('${e.id}')">Edit</button>
-          <button class="btn-entry-del" onclick="deleteEntry('${e.id}')">×</button>
-        </div>
-      </div>
-    `).join('');
-
+  function renderSection(items, type) {
+    if (!items.length) return '';
+    const label = type === 'asset' ? 'Assets' : 'Liabilities';
+    const total = totalOf(items);
+    const cards = items.map(([cat, v]) => {
+      const e = v.latestEntry;
+      return `
+        <div class="cat-card" onclick="openCategoryDrawer('${cat.replace(/'/g,"\\'")}')">
+          <div class="cat-card-left">
+            <div class="cat-card-name">${cat}</div>
+            <div class="cat-card-updated">Updated ${fmtDateLabel(e.date)}</div>
+          </div>
+          <div class="cat-card-right">
+            <div class="cat-card-val">${fmtMoney(Number(e.value))}</div>
+            <div class="cat-card-arrow">›</div>
+          </div>
+        </div>`;
+    }).join('');
     return `
-      <div class="month-group">
-        <div class="month-header">
-          <div class="month-header-left">${fmtMonthLabel(month)}</div>
-          <div class="month-header-right ${nwClass}">Net Worth: ${fmtMoney(nw)}</div>
+      <div class="history-section">
+        <div class="history-section-header">
+          <span>${label}</span>
+          <span class="history-section-total ${type}">${fmtMoney(total)}</span>
         </div>
-        <div class="month-entries">${rows}</div>
-      </div>
-    `;
-  }).join('');
+        ${cards}
+      </div>`;
+  }
+
+  container.innerHTML = renderSection(assets, 'asset') + renderSection(liabilities, 'liability');
 }
+
+// ── CATEGORY DRAWER ──
+function openCategoryDrawer(category) {
+  const entries = allEntries
+    .filter(e => e.category === category)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  if (!entries.length) return;
+  const type = entries[0].type;
+
+  document.getElementById('drawerTitle').textContent = category;
+  const typeEl = document.getElementById('drawerType');
+  typeEl.textContent = type;
+  typeEl.className = 'drawer-type ' + type;
+
+  const rows = entries.map((e, i) => {
+    const prev = entries[i + 1];
+    let changeHtml = '';
+    if (prev) {
+      const diff = Number(e.value) - Number(prev.value);
+      if (diff !== 0) {
+        const sign = diff > 0 ? '+' : '';
+        const cls = diff > 0 ? 'up' : 'down';
+        changeHtml = `<span class="drawer-row-change ${cls}">${sign}${fmtMoney(diff)}</span>`;
+      }
+    }
+    return `
+      <div class="drawer-row">
+        <div class="drawer-row-date">${fmtDateLabel(e.date)}</div>
+        <div class="drawer-row-right">
+          <div class="drawer-row-val">${fmtMoney(Number(e.value))}</div>
+          ${changeHtml}
+          <button class="btn-drawer-edit" onclick="openEditModal('${e.id}'); closeDrawer();">Edit</button>
+          <button class="btn-drawer-del" onclick="deleteEntry('${e.id}')">×</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('drawerHistory').innerHTML = rows;
+  document.getElementById('categoryDrawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('categoryDrawer').classList.remove('open');
+}
+
+document.getElementById('categoryDrawer').addEventListener('click', e => {
+  if (e.target === document.getElementById('categoryDrawer')) closeDrawer();
+});
 
 // ── COPY BANNER ──
 function checkCopyBanner() {
-  const now = currentMonthStr();
-  const thisMonthEntries = allEntries.filter(e => e.date === now);
+  const nowMonth = currentMonthStr();
+  const thisMonthEntries = allEntries.filter(e => dateToMonthStr(e.date) === nowMonth);
   if (thisMonthEntries.length > 0) { hideCopyBanner(); return; }
 
-  const months = [...new Set(allEntries.map(e => e.date))].sort().reverse();
+  const months = [...new Set(allEntries.map(e => dateToMonthStr(e.date)))].sort().reverse();
   if (!months.length) { hideCopyBanner(); return; }
 
   const lastMonth = months[0];
-  const lastEntries = allEntries.filter(e => e.date === lastMonth);
+  const lastEntries = allEntries.filter(e => dateToMonthStr(e.date) === lastMonth);
   if (!lastEntries.length) { hideCopyBanner(); return; }
 
   const banner = document.getElementById('copyBanner');
@@ -721,11 +908,11 @@ function hideCopyBanner() {
 
 async function copyLastMonth() {
   hideCopyBanner();
-  const now = currentMonthStr();
-  const months = [...new Set(allEntries.map(e => e.date))].sort().reverse();
+  const now = currentDateStr();
+  const months = [...new Set(allEntries.map(e => dateToMonthStr(e.date)))].sort().reverse();
   if (!months.length) return;
   const lastMonth = months[0];
-  const lastEntries = allEntries.filter(e => e.date === lastMonth);
+  const lastEntries = allEntries.filter(e => dateToMonthStr(e.date) === lastMonth);
 
   const toInsert = lastEntries.map(e => ({
     user_id: currentUser.id,
@@ -740,11 +927,27 @@ async function copyLastMonth() {
   await loadEntries();
 }
 
+// ── QUICK PICKS ──
+function renderQuickPicks(type) {
+  const picks = type === 'asset' ? QUICK_ASSETS : QUICK_LIABILITIES;
+  const container = document.getElementById('quickPicks');
+  const current = document.getElementById('entryCategory').value;
+  container.innerHTML = picks.map(p => `
+    <button type="button" class="qpick${current === p ? ' selected ' + type : ''}"
+      onclick="selectQuickPick('${p}', '${type}')">${p}</button>
+  `).join('');
+}
+
+function selectQuickPick(val, type) {
+  document.getElementById('entryCategory').value = val;
+  renderQuickPicks(type);
+}
+
 // ── MODAL ──
 function openLogModal() {
   editingId = null;
-  document.getElementById('modalTitle').textContent = 'Log Entry';
-  document.getElementById('entryDate').value = currentMonthStr();
+  document.getElementById('modalTitle').textContent = 'Add New Entry';
+  document.getElementById('entryDate').value = currentDateStr();
   document.getElementById('entryCategory').value = '';
   document.getElementById('entryValue').value = '';
   document.getElementById('modalErr').textContent = '';
@@ -757,7 +960,9 @@ function openEditModal(id) {
   if (!entry) return;
   editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit Entry';
-  document.getElementById('entryDate').value = entry.date;
+  // Handle both old YYYY-MM and new YYYY-MM-DD formats
+  const dateVal = entry.date.length === 7 ? entry.date + '-01' : entry.date;
+  document.getElementById('entryDate').value = dateVal;
   document.getElementById('entryCategory').value = entry.category;
   document.getElementById('entryValue').value = Number(entry.value).toLocaleString();
   document.getElementById('modalErr').textContent = '';
@@ -774,6 +979,7 @@ function setType(type) {
   selectedType = type;
   document.getElementById('typeAsset').className = 'type-btn asset' + (type === 'asset' ? ' active' : '');
   document.getElementById('typeLiability').className = 'type-btn liability' + (type === 'liability' ? ' active' : '');
+  renderQuickPicks(type);
 }
 
 async function saveEntry() {
@@ -782,7 +988,7 @@ async function saveEntry() {
   const value = parseMoney(document.getElementById('entryValue').value);
   const errEl = document.getElementById('modalErr');
 
-  if (!date) { errEl.textContent = 'Please select a month.'; return; }
+  if (!date) { errEl.textContent = 'Please select a date.'; return; }
   if (!category) { errEl.textContent = 'Please enter a category.'; return; }
   if (!value || value <= 0) { errEl.textContent = 'Please enter a value greater than 0.'; return; }
 
@@ -803,18 +1009,91 @@ async function saveEntry() {
   await loadEntries();
 }
 
-async function deleteEntry(id) {
-  if (!confirm('Delete this entry?')) return;
-  const { error } = await sb.from('net_worth_entries').delete().eq('id', id);
-  if (error) { console.error(error); return; }
+// ── UPDATE MODAL ──
+function openUpdateModal() {
+  if (!allEntries.length) { alert('No entries yet to update.'); return; }
+
+  // Get most recent entry per category
+  const latestByCategory = {};
+  for (const e of allEntries) {
+    if (!latestByCategory[e.category] || e.date > latestByCategory[e.category].date) {
+      latestByCategory[e.category] = e;
+    }
+  }
+
+  document.getElementById('updateDate').value = currentDateStr();
+  document.getElementById('updateModalErr').textContent = '';
+
+  const list = document.getElementById('updateEntriesList');
+  list.innerHTML = Object.values(latestByCategory).map(e => `
+    <div class="update-entry-row">
+      <div class="update-entry-info">
+        <div class="update-entry-name">${e.category}</div>
+        <div class="update-entry-type ${e.type}">${e.type}</div>
+      </div>
+      <input class="update-entry-input" type="text"
+        data-category="${e.category}" data-type="${e.type}"
+        value="${Number(e.value).toLocaleString()}"
+        oninput="fmtModalComma(this)">
+    </div>
+  `).join('');
+
+  document.getElementById('updateModal').classList.add('open');
+}
+
+function closeUpdateModal() {
+  document.getElementById('updateModal').classList.remove('open');
+}
+
+async function saveUpdates() {
+  const date = document.getElementById('updateDate').value;
+  const errEl = document.getElementById('updateModalErr');
+  if (!date) { errEl.textContent = 'Please select a date.'; return; }
+
+  const inputs = document.querySelectorAll('#updateEntriesList .update-entry-input');
+  const toInsert = [];
+  for (const inp of inputs) {
+    const value = parseMoney(inp.value);
+    if (value <= 0) continue; // skip blanked-out entries
+    toInsert.push({
+      user_id: currentUser.id,
+      date,
+      type: inp.dataset.type,
+      category: inp.dataset.category,
+      value
+    });
+  }
+
+  if (!toInsert.length) { errEl.textContent = 'No values to save.'; return; }
+
+  const { error } = await sb.from('net_worth_entries').insert(toInsert);
+  if (error) { errEl.textContent = 'Error saving. Please try again.'; return; }
+
+  closeUpdateModal();
   await loadEntries();
 }
 
-// Close modal on overlay click
+async function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  // Remember which category was open so we can reopen drawer after reload
+  const entry = allEntries.find(e => e.id === id);
+  const cat = entry ? entry.category : null;
+  const { error } = await sb.from('net_worth_entries').delete().eq('id', id);
+  if (error) { console.error(error); return; }
+  await loadEntries();
+  // Reopen drawer for that category if it still has entries
+  if (cat && allEntries.some(e => e.category === cat)) {
+    openCategoryDrawer(cat);
+  }
+}
+
+// Close modals on overlay click
 document.getElementById('entryModal').addEventListener('click', e => {
   if (e.target === document.getElementById('entryModal')) closeModal();
 });
-</script>
+document.getElementById('updateModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('updateModal')) closeUpdateModal();
+});</script>
 
 </body>
 </html>
