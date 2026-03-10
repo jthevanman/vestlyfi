@@ -124,7 +124,7 @@
   .nw-tile-val.liability { color:var(--red); }
   .nw-tile.debt-ratio-tile { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:10px 16px; }
   .nw-tile.debt-ratio-tile .nw-tile-val { font-size:0.95rem; }
-  .info-icon { display:inline-flex; align-items:center; justify-content:center; width:13px; height:13px; border-radius:50%; border:1px solid var(--muted); color:var(--muted); font-size:0.55rem; font-style:normal; cursor:default; position:relative; flex-shrink:0; }
+  .info-icon { display:inline-flex; align-items:center; justify-content:center; width:13px; height:13px; border-radius:50%; border:1px solid var(--muted); color:var(--muted); font-size:0.6rem; font-style:normal; line-height:1; cursor:default; position:relative; flex-shrink:0; }
   .info-icon:hover .info-tooltip { display:block; }
   .info-tooltip { display:none; position:absolute; left:18px; top:-4px; width:200px; background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:0.72rem; color:var(--cream-dim); line-height:1.5; z-index:50; letter-spacing:0; text-transform:none; font-weight:300; pointer-events:none; }
 
@@ -167,7 +167,7 @@
   .history-section-total { font-size:1rem; font-weight:600; }
   .history-section-total.asset { color:var(--green); }
   .history-section-total.liability { color:var(--red); }
-  .history-section-chevron { color:var(--muted); font-size:0.75rem; transition:transform .2s; }
+  .history-section-chevron { color:var(--muted); font-size:1.1rem; transition:transform .2s; line-height:1; }
   .history-section-chevron.open { transform:rotate(90deg); }
   .history-section-body { overflow:hidden; }
   .history-section-inner { padding-top:6px; }
@@ -401,7 +401,7 @@
             <div class="nw-tile-val liability" id="totalLiabilities">$0</div>
           </div>
           <div class="nw-tile debt-ratio-tile">
-            <div class="nw-tile-label">Debt-to-Asset Ratio <span class="info-icon">i<span class="info-tooltip">Liabilities ÷ Assets. Under 30% is healthy (green), 30–60% is moderate (yellow), above 60% is high (red).</span></span></div>
+            <div class="nw-tile-label">Debt-to-Asset Ratio <span class="info-icon">i<span class="info-tooltip">Liabilities / Assets. Under 30% is healthy (green), 30–60% is moderate (yellow), above 60% is high (red).</span></span></div>
             <div class="nw-tile-val" id="debtRatio">—</div>
           </div>
         </div>
@@ -1126,9 +1126,6 @@ async function copyShareImage() {
   }
 }
 
-document.getElementById('shareModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('shareModal')) closeShareModal();
-});
 
 // ── RENDER HISTORY ──
 const sectionCollapsed = { asset: false, liability: false };
@@ -1294,15 +1291,24 @@ function closeDrawer() {
   document.getElementById('categoryDrawer').classList.remove('open');
 }
 
-// Prevent drawer from closing when user drags selection outside the drawer
-let mouseDownInDrawer = false;
-document.getElementById('categoryDrawer').addEventListener('mousedown', e => {
-  mouseDownInDrawer = e.target === document.getElementById('categoryDrawer');
-});
-document.getElementById('categoryDrawer').addEventListener('click', e => {
-  if (e.target === document.getElementById('categoryDrawer') && mouseDownInDrawer) closeDrawer();
-  mouseDownInDrawer = false;
-});
+// ── MODAL OVERLAY CLOSE — guarded against drag-off-input false closes ──
+// Only close if mousedown AND mouseup/click both land on the backdrop itself
+(function() {
+  const pairs = [
+    { id: 'entryModal',     close: () => closeModal() },
+    { id: 'updateModal',    close: () => closeUpdateModal() },
+    { id: 'shareModal',     close: () => closeShareModal() },
+    { id: 'valuationModal', close: () => closeValuationModal() },
+    { id: 'categoryDrawer', close: () => closeDrawer() },
+  ];
+  pairs.forEach(({ id, close }) => {
+    const el = document.getElementById(id);
+    let downOnBackdrop = false;
+    el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+    el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+    el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) close(); downOnBackdrop = false; });
+  });
+})();
 
 // ── COPY BANNER ──
 function checkCopyBanner() {
@@ -1372,6 +1378,7 @@ function openLogModal() {
   document.getElementById('entryCategory').value = '';
   document.getElementById('entryValue').value = '';
   document.getElementById('modalErr').textContent = '';
+  document.querySelector('.type-toggle').closest('.modal-field').style.display = '';
   setType('asset');
   document.getElementById('entryModal').classList.add('open');
 }
@@ -1384,6 +1391,8 @@ function openLogModalTyped(type) {
   document.getElementById('entryValue').value = '';
   document.getElementById('modalErr').textContent = '';
   setType(type);
+  // Hide the type toggle so user can't switch
+  document.querySelector('.type-toggle').closest('.modal-field').style.display = 'none';
   document.getElementById('entryModal').classList.add('open');
 }
 
@@ -1432,9 +1441,6 @@ async function saveValuation() {
   }
 }
 
-document.getElementById('valuationModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('valuationModal')) closeValuationModal();
-});
 document.getElementById('valuationDate').addEventListener('keydown', e => { if (e.key === 'Enter') saveValuation(); });
 document.getElementById('valuationValue').addEventListener('keydown', e => { if (e.key === 'Enter') saveValuation(); });
 
@@ -1443,7 +1449,7 @@ function openEditModal(id) {
   if (!entry) return;
   editingId = id;
   document.getElementById('modalTitle').textContent = 'Edit Entry';
-  // Handle both old YYYY-MM and new YYYY-MM-DD formats
+  document.querySelector('.type-toggle').closest('.modal-field').style.display = '';
   const dateVal = entry.date.length === 7 ? entry.date + '-01' : entry.date;
   document.getElementById('entryDate').value = dateVal;
   document.getElementById('entryCategory').value = entry.category;
@@ -1556,14 +1562,7 @@ async function saveUpdates() {
   await loadEntries();
 }
 
-
-// Close modals on overlay click
-document.getElementById('entryModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('entryModal')) closeModal();
-});
-document.getElementById('updateModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('updateModal')) closeUpdateModal();
-});</script>
+</script>
 
 </body>
 </html>
