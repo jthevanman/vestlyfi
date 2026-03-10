@@ -495,6 +495,7 @@ let allEntries = [];
 let editingId = null;
 let selectedType = 'asset';
 let chartInstance = null;
+let isLoadingEntries = false;
 
 // ── HELPERS ──
 function fmtMoney(n) {
@@ -600,6 +601,7 @@ function showApp() {
 }
 
 // Initialize: check existing session first, then listen for changes
+let initDone = false;
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (session?.user) {
@@ -609,15 +611,18 @@ function showApp() {
   } else {
     showAuth();
   }
+  initDone = true;
 })();
 
 sb.auth.onAuthStateChange(async (event, session) => {
+  if (!initDone && event === 'SIGNED_IN') return; // already handled by getSession above
   if (event === 'SIGNED_IN' && session?.user) {
     currentUser = session.user;
     showApp();
     await loadEntries();
   } else if (event === 'SIGNED_OUT') {
     currentUser = null;
+    allEntries = [];
     showAuth();
   }
 });
@@ -632,8 +637,18 @@ document.addEventListener('visibilitychange', async () => {
 
 // ── LOAD ENTRIES ──
 async function loadEntries() {
+  if (isLoadingEntries) return;
+  isLoadingEntries = true;
+
   document.getElementById('loadingState').style.display = 'block';
   document.getElementById('mainContent').style.display = 'none';
+
+  // Safety net: force-show content after 5s no matter what
+  const timeout = setTimeout(() => {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    isLoadingEntries = false;
+  }, 5000);
 
   try {
     const { data, error } = await sb
@@ -648,6 +663,8 @@ async function loadEntries() {
     allEntries = [];
   }
 
+  clearTimeout(timeout);
+  isLoadingEntries = false;
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('mainContent').style.display = 'block';
   renderAll();
