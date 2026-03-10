@@ -125,9 +125,20 @@
 
   /* ── CHART ── */
   .chart-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:16px; padding:24px; margin-bottom:24px; }
-  .chart-card-title { font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; }
+  .chart-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .chart-card-title { font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+  .chart-period-btns { display:flex; gap:4px; }
+  .period-btn { padding:4px 10px; border-radius:6px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
+  .period-btn:hover { color:var(--cream); border-color:var(--border); }
+  .period-btn.active { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
   .chart-wrap { position:relative; height:200px; }
   .chart-empty { text-align:center; padding:40px 0; color:var(--muted); font-size:0.88rem; line-height:1.7; }
+  .chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); }
+  .chart-period-summary { font-size:0.8rem; color:var(--muted); }
+  .chart-period-summary .up { color:var(--green); }
+  .chart-period-summary .down { color:var(--red); }
+  .btn-share { padding:6px 14px; background:none; border:1px solid var(--border); color:var(--gold); border-radius:8px; font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:500; cursor:pointer; transition:all .15s; }
+  .btn-share:hover { background:rgba(201,168,76,0.08); }
 
   /* ── LOG BUTTON ── */
   .btn-log {
@@ -160,11 +171,11 @@
   .history-empty { text-align:center; padding:32px 0; color:var(--muted); font-size:0.88rem; }
 
   /* ── CATEGORY HISTORY DRAWER ── */
-  .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; justify-content:center; }
+  .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; padding:20px; }
   .drawer-overlay.open { display:flex; }
   .drawer {
-    background:var(--navy-mid); border:1px solid var(--border); border-radius:16px 16px 0 0;
-    padding:24px 24px 36px; width:100%; max-width:520px; max-height:80vh;
+    background:var(--navy-mid); border:1px solid var(--border); border-radius:16px;
+    padding:24px 24px 32px; width:100%; max-width:480px; max-height:80vh;
     display:flex; flex-direction:column;
   }
   .drawer-handle { width:40px; height:4px; background:var(--border-soft); border-radius:2px; margin:0 auto 20px; }
@@ -325,6 +336,10 @@
           <label>Password</label>
           <input type="password" id="suPassword" placeholder="At least 6 characters">
         </div>
+        <div class="auth-field">
+          <label>Confirm Password</label>
+          <input type="password" id="suPasswordConfirm" placeholder="Re-enter your password">
+        </div>
         <button class="btn-auth" onclick="signUp()">Create Account</button>
         <div class="auth-msg" id="suMsg"></div>
       </div>
@@ -360,15 +375,31 @@
             <div class="nw-tile-label">Total Liabilities</div>
             <div class="nw-tile-val liability" id="totalLiabilities">$0</div>
           </div>
+          <div class="nw-tile" style="grid-column:1/-1">
+            <div class="nw-tile-label">Debt-to-Asset Ratio</div>
+            <div class="nw-tile-val" id="debtRatio">—</div>
+          </div>
         </div>
       </div>
 
       <!-- CHART -->
       <div class="chart-card">
-        <div class="chart-card-title">Net Worth Over Time</div>
+        <div class="chart-card-header">
+          <div class="chart-card-title">Net Worth Over Time</div>
+          <div class="chart-period-btns" id="chartPeriodBtns">
+            <button class="period-btn" onclick="setChartPeriod(3)">3M</button>
+            <button class="period-btn" onclick="setChartPeriod(6)">6M</button>
+            <button class="period-btn active" onclick="setChartPeriod(12)">1Y</button>
+            <button class="period-btn" onclick="setChartPeriod(0)">All</button>
+          </div>
+        </div>
         <div class="chart-wrap">
           <div class="chart-empty" id="chartEmpty">Log entries for two or more months to see your trend.</div>
           <canvas id="nwChart" style="display:none"></canvas>
+        </div>
+        <div class="chart-footer" id="chartFooter" style="display:none">
+          <div class="chart-period-summary" id="chartPeriodSummary"></div>
+          <button class="btn-share" onclick="openShareModal()">↗ Share</button>
         </div>
       </div>
 
@@ -410,7 +441,26 @@
   </div>
 </div>
 
-<!-- ── ENTRY MODAL ── -->
+<!-- ── SHARE MODAL ── -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Share Your Progress</div>
+    <div class="modal-sub" id="shareModalSub"></div>
+    <div id="sharePreviewWrap" style="margin-bottom:16px; border-radius:10px; overflow:hidden; background:#0a0f1e; min-height:200px; display:flex; align-items:center; justify-content:center;">
+      <div id="shareGenerating" style="color:rgba(245,240,232,0.35); font-size:0.85rem;">Generating image…</div>
+      <img id="sharePreviewImg" style="display:none; width:100%; border-radius:10px;" alt="Share preview">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeShareModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="downloadShareImage()">⬇ Download</button>
+      <button class="btn-modal-save" style="background:var(--navy-light); color:var(--cream); border:1px solid var(--border-soft);" onclick="copyShareImage()">Copy Image</button>
+    </div>
+    <div class="modal-err" id="shareMsg" style="color:var(--green)"></div>
+  </div>
+</div>
+
+<!-- hidden canvas for share image rendering -->
+<canvas id="shareCanvas" style="display:none"></canvas>
 <div class="modal-overlay" id="entryModal">
   <div class="modal">
     <div class="modal-title" id="modalTitle">Add New Entry</div>
@@ -564,6 +614,7 @@ document.getElementById('siEmail').addEventListener('keydown', e => { if (e.key 
 document.getElementById('siPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); });
 document.getElementById('suEmail').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
 document.getElementById('suPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
+document.getElementById('suPasswordConfirm').addEventListener('keydown', e => { if (e.key === 'Enter') signUp(); });
 
 async function signIn() {
   const email = document.getElementById('siEmail').value.trim();
@@ -578,7 +629,14 @@ async function signIn() {
 async function signUp() {
   const email = document.getElementById('suEmail').value.trim();
   const password = document.getElementById('suPassword').value;
+  const confirm = document.getElementById('suPasswordConfirm').value;
   const msg = document.getElementById('suMsg');
+  if (password !== confirm) {
+    msg.className = 'auth-msg err'; msg.textContent = 'Passwords do not match.'; return;
+  }
+  if (password.length < 6) {
+    msg.className = 'auth-msg err'; msg.textContent = 'Password must be at least 6 characters.'; return;
+  }
   msg.className = 'auth-msg'; msg.textContent = 'Creating account…';
   const { error } = await sb.auth.signUp({ email, password });
   if (error) { msg.className = 'auth-msg err'; msg.textContent = error.message; }
@@ -627,11 +685,11 @@ sb.auth.onAuthStateChange(async (event, session) => {
   }
 });
 
-// Fix: reload if tab returns and content is still hidden
+// Only reload if genuinely stuck showing the loading spinner — never on normal tab return
 document.addEventListener('visibilitychange', async () => {
-  if (document.visibilityState === 'visible' && currentUser) {
-    const contentHidden = document.getElementById('mainContent').style.display === 'none';
-    if (contentHidden) await loadEntries();
+  if (document.visibilityState === 'visible' && currentUser && !isLoadingEntries) {
+    const loadingShowing = document.getElementById('loadingState').style.display === 'block';
+    if (loadingShowing) await loadEntries();
   }
 });
 
@@ -722,6 +780,8 @@ function renderSummary() {
     document.getElementById('nwChange').textContent = '—';
     document.getElementById('totalAssets').textContent = '$0';
     document.getElementById('totalLiabilities').textContent = '$0';
+    document.getElementById('debtRatio').textContent = '—';
+    document.getElementById('debtRatio').style.color = '';
     return;
   }
 
@@ -745,23 +805,63 @@ function renderSummary() {
 
   document.getElementById('totalAssets').textContent = fmtMoney(latest.assets);
   document.getElementById('totalLiabilities').textContent = fmtMoney(latest.liabilities);
+
+  // Debt-to-asset ratio
+  const ratioEl = document.getElementById('debtRatio');
+  if (latest.assets > 0) {
+    const ratio = (latest.liabilities / latest.assets) * 100;
+    ratioEl.textContent = ratio.toFixed(1) + '%';
+    ratioEl.style.color = ratio < 30 ? 'var(--green)' : ratio < 60 ? 'var(--gold-light)' : 'var(--red)';
+  } else {
+    ratioEl.textContent = '—';
+    ratioEl.style.color = '';
+  }
 }
 
 // ── RENDER CHART ──
+let chartPeriodMonths = 12; // 0 = all
+
+function setChartPeriod(months) {
+  chartPeriodMonths = months;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  const labels = { 3:'3M', 6:'6M', 12:'1Y', 0:'All' };
+  document.querySelectorAll('.period-btn').forEach(b => {
+    if (b.textContent === labels[months]) b.classList.add('active');
+  });
+  renderChart();
+}
+
+function getFilteredSnapshots() {
+  const all = buildMonthlySnapshots();
+  if (!chartPeriodMonths || all.length <= chartPeriodMonths) return all;
+  return all.slice(-chartPeriodMonths);
+}
+
 function renderChart() {
-  const snapshots = buildMonthlySnapshots();
+  const snapshots = getFilteredSnapshots();
   const chartEmpty = document.getElementById('chartEmpty');
   const canvas = document.getElementById('nwChart');
+  const footer = document.getElementById('chartFooter');
 
   if (snapshots.length < 2) {
     chartEmpty.style.display = 'block';
     canvas.style.display = 'none';
+    footer.style.display = 'none';
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     return;
   }
 
   chartEmpty.style.display = 'none';
   canvas.style.display = 'block';
+  footer.style.display = 'flex';
+
+  // Period summary
+  const first = snapshots[0], last = snapshots[snapshots.length - 1];
+  const diff = last.netWorth - first.netWorth;
+  const sign = diff >= 0 ? '+' : '';
+  const cls = diff >= 0 ? 'up' : 'down';
+  document.getElementById('chartPeriodSummary').innerHTML =
+    `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)} &nbsp;<span class="${cls}">${sign}${fmtMoney(diff)}</span>`;
 
   const labels = snapshots.map(s => fmtMonthLabel(s.month));
   const data = snapshots.map(s => s.netWorth);
@@ -792,9 +892,7 @@ function renderChart() {
         tooltip: {
           mode: 'index',
           intersect: false,
-          callbacks: {
-            label: ctx => ' Net Worth: ' + fmtMoney(ctx.raw)
-          },
+          callbacks: { label: ctx => ' Net Worth: ' + fmtMoney(ctx.raw) },
           backgroundColor: '#141d35',
           borderColor: 'rgba(201,168,76,0.3)',
           borderWidth: 1,
@@ -811,16 +909,183 @@ function renderChart() {
         },
         y: {
           grid: { color: 'rgba(255,255,255,0.04)' },
-          ticks: {
-            color: 'rgba(245,240,232,0.35)',
-            font: { family: 'Outfit', size: 11 },
-            callback: v => fmtMoney(v)
-          }
+          ticks: { color: 'rgba(245,240,232,0.35)', font: { family: 'Outfit', size: 11 }, callback: v => fmtMoney(v) }
         }
       }
     }
   });
 }
+
+// ── SHARE IMAGE ──
+function openShareModal() {
+  const snapshots = getFilteredSnapshots();
+  if (snapshots.length < 2) return;
+  const first = snapshots[0], last = snapshots[snapshots.length - 1];
+  const diff = last.netWorth - first.netWorth;
+  const sign = diff >= 0 ? '+' : '–';
+  document.getElementById('shareModalSub').textContent =
+    `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
+  document.getElementById('sharePreviewImg').style.display = 'none';
+  document.getElementById('shareGenerating').style.display = 'block';
+  document.getElementById('shareMsg').textContent = '';
+  document.getElementById('shareModal').classList.add('open');
+  setTimeout(() => renderShareCanvas(snapshots), 50);
+}
+
+function closeShareModal() {
+  document.getElementById('shareModal').classList.remove('open');
+}
+
+function renderShareCanvas(snapshots) {
+  const W = 1200, H = 630;
+  const canvas = document.getElementById('shareCanvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const first = snapshots[0], last = snapshots[snapshots.length - 1];
+  const diff = last.netWorth - first.netWorth;
+  const isUp = diff >= 0;
+  const accentColor = isUp ? '#4caf7d' : '#e05c5c';
+
+  // Background
+  ctx.fillStyle = '#0a0f1e';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle gold gradient top
+  const grad = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 400);
+  grad.addColorStop(0, 'rgba(201,168,76,0.06)');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // VestlyFi wordmark top-left
+  ctx.font = '600 28px "Exo 2", sans-serif';
+  ctx.fillStyle = '#c9a84c';
+  ctx.fillText('VestlyFi', 60, 58);
+
+  // Period label top-right
+  ctx.font = '300 22px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.45)';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`, W - 60, 58);
+  ctx.textAlign = 'left';
+
+  // Net worth value — big
+  ctx.font = '300 22px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.45)';
+  ctx.fillText('NET WORTH', 60, 148);
+
+  ctx.font = '600 88px Outfit, sans-serif';
+  ctx.fillStyle = '#f5f0e8';
+  ctx.fillText(fmtMoney(last.netWorth), 60, 248);
+
+  // Change pill
+  const changeText = (isUp ? '▲ +' : '▼ ') + fmtMoney(Math.abs(diff));
+  ctx.font = '500 32px Outfit, sans-serif';
+  const tw = ctx.measureText(changeText).width;
+  const pillX = 60, pillY = 270, pillW = tw + 32, pillH = 48;
+  ctx.fillStyle = isUp ? 'rgba(76,175,125,0.15)' : 'rgba(224,92,92,0.15)';
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, 8);
+  ctx.fill();
+  ctx.fillStyle = accentColor;
+  ctx.fillText(changeText, pillX + 16, pillY + 33);
+
+  // Mini line chart
+  const chartX = 60, chartY = 360, chartW = W - 120, chartH = 180;
+  const vals = snapshots.map(s => s.netWorth);
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+
+  function ptX(i) { return chartX + (i / (vals.length - 1)) * chartW; }
+  function ptY(v) { return chartY + chartH - ((v - minV) / range) * chartH; }
+
+  // Fill under line
+  const fillGrad = ctx.createLinearGradient(0, chartY, 0, chartY + chartH);
+  fillGrad.addColorStop(0, isUp ? 'rgba(76,175,125,0.18)' : 'rgba(224,92,92,0.18)');
+  fillGrad.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.moveTo(ptX(0), ptY(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(ptX(i), ptY(vals[i]));
+  ctx.lineTo(ptX(vals.length - 1), chartY + chartH);
+  ctx.lineTo(ptX(0), chartY + chartH);
+  ctx.closePath();
+  ctx.fillStyle = fillGrad;
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  ctx.moveTo(ptX(0), ptY(vals[0]));
+  for (let i = 1; i < vals.length; i++) ctx.lineTo(ptX(i), ptY(vals[i]));
+  ctx.strokeStyle = accentColor;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // Dot at end
+  ctx.beginPath();
+  ctx.arc(ptX(vals.length - 1), ptY(vals[vals.length - 1]), 6, 0, Math.PI * 2);
+  ctx.fillStyle = accentColor;
+  ctx.fill();
+
+  // Month labels under chart
+  const step = Math.ceil(snapshots.length / 6);
+  ctx.font = '300 18px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.3)';
+  snapshots.forEach((s, i) => {
+    if (i % step === 0 || i === snapshots.length - 1) {
+      ctx.textAlign = i === snapshots.length - 1 ? 'right' : (i === 0 ? 'left' : 'center');
+      ctx.fillText(fmtMonthLabel(s.month), ptX(i), chartY + chartH + 28);
+    }
+  });
+  ctx.textAlign = 'left';
+
+  // Bottom divider + vestlyfi.com
+  ctx.strokeStyle = 'rgba(201,168,76,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, H - 48); ctx.lineTo(W - 60, H - 48);
+  ctx.stroke();
+  ctx.font = '300 18px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.25)';
+  ctx.fillText('vestlyfi.com/net-worth', 60, H - 22);
+
+  // Show preview
+  const dataUrl = canvas.toDataURL('image/png');
+  document.getElementById('shareGenerating').style.display = 'none';
+  const img = document.getElementById('sharePreviewImg');
+  img.src = dataUrl;
+  img.style.display = 'block';
+}
+
+function downloadShareImage() {
+  const canvas = document.getElementById('shareCanvas');
+  const snapshots = getFilteredSnapshots();
+  if (!snapshots.length) return;
+  const first = snapshots[0], last = snapshots[snapshots.length - 1];
+  const a = document.createElement('a');
+  a.download = `vestlyfi-networth-${first.month}-to-${last.month}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  document.getElementById('shareMsg').textContent = 'Downloaded!';
+}
+
+async function copyShareImage() {
+  const canvas = document.getElementById('shareCanvas');
+  const msg = document.getElementById('shareMsg');
+  try {
+    canvas.toBlob(async blob => {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      msg.textContent = 'Copied to clipboard!';
+    });
+  } catch(e) {
+    msg.textContent = 'Copy not supported — use Download instead.';
+    msg.style.color = 'var(--red)';
+  }
+}
+
+document.getElementById('shareModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('shareModal')) closeShareModal();
+});
 
 // ── RENDER HISTORY ──
 function renderHistory() {
@@ -877,12 +1142,15 @@ function renderHistory() {
 }
 
 // ── CATEGORY DRAWER ──
+let activeDrawerCategory = null;
+
 function openCategoryDrawer(category) {
   const entries = allEntries
     .filter(e => e.category === category)
     .sort((a, b) => b.date.localeCompare(a.date));
 
   if (!entries.length) return;
+  activeDrawerCategory = category;
   const type = entries[0].type;
 
   document.getElementById('drawerTitle').textContent = category;
@@ -907,14 +1175,33 @@ function openCategoryDrawer(category) {
         <div class="drawer-row-right">
           <div class="drawer-row-val">${fmtMoney(Number(e.value))}</div>
           ${changeHtml}
-          <button class="btn-drawer-edit" onclick="openEditModal('${e.id}'); closeDrawer();">Edit</button>
-          <button class="btn-drawer-del" onclick="deleteEntry('${e.id}')">×</button>
+          <button class="btn-drawer-edit" onclick="editFromDrawer('${e.id}')">Edit</button>
+          <button class="btn-drawer-del" onclick="deleteFromDrawer('${e.id}')">×</button>
         </div>
       </div>`;
   }).join('');
 
   document.getElementById('drawerHistory').innerHTML = rows;
   document.getElementById('categoryDrawer').classList.add('open');
+}
+
+function editFromDrawer(id) {
+  closeDrawer();
+  // Small delay so drawer animation completes before modal opens
+  setTimeout(() => openEditModal(id), 150);
+}
+
+async function deleteFromDrawer(id) {
+  if (!confirm('Delete this entry?')) return;
+  const { error } = await sb.from('net_worth_entries').delete().eq('id', id);
+  if (error) { console.error(error); return; }
+  await loadEntries();
+  // Reopen drawer if category still has entries
+  if (activeDrawerCategory && allEntries.some(e => e.category === activeDrawerCategory)) {
+    openCategoryDrawer(activeDrawerCategory);
+  } else {
+    activeDrawerCategory = null;
+  }
 }
 
 function closeDrawer() {
@@ -1115,19 +1402,6 @@ async function saveUpdates() {
   await loadEntries();
 }
 
-async function deleteEntry(id) {
-  if (!confirm('Delete this entry?')) return;
-  // Remember which category was open so we can reopen drawer after reload
-  const entry = allEntries.find(e => e.id === id);
-  const cat = entry ? entry.category : null;
-  const { error } = await sb.from('net_worth_entries').delete().eq('id', id);
-  if (error) { console.error(error); return; }
-  await loadEntries();
-  // Reopen drawer for that category if it still has entries
-  if (cat && allEntries.some(e => e.category === cat)) {
-    openCategoryDrawer(cat);
-  }
-}
 
 // Close modals on overlay click
 document.getElementById('entryModal').addEventListener('click', e => {
