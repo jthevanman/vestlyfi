@@ -353,10 +353,7 @@ let currentMethod = 'avalanche';
 let lastDebts = [];
 let lastExtra = 0;
 
-const PRESETS = [
-  { name: 'Car Loan', balance: 10000, rate: 5, min: 189 },
-  { name: 'Credit Card', balance: 4000, rate: 18, min: 80 },
-];
+const PRESETS = [];
 
 function addDebtRow(preset = null) {
   const id = ++debtCount;
@@ -380,8 +377,9 @@ function removeDebt(id) {
   checkCalcBtn();
 }
 
-// Init with 3 preset rows
-PRESETS.forEach(p => addDebtRow(p));
+// Init with 2 empty rows
+addDebtRow();
+addDebtRow();
 
 function fmt(n) {
   if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
