@@ -1113,14 +1113,40 @@ function renderShareCanvas(snapshots) {
   ctx.fillStyle = accentColor;
   ctx.fillText(changeText, pillX + 16, pillY + 33);
 
-  // Mini line chart
-  const chartX = 60, chartY = 360, chartW = W - 120, chartH = 180;
+  // Mini line chart — shifted right to make room for y-axis labels
+  const yAxisW = 110;
+  const chartX = 60 + yAxisW, chartY = 360, chartW = W - 120 - yAxisW, chartH = 180;
   const vals = snapshots.map(s => s.netWorth);
   const minV = Math.min(...vals), maxV = Math.max(...vals);
   const range = maxV - minV || 1;
 
+  // Pad min/max slightly so line doesn't hug the edges
+  const pad = range * 0.08;
+  const yMin = minV - pad;
+  const yMax = maxV + pad;
+  const yRange = yMax - yMin;
+
   function ptX(i) { return chartX + (i / (vals.length - 1)) * chartW; }
-  function ptY(v) { return chartY + chartH - ((v - minV) / range) * chartH; }
+  function ptY(v) { return chartY + chartH - ((v - yMin) / yRange) * chartH; }
+
+  // Y-axis grid lines + labels (3 levels: min, mid, max)
+  const yTicks = [minV, (minV + maxV) / 2, maxV];
+  ctx.font = '300 17px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.3)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  yTicks.forEach(v => {
+    const y = ptY(v);
+    // Grid line across chart
+    ctx.beginPath();
+    ctx.moveTo(chartX, y);
+    ctx.lineTo(chartX + chartW, y);
+    ctx.stroke();
+    // Label to the left
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtMoney(v), chartX - 12, y + 6);
+  });
+  ctx.textAlign = 'left';
 
   // Fill under line
   const fillGrad = ctx.createLinearGradient(0, chartY, 0, chartY + chartH);
@@ -1652,9 +1678,11 @@ let bulkHistoryType = 'asset';
 let bulkHistoryCategory = '';
 
 function openBulkHistoryModal() {
-  // Pull category + type from the currently open entry modal
+  // Pull category + type + existing values from the currently open entry modal
   const category = document.getElementById('entryCategory').value.trim();
   const type = selectedType;
+  const existingDate = document.getElementById('entryDate').value;
+  const existingValue = document.getElementById('entryValue').value.trim();
 
   if (!category) {
     document.getElementById('modalErr').textContent = 'Please enter a category first.';
@@ -1668,22 +1696,26 @@ function openBulkHistoryModal() {
   document.getElementById('bulkHistoryTitle').textContent = `Historical Data — ${category}`;
   document.getElementById('bulkErr').textContent = '';
 
-  // Start with 3 empty rows
   const container = document.getElementById('bulkRows');
   container.innerHTML = '';
-  for (let i = 0; i < 3; i++) addBulkRow();
+
+  // First row pre-filled with whatever was already entered
+  addBulkRow(existingDate, existingValue);
+  // Two more blank rows
+  addBulkRow();
+  addBulkRow();
 
   document.getElementById('bulkHistoryModal').classList.add('open');
 }
 
-function addBulkRow() {
+function addBulkRow(date = '', value = '') {
   const container = document.getElementById('bulkRows');
   const row = document.createElement('div');
-  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;';
+  row.style.cssText = 'display:flex;gap:8px;align-items:center;';
   row.innerHTML = `
-    <input type="date" class="bulk-date" style="padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none;width:100%;">
-    <input type="text" class="bulk-value" placeholder="$0" oninput="fmtModalComma(this)" style="padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:300;outline:none;width:100%;">
-    <button onclick="this.closest('div').remove()" style="background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 6px;line-height:1;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;
+    <input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none;">
+    <input type="text" class="bulk-value" placeholder="$0" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:300;outline:none;">
+    <button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;
   container.appendChild(row);
 }
 
