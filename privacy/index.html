@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VestlyFi: Privacy Policy</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --navy-mid: #111827;
+    --navy-light: #1a2540;
+    --navy-card: #141d35;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f5f0e8;
+    --cream-dim: rgba(245,240,232,0.6);
+    --muted: rgba(245,240,232,0.35);
+    --border: rgba(201,168,76,0.15);
+    --border-soft: rgba(255,255,255,0.07);
+    --green: #4caf7d;
+    --red: #e05c5c;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.07) 0%, transparent 70%);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position:sticky; top:0; z-index:100;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0 40px; height:56px;
+    background:rgba(10,15,30,0.92); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; letter-spacing:0.01em; }
+  .nav-links { display:flex; gap:24px; align-items:center; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; font-weight:300; transition:color .15s; }
+  .nav-links a:hover { color:var(--cream); }
+  .nav-links a.active { color:var(--cream); }
+  @media(max-width:600px) { .nav-links{display:none;} nav{padding:0 20px;} }
+
+  /* ── LAYOUT ── */
+  .container { max-width:680px; margin:0 auto; padding:56px 24px 80px; position:relative; z-index:1; }
+
+  /* ── HEADER ── */
+  .page-eyebrow { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:500; }
+  .page-title { font-size:1.8rem; font-weight:300; line-height:1.2; margin-bottom:8px; }
+  .page-title em { color:var(--gold-light); font-style:italic; }
+  .page-date { font-size:0.82rem; color:var(--muted); margin-bottom:48px; }
+
+  /* ── CONTENT ── */
+  .section { margin-bottom:36px; }
+  .section h2 {
+    font-size:0.78rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:12px;
+  }
+  .section p {
+    font-size:0.92rem; color:var(--cream-dim); line-height:1.8; margin-bottom:12px;
+  }
+  .section p:last-child { margin-bottom:0; }
+  .section ul {
+    list-style:none; padding:0;
+  }
+  .section ul li {
+    font-size:0.92rem; color:var(--cream-dim); line-height:1.8; padding-left:16px; position:relative; margin-bottom:4px;
+  }
+  .section ul li::before {
+    content:'–'; position:absolute; left:0; color:var(--muted);
+  }
+  .divider { border:none; border-top:1px solid var(--border-soft); margin:36px 0; }
+  a.inline { color:var(--gold); text-decoration:none; }
+  a.inline:hover { color:var(--gold-light); }
+
+  /* ── FOOTER ── */
+  footer { border-top:1px solid var(--border-soft); padding:28px 40px; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; gap:16px; }
+  footer span { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
+  .footer-links a:hover { color:var(--gold); }
+  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; text-decoration:none; }
+  .btn-bug:hover { border-color:var(--border); color:var(--cream); }
+  @media(max-width:600px) { footer{padding:24px 20px; flex-direction:column; align-items:flex-start; gap:14px;} }
+
+  /* ── BUG MODAL ── */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; padding:20px; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:#111827; border:1px solid rgba(201,168,76,0.15); border-radius:16px; padding:28px; width:100%; max-width:460px; }
+  .modal-title { font-size:1.1rem; font-weight:500; margin-bottom:6px; }
+  .modal-sub { font-size:0.82rem; color:var(--muted); margin-bottom:24px; line-height:1.5; }
+  .modal-field { margin-bottom:16px; }
+  .modal-field label { display:block; font-size:0.75rem; color:var(--muted); margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; }
+  .modal-field input, .modal-field textarea { width:100%; padding:11px 14px; background:#141d35; border:1px solid rgba(255,255,255,0.07); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:300; outline:none; transition:border-color .15s; }
+  .modal-field input:focus, .modal-field textarea:focus { border-color:var(--gold); }
+  .modal-field textarea { resize:vertical; line-height:1.5; }
+  .modal-actions { display:flex; gap:10px; margin-top:8px; }
+  .btn-modal-save { flex:1; padding:12px; background:var(--gold); color:#0a0f1e; border:none; border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background .15s; }
+  .btn-modal-save:hover { background:var(--gold-light); }
+  .btn-modal-save:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-modal-cancel { padding:12px 18px; background:none; border:1px solid rgba(255,255,255,0.07); color:var(--muted); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; transition:all .15s; }
+  .btn-modal-cancel:hover { color:var(--cream); }
+  .modal-err { font-size:0.8rem; margin-top:8px; min-height:18px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">VestlyFi</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/calculators/">Calculators</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/net-worth/">Net Worth</a>
+    <a href="/account/">Account</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="page-eyebrow">Legal</div>
+  <h1 class="page-title">Privacy <em>Policy</em></h1>
+  <div class="page-date">Last updated March 2026</div>
+
+  <div class="section">
+    <h2>Overview</h2>
+    <p>VestlyFi is a free financial tools site. We take your privacy seriously and aim to collect as little data as possible. This policy explains what we collect, why, and how it's used.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>What We Collect</h2>
+    <p>For visitors using our calculators and diagram tools, we collect no personal information. These tools run entirely in your browser — nothing you enter is sent to our servers.</p>
+    <p>For users of the Net Worth Tracker, we collect:</p>
+    <ul>
+      <li>Your email address, used to create and identify your account</li>
+      <li>Your password, stored as a secure hash — we never see it in plain text</li>
+      <li>The financial data you choose to log (asset and liability values and dates)</li>
+    </ul>
+    <p>We also collect basic analytics data through Google Analytics, including pages visited, approximate location (country/region), browser type, and time on page. This data is aggregated and not tied to your identity.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>How We Use It</h2>
+    <ul>
+      <li>Your email is used only to sign you in and send account-related messages (e.g. password resets)</li>
+      <li>Your financial data is used only to power your Net Worth Tracker — we do not analyze, share, or sell it</li>
+      <li>Analytics data is used to understand how people use the site so we can improve it</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>Data Storage &amp; Security</h2>
+    <p>Account and financial data is stored in Supabase, a managed database platform hosted on AWS. Access is protected by row-level security — meaning your data is only accessible to you when logged in with your account. No VestlyFi employee can access your financial data.</p>
+    <p>We use HTTPS on all pages. Passwords are hashed using industry-standard bcrypt.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>Third Parties</h2>
+    <p>We use the following third-party services:</p>
+    <ul>
+      <li>Google Analytics — site usage analytics</li>
+      <li>Supabase — account and data storage</li>
+      <li>Formspree — bug report form submissions</li>
+    </ul>
+    <p>We do not sell your data to any third party, and we do not run advertising on VestlyFi.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>Your Rights</h2>
+    <p>You can delete your account and all associated data at any time from your Account settings page. If you have any questions or requests regarding your data, email us at <a class="inline" href="mailto:vestlyfi@gmail.com">vestlyfi@gmail.com</a>.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <h2>Changes to This Policy</h2>
+    <p>If we make material changes to this policy, we'll update the date at the top of this page. Continued use of VestlyFi after changes are posted constitutes acceptance of the updated policy.</p>
+  </div>
+
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="/privacy/" class="active">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+      </svg>
+      Report a bug
+    </button>
+  </div>
+</footer>
+
+<!-- ── BUG REPORT MODAL ── -->
+<div class="modal-overlay" id="bugModal">
+  <div class="modal">
+    <div class="modal-title">Report a Bug</div>
+    <div class="modal-sub">Found something broken? Let us know and we'll get it fixed.</div>
+    <div class="modal-field">
+      <label>What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Email <span style="color:var(--muted);font-size:0.7rem;letter-spacing:0;text-transform:none;font-weight:300"> — optional, if you'd like a follow-up</span></label>
+      <input type="email" id="bugEmail" placeholder="you@example.com">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div class="modal-err" id="bugErr"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeBugModal()">Cancel</button>
+      <button class="btn-modal-save" id="bugSubmitBtn" onclick="submitBugReport()">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
+
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  document.getElementById('bugModal').classList.add('open');
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+
+function closeBugModal() {
+  document.getElementById('bugModal').classList.remove('open');
+}
+
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+
+  if (!description) { errEl.style.color = '#e05c5c'; errEl.textContent = 'Please describe the bug before submitting.'; return; }
+
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  errEl.textContent = '';
+
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ description, email: email || 'Not provided', page, userAgent: navigator.userAgent })
+    });
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+      errEl.style.color = '#4caf7d';
+      errEl.textContent = 'Thanks for the report — we\'ll look into it.';
+      setTimeout(() => closeBugModal(), 2000);
+    } else { throw new Error(); }
+  } catch(e) {
+    btn.textContent = 'Send Report';
+    btn.disabled = false;
+    errEl.style.color = '#e05c5c';
+    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+  }
+}
+
+// Backdrop close
+(function() {
+  const el = document.getElementById('bugModal');
+  let downOnBackdrop = false;
+  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+})();
+
+document.getElementById('bugDescription').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport();
+});
+</script>
+
+</body>
+</html>
