@@ -76,6 +76,9 @@
   .site-nav-links a.active { color:var(--cream); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
+  .footer-links a:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
   .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
 
@@ -192,9 +195,6 @@
   .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
 
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
-  .footer-links { display:flex; gap:18px; align-items:center; }
-  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
-  .footer-links a:hover { color:var(--gold); }
   @media(max-width:600px) { footer{padding:20px;} .page{padding:40px 20px 60px;} }
   @media(max-width:580px) {
     .debt-table-header,.debt-row { grid-template-columns:1.5fr 1fr 1fr 36px; }
