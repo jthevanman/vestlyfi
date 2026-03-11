@@ -554,7 +554,33 @@
 
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal-save" style="background:var(--navy-light);color:var(--cream);border:1px solid var(--border-soft);flex:none;padding:12px 16px;font-size:0.82rem;" onclick="openBulkHistoryModal()">+ Bulk History</button>
       <button class="btn-modal-save" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BULK HISTORY MODAL ── -->
+<div class="modal-overlay" id="bulkHistoryModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title" id="bulkHistoryTitle">Add Historical Data</div>
+    <div class="modal-sub">Quickly log this category across multiple past dates. Add one row per date.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;">
+      <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Date</div>
+      <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Value</div>
+      <div></div>
+    </div>
+
+    <div id="bulkRows" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin-bottom:12px;"></div>
+
+    <button onclick="addBulkRow()" style="width:100%;padding:9px;background:none;border:1px dashed var(--border-soft);border-radius:9px;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.82rem;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--border)';this.style.color='var(--cream)'" onmouseout="this.style.borderColor='var(--border-soft)';this.style.color='var(--muted)'">+ Add Row</button>
+
+    <div class="modal-err" id="bulkErr"></div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-modal-cancel" onclick="closeBulkHistoryModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveBulkHistory()">Save All</button>
     </div>
   </div>
 </div>
@@ -1348,12 +1374,13 @@ function closeDrawer() {
 // Only close if mousedown AND mouseup/click both land on the backdrop itself
 (function() {
   const pairs = [
-    { id: 'entryModal',     close: () => closeModal() },
-    { id: 'updateModal',    close: () => closeUpdateModal() },
-    { id: 'shareModal',     close: () => closeShareModal() },
-    { id: 'valuationModal', close: () => closeValuationModal() },
-    { id: 'categoryDrawer', close: () => closeDrawer() },
-    { id: 'bugModal',       close: () => closeBugModal() },
+    { id: 'entryModal',        close: () => closeModal() },
+    { id: 'updateModal',       close: () => closeUpdateModal() },
+    { id: 'shareModal',        close: () => closeShareModal() },
+    { id: 'valuationModal',    close: () => closeValuationModal() },
+    { id: 'categoryDrawer',    close: () => closeDrawer() },
+    { id: 'bugModal',          close: () => closeBugModal() },
+    { id: 'bulkHistoryModal',  close: () => closeBulkHistoryModal() },
   ];
   pairs.forEach(({ id, close }) => {
     const el = document.getElementById(id);
@@ -1618,6 +1645,81 @@ async function saveEntry() {
 
   closeModal();
   await loadEntries();
+}
+
+// ── BULK HISTORY MODAL ──
+let bulkHistoryType = 'asset';
+let bulkHistoryCategory = '';
+
+function openBulkHistoryModal() {
+  // Pull category + type from the currently open entry modal
+  const category = document.getElementById('entryCategory').value.trim();
+  const type = selectedType;
+
+  if (!category) {
+    document.getElementById('modalErr').textContent = 'Please enter a category first.';
+    return;
+  }
+
+  bulkHistoryCategory = category;
+  bulkHistoryType = type;
+  closeModal();
+
+  document.getElementById('bulkHistoryTitle').textContent = `Historical Data — ${category}`;
+  document.getElementById('bulkErr').textContent = '';
+
+  // Start with 3 empty rows
+  const container = document.getElementById('bulkRows');
+  container.innerHTML = '';
+  for (let i = 0; i < 3; i++) addBulkRow();
+
+  document.getElementById('bulkHistoryModal').classList.add('open');
+}
+
+function addBulkRow() {
+  const container = document.getElementById('bulkRows');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;';
+  row.innerHTML = `
+    <input type="date" class="bulk-date" style="padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;outline:none;width:100%;">
+    <input type="text" class="bulk-value" placeholder="$0" oninput="fmtModalComma(this)" style="padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:300;outline:none;width:100%;">
+    <button onclick="this.closest('div').remove()" style="background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px 6px;line-height:1;transition:color .15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;
+  container.appendChild(row);
+}
+
+function closeBulkHistoryModal() {
+  document.getElementById('bulkHistoryModal').classList.remove('open');
+}
+
+async function saveBulkHistory() {
+  const rows = document.querySelectorAll('#bulkRows > div');
+  const errEl = document.getElementById('bulkErr');
+  errEl.textContent = '';
+
+  const toInsert = [];
+  let hasError = false;
+
+  rows.forEach((row, i) => {
+    const date = row.querySelector('.bulk-date').value;
+    const value = parseMoney(row.querySelector('.bulk-value').value);
+
+    // Skip completely empty rows
+    if (!date && !row.querySelector('.bulk-value').value.trim()) return;
+
+    if (!date) { errEl.style.color = 'var(--red)'; errEl.textContent = `Row ${i + 1}: please select a date.`; hasError = true; return; }
+    if (!value || value <= 0) { errEl.style.color = 'var(--red)'; errEl.textContent = `Row ${i + 1}: please enter a value greater than 0.`; hasError = true; return; }
+
+    toInsert.push({ user_id: currentUser.id, date, type: bulkHistoryType, category: bulkHistoryCategory, value });
+  });
+
+  if (hasError) return;
+  if (!toInsert.length) { errEl.style.color = 'var(--red)'; errEl.textContent = 'Please fill in at least one row.'; return; }
+
+  const { error } = await sb.from('net_worth_entries').insert(toInsert);
+  if (error) { errEl.style.color = 'var(--red)'; errEl.textContent = 'Error saving. Please try again.'; return; }
+
+  closeBulkHistoryModal();
+  await loadEntries(true);
 }
 
 // ── UPDATE MODAL ──
