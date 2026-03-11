@@ -67,13 +67,14 @@
   body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
   body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
 
-  nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
-  .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
-  .nav-logo:hover { opacity:.8; }
-  .nav-links { display:flex; gap:24px; }
-  .nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
-  .nav-links a:hover { color:var(--cream); }
-  @media(max-width:600px) { .nav-links{display:none;} nav{padding:0 20px;} }
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  .site-nav-links a.active { color:var(--cream); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
   .container { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
   .wizard { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0 80px; }
@@ -158,9 +159,11 @@
   .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
 
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
-  footer a { color:var(--muted); text-decoration:none; }
-  footer a:hover { color:var(--gold); }
-  .footer-links { display:flex; gap:18px; }
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
+  .footer-links a:hover { color:var(--gold); }
+  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
+  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} }
 
   /* Progress */
@@ -182,23 +185,13 @@
   .input-row > .input-group,
   .input-row-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
 
-  /* ── FOOTER ── */
-  footer { border-top:1px solid var(--border-soft); padding:28px 40px; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; gap:16px; }
-  footer span { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
-  .footer-links { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
-  footer a { color:var(--muted); text-decoration:none; font-size:0.78rem; transition:color .15s; }
-  footer a:hover { color:var(--cream); }
-  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; text-decoration:none; }
-  .btn-bug:hover { border-color:var(--border); color:var(--cream); }
-  .btn-bug svg { flex-shrink:0; }
-  @media(max-width:600px) { footer{padding:24px 20px; flex-direction:column; align-items:flex-start; gap:14px;} }
 </style>
 </head>
 <body>
 
-<nav>
-  <a class="nav-logo" href="/">VestlyFi</a>
-  <div class="nav-links">
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
     <a href="/">Home</a>
     <a href="/calculators/" class="active">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
@@ -364,9 +357,7 @@
   <div class="footer-links">
     <a href="/privacy/">Privacy</a>
     <button class="btn-bug" onclick="openBugModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
-      </svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
       Report a bug
     </button>
   </div>
@@ -384,7 +375,7 @@
       <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4412213730283d022d042329252d286a272b29">[email&#160;protected]</a></span></p>
+      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -397,12 +388,12 @@
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
-      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f2a49781869e8bb49bb2959f939b9edc919d9f">[email&#160;protected]</a></span></p>
+      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const S = { returnRate: 10, inflationRate: 3 };
 let currentStep = 0;
 
@@ -595,34 +586,8 @@ document.addEventListener('keydown', function(e) {
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
-
-    if (res.ok) {
-      btn.textContent = 'Sent!';
-      errEl.style.color = 'var(--green)';
-      errEl.textContent = "Thanks for the report — we'll look into it.";
-      setTimeout(() => closeBugModal(), 2000);
-    } else { throw new Error(); }
-  } catch(e) {
-    btn.textContent = 'Send Report';
-    btn.disabled = false;
-    errEl.style.color = 'var(--red)';
-    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('bugModal');
-  if (!el) return;
-  let downOnBackdrop = false;
-  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
-  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
-  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
-  const ta = document.getElementById('bugDescription');
-  if (ta) ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport(); });
-});
 </script>
 
-<!-- ── BUG REPORT MODAL ── -->
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
     <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
@@ -632,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email <span style="font-size:0.7rem;letter-spacing:0;text-transform:none;font-weight:300;color:rgba(245,240,232,0.35)"></span></label>
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
       <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
@@ -644,11 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-
 <script>
-// ── BUG REPORT ──
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
-
 function openBugModal() {
   document.getElementById('bugDescription').value = '';
   document.getElementById('bugEmail').value = '';
@@ -656,47 +617,32 @@ function openBugModal() {
   document.getElementById('bugErr').textContent = '';
   document.getElementById('bugSubmitBtn').textContent = 'Send Report';
   document.getElementById('bugSubmitBtn').disabled = false;
-  const bm=document.getElementById('bugModal');bm.style.display='flex';bm.style.alignItems='center';bm.style.justifyContent='center';
+  document.getElementById('bugModal').style.display = 'flex';
   setTimeout(() => document.getElementById('bugDescription').focus(), 50);
 }
-
-function closeBugModal() {
-  document.getElementById('bugModal').style.display='none';
-}
-
+function closeBugModal() { document.getElementById('bugModal').style.display = 'none'; }
 async function submitBugReport() {
   const description = document.getElementById('bugDescription').value.trim();
   const email = document.getElementById('bugEmail').value.trim();
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color = 'var(--red)'; errEl.textContent = 'Please describe the bug before submitting.'; return; }
-  btn.textContent = 'Sending…';
-  btn.disabled = true;
-  errEl.textContent = '';
+  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
-    const res = await fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ description, email: email || 'Not provided', page, userAgent: navigator.userAgent })
-    });
-    if (res.ok) {
-      btn.textContent = 'Sent!';
-      errEl.style.color = 'var(--green)';
-      errEl.textContent = "Thanks for the report — we'll look into it.";
-      setTimeout(() => closeBugModal(), 2000);
-    } else { throw new Error(); }
-  } catch(e) {
-    btn.textContent = 'Send Report';
-    btn.disabled = false;
-    errEl.style.color = 'var(--red)';
-    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
-  }
+    const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    else throw new Error();
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');
-  if (!el) return;
   let downOnBackdrop = false;
   el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
-  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdro
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+  document.getElementById('bugDescription').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) submitBugReport(); });
+});
+</script>
+</body>
+</html>
