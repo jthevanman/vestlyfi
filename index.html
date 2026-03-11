@@ -187,6 +187,7 @@
   }
   .section-card:nth-child(1) { animation-delay: 0.15s; }
   .section-card:nth-child(2) { animation-delay: 0.25s; }
+  .section-card:nth-child(3) { animation-delay: 0.35s; }
   .section-card:hover { border-color: var(--border); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); }
 
   .section-inner {
@@ -208,6 +209,7 @@
   }
   .tag-calc { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); }
   .tag-diag { color: var(--gold); background: var(--gold-dim); border: 1px solid var(--border); }
+  .tag-nw   { color: #4caf7d; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); }
 
   .section-title {
     font-size: 1.6rem; font-weight: 400;
@@ -283,10 +285,13 @@
     font-size: 0.75rem; color: var(--muted);
     flex-wrap: wrap; gap: 12px;
   }
-  footer a { color: var(--muted); text-decoration: none; transition: color .15s; }
+  footer span { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
+  .footer-links { display: flex; gap: 20px; align-items:center; }
+  footer a { color: var(--muted); text-decoration: none; transition: color .15s; font-size:0.78rem; }
   footer a:hover { color: var(--gold); }
-  .footer-links { display: flex; gap: 20px; }
-  @media(max-width:600px) { footer { padding: 24px 20px; } nav { padding: 0 20px; } }
+  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; text-decoration:none; }
+  .btn-bug:hover { border-color:var(--border); color:var(--cream); }
+  @media(max-width:600px) { footer { padding: 24px 20px; flex-direction:column; align-items:flex-start; gap:14px; } nav { padding: 0 20px; } }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
@@ -303,6 +308,8 @@
     <a href="/" class="active">Home</a>
     <a href="/calculators/">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/net-worth/">Net Worth</a>
+    <a href="/account/">Account</a>
   </div>
 </nav>
 
@@ -311,24 +318,30 @@
   <div class="hero-left">
     <div class="hero-eyebrow">Financial tools</div>
     <h1>Understand<br>your money<br><em>completely</em></h1>
-    <p class="hero-sub">Calculators that give you straight answers. Diagrams that make your finances visual.</p>
+    <p class="hero-sub">Calculators that give you straight answers. Diagrams that make your finances visual. A net worth tracker that shows where you're headed.</p>
     <div class="hero-ctas">
-      <a href="/calculators/" class="btn-primary">Browse Calculators</a>
-      <a href="/create-a-diagram/" class="btn-secondary">Create a Diagram</a>
+      <a href="/net-worth/" class="btn-primary">Track Net Worth</a>
+      <a href="/calculators/" class="btn-secondary">Browse Calculators</a>
     </div>
   </div>
 
   <div class="hero-right">
     <div class="stat-card">
-      <div class="stat-label">What you get</div>
-      <div class="stat-value">Calculators <em>&</em> diagrams</div>
-      <div class="stat-desc">Tools for mortgages, retirement, debt, and investing. Plus diagrams that make your numbers visual.</div>
+      <div class="stat-label">Monitor</div>
+      <div class="stat-value"><em>Net worth</em> tracker</div>
+      <div class="stat-desc">Log your assets and liabilities, watch your net worth trend, and share your progress.</div>
     </div>
 
     <div class="stat-card">
-      <div class="stat-label">Built for</div>
-      <div class="stat-value"><em>Real</em> answers</div>
-      <div class="stat-desc">Open a tool, enter your numbers, get an answer.</div>
+      <div class="stat-label">Calculate</div>
+      <div class="stat-value">Mortgages, <em>FIRE</em> & more</div>
+      <div class="stat-desc">Tools for the financial decisions that matter — mortgages, retirement, debt, and investing.</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Visualize</div>
+      <div class="stat-value">Your <em>money flow</em></div>
+      <div class="stat-desc">Diagrams that make it easy to see exactly where your money is going.</div>
     </div>
   </div>
 </section>
@@ -342,6 +355,62 @@
 
 <!-- ── SECTION CARDS ── -->
 <div class="sections">
+
+  <!-- NET WORTH TRACKER -->
+  <a class="section-card" href="/net-worth/">
+    <div class="section-inner">
+      <div class="section-info">
+        <div>
+          <div class="section-tag tag-nw">Net Worth Tracker</div>
+          <div class="section-title">Watch your wealth<br><em>grow over time</em></div>
+          <p class="section-desc">Log your assets and liabilities month by month. See your net worth trend, track every category, and share your progress — all in one place.</p>
+        </div>
+        <div class="section-cta">
+          Start tracking <span class="section-cta-arrow">→</span>
+        </div>
+      </div>
+      <div class="section-tools" style="align-content:center;">
+        <div class="tool-pill" style="grid-column:span 3; padding:20px 18px;">
+          <!-- Mini net worth chart preview -->
+          <svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:80px;display:block;margin-bottom:12px;">
+            <line x1="0" y1="100" x2="360" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="66" x2="360" y2="66" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <line x1="0" y1="33" x2="360" y2="33" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+            <text x="0" y="103" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$0</text>
+            <text x="0" y="69" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$150k</text>
+            <text x="0" y="36" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$300k</text>
+            <path d="M28,95 L80,88 L132,78 L184,65 L236,50 L288,35 L340,18 L340,100 L28,100 Z" fill="rgba(76,175,125,0.12)"/>
+            <path d="M28,95 L80,88 L132,78 L184,65 L236,50 L288,35 L340,18" fill="none" stroke="#4caf7d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="28"  cy="95" r="3.5" fill="#4caf7d"/>
+            <circle cx="80"  cy="88" r="3.5" fill="#4caf7d"/>
+            <circle cx="132" cy="78" r="3.5" fill="#4caf7d"/>
+            <circle cx="184" cy="65" r="3.5" fill="#4caf7d"/>
+            <circle cx="236" cy="50" r="3.5" fill="#4caf7d"/>
+            <circle cx="288" cy="35" r="3.5" fill="#4caf7d"/>
+            <circle cx="340" cy="18" r="5"   fill="#4caf7d"/>
+            <text x="24"  y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Jul</text>
+            <text x="132" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Sep</text>
+            <text x="236" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Nov</text>
+            <text x="340" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="right">Jan</text>
+          </svg>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="tool-pill-name">Net worth over 6 months</div>
+            <div class="tool-pill-tag" style="color:#4caf7d;">+$47,200</div>
+          </div>
+        </div>
+        <div style="grid-column:span 3;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="tool-pill">
+            <div class="tool-pill-name">Assets</div>
+            <div class="tool-pill-tag tag-invest">401k · IRA · Home</div>
+          </div>
+          <div class="tool-pill">
+            <div class="tool-pill-name">Liabilities</div>
+            <div class="tool-pill-tag tag-debt">Mortgage · Loans</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
 
   <!-- CALCULATORS -->
   <a class="section-card" href="/calculators/">
@@ -408,15 +477,103 @@
     </div>
   </a>
 
+
 </div>
 
 <footer>
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
-    <a href="/calculators/">Calculators</a>
-    <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/privacy/">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+      </svg>
+      Report a bug
+    </button>
   </div>
 </footer>
+
+<div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── BUG REPORT ──
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
+
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  const m = document.getElementById('bugModal');
+  m.style.display = 'flex';
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+
+function closeBugModal() {
+  document.getElementById('bugModal').style.display = 'none';
+}
+
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+  if (!description) { errEl.style.color = '#e05c5c'; errEl.textContent = 'Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  errEl.textContent = '';
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ description, email: email || 'Not provided', page, userAgent: navigator.userAgent })
+    });
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+      errEl.style.color = '#4caf7d';
+      errEl.textContent = "Thanks for the report — we'll look into it.";
+      setTimeout(() => closeBugModal(), 2000);
+    } else { throw new Error(); }
+  } catch(e) {
+    btn.textContent = 'Send Report';
+    btn.disabled = false;
+    errEl.style.color = '#e05c5c';
+    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('bugModal');
+  let downOnBackdrop = false;
+  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+  const ta = document.getElementById('bugDescription');
+  if (ta) ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport(); });
+});
+</script>
 
 </body>
 </html>
