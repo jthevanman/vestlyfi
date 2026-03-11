@@ -1238,7 +1238,37 @@ const sectionCollapsed = { asset: false, liability: false };
 function renderHistory() {
   const container = document.getElementById('historyList');
   if (!allEntries.length) {
-    container.innerHTML = '<div class="history-empty">No entries yet. Add your first asset or liability above.</div>';
+    container.innerHTML = `
+      <div class="history-section">
+        <div class="history-section-header" onclick="toggleSection('asset')">
+          <div class="history-section-header-left">
+            <span class="history-section-chevron open">›</span>
+            <span class="history-section-label">Assets</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn-add-section btn-add-asset" onclick="event.stopPropagation();openLogModalTyped('asset')">+ Add Asset</button>
+            <span class="history-section-total asset">$0</span>
+          </div>
+        </div>
+        <div class="history-section-body" id="section-body-asset">
+          <div class="history-section-inner"><div class="history-empty" style="padding:16px 0">No assets yet.</div></div>
+        </div>
+      </div>
+      <div class="history-section">
+        <div class="history-section-header" onclick="toggleSection('liability')">
+          <div class="history-section-header-left">
+            <span class="history-section-chevron open">›</span>
+            <span class="history-section-label">Liabilities</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn-add-section btn-add-liability" onclick="event.stopPropagation();openLogModalTyped('liability')">+ Add Liability</button>
+            <span class="history-section-total liability">$0</span>
+          </div>
+        </div>
+        <div class="history-section-body" id="section-body-liability">
+          <div class="history-section-inner"><div class="history-empty" style="padding:16px 0">No liabilities yet.</div></div>
+        </div>
+      </div>`;
     return;
   }
 
@@ -1257,23 +1287,28 @@ function renderHistory() {
   }
 
   function renderSection(items, type) {
-    if (!items.length && type === 'asset') return `
+    if (!items.length) {
+      const label = type === 'asset' ? 'Assets' : 'Liabilities';
+      const btnClass = type === 'asset' ? 'btn-add-asset' : 'btn-add-liability';
+      const btnLabel = type === 'asset' ? '+ Add Asset' : '+ Add Liability';
+      const emptyMsg = type === 'asset' ? 'No assets yet.' : 'No liabilities yet.';
+      return `
       <div class="history-section">
         <div class="history-section-header" onclick="toggleSection('${type}')">
           <div class="history-section-header-left">
             <span class="history-section-chevron ${sectionCollapsed[type] ? '' : 'open'}">›</span>
-            <span class="history-section-label">Assets</span>
+            <span class="history-section-label">${label}</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px">
-            <button class="btn-add-section btn-add-asset" onclick="event.stopPropagation();openLogModalTyped('asset')">+ Add Asset</button>
-            <span class="history-section-total asset">$0</span>
+            <button class="btn-add-section ${btnClass}" onclick="event.stopPropagation();openLogModalTyped('${type}')">${btnLabel}</button>
+            <span class="history-section-total ${type === 'asset' ? 'asset' : 'liability'}">$0</span>
           </div>
         </div>
         <div class="history-section-body" id="section-body-${type}" style="${sectionCollapsed[type] ? 'display:none' : ''}">
-          <div class="history-section-inner"><div class="history-empty" style="padding:16px 0">No assets yet.</div></div>
+          <div class="history-section-inner"><div class="history-empty" style="padding:16px 0">${emptyMsg}</div></div>
         </div>
       </div>`;
-    if (!items.length) return '';
+    }
     const label = type === 'asset' ? 'Assets' : 'Liabilities';
     const btnClass = type === 'asset' ? 'btn-add-asset' : 'btn-add-liability';
     const btnLabel = type === 'asset' ? '+ Add Asset' : '+ Add Liability';
