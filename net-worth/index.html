@@ -239,7 +239,7 @@
     color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:300;
     outline:none; transition:border-color .15s;
   }
-  .modal-field input:focus, .modal-field select:focus { border-color:var(--gold); }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color:var(--gold); }
   .modal-field select option { background:var(--navy-mid); }
   .type-toggle { display:flex; gap:8px; }
   .type-btn { flex:1; padding:10px; border-radius:9px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
@@ -511,7 +511,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeShareModal()">Cancel</button>
-      <button class="btn-modal-save" onclick="downloadShareImage()">⬇ Download</button>
+      <button class="btn-modal-save" id="downloadBtn" onclick="downloadShareImage()">⬇ Download</button>
       <button class="btn-modal-save" style="background:var(--navy-light); color:var(--cream); border:1px solid var(--border-soft);" onclick="copyShareImage()">Copy Image</button>
     </div>
     <div class="modal-err" id="shareMsg" style="color:var(--green)"></div>
@@ -585,14 +585,41 @@
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
     <a href="/privacy/">Privacy</a>
-    <a class="btn-bug" href="mailto:vestlyfi@gmail.com?subject=Bug Report">
+    <button class="btn-bug" onclick="openBugModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
       </svg>
       Report a bug
-    </a>
+    </button>
   </div>
 </footer>
+
+<!-- ── BUG REPORT MODAL ── -->
+<div class="modal-overlay" id="bugModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">Report a Bug</div>
+    <div class="modal-sub">Found something broken? Let us know and we'll get it fixed.</div>
+
+    <div class="modal-field">
+      <label>What went wrong? <span style="color:var(--red)">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;transition:border-color .15s;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+
+    <div class="modal-field">
+      <label>Email <span style="color:var(--muted);font-size:0.7rem;letter-spacing:0;text-transform:none;font-weight:300"> — optional, if you'd like a follow-up</span></label>
+      <input type="email" id="bugEmail" placeholder="you@example.com">
+    </div>
+
+    <input type="hidden" id="bugPage">
+
+    <div class="modal-err" id="bugErr"></div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeBugModal()">Cancel</button>
+      <button class="btn-modal-save" id="bugSubmitBtn" onclick="submitBugReport()">Send Report</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ── SUPABASE ──
@@ -989,13 +1016,14 @@ function openShareModal() {
   const snapshots = getFilteredSnapshots();
   if (snapshots.length < 2) return;
   const first = snapshots[0], last = snapshots[snapshots.length - 1];
-  const diff = last.netWorth - first.netWorth;
-  const sign = diff >= 0 ? '+' : '–';
   document.getElementById('shareModalSub').textContent =
     `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
   document.getElementById('sharePreviewImg').style.display = 'none';
   document.getElementById('shareGenerating').style.display = 'block';
   document.getElementById('shareMsg').textContent = '';
+  // Label download button appropriately for device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.getElementById('downloadBtn').textContent = isMobile ? '↗ Open Image' : '⬇ Download';
   document.getElementById('shareModal').classList.add('open');
   setTimeout(() => renderShareCanvas(snapshots), 50);
 }
@@ -1120,11 +1148,21 @@ function downloadShareImage() {
   const snapshots = getFilteredSnapshots();
   if (!snapshots.length) return;
   const first = snapshots[0], last = snapshots[snapshots.length - 1];
-  const a = document.createElement('a');
-  a.download = `vestlyfi-networth-${first.month}-to-${last.month}.png`;
-  a.href = canvas.toDataURL('image/png');
-  a.click();
-  document.getElementById('shareMsg').textContent = 'Downloaded!';
+  const dataUrl = canvas.toDataURL('image/png');
+
+  // Mobile: open in new tab so user can long-press to save to photos
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    const win = window.open();
+    win.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}" alt="Net Worth Chart"></body></html>`);
+    win.document.close();
+  } else {
+    const a = document.createElement('a');
+    a.download = `vestlyfi-networth-${first.month}-to-${last.month}.png`;
+    a.href = dataUrl;
+    a.click();
+    document.getElementById('shareMsg').textContent = 'Downloaded!';
+  }
 }
 
 async function copyShareImage() {
@@ -1315,6 +1353,7 @@ function closeDrawer() {
     { id: 'shareModal',     close: () => closeShareModal() },
     { id: 'valuationModal', close: () => closeValuationModal() },
     { id: 'categoryDrawer', close: () => closeDrawer() },
+    { id: 'bugModal',       close: () => closeBugModal() },
   ];
   pairs.forEach(({ id, close }) => {
     const el = document.getElementById(id);
@@ -1324,6 +1363,74 @@ function closeDrawer() {
     el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) close(); downOnBackdrop = false; });
   });
 })();
+
+// ── BUG REPORT ──
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
+
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  document.getElementById('bugModal').classList.add('open');
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+
+function closeBugModal() {
+  document.getElementById('bugModal').classList.remove('open');
+}
+
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+
+  if (!description) {
+    errEl.className = 'modal-err';
+    errEl.style.color = 'var(--red)';
+    errEl.textContent = 'Please describe the bug before submitting.';
+    return;
+  }
+
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  errEl.textContent = '';
+
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        description,
+        email: email || 'Not provided',
+        page,
+        userAgent: navigator.userAgent
+      })
+    });
+
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = 'Thanks for the report — we\'ll look into it.';
+      setTimeout(() => closeBugModal(), 2000);
+    } else {
+      throw new Error('Server error');
+    }
+  } catch(e) {
+    btn.textContent = 'Send Report';
+    btn.disabled = false;
+    errEl.style.color = 'var(--red)';
+    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+  }
+}
+
+document.getElementById('bugDescription').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport();
+});
 
 // ── COPY BANNER ──
 function checkCopyBanner() {
