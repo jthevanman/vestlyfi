@@ -19,11 +19,11 @@
       <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="194f7c6a6d75605f70597e74787075377a7674">[email&#160;protected]</a></span></p>
     </div>
   </div>
 </div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -291,8 +291,10 @@
   <a class="nav-logo" href="/">VestlyFi</a>
   <div class="nav-links">
     <a href="/">Home</a>
-    <a href="/calculators/" style="color:var(--cream);">Calculators</a>
+    <a href="/calculators/" class="active">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/net-worth/">Net Worth</a>
+    <a href="/account/">Account</a>
   </div>
 </nav>
 
@@ -384,8 +386,13 @@
 <footer>
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
-    <a href="#" onclick="showModal('methodology'); return false;">Methodology</a>
-    <a href="#" onclick="showModal('privacy'); return false;">Privacy</a>
+    <a href="/privacy/">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+      </svg>
+      Report a bug
+    </button>
   </div>
 </footer>
 
@@ -416,7 +423,7 @@
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>VestlyFi does not collect, store, or transmit any financial information you enter. All calculations run entirely in your browser.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Account Required</strong><br>No email, no signup, no personal information needed.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Affiliate Links</strong><br>Some brokerage links are affiliate links. If you open an account through them, VestlyFi may receive a commission at no cost to you.</p>
-      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56003325223a2f103f16313b373f3a7835393b">[email&#160;protected]</a></span></p>
     </div>
   </div>
 </div>
@@ -432,11 +439,11 @@
       <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="87d1e2f4f3ebfec1eec7e0eae6eeeba9e4e8ea">[email&#160;protected]</a></span></p>
     </div>
   </div>
 </div>
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function showModal(id) {
   document.getElementById('modal-' + id).style.display = 'block';
   document.body.style.overflow = 'hidden';
@@ -447,6 +454,104 @@ function closeModal(id) {
   document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = "Thanks for the report — we'll look into it.";
+      setTimeout(() => closeBugModal(), 2000);
+    } else { throw new Error(); }
+  } catch(e) {
+    btn.textContent = 'Send Report';
+    btn.disabled = false;
+    errEl.style.color = 'var(--red)';
+    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('bugModal');
+  if (!el) return;
+  let downOnBackdrop = false;
+  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+  const ta = document.getElementById('bugDescription');
+  if (ta) ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport(); });
+});
 </script>
-</body>
-</html>
+
+<!-- ── BUG REPORT MODAL ── -->
+<div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email <span style="font-size:0.7rem;letter-spacing:0;text-transform:none;font-weight:300;color:rgba(245,240,232,0.35)"></span></label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ── BUG REPORT ──
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
+
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  const bm=document.getElementById('bugModal');bm.style.display='flex';bm.style.alignItems='center';bm.style.justifyContent='center';
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+
+function closeBugModal() {
+  document.getElementById('bugModal').style.display='none';
+}
+
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+  if (!description) { errEl.style.color = 'var(--red)'; errEl.textContent = 'Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  errEl.textContent = '';
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ description, email: email || 'Not provided', page, userAgent: navigator.userAgent })
+    });
+    if (res.ok) {
+      btn.textContent = 'Sent!';
+      errEl.style.color = 'var(--green)';
+      errEl.textContent = "Thanks for the report — we'll look into it.";
+      setTimeout(() => closeBugModal(), 2000);
+    } else { throw new Error(); }
+  } catch(e) {
+    btn.textContent = 'Send Report';
+    btn.disabled = false;
+    errEl.style.color = 'var(--red)';
+    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getE
