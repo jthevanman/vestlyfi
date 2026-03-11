@@ -306,12 +306,21 @@
   .loading { text-align:center; padding:60px 0; color:var(--muted); font-size:0.88rem; }
 
   /* ── FOOTER ── */
-  footer { border-top:1px solid var(--border-soft); padding:32px 40px; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; }
-  footer span { color:var(--muted); font-size:0.78rem; }
-  .footer-links { display:flex; gap:20px; }
+  footer { border-top:1px solid var(--border-soft); padding:28px 40px; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; gap:16px; }
+  footer span { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
+  .footer-links { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
   footer a { color:var(--muted); text-decoration:none; font-size:0.78rem; transition:color .15s; }
   footer a:hover { color:var(--cream); }
-  @media(max-width:600px) { footer{padding:24px 20px; flex-direction:column; gap:12px;} }
+  .btn-bug {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 12px; border-radius:8px;
+    border:1px solid var(--border-soft); background:none;
+    color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem;
+    cursor:pointer; transition:all .15s; text-decoration:none;
+  }
+  .btn-bug:hover { border-color:var(--border); color:var(--cream); }
+  .btn-bug svg { flex-shrink:0; }
+  @media(max-width:600px) { footer{padding:24px 20px; flex-direction:column; align-items:flex-start; gap:14px;} }
 </style>
 </head>
 <body>
@@ -575,9 +584,13 @@
 <footer>
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
-    <a href="/">Home</a>
-    <a href="/calculators/">Calculators</a>
-    <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/privacy/">Privacy</a>
+    <a class="btn-bug" href="mailto:vestlyfi@gmail.com?subject=Bug Report">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
+      </svg>
+      Report a bug
+    </a>
   </div>
 </footer>
 
