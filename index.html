@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VestlyFi: Financial Calculators and Diagrams</title>
+<title>VestlyFi — Financial Tools That Actually Answer Your Question</title>
 <meta name="description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
 <link rel="canonical" href="https://vestlyfi.com/">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
@@ -16,26 +16,23 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
   :root {
     --navy: #0a0f1e;
     --navy-mid: #111827;
-    --navy-light: #1a2540;
     --navy-card: #141d35;
+    --navy-light: #1a2540;
     --gold: #c9a84c;
     --gold-light: #e8c97a;
-    --gold-dim: rgba(201,168,76,0.13);
+    --gold-dim: rgba(201,168,76,0.1);
     --cream: #f5f0e8;
-    --cream-dim: rgba(245,240,232,0.6);
-    --muted: rgba(245,240,232,0.35);
+    --muted: rgba(245,240,232,0.38);
     --border: rgba(201,168,76,0.15);
     --border-soft: rgba(255,255,255,0.07);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin:0; padding:0; box-sizing:border-box; }
 
   body {
     background: var(--navy);
@@ -46,14 +43,12 @@
     overflow-x: hidden;
   }
 
-  /* ── BACKGROUND ── */
   body::before {
     content: '';
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 20% -10%, rgba(201,168,76,0.09) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 110%, rgba(201,168,76,0.06) 0%, transparent 55%),
-      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26,37,64,0.4) 0%, transparent 70%);
+      radial-gradient(ellipse 70% 55% at 15% -5%, rgba(201,168,76,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 45% at 85% 105%, rgba(201,168,76,0.05) 0%, transparent 55%);
     pointer-events: none; z-index: 0;
   }
 
@@ -63,240 +58,131 @@
     padding: 0 40px; height: 64px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border-soft);
-    background: rgba(10,15,30,0.85); backdrop-filter: blur(12px);
+    background: rgba(10,15,30,0.9); backdrop-filter: blur(14px);
   }
-  .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
-  .nav-logo:hover { opacity:.8; }
-  .nav-links { display:flex; gap:24px; align-items:center; }
-  .nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; font-weight:300; transition:color .15s; }
-  .nav-links a:hover { color:var(--cream); }
-  .nav-links a.active { color: var(--cream); }
+  .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.2rem; color:var(--gold); text-decoration:none; letter-spacing:0.01em; transition:opacity .15s; }
+  .nav-logo:hover { opacity:.75; }
+  .nav-links { display:flex; gap:28px; align-items:center; }
+  .nav-links a { color:var(--muted); text-decoration:none; font-size:0.82rem; font-weight:300; transition:color .15s; }
+  .nav-links a:hover, .nav-links a.active { color:var(--cream); }
   @media(max-width:600px) { .nav-links{display:none;} nav{padding:0 20px;} }
 
-  /* ── HERO ── */
-  .hero {
+  /* ── LAYOUT ── */
+  .page-wrap {
     position: relative; z-index: 1;
-    max-width: 1080px; margin: 0 auto;
-    padding: 100px 40px 80px;
+    max-width: 860px; margin: 0 auto;
+    padding: 72px 40px 48px;
+    display: flex; flex-direction: column; gap: 40px;
+  }
+
+  .cards-header {
+    opacity: 0; animation: fadeUp 0.5s ease 0.05s forwards;
+  }
+  .cards-header h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    font-weight: 400; letter-spacing: -0.01em;
+    color: var(--cream); line-height: 1.2;
+  }
+
+  .section-block {
+    width: 100%;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .section-desc-outer {
+    font-size: 1rem; color: rgba(245,240,232,0.55); line-height: 1.6;
+  }
+
+  .section-divider {
+    height: 1px; background: var(--border-soft);
+    width: 100%;
+  }
+
+  .card {
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    background: var(--navy-card);
+    text-decoration: none; color: inherit;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
+    grid-template-columns: 1fr 260px;
+    align-items: stretch;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, background .2s;
+  }
+  .card:hover {
+    border-color: rgba(201,168,76,0.22);
+    transform: translateY(-2px);
+    background: #172035;
   }
 
-  .hero-left { animation: fadeUp 0.6s cubic-bezier(.4,0,.2,1) both; }
-
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); font-weight: 500; margin-bottom: 24px;
-    padding: 6px 14px; border-radius: 100px;
-    border: 1px solid var(--border); background: var(--gold-dim);
-  }
-  .hero-eyebrow::before {
-    content: ''; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gold); flex-shrink: 0;
+  .card-left {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 24px 28px;
+    border-right: 1px solid var(--border-soft);
+    justify-content: flex-start;
   }
 
-  .hero h1 {
-    font-size: clamp(2.6rem, 5vw, 4rem);
-    font-weight: 400; line-height: 1.12;
-    color: var(--cream); margin-bottom: 20px;
+  .card-title {
+    font-size: 1.5rem; font-weight: 400;
+    color: var(--cream); line-height: 1.25;
     letter-spacing: -0.01em;
   }
-  .hero h1 em { font-style: italic; color: var(--gold-light); }
 
-  .hero-sub {
-    color: var(--muted); font-size: 1rem;
-    line-height: 1.7; max-width: 440px; margin-bottom: 40px;
+  .card-preview {
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(255,255,255,0.012);
+    transition: background .2s;
+  }
+  .card:hover .card-preview { background: rgba(255,255,255,0.02); }
+
+  .card-tag {
+    font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 500; display: inline-block;
+    padding: 3px 9px; border-radius: 100px;
+    width: fit-content;
+  }
+  .tag-nw   { color: #4caf7d; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.18); }
+  .tag-calc { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.18); }
+  .tag-diag { color: var(--gold); background: var(--gold-dim);  border: 1px solid var(--border); }
+
+  .card-desc { display: none; }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
   }
 
-  .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-
-  .btn-primary {
-    padding: 13px 28px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border: none; color: var(--navy);
-    font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.9rem;
-    cursor: pointer; text-decoration: none;
-    transition: transform .15s, box-shadow .2s;
-    box-shadow: 0 4px 20px rgba(201,168,76,0.28);
-    display: inline-block;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(201,168,76,0.4); }
-
-  .btn-secondary {
-    padding: 13px 28px; border-radius: 10px;
-    background: none; border: 1px solid var(--border-soft);
-    color: var(--cream-dim); font-family: 'Outfit', sans-serif;
-    font-size: 0.9rem; cursor: pointer; text-decoration: none;
-    transition: all .18s; display: inline-block;
-  }
-  .btn-secondary:hover { border-color: var(--border); color: var(--cream); }
-
-  /* ── HERO RIGHT — stat cards ── */
-  .hero-right {
-    display: grid; grid-template-columns: 1fr;
-    gap: 12px;
-    animation: fadeUp 0.6s cubic-bezier(.4,0,.2,1) 0.1s both;
-  }
-
-  .stat-card { padding: 4px 0 16px; border-bottom: 1px solid var(--border-soft); }
-  .stat-card:last-child { border-bottom: none; }
-
-  .stat-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; font-weight: 500; }
-  .stat-value { font-size: 1.9rem; font-weight: 400; color: var(--cream); line-height: 1; margin-bottom: 4px; }
-  .stat-value em { color: var(--gold-light); font-style: italic; }
-  .stat-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; margin-top: 6px; }
-
-  @media(max-width: 860px) {
-    .hero { grid-template-columns: 1fr; padding: 60px 24px 40px; gap: 40px; }
-    .hero-right { grid-template-columns: 1fr; }
-    }
-  @media(max-width: 480px) {
-    .hero-right { grid-template-columns: 1fr; }
-    }
-
-  /* ── DIVIDER ── */
-  .divider {
-    position: relative; z-index: 1;
-    max-width: 1080px; margin: 0 auto;
-    padding: 0 40px;
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 0;
-  }
-  .divider-line { flex: 1; height: 1px; background: var(--border-soft); }
-  .divider-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-
-  /* ── SECTIONS ── */
-  .sections {
-    position: relative; z-index: 1;
-    max-width: 1080px; margin: 0 auto;
-    padding: 48px 40px 80px;
-    display: flex; flex-direction: column; gap: 24px;
-  }
-
-  .section-card {
-    border: 1px solid var(--border-soft);
-    border-radius: 20px; overflow: hidden;
-    background: var(--navy-card);
-    transition: border-color .22s, transform .22s;
-    text-decoration: none; color: inherit;
-    display: block;
-    animation: fadeUp 0.5s cubic-bezier(.4,0,.2,1) both;
-  }
-  .section-card:nth-child(1) { animation-delay: 0.15s; }
-  .section-card:nth-child(2) { animation-delay: 0.25s; }
-  .section-card:nth-child(3) { animation-delay: 0.35s; }
-  .section-card:hover { border-color: var(--border); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0,0,0,0.3); }
-
-  .section-inner {
-    display: grid;
-    grid-template-columns: 360px 1fr;
-    min-height: 220px;
-  }
-
-  .section-info {
-    padding: 36px 36px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    border-right: 1px solid var(--border-soft);
-  }
-
-  .section-tag {
-    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
-    font-weight: 500; margin-bottom: 12px;
-    display: inline-block; padding: 4px 10px; border-radius: 100px;
-  }
-  .tag-calc { color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.2); }
-  .tag-diag { color: var(--gold); background: var(--gold-dim); border: 1px solid var(--border); }
-  .tag-nw   { color: #4caf7d; background: rgba(76,175,125,0.1); border: 1px solid rgba(76,175,125,0.2); }
-
-  .section-title {
-    font-size: 1.6rem; font-weight: 400;
-    color: var(--cream); line-height: 1.2; margin-bottom: 10px;
-  }
-  .section-title em { font-style: italic; color: var(--gold-light); }
-  .section-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 24px; flex: 1; }
-
-  .section-cta {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 0.83rem; color: var(--gold); font-weight: 400;
-    transition: gap .18s;
-  }
-  .section-card:hover .section-cta { gap: 12px; }
-  .section-cta-arrow { font-size: 1rem; }
-
-  /* ── TOOL GRID ── */
-  .section-tools {
-    padding: 28px 28px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    align-content: start;
-  }
-
-  .tool-pill {
-    background: var(--navy-light);
-    border: 1px solid var(--border-soft);
-    border-radius: 10px; padding: 12px 14px;
-    transition: border-color .15s, background .15s;
-  }
-  .section-card:hover .tool-pill { border-color: rgba(255,255,255,0.1); }
-  .tool-pill-name { font-size: 0.8rem; color: var(--cream-dim); line-height: 1.3; }
-  .tool-pill-tag { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; font-weight: 500; }
-
-  .tag-fire { color: #fb923c; }
-  .tag-invest { color: #4ade80; }
-  .tag-mortgage { color: #60a5fa; }
-  .tag-debt { color: #fbbf24; }
-  .tag-gold { color: var(--gold); }
-
-  /* Diagram preview pills */
-  .diag-pill {
-    background: var(--navy-light);
-    border: 1px solid var(--border-soft);
-    border-radius: 10px; padding: 14px;
-    grid-column: span 1;
-  }
-  .diag-pill-preview {
-    width: 100%; height: 48px; border-radius: 6px;
-    background: var(--navy-mid); margin-bottom: 8px;
-    overflow: hidden; display: flex; align-items: center; justify-content: center;
-  }
-  .diag-pill-name { font-size: 0.78rem; color: var(--cream-dim); }
-
-  @media(max-width: 860px) {
-    .section-inner { grid-template-columns: 1fr; }
-    .section-info { border-right: none; border-bottom: 1px solid var(--border-soft); padding: 28px; }
-    .section-tools { grid-template-columns: repeat(3, 1fr); padding: 20px; }
-    .sections { padding: 32px 24px 60px; }
-    .divider { padding: 0 24px; }
-  }
-  @media(max-width: 480px) {
-    .section-tools { grid-template-columns: repeat(2, 1fr); }
+  @media(max-width:700px) {
+    .page-wrap { padding: 48px 20px 40px; gap: 28px; }
+    .card { grid-template-columns: 1fr; }
+    .card-preview { display: none; }
+    .card-left { border-right: none; padding: 22px; }
+    footer { padding: 28px 20px 48px; flex-direction: column; gap: 16px; text-align: center; }
   }
 
   /* ── FOOTER ── */
   footer {
     position: relative; z-index: 1;
-    border-top: 1px solid var(--border-soft);
-    padding: 28px 40px;
+    max-width: 860px; margin: 0 auto;
+    padding: 0 40px 48px;
     display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border-soft); padding-top: 28px;
     font-size: 0.75rem; color: var(--muted);
-    flex-wrap: wrap; gap: 12px;
   }
-  footer span { color:var(--muted); font-size:0.78rem; white-space:nowrap; }
-  .footer-links { display: flex; gap: 20px; align-items:center; }
-  footer a { color: var(--muted); text-decoration: none; transition: color .15s; font-size:0.78rem; }
-  footer a:hover { color: var(--gold); }
-  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; text-decoration:none; }
-  .btn-bug:hover { border-color:var(--border); color:var(--cream); }
-  @media(max-width:600px) { footer { padding: 24px 20px; flex-direction:column; align-items:flex-start; gap:14px; } nav { padding: 0 20px; } }
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
+  .footer-links a:hover { color:var(--gold); }
+  .btn-bug {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; color: var(--muted);
+    font-family: 'Outfit', sans-serif; font-size: 0.75rem;
+    cursor: pointer; padding: 6px 0; transition: color .15s;
+  }
+  .btn-bug:hover { color: var(--gold); }
 
-  /* ── ANIMATIONS ── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
   }
 </style>
 </head>
@@ -313,170 +199,108 @@
   </div>
 </nav>
 
-<!-- ── HERO ── -->
-<section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">Financial tools</div>
-    <h1>Understand<br>your money<br><em>completely</em></h1>
-    <p class="hero-sub">Calculators that give you straight answers. Diagrams that make your finances visual. A net worth tracker that shows where you're headed.</p>
-    <div class="hero-ctas">
-      <a href="/net-worth/" class="btn-primary">Track Net Worth</a>
-      <a href="/calculators/" class="btn-secondary">Browse Calculators</a>
-    </div>
+<div class="page-wrap">
+
+  <div class="cards-header">
+    <h1>Available financial tools</h1>
   </div>
 
-  <div class="hero-right">
-    <div class="stat-card">
-      <div class="stat-label">Monitor</div>
-      <div class="stat-value"><em>Net worth</em> tracker</div>
-      <div class="stat-desc">Log your assets and liabilities, watch your net worth trend, and share your progress.</div>
+  <div class="section-block" style="opacity:0;animation:fadeUp 0.5s ease 0.12s forwards">
+    <div class="section-desc-outer">Log assets and liabilities, watch your wealth grow over time. No bank connection required.</div>
+    <a class="card" href="/net-worth/">
+    <div class="card-left">
+      <div class="card-tag tag-nw">Net Worth</div>
+      <div class="card-title">Track your net worth</div>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Calculate</div>
-      <div class="stat-value">Mortgages, <em>FIRE</em> & more</div>
-      <div class="stat-desc">Tools for the financial decisions that matter — mortgages, retirement, debt, and investing.</div>
+    <div class="card-preview">
+      <svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:220px;">
+        <!-- Grid lines -->
+        <line x1="20" y1="15" x2="205" y2="15" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="45" x2="205" y2="45" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="75" x2="205" y2="75" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="105" x2="205" y2="105" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <!-- Area fill -->
+        <path d="M20,100 L55,90 L90,78 L125,62 L160,44 L195,28 L205,22 L205,108 L20,108 Z" fill="rgba(76,175,125,0.1)"/>
+        <!-- Line -->
+        <path d="M20,100 L55,90 L90,78 L125,62 L160,44 L195,28" fill="none" stroke="#4caf7d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <!-- Dots -->
+        <circle cx="20"  cy="100" r="2.5" fill="#4caf7d"/>
+        <circle cx="90"  cy="78"  r="2.5" fill="#4caf7d"/>
+        <circle cx="160" cy="44"  r="2.5" fill="#4caf7d"/>
+        <circle cx="195" cy="28"  r="3.5" fill="#4caf7d" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+        <!-- Value callout -->
+        <text x="193" y="21" font-family="Outfit" font-size="8.5" fill="#4caf7d" text-anchor="end" font-weight="500">+$47,200</text>
+        <!-- X labels -->
+        <text x="20"  y="118" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.22)" text-anchor="middle">Jan</text>
+        <text x="90"  y="118" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.22)" text-anchor="middle">Apr</text>
+        <text x="160" y="118" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.22)" text-anchor="middle">Aug</text>
+        <text x="195" y="118" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.22)" text-anchor="middle">Nov</text>
+      </svg>
     </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Visualize</div>
-      <div class="stat-value">Your <em>money flow</em></div>
-      <div class="stat-desc">Diagrams that make it easy to see exactly where your money is going.</div>
-    </div>
+  </a>
   </div>
-</section>
 
-<!-- ── DIVIDER ── -->
-<div class="divider">
-  <div class="divider-line"></div>
-  <div class="divider-label">Explore</div>
-  <div class="divider-line"></div>
-</div>
+  <div class="section-divider"></div>
 
-<!-- ── SECTION CARDS ── -->
-<div class="sections">
-
-  <!-- NET WORTH TRACKER -->
-  <a class="section-card" href="/net-worth/">
-    <div class="section-inner">
-      <div class="section-info">
-        <div>
-          <div class="section-tag tag-nw">Net Worth Tracker</div>
-          <div class="section-title">Watch your wealth<br><em>grow over time</em></div>
-          <p class="section-desc">Log your assets and liabilities month by month. See your net worth trend, track every category, and share your progress — all in one place.</p>
-        </div>
-        <div class="section-cta">
-          Start tracking <span class="section-cta-arrow">→</span>
-        </div>
-      </div>
-      <div class="section-tools" style="align-content:center;">
-        <div class="tool-pill" style="grid-column:span 3; padding:20px 18px;">
-          <!-- Mini net worth chart preview -->
-          <svg viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:80px;display:block;margin-bottom:12px;">
-            <line x1="0" y1="100" x2="360" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-            <line x1="0" y1="66" x2="360" y2="66" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-            <line x1="0" y1="33" x2="360" y2="33" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-            <text x="0" y="103" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$0</text>
-            <text x="0" y="69" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$150k</text>
-            <text x="0" y="36" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)">$300k</text>
-            <path d="M28,95 L80,88 L132,78 L184,65 L236,50 L288,35 L340,18 L340,100 L28,100 Z" fill="rgba(76,175,125,0.12)"/>
-            <path d="M28,95 L80,88 L132,78 L184,65 L236,50 L288,35 L340,18" fill="none" stroke="#4caf7d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-            <circle cx="28"  cy="95" r="3.5" fill="#4caf7d"/>
-            <circle cx="80"  cy="88" r="3.5" fill="#4caf7d"/>
-            <circle cx="132" cy="78" r="3.5" fill="#4caf7d"/>
-            <circle cx="184" cy="65" r="3.5" fill="#4caf7d"/>
-            <circle cx="236" cy="50" r="3.5" fill="#4caf7d"/>
-            <circle cx="288" cy="35" r="3.5" fill="#4caf7d"/>
-            <circle cx="340" cy="18" r="5"   fill="#4caf7d"/>
-            <text x="24"  y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Jul</text>
-            <text x="132" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Sep</text>
-            <text x="236" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="middle">Nov</text>
-            <text x="340" y="115" font-family="Outfit" font-size="9" fill="rgba(245,240,232,0.3)" text-anchor="right">Jan</text>
-          </svg>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div class="tool-pill-name">Net worth over 6 months</div>
-            <div class="tool-pill-tag" style="color:#4caf7d;">+$47,200</div>
-          </div>
-        </div>
-        <div style="grid-column:span 3;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="tool-pill">
-            <div class="tool-pill-name">Assets</div>
-            <div class="tool-pill-tag tag-invest">401k · IRA · Home</div>
-          </div>
-          <div class="tool-pill">
-            <div class="tool-pill-name">Liabilities</div>
-            <div class="tool-pill-tag tag-debt">Mortgage · Loans</div>
-          </div>
-        </div>
-      </div>
+  <div class="section-block" style="opacity:0;animation:fadeUp 0.5s ease 0.22s forwards">
+    <div class="section-desc-outer">Calculate your retirement age, mortgage payoff, debt payoff, and more.</div>
+    <a class="card" href="/calculators/">
+    <div class="card-left">
+      <div class="card-tag tag-calc">Calculators</div>
+      <div class="card-title">Financial calculators</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:220px;">
+        <line x1="20" y1="15" x2="205" y2="15" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="45" x2="205" y2="45" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="75" x2="205" y2="75" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="20" y1="105" x2="205" y2="105" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M20,105 C55,102 85,92 115,76 C135,64 152,46 168,30 L168,108 L20,108 Z" fill="rgba(232,201,122,0.08)"/>
+        <path d="M20,105 C55,102 85,92 115,76 C135,64 152,46 168,30" fill="none" stroke="#e8c97a" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M168,30 C180,40 192,58 202,82 L202,108 L168,108 Z" fill="rgba(91,184,245,0.08)"/>
+        <path d="M168,30 C180,40 192,58 202,82" fill="none" stroke="#5bb8f5" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="20" y1="30" x2="205" y2="30" stroke="rgba(255,255,255,0.14)" stroke-width="1" stroke-dasharray="4,4"/>
+        <line x1="168" y1="10" x2="168" y2="108" stroke="rgba(245,240,232,0.14)" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="170" y="10" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.3)">Retire 58</text>
+        <text x="22"  y="27" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.25)">FIRE target</text>
+        <circle cx="168" cy="30" r="3" fill="#e8c97a" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+      </svg>
     </div>
   </a>
+  </div>
 
-  <!-- CALCULATORS -->
-  <a class="section-card" href="/calculators/">
-    <div class="section-inner">
-      <div class="section-info">
-        <div>
-          <div class="section-tag tag-calc">Calculators</div>
-          <div class="section-title">Numbers that<br><em>actually answer</em><br>your question</div>
-          <p class="section-desc">Tools for the financial decisions that matter most — mortgages, retirement, debt, and investing. Each one gives you a clear answer, not more questions.</p>
-        </div>
-        <div class="section-cta">
-          Browse all calculators <span class="section-cta-arrow">→</span>
-        </div>
-      </div>
-      <div class="section-tools">
-        <div class="tool-pill" style="grid-column:span 3;">
-          <div class="tool-pill-name">Mortgage Payoff Calculator</div>
-          <div class="tool-pill-tag tag-mortgage">Most popular</div>
-        </div>
-        <div class="tool-pill" style="grid-column:span 3;">
-          <div class="tool-pill-name">Retirement Age Calculator</div>
-          <div class="tool-pill-tag tag-fire">FIRE</div>
-        </div>
-        <div class="tool-pill" style="grid-column:span 3; opacity:0.5;">
-          <div class="tool-pill-name">And more inside →</div>
-          <div class="tool-pill-tag tag-invest">Debt · Investing · Housing</div>
-        </div>
-      </div>
+  <div class="section-divider"></div>
+
+  <div class="section-block" style="opacity:0;animation:fadeUp 0.5s ease 0.32s forwards">
+    <div class="section-desc-outer">Turn your budget into a flow chart.</div>
+    <a class="card" href="/create-a-diagram/">
+    <div class="card-left">
+      <div class="card-tag tag-diag">Diagrams</div>
+      <div class="card-title">Build a diagram</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:220px;">
+        <rect x="18" y="10" width="11" height="100" rx="3" fill="rgba(232,201,122,0.75)"/>
+        <text x="23" y="7" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.35)" text-anchor="middle">Income</text>
+        <path d="M29,12 C72,12 72,18 108,18 L108,38 C72,38 72,32 29,32 Z" fill="rgba(74,222,128,0.2)"/>
+        <path d="M29,34 C72,34 72,46 108,46 L108,64 C72,64 72,52 29,52 Z" fill="rgba(96,165,250,0.2)"/>
+        <path d="M29,54 C72,54 72,68 108,68 L108,84 C72,84 72,70 29,70 Z" fill="rgba(251,146,60,0.2)"/>
+        <path d="M29,72 C72,72 72,88 108,88 L108,100 C72,100 72,84 29,84 Z" fill="rgba(251,191,36,0.2)"/>
+        <path d="M29,86 C72,86 72,102 108,102 L108,112 C72,112 72,96 29,96 Z" fill="rgba(167,139,250,0.2)"/>
+        <rect x="108" y="18" width="10" height="20" rx="2" fill="rgba(74,222,128,0.7)"/>
+        <rect x="108" y="46" width="10" height="18" rx="2" fill="rgba(96,165,250,0.7)"/>
+        <rect x="108" y="68" width="10" height="16" rx="2" fill="rgba(251,146,60,0.7)"/>
+        <rect x="108" y="88" width="10" height="12" rx="2" fill="rgba(251,191,36,0.7)"/>
+        <rect x="108" y="102" width="10" height="10" rx="2" fill="rgba(167,139,250,0.7)"/>
+        <text x="122" y="31" font-family="Outfit" font-size="7.5" fill="rgba(245,240,232,0.55)">Housing</text>
+        <text x="122" y="57" font-family="Outfit" font-size="7.5" fill="rgba(245,240,232,0.55)">Savings</text>
+        <text x="122" y="79" font-family="Outfit" font-size="7.5" fill="rgba(245,240,232,0.55)">Food</text>
+        <text x="122" y="97" font-family="Outfit" font-size="7.5" fill="rgba(245,240,232,0.55)">Transport</text>
+        <text x="122" y="111" font-family="Outfit" font-size="7.5" fill="rgba(245,240,232,0.55)">Other</text>
+      </svg>
     </div>
   </a>
-
-  <!-- DIAGRAMS -->
-  <a class="section-card" href="/create-a-diagram/">
-    <div class="section-inner">
-      <div class="section-info">
-        <div>
-          <div class="section-tag tag-diag">Diagrams</div>
-          <div class="section-title">Your finances,<br><em>drawn out</em></div>
-          <p class="section-desc">Put your numbers in, get a visual back. Flow charts and diagrams that make it easy to see where your money is actually going.</p>
-        </div>
-        <div class="section-cta">
-          Create a diagram <span class="section-cta-arrow">→</span>
-        </div>
-      </div>
-      <div class="section-tools">
-        <div class="diag-pill" style="grid-column:span 3;">
-          <div class="diag-pill-preview">
-            <svg viewBox="0 0 260 48" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-              <rect x="8" y="4" width="12" height="40" rx="3" fill="rgba(201,168,76,0.7)"/>
-              <path d="M20,6 C80,6 80,10 120,10 L120,22 C80,22 80,18 20,18 Z" fill="rgba(74,222,128,0.25)"/>
-              <path d="M20,20 C80,20 80,26 120,26 L120,34 C80,34 80,28 20,28 Z" fill="rgba(96,165,250,0.25)"/>
-              <path d="M20,30 C80,30 80,36 120,36 L120,42 C80,42 80,36 20,36 Z" fill="rgba(251,146,60,0.25)"/>
-              <rect x="120" y="10" width="10" height="12" rx="2" fill="rgba(74,222,128,0.7)"/>
-              <rect x="120" y="26" width="10" height="8" rx="2" fill="rgba(96,165,250,0.7)"/>
-              <rect x="120" y="36" width="10" height="6" rx="2" fill="rgba(251,146,60,0.7)"/>
-              <text x="136" y="18" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.5)">Housing</text>
-              <text x="136" y="32" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.5)">Savings</text>
-              <text x="136" y="42" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.5)">Food</text>
-            </svg>
-          </div>
-          <div class="diag-pill-name">Budget Sankey</div>
-        </div>
-      </div>
-    </div>
-  </a>
-
+  </div>
 
 </div>
 
@@ -485,9 +309,7 @@
   <div class="footer-links">
     <a href="/privacy/">Privacy</a>
     <button class="btn-bug" onclick="openBugModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/>
-      </svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
       Report a bug
     </button>
   </div>
@@ -502,7 +324,7 @@
       <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email <span style="color:#e05c5c">*</span></label>
       <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
@@ -515,9 +337,7 @@
 </div>
 
 <script>
-// ── BUG REPORT ──
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xjgaydej';
-
 function openBugModal() {
   document.getElementById('bugDescription').value = '';
   document.getElementById('bugEmail').value = '';
@@ -529,41 +349,32 @@ function openBugModal() {
   m.style.display = 'flex';
   setTimeout(() => document.getElementById('bugDescription').focus(), 50);
 }
-
-function closeBugModal() {
-  document.getElementById('bugModal').style.display = 'none';
-}
-
+function closeBugModal() { document.getElementById('bugModal').style.display = 'none'; }
 async function submitBugReport() {
   const description = document.getElementById('bugDescription').value.trim();
   const email = document.getElementById('bugEmail').value.trim();
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color = '#e05c5c'; errEl.textContent = 'Please describe the bug before submitting.'; return; }
-  btn.textContent = 'Sending…';
-  btn.disabled = true;
-  errEl.textContent = '';
+  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch(FORMSPREE_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ description, email: email || 'Not provided', page, userAgent: navigator.userAgent })
+      method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent })
     });
     if (res.ok) {
       btn.textContent = 'Sent!';
       errEl.style.color = '#4caf7d';
-      errEl.textContent = "Thanks for the report — we'll look into it.";
+      errEl.textContent = "Thanks — we'll look into it.";
       setTimeout(() => closeBugModal(), 2000);
     } else { throw new Error(); }
   } catch(e) {
-    btn.textContent = 'Send Report';
-    btn.disabled = false;
-    errEl.style.color = '#e05c5c';
-    errEl.textContent = 'Something went wrong. Try again or email vestlyfi@gmail.com.';
+    btn.textContent='Send Report'; btn.disabled=false;
+    errEl.style.color='#e05c5c';
+    errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';
   }
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');
   let downOnBackdrop = false;
@@ -571,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
   el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
   el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
   const ta = document.getElementById('bugDescription');
-  if (ta) ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitBugReport(); });
+  if (ta) ta.addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) submitBugReport(); });
 });
 </script>
 
