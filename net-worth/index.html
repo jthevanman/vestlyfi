@@ -156,8 +156,8 @@
   .period-btn { padding:4px 10px; border-radius:6px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
   .period-btn:hover { color:var(--cream); border-color:var(--border); }
   .period-btn.active { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
-  .chart-wrap { position:relative; height:200px; }
-  .chart-wrap.stat-mode { height:auto; }
+  .chart-wrap { position:relative; height:200px; min-height:200px; }
+  .chart-wrap.stat-mode { height:auto !important; min-height:0 !important; }
   .chart-empty { text-align:center; padding:40px 0; color:var(--muted); font-size:0.88rem; line-height:1.7; }
   .chart-empty.stat-mode { text-align:left; padding:8px 0 4px; }
   .chart-empty:has(.snap-stat-view) { text-align:left; padding:8px 0 0; }
@@ -1112,6 +1112,8 @@ function renderChart() {
         </div>
       </div>`;
     canvas.style.display = 'none';
+    canvas.style.height = '0';
+    canvas.style.width = '0';
     const chartWrap = document.getElementById('chartWrap');
     chartWrap.classList.add('stat-mode');
     chartWrap.style.height = 'auto';
@@ -1129,6 +1131,8 @@ function renderChart() {
   chartEmpty.style.display = 'none';
   chartEmpty.classList.remove('stat-mode');
   canvas.style.display = 'block';
+  canvas.style.height = '';
+  canvas.style.width = '';
   footer.style.display = 'flex';
   footer.style.justifyContent = '';
   const chartWrap = document.getElementById('chartWrap');
@@ -1254,8 +1258,10 @@ function renderShareCanvas(snapshots) {
   ctx.fillStyle = '#c9a84c';
   ctx.fillText('VestlyFi', 60, 54);
 
-  // Timeframe — top center
-  const dateRangeText = `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
+  // Timeframe — top center (single month name if only one snapshot)
+  const dateRangeText = snapshots.length === 1
+    ? fmtMonthLabel(first.month)
+    : `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
   ctx.font = '300 22px Outfit, sans-serif';
   ctx.fillStyle = 'rgba(245,240,232,0.45)';
   ctx.textAlign = 'center';
