@@ -159,13 +159,13 @@
   .chart-wrap { position:relative; height:200px; }
   .chart-empty { text-align:center; padding:40px 0; color:var(--muted); font-size:0.88rem; line-height:1.7; }
   .chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); }
-  .chart-footer-stats { display:flex; flex-direction:column; gap:4px; }
+  .chart-footer-stats { display:flex; gap:20px; align-items:center; }
   .chart-period-summary { font-size:0.8rem; color:var(--muted); }
-  .chart-period-summary .up { color:var(--green); }
-  .chart-period-summary .down { color:var(--red); }
+  .chart-period-summary .up { color:var(--green); font-weight:600; }
+  .chart-period-summary .down { color:var(--red); font-weight:600; }
   .chart-debt-summary { font-size:0.78rem; color:var(--muted); }
-  .chart-debt-summary .debt-down { color:#4caf7d; }
-  .chart-debt-summary .debt-up { color:var(--red); }
+  .chart-debt-summary .debt-down { color:#4caf7d; font-weight:600; }
+  .chart-debt-summary .debt-up { color:var(--red); font-weight:600; }
   .btn-share { padding:6px 14px; background:none; border:1px solid var(--border); color:var(--gold); border-radius:8px; font-family:'Outfit',sans-serif; font-size:0.78rem; font-weight:500; cursor:pointer; transition:all .15s; }
   .btn-share:hover { background:rgba(201,168,76,0.08); }
 
@@ -447,8 +447,8 @@
         <div class="chart-card-header">
           <div class="chart-card-title">Net Worth Over Time</div>
           <div class="chart-period-btns" id="chartPeriodBtns">
-            <button class="period-btn" onclick="setChartPeriod(3)">3M</button>
             <button class="period-btn" onclick="setChartPeriod(1)">1M</button>
+            <button class="period-btn" onclick="setChartPeriod(3)">3M</button>
             <button class="period-btn active" onclick="setChartPeriod(12)">1Y</button>
             <button class="period-btn" onclick="setChartPeriod(0)">All</button>
           </div>
@@ -1000,16 +1000,15 @@ function renderChart() {
   const sign = diff >= 0 ? '+' : '';
   const cls = diff >= 0 ? 'up' : 'down';
   document.getElementById('chartPeriodSummary').innerHTML =
-    `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)} &nbsp;<span class="${cls}">${sign}${fmtMoney(diff)}</span>`;
+    `Total gain &nbsp;<span class="${cls}">${sign}${fmtMoney(diff)}</span>`;
 
   // Debt reduction summary
-  const liabDiff = first.liabilities - last.liabilities; // positive = debt paid down
+  const liabDiff = first.liabilities - last.liabilities;
   const debtEl = document.getElementById('chartDebtSummary');
   if (first.liabilities > 0 || last.liabilities > 0) {
     const debtCls = liabDiff >= 0 ? 'debt-down' : 'debt-up';
-    const debtSign = liabDiff >= 0 ? '▼ ' : '▲ +';
     const debtLabel = liabDiff >= 0 ? 'Debt paid off' : 'Debt added';
-    debtEl.innerHTML = `${debtLabel} &nbsp;<span class="${debtCls}">${debtSign}${fmtMoney(Math.abs(liabDiff))}</span>`;
+    debtEl.innerHTML = `${debtLabel} &nbsp;<span class="${debtCls}">${fmtMoney(Math.abs(liabDiff))}</span>`;
     debtEl.style.display = 'block';
   } else {
     debtEl.style.display = 'none';
@@ -1116,54 +1115,62 @@ function renderShareCanvas(snapshots) {
   ctx.fillStyle = '#c9a84c';
   ctx.fillText('VestlyFi', 60, 58);
 
-  // Period label top-right
+  // NET WORTH label
   ctx.font = '300 22px Outfit, sans-serif';
   ctx.fillStyle = 'rgba(245,240,232,0.45)';
-  ctx.textAlign = 'right';
-  ctx.fillText(`${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`, W - 60, 58);
-  ctx.textAlign = 'left';
+  ctx.fillText('NET WORTH', 60, 130);
 
-  // Net worth value — big
-  ctx.font = '300 22px Outfit, sans-serif';
-  ctx.fillStyle = 'rgba(245,240,232,0.45)';
-  ctx.fillText('NET WORTH', 60, 148);
-
+  // Net worth big value
   ctx.font = '600 88px Outfit, sans-serif';
   ctx.fillStyle = '#f5f0e8';
-  ctx.fillText(fmtMoney(last.netWorth), 60, 248);
+  const nwText = fmtMoney(last.netWorth);
+  ctx.fillText(nwText, 60, 228);
 
-  // Change pill
-  const changeText = (isUp ? '▲ +' : '▼ ') + fmtMoney(Math.abs(diff));
-  ctx.font = '500 32px Outfit, sans-serif';
-  const tw = ctx.measureText(changeText).width;
-  const pillX = 60, pillY = 270, pillW = tw + 32, pillH = 48;
-  ctx.fillStyle = isUp ? 'rgba(76,175,125,0.15)' : 'rgba(224,92,92,0.15)';
-  ctx.beginPath();
-  ctx.roundRect(pillX, pillY, pillW, pillH, 8);
-  ctx.fill();
-  ctx.fillStyle = accentColor;
-  ctx.fillText(changeText, pillX + 16, pillY + 33);
+  // Total gain — to the right of net worth, vertically centred
+  const nwWidth = ctx.measureText(nwText).width;
+  const gainSign = diff >= 0 ? '+' : '';
+  const gainText = `${gainSign}${fmtMoney(diff)}`;
+  const gainColor = isUp ? '#4caf7d' : '#e05c5c';
+  ctx.font = '500 36px Outfit, sans-serif';
+  const gainX = 60 + nwWidth + 24;
+  const gainY = 220;
+  ctx.fillStyle = gainColor;
+  ctx.fillText(gainText, gainX, gainY);
+  ctx.font = '300 22px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.35)';
+  ctx.fillText('total gain', gainX, gainY + 28);
 
-  // Debt paid off pill
+  // Date range — below net worth value
+  const dateRangeText = `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
+  ctx.font = '300 24px Outfit, sans-serif';
+  ctx.fillStyle = 'rgba(245,240,232,0.4)';
+  ctx.fillText(dateRangeText, 60, 268);
+
+  // Debt paid off — to the right of date range
   const liabDiff = first.liabilities - last.liabilities;
   if (first.liabilities > 0 || last.liabilities > 0) {
-    const debtText = (liabDiff >= 0 ? '▼ Debt paid off  ' : '▲ Debt added  ') + fmtMoney(Math.abs(liabDiff));
+    const dateW = ctx.measureText(dateRangeText).width;
+    const debtLabel = liabDiff >= 0 ? 'Debt paid off' : 'Debt added';
+    const debtVal = fmtMoney(Math.abs(liabDiff));
     const debtColor = liabDiff >= 0 ? '#4caf7d' : '#e05c5c';
-    const debtBg   = liabDiff >= 0 ? 'rgba(76,175,125,0.12)' : 'rgba(224,92,92,0.12)';
-    ctx.font = '500 28px Outfit, sans-serif';
-    const dtw = ctx.measureText(debtText).width;
-    const dpillX = pillX + pillW + 16, dpillY = pillY, dpillW = dtw + 28, dpillH = pillH;
-    ctx.fillStyle = debtBg;
+    const sepX = 60 + dateW + 28;
+    // Separator dot
+    ctx.fillStyle = 'rgba(245,240,232,0.2)';
     ctx.beginPath();
-    ctx.roundRect(dpillX, dpillY, dpillW, dpillH, 8);
+    ctx.arc(sepX - 14, 260, 3, 0, Math.PI * 2);
     ctx.fill();
+    ctx.font = '300 24px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(245,240,232,0.4)';
+    ctx.fillText(`${debtLabel} `, sepX, 268);
+    const labelW = ctx.measureText(`${debtLabel} `).width;
+    ctx.font = '600 24px Outfit, sans-serif';
     ctx.fillStyle = debtColor;
-    ctx.fillText(debtText, dpillX + 14, dpillY + 32);
+    ctx.fillText(debtVal, sepX + labelW, 268);
   }
 
-  // Mini line chart — shifted right to make room for y-axis labels
+  // Mini line chart
   const yAxisW = 110;
-  const chartX = 60 + yAxisW, chartY = 360, chartW = W - 120 - yAxisW, chartH = 180;
+  const chartX = 60 + yAxisW, chartY = 340, chartW = W - 120 - yAxisW, chartH = 190;
   const vals = snapshots.map(s => s.netWorth);
   const minV = Math.min(...vals), maxV = Math.max(...vals);
   const range = maxV - minV || 1;
