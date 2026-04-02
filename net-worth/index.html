@@ -1110,8 +1110,24 @@ function renderChart() {
         </div>
       </div>`;
     canvas.style.display = 'none';
-    footer.style.display = 'none';
-    document.getElementById('nwChart').closest('.chart-wrap').classList.add('stat-mode');
+    canvas.closest('.chart-wrap').classList.add('stat-mode');
+
+    // Show footer with share button, summary from single snap
+    const snapDiff = nwDiff !== null ? nwDiff : 0;
+    const snapSign = snapDiff >= 0 ? '+' : '';
+    const snapCls = snapDiff >= 0 ? 'up' : 'down';
+    document.getElementById('chartPeriodSummary').innerHTML =
+      nwDiff !== null ? `Total gain &nbsp;<span class="${snapCls}">${snapSign}${fmtMoney(snapDiff)}</span>` : `${fmtMonthLabel(s.month)}`;
+    const debtEl = document.getElementById('chartDebtSummary');
+    if (s.liabilities > 0 && liabDiff !== null) {
+      const debtCls = liabDiff >= 0 ? 'debt-down' : 'debt-up';
+      const debtLabel = liabDiff >= 0 ? 'Debt paid off' : 'Debt added';
+      debtEl.innerHTML = `${debtLabel} &nbsp;<span class="${debtCls}">${fmtMoney(Math.abs(liabDiff))}</span>`;
+      debtEl.style.display = 'block';
+    } else {
+      debtEl.style.display = 'none';
+    }
+    footer.style.display = 'flex';
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     return;
   }
@@ -1198,7 +1214,7 @@ function renderChart() {
 // ── SHARE IMAGE ──
 function openShareModal() {
   const snapshots = getFilteredSnapshots();
-  if (snapshots.length < 2) return;
+  if (snapshots.length < 1) return;
   const first = snapshots[0], last = snapshots[snapshots.length - 1];
   document.getElementById('shareModalSub').textContent =
     `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
@@ -1275,15 +1291,10 @@ function renderShareCanvas(snapshots) {
     const debtLabel = liabDiff >= 0 ? 'Debt paid off' : 'Debt added';
     const debtVal = fmtMoney(Math.abs(liabDiff));
     const debtColor = liabDiff >= 0 ? '#4caf7d' : '#e05c5c';
-    ctx.font = '300 24px Outfit, sans-serif';
-    ctx.fillStyle = 'rgba(245,240,232,0.4)';
-    const labelW = ctx.measureText(`${debtLabel}  `).width;
-    ctx.fillText(`${debtLabel}  `, W - 60, 222);
-    // Bold coloured value inline — measure from right
+    // Draw value right-aligned first, then label to its left
     ctx.font = '600 24px Outfit, sans-serif';
     ctx.fillStyle = debtColor;
     ctx.fillText(debtVal, W - 60, 222);
-    // Re-draw label to the left of value
     const valW = ctx.measureText(debtVal).width;
     ctx.font = '300 24px Outfit, sans-serif';
     ctx.fillStyle = 'rgba(245,240,232,0.4)';
