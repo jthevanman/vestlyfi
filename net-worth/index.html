@@ -157,7 +157,78 @@
   .period-btn:hover { color:var(--cream); border-color:var(--border); }
   .period-btn.active { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
   .chart-wrap { position:relative; height:200px; }
+  .chart-wrap.stat-mode { height:auto; }
   .chart-empty { text-align:center; padding:40px 0; color:var(--muted); font-size:0.88rem; line-height:1.7; }
+  .chart-empty.stat-mode { text-align:left; padding:8px 0 4px; }
+  .chart-empty:has(.snap-stat-view) { text-align:left; padding:8px 0 0; }
+
+  /* Single-month stat view */
+  .snap-stat-view {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 6px 0 4px;
+  }
+
+  /* Top — net worth left, gain right */
+  .snap-top {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .snap-top-left {}
+  .snap-period {
+    font-size: 0.65rem; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .snap-nw {
+    font-size: 2.6rem; font-weight: 400;
+    color: var(--cream); letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .snap-top-right { text-align: right; }
+  .snap-gain-label {
+    font-size: 0.65rem; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .snap-gain {
+    font-size: 1.6rem; font-weight: 500; line-height: 1; letter-spacing: -0.02em;
+  }
+  .snap-gain.up { color: #4caf7d; }
+  .snap-gain.down { color: var(--red); }
+
+  /* Debt strip */
+  .snap-debt-strip {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(76,175,125,0.07);
+    border: 1px solid rgba(76,175,125,0.18);
+    border-radius: 12px; padding: 13px 18px;
+  }
+  .snap-debt-strip.negative {
+    background: rgba(224,92,92,0.07);
+    border-color: rgba(224,92,92,0.18);
+  }
+  .snap-debt-label {
+    font-size: 0.78rem; color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .snap-debt-val { font-size: 1.1rem; font-weight: 600; color: #4caf7d; letter-spacing: -0.01em; }
+  .snap-debt-val.negative { color: var(--red); }
+
+  /* Bottom row — assets / liabilities */
+  .snap-bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .snap-tile {
+    background: var(--navy-light);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px; padding: 16px 18px;
+  }
+  .snap-tile-label {
+    font-size: 0.65rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px;
+  }
+  .snap-tile-val { font-size: 1.4rem; font-weight: 400; letter-spacing: -0.02em; }
+  .snap-tile-val.assets { color: #4caf7d; }
+  .snap-tile-val.liabs { color: var(--red); }
   .chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); }
   .chart-footer-stats { display:flex; gap:20px; align-items:center; }
   .chart-period-summary { font-size:0.8rem; color:var(--muted); }
@@ -984,27 +1055,72 @@ function renderChart() {
 
   if (snapshots.length === 0) {
     chartEmpty.style.display = 'block';
+    chartEmpty.classList.remove('stat-mode');
     chartEmpty.textContent = 'Log entries for two or more months to see your trend.';
     canvas.style.display = 'none';
     footer.style.display = 'none';
+    canvas.closest('.chart-wrap').classList.remove('stat-mode');
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     return;
   }
 
-  // Single snapshot (e.g. 1M with only one month logged) — show stat only, no chart
+  // Single snapshot — rich stat view
   if (snapshots.length === 1) {
     const s = snapshots[0];
+    // Find previous snapshot from full list for gain calc
+    const allSnaps = buildMonthlySnapshots();
+    const idx = allSnaps.findIndex(x => x.month === s.month);
+    const prev = idx > 0 ? allSnaps[idx - 1] : null;
+    const nwDiff = prev ? s.netWorth - prev.netWorth : null;
+    const liabDiff = prev ? prev.liabilities - s.liabilities : null;
+    const gainCls = nwDiff >= 0 ? 'up' : 'down';
+    const gainSign = nwDiff >= 0 ? '+' : '';
+
+    const debtHtml = (prev && (s.liabilities > 0 || prev.liabilities > 0)) ? `
+      <div class="snap-debt-strip${liabDiff < 0 ? ' negative' : ''}">
+        <span class="snap-debt-label">${liabDiff >= 0 ? 'Debt paid off this month' : 'Debt added this month'}</span>
+        <span class="snap-debt-val${liabDiff < 0 ? ' negative' : ''}">${fmtMoney(Math.abs(liabDiff))}</span>
+      </div>` : '';
+
     chartEmpty.style.display = 'block';
-    chartEmpty.innerHTML = `<span style="color:var(--cream);font-size:1.1rem;font-weight:400">${fmtMoney(s.netWorth)}</span><br><span style="font-size:0.8rem">${fmtMonthLabel(s.month)} — only one month in range</span>`;
+    chartEmpty.classList.add('stat-mode');
+    chartEmpty.innerHTML = `
+      <div class="snap-stat-view">
+        <div class="snap-top">
+          <div class="snap-top-left">
+            <div class="snap-period">${fmtMonthLabel(s.month)}</div>
+            <div class="snap-nw">${fmtMoney(s.netWorth)}</div>
+          </div>
+          ${nwDiff !== null ? `
+          <div class="snap-top-right">
+            <div class="snap-gain-label">This month</div>
+            <div class="snap-gain ${gainCls}">${gainSign}${fmtMoney(nwDiff)}</div>
+          </div>` : ''}
+        </div>
+        ${debtHtml}
+        <div class="snap-bottom-row">
+          <div class="snap-tile">
+            <div class="snap-tile-label">Total Assets</div>
+            <div class="snap-tile-val assets">${fmtMoney(s.assets)}</div>
+          </div>
+          <div class="snap-tile">
+            <div class="snap-tile-label">Total Liabilities</div>
+            <div class="snap-tile-val liabs">${fmtMoney(s.liabilities)}</div>
+          </div>
+        </div>
+      </div>`;
     canvas.style.display = 'none';
     footer.style.display = 'none';
+    document.getElementById('nwChart').closest('.chart-wrap').classList.add('stat-mode');
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     return;
   }
 
   chartEmpty.style.display = 'none';
+  chartEmpty.classList.remove('stat-mode');
   canvas.style.display = 'block';
   footer.style.display = 'flex';
+  canvas.closest('.chart-wrap').classList.remove('stat-mode');
 
   // Period summary — net worth change
   const first = snapshots[0], last = snapshots[snapshots.length - 1];
