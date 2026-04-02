@@ -1059,7 +1059,9 @@ function renderChart() {
     chartEmpty.textContent = 'Log entries for two or more months to see your trend.';
     canvas.style.display = 'none';
     footer.style.display = 'none';
-    document.getElementById('chartWrap').classList.remove('stat-mode');
+    const cw = document.getElementById('chartWrap');
+    cw.classList.remove('stat-mode');
+    cw.style.height = '';
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     return;
   }
@@ -1110,11 +1112,11 @@ function renderChart() {
         </div>
       </div>`;
     canvas.style.display = 'none';
-    requestAnimationFrame(() => {
-      document.getElementById('chartWrap').classList.add('stat-mode');
-    });
+    const chartWrap = document.getElementById('chartWrap');
+    chartWrap.classList.add('stat-mode');
+    chartWrap.style.height = 'auto';
 
-    // Hide stats in footer (shown in snap view already), just show share button
+    // Footer: only share button, no repeated stats
     document.getElementById('chartPeriodSummary').innerHTML = '';
     document.getElementById('chartDebtSummary').innerHTML = '';
     document.getElementById('chartDebtSummary').style.display = 'none';
@@ -1129,7 +1131,9 @@ function renderChart() {
   canvas.style.display = 'block';
   footer.style.display = 'flex';
   footer.style.justifyContent = '';
-  document.getElementById('chartWrap').classList.remove('stat-mode');
+  const chartWrap = document.getElementById('chartWrap');
+  chartWrap.classList.remove('stat-mode');
+  chartWrap.style.height = '';
 
   // Period summary — net worth change
   const first = snapshots[0], last = snapshots[snapshots.length - 1];
@@ -1236,19 +1240,16 @@ function renderShareCanvas(snapshots) {
   const isUp = diff >= 0;
   const accentColor = isUp ? '#4caf7d' : '#e05c5c';
 
-  // Background — solid, no gradient
+  // Solid background
   ctx.fillStyle = '#0d1326';
   ctx.fillRect(0, 0, W, H);
 
-  // Subtle horizontal separator line
+  // Header separator
   ctx.strokeStyle = 'rgba(255,255,255,0.06)';
   ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(60, 80);
-  ctx.lineTo(W - 60, 80);
-  ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(60, 80); ctx.lineTo(W - 60, 80); ctx.stroke();
 
-  // VestlyFi wordmark top-left
+  // VestlyFi wordmark
   ctx.font = '600 26px "Exo 2", sans-serif';
   ctx.fillStyle = '#c9a84c';
   ctx.fillText('VestlyFi', 60, 54);
@@ -1260,6 +1261,80 @@ function renderShareCanvas(snapshots) {
   ctx.textAlign = 'center';
   ctx.fillText(dateRangeText, W / 2, 54);
   ctx.textAlign = 'left';
+
+  // ── SINGLE SNAPSHOT: stat card layout ──────────────────────────────
+  if (snapshots.length === 1) {
+    const s = snapshots[0];
+    const allSnaps = buildMonthlySnapshots();
+    const idx = allSnaps.findIndex(x => x.month === s.month);
+    const prev = idx > 0 ? allSnaps[idx - 1] : null;
+    const nwDiff = prev ? s.netWorth - prev.netWorth : null;
+    const liabDiff = prev ? prev.liabilities - s.liabilities : null;
+
+    // Big net worth
+    ctx.font = '300 22px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(245,240,232,0.4)';
+    ctx.fillText('NET WORTH', 80, 170);
+    ctx.font = '600 96px Outfit, sans-serif';
+    ctx.fillStyle = '#f5f0e8';
+    ctx.fillText(fmtMoney(s.netWorth), 80, 280);
+
+    // Gain to the right
+    if (nwDiff !== null) {
+      const nwW = ctx.measureText(fmtMoney(s.netWorth)).width;
+      const gainColor = nwDiff >= 0 ? '#4caf7d' : '#e05c5c';
+      ctx.font = '500 44px Outfit, sans-serif';
+      ctx.fillStyle = gainColor;
+      ctx.fillText(`${nwDiff >= 0 ? '+' : ''}${fmtMoney(nwDiff)}`, 80 + nwW + 30, 280);
+    }
+
+    // Divider
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(80, 320); ctx.lineTo(W - 80, 320); ctx.stroke();
+
+    // Stat tiles — assets, liabilities, debt paid off
+    const tiles = [
+      { label: 'TOTAL ASSETS',       val: fmtMoney(s.assets),       color: '#4caf7d' },
+      { label: 'TOTAL LIABILITIES',  val: fmtMoney(s.liabilities),  color: '#e05c5c' },
+    ];
+    if (liabDiff !== null && (s.liabilities > 0 || (prev && prev.liabilities > 0))) {
+      tiles.push({
+        label: liabDiff >= 0 ? 'DEBT PAID OFF' : 'DEBT ADDED',
+        val: fmtMoney(Math.abs(liabDiff)),
+        color: liabDiff >= 0 ? '#4caf7d' : '#e05c5c',
+      });
+    }
+
+    const tileW = (W - 160 - (tiles.length - 1) * 24) / tiles.length;
+    tiles.forEach((t, i) => {
+      const tx = 80 + i * (tileW + 24);
+      const ty = 348;
+      // Tile background
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.beginPath();
+      ctx.roundRect(tx, ty, tileW, 200, 16);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // Label
+      ctx.font = '400 20px Outfit, sans-serif';
+      ctx.fillStyle = 'rgba(245,240,232,0.35)';
+      ctx.fillText(t.label, tx + 28, ty + 46);
+      // Value
+      ctx.font = '500 42px Outfit, sans-serif';
+      ctx.fillStyle = t.color;
+      ctx.fillText(t.val, tx + 28, ty + 108);
+    });
+
+    const dataUrl = canvas.toDataURL('image/png');
+    document.getElementById('shareGenerating').style.display = 'none';
+    const img = document.getElementById('sharePreviewImg');
+    img.src = dataUrl; img.style.display = 'block';
+    return;
+  }
+  // ── END SINGLE SNAPSHOT ──────────────────────────────────────────────
 
   // NET WORTH label
   ctx.font = '300 20px Outfit, sans-serif';
