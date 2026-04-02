@@ -982,8 +982,20 @@ function renderChart() {
   const canvas = document.getElementById('nwChart');
   const footer = document.getElementById('chartFooter');
 
-  if (snapshots.length < 2) {
+  if (snapshots.length === 0) {
     chartEmpty.style.display = 'block';
+    chartEmpty.textContent = 'Log entries for two or more months to see your trend.';
+    canvas.style.display = 'none';
+    footer.style.display = 'none';
+    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    return;
+  }
+
+  // Single snapshot (e.g. 1M with only one month logged) — show stat only, no chart
+  if (snapshots.length === 1) {
+    const s = snapshots[0];
+    chartEmpty.style.display = 'block';
+    chartEmpty.innerHTML = `<span style="color:var(--cream);font-size:1.1rem;font-weight:400">${fmtMoney(s.netWorth)}</span><br><span style="font-size:0.8rem">${fmtMonthLabel(s.month)} — only one month in range</span>`;
     canvas.style.display = 'none';
     footer.style.display = 'none';
     if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
@@ -1126,47 +1138,42 @@ function renderShareCanvas(snapshots) {
   const nwText = fmtMoney(last.netWorth);
   ctx.fillText(nwText, 60, 228);
 
-  // Total gain — to the right of net worth, vertically centred
+  // Total gain — to the right of net worth, vertically centred on the value, no label
   const nwWidth = ctx.measureText(nwText).width;
   const gainSign = diff >= 0 ? '+' : '';
   const gainText = `${gainSign}${fmtMoney(diff)}`;
   const gainColor = isUp ? '#4caf7d' : '#e05c5c';
-  ctx.font = '500 36px Outfit, sans-serif';
-  const gainX = 60 + nwWidth + 24;
-  const gainY = 220;
+  ctx.font = '500 42px Outfit, sans-serif';
   ctx.fillStyle = gainColor;
-  ctx.fillText(gainText, gainX, gainY);
-  ctx.font = '300 22px Outfit, sans-serif';
-  ctx.fillStyle = 'rgba(245,240,232,0.35)';
-  ctx.fillText('total gain', gainX, gainY + 28);
+  ctx.fillText(gainText, 60 + nwWidth + 28, 228);
 
-  // Date range — below net worth value
+  // Date range + debt paid off — right-aligned, stacked
+  const liabDiff = first.liabilities - last.liabilities;
   const dateRangeText = `${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
   ctx.font = '300 24px Outfit, sans-serif';
   ctx.fillStyle = 'rgba(245,240,232,0.4)';
-  ctx.fillText(dateRangeText, 60, 268);
+  ctx.textAlign = 'right';
+  ctx.fillText(dateRangeText, W - 60, 188);
 
-  // Debt paid off — to the right of date range
-  const liabDiff = first.liabilities - last.liabilities;
   if (first.liabilities > 0 || last.liabilities > 0) {
-    const dateW = ctx.measureText(dateRangeText).width;
     const debtLabel = liabDiff >= 0 ? 'Debt paid off' : 'Debt added';
     const debtVal = fmtMoney(Math.abs(liabDiff));
     const debtColor = liabDiff >= 0 ? '#4caf7d' : '#e05c5c';
-    const sepX = 60 + dateW + 28;
-    // Separator dot
-    ctx.fillStyle = 'rgba(245,240,232,0.2)';
-    ctx.beginPath();
-    ctx.arc(sepX - 14, 260, 3, 0, Math.PI * 2);
-    ctx.fill();
     ctx.font = '300 24px Outfit, sans-serif';
     ctx.fillStyle = 'rgba(245,240,232,0.4)';
-    ctx.fillText(`${debtLabel} `, sepX, 268);
-    const labelW = ctx.measureText(`${debtLabel} `).width;
+    const labelW = ctx.measureText(`${debtLabel}  `).width;
+    ctx.fillText(`${debtLabel}  `, W - 60, 222);
+    // Bold coloured value inline — measure from right
     ctx.font = '600 24px Outfit, sans-serif';
     ctx.fillStyle = debtColor;
-    ctx.fillText(debtVal, sepX + labelW, 268);
+    ctx.fillText(debtVal, W - 60, 222);
+    // Re-draw label to the left of value
+    const valW = ctx.measureText(debtVal).width;
+    ctx.font = '300 24px Outfit, sans-serif';
+    ctx.fillStyle = 'rgba(245,240,232,0.4)';
+    ctx.fillText(`${debtLabel}  `, W - 60 - valW, 222);
   }
+  ctx.textAlign = 'left';
 
   // Mini line chart
   const yAxisW = 110;
