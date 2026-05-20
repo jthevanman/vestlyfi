@@ -212,21 +212,21 @@
     <div style="background:var(--navy-light);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:32px;">
       <div style="display:flex;flex-direction:column;gap:20px;">
         <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">🎯</div>
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
           <div>
             <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">The idea</div>
             <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">If you save enough early, compound interest will do the rest of the work on its own. You hit a number — your Coast FIRE number — and then you can stop contributing entirely.</div>
           </div>
         </div>
         <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">💼</div>
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
           <div>
             <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">What changes</div>
             <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">Once you've coasted, you only need to cover your current living expenses — not save for retirement on top of them. That opens the door to lower-stress jobs, part-time work, or passion projects.</div>
           </div>
         </div>
         <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="font-size:1.4rem;flex-shrink:0;margin-top:2px;">📐</div>
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
           <div>
             <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">How it's calculated</div>
             <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">We take your full retirement number (25× your annual spending) and discount it back to today using your expected investment return. The result is how much you need saved <em>right now</em> to coast.</div>
@@ -441,17 +441,12 @@ function calculate() {
   const yearsToRetire = retireAge - currentAge;
   const realReturn = (returnRate - inflationRate) / 100;
 
-  // FIRE number at retirement
   const fireNumber = annualSpend / 0.04;
-
-  // Coast FIRE number = fireNumber discounted back to today
   const coastNumber = fireNumber / Math.pow(1 + realReturn, yearsToRetire);
-
   const alreadyCoasted = currentSavings >= coastNumber;
   const gap = coastNumber - currentSavings;
   const pct = Math.min(100, (currentSavings / coastNumber) * 100);
 
-  // If already at coast, when could they have stopped?
   let coastedAtAge = null;
   if (alreadyCoasted) {
     for (let age = currentAge; age >= 18; age--) {
@@ -461,88 +456,114 @@ function calculate() {
     }
   }
 
-  // Monthly contrib needed to reach coast in 1, 3, 5 years
   const scenarios = [1, 3, 5].map(yrs => {
-    if (alreadyCoasted) return null;
+    if (alreadyCoasted || yrs >= yearsToRetire) return null;
     const monthlyR = Math.pow(1 + realReturn, 1/12) - 1;
     const fvCurrent = currentSavings * Math.pow(1 + realReturn, yrs);
     const needed = coastNumber - fvCurrent;
     if (needed <= 0) return { yrs, monthly: 0 };
-    const monthly = needed / ((Math.pow(1 + monthlyR, yrs * 12) - 1) / monthlyR);
+    const monthly = monthlyR > 0
+      ? needed / ((Math.pow(1 + monthlyR, yrs * 12) - 1) / monthlyR)
+      : needed / (yrs * 12);
     return { yrs, monthly: Math.max(0, monthly) };
   }).filter(Boolean);
 
-  const badgeClass = alreadyCoasted ? 'badge-green' : (pct > 70 ? 'badge-gold' : 'badge-red');
-  const badgeText = alreadyCoasted ? '✦ You\'ve Already Coasted' : (pct > 70 ? '◈ Almost There' : '⚠ Keep Building');
+  const barColor = pct >= 100 ? '#4caf7d' : pct >= 60 ? '#c9a84c' : '#5bb8f5';
 
   const html = `
-    <div class="result-hero">
-      <div class="result-badge ${badgeClass}">${badgeText}</div>
-      <div class="result-number">${fmt(coastNumber)}</div>
-      <div class="result-number-label">your Coast FIRE number</div>
-      <p class="result-sub">
+    <div style="margin-bottom:32px;">
+
+      <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500;">Coast FIRE Result</div>
+
+      <div style="margin-bottom:4px;">
+        <span style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:${alreadyCoasted ? '#4caf7d' : 'var(--gold-light)'};">${fmt(coastNumber)}</span>
+      </div>
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:28px;">
+        your Coast FIRE number &mdash; save this once, then stop contributing. Your money grows the rest of the way on its own.
+      </div>
+
+      <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:22px 24px;margin-bottom:28px;font-size:0.92rem;line-height:1.75;color:rgba(245,240,232,0.65);">
         ${alreadyCoasted
-          ? `You've already hit your Coast FIRE number${coastedAtAge ? ` — you actually crossed it around age ${coastedAtAge}` : ''}. Your current savings will grow on their own to fund retirement at ${retireAge}.`
-          : `Save ${fmt(coastNumber)} and you can stop contributing entirely. Your money will grow on its own to ${fmt(fireNumber)} by age ${retireAge}.`
+          ? `You've already hit your Coast FIRE number${coastedAtAge ? ` — you actually crossed it around age <strong style="color:var(--cream)">${coastedAtAge}</strong>` : ''}. Your <strong style="color:var(--cream)">${fmt(currentSavings)}</strong> will grow on its own to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by the time you're ${retireAge}. You don't need to save another dollar for retirement.`
+          : `You need <strong style="color:var(--cream)">${fmt(gap)}</strong> more to reach your Coast FIRE number. Once you get there, you can stop contributing entirely and your money will grow to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by age ${retireAge} on its own.`
         }
-      </p>
-    </div>
+      </div>
 
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">Coast FIRE Number</div>
-        <div class="stat-val gold">${fmt(coastNumber)}</div>
-        <div class="stat-note">save this, then coast</div>
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <span style="font-size:0.72rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;">Progress to Coast FIRE</span>
+          <span style="font-size:0.85rem;color:var(--cream);font-weight:500;">${pct.toFixed(1)}%</span>
+        </div>
+        <div style="height:7px;background:rgba(255,255,255,0.06);border-radius:7px;overflow:hidden;">
+          <div style="height:100%;width:${pct.toFixed(1)}%;background:${barColor};border-radius:7px;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:0.72rem;color:var(--muted);">
+          <span>${fmt(currentSavings)} saved</span>
+          <span>${fmt(coastNumber)} goal</span>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Full FIRE Number</div>
-        <div class="stat-val">${fmt(fireNumber)}</div>
-        <div class="stat-note">what you need at age ${retireAge}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Current Balance</div>
-        <div class="stat-val ${alreadyCoasted ? 'green' : 'red'}">${fmt(currentSavings)}</div>
-        <div class="stat-note">${pct.toFixed(1)}% of coast number</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">${alreadyCoasted ? 'Surplus' : 'Gap Remaining'}</div>
-        <div class="stat-val ${alreadyCoasted ? 'green' : 'red'}">${fmt(Math.abs(gap))}</div>
-        <div class="stat-note">${alreadyCoasted ? 'above coast number' : 'still needed'}</div>
-      </div>
-    </div>
 
-    ${!alreadyCoasted && scenarios.length > 0 ? `
-    <div class="stat-card" style="margin-bottom:24px;">
-      <div class="stat-label" style="margin-bottom:12px;">How fast can you get there?</div>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        ${scenarios.map(s => `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-soft);">
-            <span style="font-size:0.85rem;color:var(--cream-dim);">Reach coast in <strong style="color:var(--cream)">${s.yrs} year${s.yrs>1?'s':''}</strong></span>
-            <span style="font-family:'Outfit',sans-serif;font-size:1.1rem;color:var(--gold-light);">${s.monthly < 1 ? 'Already there' : fmt(s.monthly) + '/mo'}</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Full retirement number</div>
+          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${fmt(fireNumber)}</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">what you'll need at age ${retireAge}</div>
+        </div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${alreadyCoasted ? 'Surplus' : 'Gap remaining'}</div>
+          <div style="font-size:1.4rem;font-weight:400;color:${alreadyCoasted ? '#4caf7d' : '#5bb8f5'};letter-spacing:-0.02em;">${fmt(Math.abs(gap))}</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">${alreadyCoasted ? 'above your coast number' : 'until you can coast'}</div>
+        </div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Years to grow</div>
+          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${yearsToRetire}</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">compound growth until age ${retireAge}</div>
+        </div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Return assumption</div>
+          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${returnRate - inflationRate}% <span style="font-size:0.9rem;font-weight:300;">real</span></div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">${returnRate}% minus ${inflationRate}% inflation</div>
+        </div>
+      </div>
+
+      ${!alreadyCoasted && scenarios.length > 0 ? `
+      <div style="border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;margin-bottom:28px;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border-soft);">
+          <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">How to get there</div>
+        </div>
+        ${scenarios.map((sc, i) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;${i < scenarios.length - 1 ? 'border-bottom:1px solid var(--border-soft);' : ''}">
+          <div>
+            <div style="font-size:0.9rem;color:var(--cream);">Hit Coast FIRE in <strong>${sc.yrs} year${sc.yrs > 1 ? 's' : ''}</strong></div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">by age ${currentAge + sc.yrs}</div>
           </div>
-        `).join('')}
-      </div>
-    </div>` : ''}
+          <div style="font-size:1.2rem;color:var(--gold-light);font-weight:400;">${sc.monthly < 1 ? 'Already there' : fmt(sc.monthly) + '/mo'}</div>
+        </div>`).join('')}
+      </div>` : ''}
 
-    <ul class="insight-list">
-      <li><span class="ii">💡</span><span>Coast FIRE is popular with people who want to <strong>downshift their career</strong> — take a lower-paying job they enjoy, work part-time, or start a business — without worrying about retirement savings.</span></li>
-      <li><span class="ii">📈</span><span>This calculation uses a <strong>${returnRate - inflationRate}% real return</strong> (${returnRate}% investment return minus ${inflationRate}% inflation). Adjust these assumptions if your portfolio is more conservative or aggressive.</span></li>
-      ${alreadyCoasted ? `<li><span class="ii">🎉</span><span>You're already coasting. Any contributions you make from here are <strong>bonus runway</strong> — they either let you retire earlier or spend more in retirement.</span></li>` : `<li><span class="ii">⚡</span><span>Every dollar you save now is worth <strong>much more</strong> than a dollar saved later — because it has more time to compound. Getting to your coast number early is one of the highest-leverage financial moves you can make.</span></li>`}
-    </ul>
+      ${alreadyCoasted ? `
+      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:14px;padding:20px 24px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        Any contributions you make from here are <strong style="color:var(--cream)">optional</strong> — they either let you retire earlier or give you more to spend in retirement. Coast FIRE doesn't mean stop working, it just means retirement savings are no longer a requirement.
+      </div>` : ''}
 
-    <div class="aff-section">
-      <h3>Start building your Coast number</h3>
-      <p>Low-cost index funds in tax-advantaged accounts (401k, IRA) are the most efficient way to reach Coast FIRE.</p>
-      <div class="aff-links">
-        <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
-        <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
-        <a class="aff-link" href="https://m1.com" target="_blank">M1 Finance ↗</a>
-        <a class="aff-link" href="https://www.schwab.com" target="_blank">Schwab ↗</a>
+      <div style="border-top:1px solid var(--border-soft);padding-top:20px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
+        Uses a ${returnRate - inflationRate}% real annual return and the 4% rule to set your retirement target (25× your ${fmt(annualSpend)}/year spending).
       </div>
+
+      <div class="aff-section">
+        <h3>Build your Coast number here</h3>
+        <p>Low-cost index funds in a 401k or IRA are the most efficient path to Coast FIRE.</p>
+        <div class="aff-links">
+          <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
+          <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
+          <a class="aff-link" href="https://m1.com" target="_blank">M1 Finance ↗</a>
+          <a class="aff-link" href="https://www.schwab.com" target="_blank">Schwab ↗</a>
+        </div>
+      </div>
+
+      <button class="btn-restart" onclick="restartWizard()">← Change my inputs</button>
+      <p class="disclaimer">For educational purposes only. Not financial advice. Consult a qualified financial advisor before making major decisions.</p>
     </div>
-
-    <button class="btn-restart" onclick="restartWizard()">← Recalculate with different inputs</button>
-    <p class="disclaimer">For educational purposes only. Not financial advice. Consult a certified financial planner before making major financial decisions.</p>
   `;
 
   document.getElementById('resultsContent').innerHTML = html;
