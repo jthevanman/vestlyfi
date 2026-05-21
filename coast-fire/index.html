@@ -93,10 +93,10 @@
   .input-wrap { position:relative; display:flex; align-items:center; }
   .input-prefix { position:absolute; left:16px; color:var(--gold); font-size:1rem; pointer-events:none; font-family:'Outfit',sans-serif; }
   .input-suffix { position:absolute; right:16px; color:var(--muted); font-size:0.82rem; pointer-events:none; }
-  input[type="number"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
   input.has-prefix { padding-left:30px; }
   input.has-suffix { padding-right:48px; }
-  input:focus,select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
   .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
@@ -186,6 +186,7 @@
   .input-row-3 > .input-group { display: flex; flex-direction: column; justify-content: flex-end; }
 
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -205,46 +206,37 @@
 
   <!-- Step 0: What is Coast FIRE -->
   <div class="step active" id="step-0">
-    <div class="step-tag">Coast FIRE</div>
-    <h2>Save once.<br><em>Coast forever.</em></h2>
-    <p class="sub">Most people think you have to keep saving aggressively until retirement. Coast FIRE flips that idea.</p>
+    <div class="step-tag">Coast FIRE Calculator</div>
+    <h2>Stop saving for retirement<br><em>sooner than you think.</em></h2>
+    <p class="sub">Coast FIRE is a savings milestone. Hit it once, and your investments will grow to fund your retirement without another contribution.</p>
 
     <div style="background:var(--navy-light);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:32px;">
-      <div style="display:flex;flex-direction:column;gap:20px;">
-        <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
-          <div>
-            <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">The idea</div>
-            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">If you save enough early, compound interest will do the rest of the work on its own. You hit a number — your Coast FIRE number — and then you can stop contributing entirely.</div>
-          </div>
+      <div style="display:flex;flex-direction:column;gap:22px;">
+        <div>
+          <div style="font-size:0.95rem;color:var(--cream);margin-bottom:6px;font-weight:400;">Here's how it works</div>
+          <div style="font-size:0.87rem;color:var(--muted);line-height:1.7;">There's a specific dollar amount that, if you have it invested today, will compound on its own to fund your full retirement. That's your Coast FIRE number. Once you hit it, retirement savings become optional.</div>
         </div>
-        <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
-          <div>
-            <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">What changes</div>
-            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">Once you've coasted, you only need to cover your current living expenses — not save for retirement on top of them. That opens the door to lower-stress jobs, part-time work, or passion projects.</div>
-          </div>
+        <div style="border-top:1px solid var(--border-soft);padding-top:20px;">
+          <div style="font-size:0.95rem;color:var(--cream);margin-bottom:6px;font-weight:400;">What happens after you hit it</div>
+          <div style="font-size:0.87rem;color:var(--muted);line-height:1.7;">You still work and cover your living expenses, but you're no longer racing to save for retirement. That opens the door to a lower-paying job you actually enjoy, going part-time, or just having breathing room.</div>
         </div>
-        <div style="display:flex;gap:16px;align-items:flex-start;">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px;"></div>
-          <div>
-            <div style="font-family:'Outfit',sans-serif;font-size:1rem;color:var(--cream);margin-bottom:4px;">How it's calculated</div>
-            <div style="font-size:0.87rem;color:var(--muted);line-height:1.65;">We take your full retirement number (25× your annual spending) and discount it back to today using your expected investment return. The result is how much you need saved <em>right now</em> to coast.</div>
-          </div>
+        <div style="border-top:1px solid var(--border-soft);padding-top:20px;">
+          <div style="font-size:0.95rem;color:var(--cream);margin-bottom:6px;font-weight:400;">How this calculator works</div>
+          <div style="font-size:0.87rem;color:var(--muted);line-height:1.7;">We figure out how much you'll need at retirement, then work backwards to find the number you need invested today. The more time you have, the smaller that number is.</div>
         </div>
       </div>
     </div>
 
     <div class="step-nav">
-      <button class="btn-next" onclick="showStep(1)">Let's calculate mine →</button>
+      <button class="btn-next" onclick="showStep(1)">Calculate my number →</button>
     </div>
   </div>
 
   <!-- Step 1 -->
   <div class="step" id="step-1">
-    <div class="step-tag">Coast FIRE</div>
-    <h2>What's your <em>retirement goal?</em></h2>
-    <p class="sub">Coast FIRE is when you've saved enough that — even if you never invest another dollar — your money will grow on its own to fund your retirement. Let's find your number.</p>
+    <div class="step-tag">Step 1 of 2</div>
+    <h2>Your retirement <em>basics</em></h2>
+    <p class="sub">These three numbers are all we need to find your Coast FIRE number.</p>
 
     <div class="input-row">
       <div class="input-group">
@@ -255,7 +247,9 @@
         </div>
       </div>
       <div class="input-group">
-        <label>Target Retirement Age</label>
+        <label>Full Retirement Age
+          <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">when you want to fully stop working</span>
+        </label>
         <div class="input-wrap">
           <input type="number" id="retireAge" min="40" max="80" class="has-suffix" oninput="checkStep1()">
           <span class="input-suffix">yrs</span>
@@ -267,7 +261,10 @@
       <label>Annual Spending in Retirement</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="annualSpend" min="0" class="has-prefix" oninput="checkStep1()">
+        <input type="text" id="annualSpend" class="has-prefix" oninput="handleCommaInput(this, 'checkStep1')">
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:8px;line-height:1.6;">
+        Not sure? A common rule of thumb is 80% of your current income.
       </div>
     </div>
 
@@ -288,7 +285,15 @@
       <label>Current Invested Balance</label>
       <div class="input-wrap">
         <span class="input-prefix">$</span>
-        <input type="number" id="currentSavings" min="0" class="has-prefix" oninput="checkStep2()">
+        <input type="text" id="currentSavings" class="has-prefix" oninput="handleCommaInput(this, 'checkStep2')">
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Monthly Contribution <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">how much you invest each month</span></label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="text" id="monthlyContrib" class="has-prefix" placeholder="0" oninput="handleCommaInput(this, 'checkStep2')">
       </div>
     </div>
 
@@ -411,10 +416,23 @@ function selectPill(btn, groupId, val) {
   if (groupId === 'inflationPills') S.inflationRate = val;
 }
 
+function parseVal(id) {
+  return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+}
+
+function handleCommaInput(el, checkFn) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  if (raw === '') { el.value = ''; } else {
+    const num = parseInt(raw, 10);
+    el.value = num.toLocaleString('en-US');
+  }
+  if (checkFn) window[checkFn]();
+}
+
 function validateStep1() {
   const ca = parseInt(document.getElementById('currentAge').value);
   const ra = parseInt(document.getElementById('retireAge').value);
-  const sp = parseFloat(document.getElementById('annualSpend').value);
+  const sp = parseVal('annualSpend');
   const err = document.getElementById('err-1');
   if (!ca || !ra || !sp || ra <= ca || sp <= 0) { err.style.display = 'block'; return; }
   err.style.display = 'none';
@@ -423,11 +441,13 @@ function validateStep1() {
 }
 
 function validateStep2() {
-  const cs = parseFloat(document.getElementById('currentSavings').value);
+  const cs = parseVal('currentSavings');
+  const mc = parseVal('monthlyContrib') || 0;
   const err = document.getElementById('err-2');
   if (isNaN(cs) || cs < 0) { err.style.display = 'block'; return; }
   err.style.display = 'none';
   S.currentSavings = cs;
+  S.monthlyContrib = mc;
   calculate();
 }
 
@@ -438,56 +458,146 @@ function fmt(n) {
 
 function calculate() {
   const { currentAge, retireAge, annualSpend, currentSavings, returnRate, inflationRate } = S;
+  const monthlyContrib = S.monthlyContrib || 0;
   const yearsToRetire = retireAge - currentAge;
   const realReturn = (returnRate - inflationRate) / 100;
+  const monthlyR = Math.pow(1 + realReturn, 1/12) - 1;
 
   const fireNumber = annualSpend / 0.04;
+  // Coast number = what you need invested TODAY so it grows to fireNumber by retireAge
   const coastNumber = fireNumber / Math.pow(1 + realReturn, yearsToRetire);
   const alreadyCoasted = currentSavings >= coastNumber;
   const gap = coastNumber - currentSavings;
   const pct = Math.min(100, (currentSavings / coastNumber) * 100);
 
+  // Helper: simulate year-by-year balance with given monthly contribution
+  // Returns balance at each age from currentAge to retireAge
+  function simulate(monthly) {
+    const ages = [currentAge], bals = [currentSavings];
+    let bal = currentSavings;
+    for (let age = currentAge + 1; age <= retireAge; age++) {
+      for (let m = 0; m < 12; m++) {
+        bal = bal * (1 + (monthlyR > 0 ? monthlyR : 0)) + monthly;
+      }
+      ages.push(age);
+      bals.push(Math.round(bal));
+    }
+    return { ages, bals };
+  }
+
+  // Coast threshold at each age (declining line — less needed the older you are)
+  function coastAtAge(age) {
+    return fireNumber / Math.pow(1 + realReturn, retireAge - age);
+  }
+
+  // Find the age where a given simulation crosses the coast threshold
+  function findCoastAge(sim) {
+    for (let i = 0; i < sim.ages.length; i++) {
+      if (sim.bals[i] >= coastAtAge(sim.ages[i])) return sim.ages[i];
+    }
+    return null;
+  }
+
+  // When did they already coast (look back)?
   let coastedAtAge = null;
   if (alreadyCoasted) {
     for (let age = currentAge; age >= 18; age--) {
-      const y = retireAge - age;
-      const cn = fireNumber / Math.pow(1 + realReturn, y);
-      if (currentSavings < cn) { coastedAtAge = age + 1; break; }
+      if (currentSavings < coastAtAge(age)) { coastedAtAge = age + 1; break; }
     }
   }
 
-  const scenarios = [1, 3, 5].map(yrs => {
-    if (alreadyCoasted || yrs >= yearsToRetire) return null;
-    const monthlyR = Math.pow(1 + realReturn, 1/12) - 1;
-    const fvCurrent = currentSavings * Math.pow(1 + realReturn, yrs);
-    const needed = coastNumber - fvCurrent;
-    if (needed <= 0) return { yrs, monthly: 0 };
-    const monthly = monthlyR > 0
-      ? needed / ((Math.pow(1 + monthlyR, yrs * 12) - 1) / monthlyR)
-      : needed / (yrs * 12);
-    return { yrs, monthly: Math.max(0, monthly) };
-  }).filter(Boolean);
+  // Simulate current trajectory
+  const currentSim = simulate(monthlyContrib);
+  const coastAge = alreadyCoasted ? currentAge : findCoastAge(currentSim);
+
+  // Dynamic scenarios — suggest 3 ages earlier than coastAge (or earlier than retireAge if no coastAge)
+  function buildScenarios() {
+    if (alreadyCoasted) return [];
+    const horizon = coastAge || retireAge;
+    const yrsToHorizon = horizon - currentAge;
+    if (yrsToHorizon <= 1) return []; // already so close there's nothing useful to show
+    // Pick 3 target ages: roughly 1/3, 2/3, and just before horizon
+    const step = Math.max(1, Math.floor(yrsToHorizon / 3));
+    const rawTargets = [
+      currentAge + step,
+      currentAge + step * 2,
+      horizon - 1
+    ].filter((age, i, a) => age > currentAge && age < horizon && a.indexOf(age) === i);
+
+    const results = rawTargets.map(targetAge => {
+      const yrs = targetAge - currentAge;
+      let lo = 0, hi = 100000;
+      for (let i = 0; i < 40; i++) {
+        const mid = (lo + hi) / 2;
+        const sim = simulate(mid);
+        const idx = sim.ages.indexOf(targetAge);
+        if (sim.bals[idx] >= coastAtAge(targetAge)) hi = mid; else lo = mid;
+      }
+      const needed = Math.ceil((lo + hi) / 2);
+      const onTrack = needed <= monthlyContrib;
+      return { yrs, targetAge, monthly: needed, onTrack };
+    });
+
+    // If every row is on track, don't show the section at all
+    if (results.every(r => r.onTrack)) return [];
+    return results;
+  }
+  const scenarios = buildScenarios();
+
+  // Build chart data
+  const chartAges = currentSim.ages;
+  const chartPortfolio = currentSim.bals;
+  const chartThreshold = chartAges.map(age => Math.round(coastAtAge(age)));
 
   const barColor = pct >= 100 ? '#4caf7d' : pct >= 60 ? '#c9a84c' : '#5bb8f5';
+
+  // Coast timing card
+  let coastTimingHtml = '';
+  if (!alreadyCoasted) {
+    if (coastAge) {
+      const yrsToCoast = coastAge - currentAge;
+      const contrib = monthlyContrib > 0
+        ? `At your current rate of <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, you`
+        : `Even without new contributions, your existing balance will grow and you`;
+      coastTimingHtml = `
+        <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+          ${contrib}'ll hit your Coast FIRE number at age <strong style="color:#5bb8f5">${coastAge}</strong> — in <strong style="color:#5bb8f5">${yrsToCoast} year${yrsToCoast !== 1 ? 's' : ''}</strong>. After that, you can stop contributing entirely.
+        </div>`;
+    } else {
+      coastTimingHtml = `
+        <div style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+          At ${fmt(monthlyContrib)}/month you won't reach Coast FIRE before age ${retireAge}. Increase your monthly savings — see the options below.
+        </div>`;
+    }
+  }
 
   const html = `
     <div style="margin-bottom:32px;">
 
-      <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500;">Coast FIRE Result</div>
+      <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500;">Your Result</div>
 
-      <div style="margin-bottom:4px;">
-        <span style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:${alreadyCoasted ? '#4caf7d' : 'var(--gold-light)'};">${fmt(coastNumber)}</span>
-      </div>
-      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:28px;">
-        your Coast FIRE number &mdash; save this once, then stop contributing. Your money grows the rest of the way on its own.
-      </div>
-
-      <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:22px 24px;margin-bottom:28px;font-size:0.92rem;line-height:1.75;color:rgba(245,240,232,0.65);">
-        ${alreadyCoasted
-          ? `You've already hit your Coast FIRE number${coastedAtAge ? ` — you actually crossed it around age <strong style="color:var(--cream)">${coastedAtAge}</strong>` : ''}. Your <strong style="color:var(--cream)">${fmt(currentSavings)}</strong> will grow on its own to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by the time you're ${retireAge}. You don't need to save another dollar for retirement.`
-          : `You need <strong style="color:var(--cream)">${fmt(gap)}</strong> more to reach your Coast FIRE number. Once you get there, you can stop contributing entirely and your money will grow to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by age ${retireAge} on its own.`
-        }
-      </div>
+      ${alreadyCoasted ? `
+        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#4caf7d;margin-bottom:6px;">Already coasting</div>
+        <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">You crossed your Coast FIRE number${coastedAtAge ? ` around age ${coastedAtAge}` : ''}</div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+          Your <strong style="color:var(--cream)">${fmt(currentSavings)}</strong> will compound on its own to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by age ${retireAge}. You don't need to save another dollar for retirement.
+        </div>
+      ` : coastAge ? `
+        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:var(--gold-light);margin-bottom:6px;">Age ${coastAge}</div>
+        <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">when you'll hit Coast FIRE — ${coastAge - currentAge} year${coastAge - currentAge !== 1 ? 's' : ''} from now</div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+          ${monthlyContrib > 0
+            ? `Saving <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, your portfolio hits <strong style="color:var(--cream)">${fmt(Math.round(coastAtAge(coastAge)))}</strong> at age ${coastAge}. From that point, compound growth alone carries you to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by retirement at age ${retireAge}. Contributions become optional.`
+            : `Without any new contributions, your current balance will grow enough to cross the coast threshold at age ${coastAge}. After that, compound growth carries you to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by retirement at age ${retireAge}.`
+          }
+        </div>
+      ` : `
+        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#e05c5c;margin-bottom:6px;">Not on track</div>
+        <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">at your current savings rate</div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+          Saving <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, your portfolio won't cross the Coast FIRE threshold before age ${retireAge}. Use the options below to find a savings rate that works.
+        </div>
+      `}
 
       <div style="margin-bottom:28px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
@@ -498,67 +608,57 @@ function calculate() {
           <div style="height:100%;width:${pct.toFixed(1)}%;background:${barColor};border-radius:7px;"></div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:7px;font-size:0.72rem;color:var(--muted);">
-          <span>${fmt(currentSavings)} saved</span>
-          <span>${fmt(coastNumber)} goal</span>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
-          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Full retirement number</div>
-          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${fmt(fireNumber)}</div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">what you'll need at age ${retireAge}</div>
-        </div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
-          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${alreadyCoasted ? 'Surplus' : 'Gap remaining'}</div>
-          <div style="font-size:1.4rem;font-weight:400;color:${alreadyCoasted ? '#4caf7d' : '#5bb8f5'};letter-spacing:-0.02em;">${fmt(Math.abs(gap))}</div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">${alreadyCoasted ? 'above your coast number' : 'until you can coast'}</div>
-        </div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
-          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Years to grow</div>
-          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${yearsToRetire}</div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">compound growth until age ${retireAge}</div>
-        </div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:18px 20px;">
-          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Return assumption</div>
-          <div style="font-size:1.4rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${returnRate - inflationRate}% <span style="font-size:0.9rem;font-weight:300;">real</span></div>
-          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">${returnRate}% minus ${inflationRate}% inflation</div>
+          <span>${fmt(currentSavings)} today</span>
+          <span>${fmt(coastNumber)} target at current age</span>
         </div>
       </div>
 
       ${!alreadyCoasted && scenarios.length > 0 ? `
       <div style="border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;margin-bottom:28px;">
         <div style="padding:16px 20px;border-bottom:1px solid var(--border-soft);">
-          <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">How to get there</div>
+          <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">How to get there faster</div>
+          <div style="font-size:0.8rem;color:rgba(245,240,232,0.4);margin-top:3px;">Monthly savings needed to hit Coast FIRE${monthlyContrib > 0 ? ` — you currently save ${fmt(monthlyContrib)}/mo` : ''}</div>
         </div>
         ${scenarios.map((sc, i) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;${i < scenarios.length - 1 ? 'border-bottom:1px solid var(--border-soft);' : ''}">
-          <div>
-            <div style="font-size:0.9rem;color:var(--cream);">Hit Coast FIRE in <strong>${sc.yrs} year${sc.yrs > 1 ? 's' : ''}</strong></div>
-            <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">by age ${currentAge + sc.yrs}</div>
-          </div>
-          <div style="font-size:1.2rem;color:var(--gold-light);font-weight:400;">${sc.monthly < 1 ? 'Already there' : fmt(sc.monthly) + '/mo'}</div>
+          <div style="font-size:0.9rem;color:var(--cream);">Coast by age <strong>${sc.targetAge}</strong> (in ${sc.yrs} yr${sc.yrs > 1 ? 's' : ''})</div>
+          <div style="font-size:1.15rem;color:${sc.onTrack ? '#4caf7d' : 'var(--gold-light)'};font-weight:400;">${sc.onTrack ? 'On track' : fmt(sc.monthly) + '/mo'}</div>
         </div>`).join('')}
       </div>` : ''}
 
-      ${alreadyCoasted ? `
-      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:14px;padding:20px 24px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
-        Any contributions you make from here are <strong style="color:var(--cream)">optional</strong> — they either let you retire earlier or give you more to spend in retirement. Coast FIRE doesn't mean stop working, it just means retirement savings are no longer a requirement.
-      </div>` : ''}
-
-      <div style="border-top:1px solid var(--border-soft);padding-top:20px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
-        Uses a ${returnRate - inflationRate}% real annual return and the 4% rule to set your retirement target (25× your ${fmt(annualSpend)}/year spending).
+      <div style="margin-bottom:28px;">
+        <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Portfolio growth over time</div>
+        <div style="position:relative;height:220px;background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:16px;">
+          <canvas id="coastChart"></canvas>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:0.75rem;color:var(--muted);">
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5bb8f5;border-radius:2px;"></span>Your portfolio</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;border-top:2px dashed rgba(201,168,76,0.4);"></span>Coast FIRE threshold</span>
+          ${coastAge ? `<span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4caf7d;"></span>Coast FIRE (age ${coastAge})</span>` : ''}
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#c9a84c;"></span>Full retirement (age ${retireAge})</span>
+        </div>
       </div>
 
-      <div class="aff-section">
-        <h3>Build your Coast number here</h3>
-        <p>Low-cost index funds in a 401k or IRA are the most efficient path to Coast FIRE.</p>
-        <div class="aff-links">
-          <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
-          <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
-          <a class="aff-link" href="https://m1.com" target="_blank">M1 Finance ↗</a>
-          <a class="aff-link" href="https://www.schwab.com" target="_blank">Schwab ↗</a>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;">
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:16px 18px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Full retirement target</div>
+          <div style="font-size:1.3rem;font-weight:400;color:var(--cream);letter-spacing:-0.02em;">${fmt(fireNumber)}</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">needed at age ${retireAge}</div>
         </div>
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:16px 18px;">
+          <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${alreadyCoasted ? 'Surplus' : 'Gap to coast today'}</div>
+          <div style="font-size:1.3rem;font-weight:400;color:${alreadyCoasted ? '#4caf7d' : '#5bb8f5'};letter-spacing:-0.02em;">${fmt(Math.abs(gap))}</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">${alreadyCoasted ? 'above your coast number' : 'below current coast threshold'}</div>
+        </div>
+      </div>
+
+      ${alreadyCoasted ? `
+      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:14px;padding:18px 22px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        Any savings from here are optional. Extra contributions mean retiring earlier or spending more in retirement.
+      </div>` : ''}
+
+      <div style="border-top:1px solid var(--border-soft);padding-top:18px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
+        Based on a ${returnRate - inflationRate}% real annual return and the 4% rule (25x your ${fmt(annualSpend)}/year spending).
       </div>
 
       <button class="btn-restart" onclick="restartWizard()">← Change my inputs</button>
@@ -569,6 +669,77 @@ function calculate() {
   document.getElementById('resultsContent').innerHTML = html;
   showStep('results');
   document.getElementById('step-results').classList.add('active');
+
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('coastChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const allVals = [...chartPortfolio, ...chartThreshold];
+    const yMin = Math.max(0, Math.min(...allVals) * 0.85);
+    const yMax = Math.max(...allVals) * 1.08;
+
+    let crossIdx = null;
+    if (coastAge) crossIdx = chartAges.indexOf(coastAge);
+    const retireIdx = chartAges.indexOf(retireAge);
+
+    const markersPlugin = {
+      id: 'markers',
+      afterDraw(chart) {
+        const { ctx: c, scales: { x, y }, chartArea: { top, bottom } } = chart;
+
+        function drawMarker({ age, idx, color, dotColor }) {
+          if (idx < 0) return;
+          const xPx = x.getPixelForValue(age);
+          const yPx = y.getPixelForValue(chartPortfolio[idx]);
+          c.save();
+          // Vertical dashed line full height
+          c.strokeStyle = color; c.lineWidth = 1.5; c.setLineDash([4,3]);
+          c.beginPath(); c.moveTo(xPx, top); c.lineTo(xPx, bottom); c.stroke();
+          c.setLineDash([]);
+          // Dot on portfolio line
+          c.beginPath(); c.arc(xPx, yPx, 5, 0, Math.PI*2);
+          c.fillStyle = dotColor; c.fill();
+          c.strokeStyle = '#0a0f1e'; c.lineWidth = 2; c.stroke();
+          c.restore();
+        }
+
+        drawMarker({
+          age: retireAge, idx: retireIdx,
+          color: 'rgba(201,168,76,0.6)',
+          dotColor: '#c9a84c',
+        });
+
+        if (crossIdx !== null) {
+          drawMarker({
+            age: coastAge, idx: crossIdx,
+            color: 'rgba(76,175,125,0.6)',
+            dotColor: '#4caf7d',
+          });
+        }
+      }
+    };
+
+    new Chart(ctx, {
+      type: 'line',
+      plugins: [markersPlugin],
+      data: {
+        labels: chartAges,
+        datasets: [
+          { label: 'Your portfolio', data: chartPortfolio, borderColor: '#5bb8f5', backgroundColor: 'rgba(91,184,245,0.07)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: true, tension: 0.3 },
+          { label: 'Coast FIRE threshold', data: chartThreshold, borderColor: 'rgba(201,168,76,0.4)', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.1 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { title: i => `Age ${i[0].label}`, label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, maxTicksLimit:8 } },
+          y: { min: yMin, max: yMax, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, callback: v => fmt(v) } }
+        }
+      }
+    });
+  });
 }
 
 function restartWizard() {
@@ -582,9 +753,9 @@ function restartWizard() {
 function checkStep1() {
   const ca = document.getElementById('currentAge').value;
   const ra = document.getElementById('retireAge').value;
-  const sp = document.getElementById('annualSpend').value;
+  const sp = parseVal('annualSpend');
   const btn = document.getElementById('btn-step1');
-  if (btn) btn.disabled = !(ca && ra && sp && parseInt(ra) > parseInt(ca));
+  if (btn) btn.disabled = !(ca && ra && sp > 0 && parseInt(ra) > parseInt(ca));
 }
 
 function checkStep2() {
