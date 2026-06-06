@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VestlyFi — Financial Tools That Actually Answer Your Question</title>
+<meta name="description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
+<link rel="canonical" href="https://vestlyfi.com/">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+:root {
+  --navy:       #0a0f1e;
+  --navy-card:  #141d35;
+  --gold:       #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim:   rgba(201,168,76,0.10);
+  --cream:      #f5f0e8;
+  --muted:      rgba(245,240,232,0.38);
+  --border:     rgba(201,168,76,0.15);
+  --border-soft:rgba(255,255,255,0.07);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--navy);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 45% at 85% 105%, rgba(201,168,76,0.04) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── NAV ── */
+nav {
+  position:sticky; top:0; z-index:50;
+  padding:0 40px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border-soft);
+  background:rgba(10,15,30,0.88); backdrop-filter:blur(16px);
+}
+
+.nav-logo {
+  font-family:'Exo 2',sans-serif;
+  font-size:1.2rem; color:var(--gold);
+  text-decoration:none; letter-spacing:0.01em;
+  transition:opacity .15s;
+  display:flex; align-items:center; gap:8px;
+}
+.nav-logo:hover { opacity:.75; }
+
+
+.nav-links { display:flex; gap:28px; align-items:center; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:0.82rem; font-weight:300; transition:color .15s; }
+.nav-links a:hover, .nav-links a.active { color:var(--cream); }
+
+/* ── PROMPT AREA ── */
+.prompt-wrap {
+  position:relative; z-index:1;
+  max-width:680px; margin:0 auto;
+  padding:80px 40px 0;
+  opacity:0; animation:fadeUp 0.55s ease 0.1s forwards;
+}
+
+.prompt-sentence {
+  font-size:1.35rem;
+  line-height:2.5;
+  color:var(--cream);
+  font-weight:400;
+}
+
+.prompt-sentence input[type="text"] {
+  width:52px !important;
+  border:none !important;
+  border-bottom:2px solid var(--gold) !important;
+  background:transparent !important;
+  color:var(--gold) !important;
+  font-size:1.35rem !important;
+  font-family:'Outfit',sans-serif !important;
+  font-weight:500 !important;
+  text-align:center !important;
+  padding:0 2px 1px !important;
+  outline:none !important;
+  display:inline !important;
+  vertical-align:baseline !important;
+  -webkit-appearance:none !important;
+  border-radius:0 !important;
+  transition:color 0.2s, border-color 0.2s;
+}
+.prompt-sentence input[type="text"].wide {
+  width:104px !important;
+}
+.prompt-sentence input[type="text"]:focus {
+  color:var(--cream) !important;
+  border-bottom-color:var(--gold-light) !important;
+}
+
+.prompt-sentence select {
+  display:inline !important;
+  width:auto !important;
+  border:none !important;
+  border-bottom:2px solid var(--gold) !important;
+  background:transparent !important;
+  color:var(--gold) !important;
+  font-size:1.35rem !important;
+  font-family:'Outfit',sans-serif !important;
+  font-weight:500 !important;
+  padding:0 22px 1px 2px !important;
+  outline:none !important;
+  cursor:pointer !important;
+  -webkit-appearance:none !important;
+  -moz-appearance:none !important;
+  appearance:none !important;
+  border-radius:0 !important;
+  vertical-align:baseline !important;
+}
+.prompt-sentence select option { background:#141d35; color:var(--cream); font-size:15px; }
+
+.sel-caret {
+  display:inline;
+  font-size:11px;
+  color:var(--gold);
+  pointer-events:none;
+  margin-left:-18px;
+  vertical-align:baseline;
+}
+
+.debt-hint {
+  font-size:0.68rem;
+  color:rgba(245,240,232,0.22);
+  margin-left:3px;
+}
+
+/* ── FOLLOW-UP ── */
+.followup {
+  display:block;
+  margin-top:6px;
+  font-size:1.2rem;
+  line-height:2.5;
+  color:var(--cream);
+  font-weight:400;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity 0.35s ease, transform 0.35s ease;
+  pointer-events:none;
+}
+.followup.show { opacity:1; transform:translateY(0); pointer-events:all; }
+.hint { font-size:0.68rem; color:rgba(245,240,232,0.25); margin-left:5px; }
+
+/* ── CTA ── */
+.prompt-cta-row {
+  margin-top:28px;
+  display:flex;
+  justify-content:flex-start;
+}
+
+.cta-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--gold); color:var(--navy);
+  border:none; border-radius:9px;
+  font-size:0.88rem; font-weight:600;
+  font-family:'Outfit',sans-serif;
+  padding:13px 26px;
+  cursor:pointer;
+  opacity:0; transform:translateY(4px);
+  transition:opacity 0.3s ease, transform 0.3s ease, background 0.15s;
+  pointer-events:none;
+}
+.cta-btn.show { opacity:1; transform:translateY(0); pointer-events:all; }
+.cta-btn:hover { background:var(--gold-light); }
+
+/* ── RESULT ── */
+.result-area {
+  margin-top:32px;
+  opacity:0; transform:translateY(8px);
+  transition:opacity 0.4s ease, transform 0.4s ease;
+}
+.result-area.show { opacity:1; transform:translateY(0); }
+
+.r-card {
+  background:rgba(201,168,76,0.07);
+  border:0.5px solid rgba(201,168,76,0.18);
+  border-radius:14px;
+  padding:20px 22px 16px;
+  margin-bottom:10px;
+}
+.r-lbl { font-size:0.65rem; color:rgba(245,240,232,0.35); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; }
+.r-val { font-size:2rem; font-weight:500; color:var(--gold); line-height:1; }
+.r-sub { font-size:0.72rem; color:rgba(245,240,232,0.28); margin-top:6px; }
+
+.r-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.r-mini {
+  background:rgba(255,255,255,0.025);
+  border:0.5px solid var(--border-soft);
+  border-radius:10px; padding:11px 14px;
+}
+.r-mini-lbl { font-size:0.6rem; color:rgba(245,240,232,0.28); text-transform:uppercase; letter-spacing:0.08em; }
+.r-mini-val { font-size:1rem; font-weight:500; color:var(--cream); margin-top:3px; }
+
+.edit-link {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:0.72rem;
+  color:rgba(245,240,232,0.25);
+  background:none; border:none;
+  font-family:'Outfit',sans-serif;
+  cursor:pointer; padding:0; margin-top:14px;
+  transition:color 0.15s;
+}
+.edit-link:hover { color:var(--gold); }
+
+/* ── TOOLS SECTION ── */
+.section-intro {
+  position:relative; z-index:1;
+  max-width:680px; margin:0 auto;
+  padding:64px 40px 0;
+  opacity:0; animation:fadeUp 0.5s ease 0.3s forwards;
+}
+.section-intro-rule {
+  display:flex; align-items:center; gap:16px;
+  margin-bottom:24px;
+}
+.section-intro-rule span {
+  font-size:0.65rem; font-weight:500;
+  letter-spacing:0.16em; text-transform:uppercase;
+  color:rgba(245,240,232,0.18); white-space:nowrap;
+}
+.rule-line { flex:1; height:1px; background:var(--border-soft); }
+
+.page-wrap {
+  position:relative; z-index:1;
+  max-width:680px; margin:0 auto;
+  padding:0 40px 56px;
+  display:flex; flex-direction:column; gap:0;
+}
+
+.section-divider { height:1px; background:var(--border-soft); width:100%; }
+
+.card {
+  border:1px solid var(--border-soft);
+  border-radius:0;
+  background:transparent;
+  text-decoration:none; color:inherit;
+  display:grid;
+  grid-template-columns:1fr 200px;
+  align-items:stretch;
+  overflow:hidden;
+  transition:background .2s, box-shadow .2s;
+}
+.card:first-child { border-radius:14px 14px 0 0; }
+.card:last-child  { border-radius:0 0 14px 14px; }
+
+.card:hover { background:rgba(255,255,255,0.025); }
+
+.card-left {
+  display:flex; flex-direction:column; gap:6px;
+  padding:20px 22px;
+  border-right:1px solid var(--border-soft);
+}
+.card-title { font-size:1.05rem; font-weight:400; color:var(--cream); line-height:1.25; }
+
+.card-preview {
+  display:flex; align-items:center; justify-content:center;
+  padding:16px;
+}
+
+.card-tag {
+  font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase;
+  font-weight:500; display:inline-block;
+  padding:3px 8px; border-radius:100px; width:fit-content;
+}
+.tag-nw   { color:#4caf7d; background:rgba(76,175,125,0.1);  border:1px solid rgba(76,175,125,0.18); }
+.tag-calc { color:#60a5fa; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
+.tag-diag { color:var(--gold); background:var(--gold-dim);   border:1px solid var(--border); }
+
+/* ── FOOTER ── */
+footer {
+  position:relative; z-index:1;
+  max-width:680px; margin:0 auto;
+  padding:24px 40px 48px;
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid var(--border-soft);
+  font-size:0.75rem; color:var(--muted);
+}
+.footer-links { display:flex; gap:18px; align-items:center; }
+.footer-links a { color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
+.footer-links a:hover { color:var(--gold); }
+.btn-bug {
+  display:inline-flex; align-items:center; gap:6px;
+  background:none; border:none; color:var(--muted);
+  font-family:'Outfit',sans-serif; font-size:0.75rem;
+  cursor:pointer; padding:0; transition:color .15s;
+}
+.btn-bug:hover { color:var(--gold); }
+
+/* ── BUG MODAL ── */
+#bugModal {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.7); z-index:500;
+  align-items:center; justify-content:center; padding:20px;
+}
+.modal-box { background:#111827; border:1px solid rgba(201,168,76,0.15); border-radius:16px; padding:28px; width:100%; max-width:460px; }
+.modal-title { font-size:1.1rem; font-weight:500; margin-bottom:6px; color:var(--cream); }
+.modal-sub { font-size:0.82rem; color:rgba(245,240,232,0.35); margin-bottom:24px; line-height:1.5; font-weight:300; }
+.modal-label { display:block; font-size:0.72rem; color:rgba(245,240,232,0.35); margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; }
+.modal-input, .modal-textarea { width:100%; padding:11px 14px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:300; outline:none; line-height:1.5; }
+.modal-textarea { resize:vertical; }
+.modal-actions { display:flex; gap:10px; margin-top:16px; }
+.modal-cancel { padding:12px 18px; background:none; border:1px solid var(--border-soft); color:rgba(245,240,232,0.35); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; }
+.modal-submit { flex:1; padding:12px; background:var(--gold); color:var(--navy); border:none; border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+@media(max-width:640px) {
+  nav { padding:0 20px; }
+  .nav-links { display:none; }
+  .prompt-wrap, .section-intro, .page-wrap, footer { padding-left:20px; padding-right:20px; }
+  .prompt-sentence, .prompt-sentence input[type="text"], .prompt-sentence select { font-size:1.1rem !important; }
+  .card { grid-template-columns:1fr; }
+  .card-preview { display:none; }
+  .card-left { border-right:none; }
+  footer { flex-direction:column; gap:16px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="/">VestlyFi</a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/calculators/">Calculators</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/net-worth/">Net Worth</a>
+    <a href="/account/">Account</a>
+  </div>
+</nav>
+
+<!-- ── PROMPT ── -->
+<div class="prompt-wrap">
+  <div class="prompt-sentence">I am <input type="text" id="age" inputmode="numeric"> years old, I have $<input type="text" id="inv" class="wide" inputmode="numeric"> invested and $<input type="text" id="debt" class="wide" inputmode="numeric"> in debt and my goal is to <select id="goal"><option value=""> </option><option value="grow">see what my money could grow to</option><option value="retire">plan my retirement</option><option value="fire">reach Coast FIRE</option><option value="debt">pay off my debt</option><option value="house">see what house I can afford</option></select><span class="sel-caret">▾</span></div>
+
+  <div class="followup" id="followup"></div>
+
+  <div class="prompt-cta-row">
+    <button class="cta-btn" id="ctaBtn" onclick="showResult()">
+      Show my numbers
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <div class="result-area" id="resultArea"></div>
+</div>
+
+<!-- ── TOOLS ── -->
+<div class="section-intro">
+  <div class="section-intro-rule">
+    <div class="rule-line"></div>
+    <span>All tools</span>
+    <div class="rule-line"></div>
+  </div>
+</div>
+
+<div class="page-wrap">
+  <a class="card" href="/net-worth/">
+    <div class="card-left">
+      <div class="card-tag tag-nw">Net Worth</div>
+      <div class="card-title">Track your net worth</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;">
+        <line x1="14" y1="12" x2="172" y2="12" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18" fill="none" stroke="#4caf7d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18 L170,92 L14,92 Z" fill="rgba(76,175,125,0.08)"/>
+        <circle cx="170" cy="18" r="3.5" fill="#4caf7d" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+        <text x="168" y="13" font-family="Outfit" font-size="8" fill="#4caf7d" text-anchor="end" font-weight="500">+$47,200</text>
+      </svg>
+    </div>
+  </a>
+
+  <div class="section-divider"></div>
+
+  <a class="card" href="/calculators/">
+    <div class="card-left">
+      <div class="card-tag tag-calc">Calculators</div>
+      <div class="card-title">Financial calculators</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;">
+        <line x1="14" y1="12" x2="172" y2="12" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18" fill="none" stroke="#e8c97a" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18 L158,92 L14,92 Z" fill="rgba(232,201,122,0.07)"/>
+        <line x1="158" y1="10" x2="158" y2="92" stroke="rgba(245,240,232,0.1)" stroke-width="1" stroke-dasharray="3,3"/>
+        <circle cx="158" cy="18" r="3" fill="#e8c97a" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+        <text x="160" y="15" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.3)">Retire 58</text>
+      </svg>
+    </div>
+  </a>
+
+  <div class="section-divider"></div>
+
+  <a class="card" href="/create-a-diagram/">
+    <div class="card-left">
+      <div class="card-tag tag-diag">Diagrams</div>
+      <div class="card-title">Build a budget diagram</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;">
+        <rect x="14" y="10" width="9" height="80" rx="2" fill="rgba(232,201,122,0.65)"/>
+        <path d="M23,12 C58,12 58,18 90,18 L90,32 C58,32 58,26 23,26 Z" fill="rgba(74,222,128,0.2)"/>
+        <path d="M23,28 C58,28 58,40 90,40 L90,54 C58,54 58,42 23,42 Z" fill="rgba(96,165,250,0.2)"/>
+        <path d="M23,44 C58,44 58,56 90,56 L90,68 C58,68 58,56 23,56 Z" fill="rgba(251,146,60,0.2)"/>
+        <path d="M23,60 C58,60 58,72 90,72 L90,82 C58,82 58,70 23,70 Z" fill="rgba(251,191,36,0.2)"/>
+        <rect x="90" y="18" width="8" height="14" rx="2" fill="rgba(74,222,128,0.7)"/>
+        <rect x="90" y="40" width="8" height="14" rx="2" fill="rgba(96,165,250,0.7)"/>
+        <rect x="90" y="56" width="8" height="12" rx="2" fill="rgba(251,146,60,0.7)"/>
+        <rect x="90" y="72" width="8" height="10" rx="2" fill="rgba(251,191,36,0.7)"/>
+        <text x="102" y="28" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Housing</text>
+        <text x="102" y="50" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Savings</text>
+        <text x="102" y="65" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Food</text>
+        <text x="102" y="80" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Transport</text>
+      </svg>
+    </div>
+  </a>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <a href="/privacy/">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+      Report a bug
+    </button>
+  </div>
+</footer>
+
+<!-- ── BUG MODAL ── -->
+<div id="bugModal">
+  <div class="modal-box">
+    <div class="modal-title">Report a Bug</div>
+    <div class="modal-sub">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px">
+      <label class="modal-label">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" class="modal-textarea" rows="4" placeholder="Describe what happened and what you expected…"></textarea>
+    </div>
+    <div style="margin-bottom:14px">
+      <label class="modal-label">Email <span style="color:#e05c5c">*</span></label>
+      <input type="email" id="bugEmail" class="modal-input" placeholder="you@example.com">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div id="bugErr" style="font-size:0.8rem;min-height:18px;margin-top:4px;"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeBugModal()">Cancel</button>
+      <button id="bugSubmitBtn" class="modal-submit" onclick="submitBugReport()">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── PROMPT LOGIC ── */
+const AGES  = ['24','31','38','45','52','29','41'];
+const INVS  = ['12,500','48,000','103,000','250,000','74,200','31,000'];
+const DEBTS = ['0','22,000','85,000','14,500','37,800','52,000'];
+const GOALS = ['grow','retire','fire','debt','house'];
+
+const FLOW_HTML = {
+  grow:   `How long will you stay invested? <input type="text" id="f1" inputmode="numeric" style="width:52px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;"> years`,
+  retire: `I want to retire by age <input type="text" id="f1" inputmode="numeric" style="width:52px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;">`,
+  fire:   `I want to coast to retirement by age <input type="text" id="f1" inputmode="numeric" style="width:52px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;">`,
+  debt:   `My interest rate is <input type="text" id="f1" inputmode="decimal" style="width:52px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;">%`,
+  house:  `My annual gross income is $<input type="text" id="f1" inputmode="numeric" style="width:104px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;"> and I have $<input type="text" id="f2" inputmode="numeric" style="width:104px;border:none;border-bottom:2px solid #c9a84c;background:transparent;color:#c9a84c;font-size:1.2rem;font-family:'Outfit',sans-serif;font-weight:500;text-align:center;outline:none;display:inline;vertical-align:baseline;-webkit-appearance:none;border-radius:0;padding:0 2px 1px;"> for a down payment`
+};
+const FLOW_IDS = { grow:['f1'], retire:['f1'], fire:['f1'], debt:['f1'], house:['f1','f2'] };
+
+function p(id) { const el=document.getElementById(id); if(!el) return 0; return parseFloat((el.value||'').replace(/,/g,''))||0; }
+function fmt(n) { return Math.round(n).toLocaleString(); }
+
+function addCommas(el) {
+  el.addEventListener('blur', ()=>{ const r=parseFloat(el.value.replace(/,/g,'')); if(!isNaN(r)&&r>=1000) el.value=r.toLocaleString(); });
+  el.addEventListener('focus', ()=>{ el.value=el.value.replace(/,/g,''); });
+}
+
+document.getElementById('goal').addEventListener('change', onGoalChange);
+['age','inv','debt'].forEach(id => {
+  const el=document.getElementById(id);
+  el.addEventListener('input', checkCta);
+  if(id!=='age') addCommas(el);
+});
+
+function onGoalChange() {
+  const v=document.getElementById('goal').value;
+  const fup=document.getElementById('followup');
+  const res=document.getElementById('resultArea');
+  res.classList.remove('show'); res.innerHTML='';
+  document.getElementById('ctaBtn').classList.remove('show');
+  if(!v){fup.classList.remove('show');fup.innerHTML='';return;}
+  fup.innerHTML=FLOW_HTML[v];
+  fup.classList.add('show');
+  FLOW_IDS[v].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.addEventListener('input',checkCta); if(el.style.width==='104px') addCommas(el); }
+  });
+  checkCta();
+}
+
+function checkCta() {
+  const v=document.getElementById('goal').value;
+  const age=document.getElementById('age').value.trim();
+  const inv=document.getElementById('inv').value.trim();
+  const cta=document.getElementById('ctaBtn');
+  if(!v||!age||!inv){cta.classList.remove('show');return;}
+  const allFilled=FLOW_IDS[v].every(id=>{const el=document.getElementById(id);return el&&el.value.trim();});
+  if(allFilled) cta.classList.add('show'); else cta.classList.remove('show');
+}
+
+function showResult() {
+  const goal=document.getElementById('goal').value;
+  const age=p('age'),inv=p('inv'),debt=p('debt');
+  const box=document.getElementById('resultArea');
+  let html='';
+  if(goal==='grow'){
+    const yrs=p('f1'),future=inv*Math.pow(1.07,yrs),gain=future-inv;
+    html=`<div class="r-card"><div class="r-lbl">Estimated value in ${yrs} years</div><div class="r-val">$${fmt(future)}</div><div class="r-sub">Assuming 7% avg annual return</div></div><div class="r-grid"><div class="r-mini"><div class="r-mini-lbl">Starting amount</div><div class="r-mini-val">$${fmt(inv)}</div></div><div class="r-mini"><div class="r-mini-lbl">Total growth</div><div class="r-mini-val">+$${fmt(gain)}</div></div></div>`;
+  } else if(goal==='retire'){
+    const ta=p('f1'),yrs=Math.max(0,ta-age),future=inv*Math.pow(1.07,yrs),pct=Math.min(100,Math.round(inv/3000000*100));
+    html=`<div class="r-card"><div class="r-lbl">Projected at retirement (age ${ta})</div><div class="r-val">$${fmt(future)}</div><div class="r-sub">${yrs} years away · $3M benchmark · 7% growth assumed</div></div><div class="r-grid"><div class="r-mini"><div class="r-mini-lbl">Years to retire</div><div class="r-mini-val">${yrs} yrs</div></div><div class="r-mini"><div class="r-mini-lbl">Progress to $3M</div><div class="r-mini-val">${pct}%</div></div></div>`;
+  } else if(goal==='fire'){
+    const ta=p('f1'),yrs=Math.max(0,ta-age),coastNum=1000000/Math.pow(1.07,yrs),gap=coastNum-inv;
+    const msg=gap<=0?"You've already hit your Coast FIRE number!":`$${fmt(gap)} more needed to coast`;
+    html=`<div class="r-card"><div class="r-lbl">Your Coast FIRE number</div><div class="r-val">$${fmt(coastNum)}</div><div class="r-sub">${msg}</div></div><div class="r-grid"><div class="r-mini"><div class="r-mini-lbl">Currently invested</div><div class="r-mini-val">$${fmt(inv)}</div></div><div class="r-mini"><div class="r-mini-lbl">${gap<=0?'Surplus':'Gap'}</div><div class="r-mini-val">${gap<=0?'+':'-'}$${fmt(Math.abs(gap))}</div></div></div>`;
+  } else if(goal==='debt'){
+    const rate=p('f1')/100/12,minPay=Math.max(debt*0.02,25);
+    const months=rate>0?Math.ceil(-Math.log(1-(debt*rate)/minPay)/Math.log(1+rate)):Math.ceil(debt/minPay);
+    const interest=Math.round(minPay*months-debt);
+    const yrsLabel=months>=12?`${Math.floor(months/12)}y ${months%12}m`:`${months}mo`;
+    html=`<div class="r-card"><div class="r-lbl">Payoff timeline (minimum payments)</div><div class="r-val">${yrsLabel}</div><div class="r-sub">~$${fmt(minPay)}/mo minimum payment</div></div><div class="r-grid"><div class="r-mini"><div class="r-mini-lbl">Total paid</div><div class="r-mini-val">$${fmt(minPay*months)}</div></div><div class="r-mini"><div class="r-mini-lbl">Interest cost</div><div class="r-mini-val">$${fmt(interest)}</div></div></div>`;
+  } else if(goal==='house'){
+    const income=p('f1'),dp=p('f2'),maxPITI=(income/12)*0.28;
+    const rate=0.065/12,n=360,maxLoan=maxPITI*((Math.pow(1+rate,n)-1)/(rate*Math.pow(1+rate,n)));
+    html=`<div class="r-card"><div class="r-lbl">Estimated max home price</div><div class="r-val">$${fmt(maxLoan+dp)}</div><div class="r-sub">6.5% rate · 30yr mortgage · 28% of gross income rule</div></div><div class="r-grid"><div class="r-mini"><div class="r-mini-lbl">Down payment</div><div class="r-mini-val">$${fmt(dp)}</div></div><div class="r-mini"><div class="r-mini-lbl">Max monthly payment</div><div class="r-mini-val">$${fmt(maxPITI)}</div></div></div>`;
+  }
+  html+=`<button class="edit-link" onclick="resetForm()">↩ Edit my inputs</button>`;
+  box.innerHTML=html;
+  setTimeout(()=>box.classList.add('show'),20);
+  document.getElementById('ctaBtn').classList.remove('show');
+}
+
+function resetForm() {
+  const res=document.getElementById('resultArea');
+  res.classList.remove('show');
+  setTimeout(()=>{res.innerHTML='';},400);
+  ['age','inv','debt'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('goal').value='';
+  const fup=document.getElementById('followup');
+  fup.classList.remove('show');
+  setTimeout(()=>{fup.innerHTML='';},350);
+  document.getElementById('ctaBtn').classList.remove('show');
+  document.getElementById('age').focus();
+}
+
+/* ── ENTRANCE ANIMATION ── */
+(function runAnim(){
+  const inputIds=['age','inv','debt'];
+  const POOLS=[AGES,INVS,DEBTS];
+  const OFFSETS=[0,90,190];
+  const FRAME_MS=420,FADE_MS=150,FRAMES=5;
+  let frame=0,goalFrame=0;
+  const counters=[0,0,0];
+  const goalSel=document.getElementById('goal');
+  const iv=setInterval(()=>{
+    inputIds.forEach((id,i)=>{
+      const el=document.getElementById(id);
+      setTimeout(()=>{
+        el.style.opacity='0';
+        setTimeout(()=>{el.value=POOLS[i][counters[i]%POOLS[i].length];el.style.opacity='1';counters[i]++;},FADE_MS);
+      },OFFSETS[i]);
+    });
+    setTimeout(()=>{
+      goalSel.style.opacity='0';
+      setTimeout(()=>{goalSel.value=GOALS[goalFrame%GOALS.length];goalSel.style.opacity='1';goalFrame++;},FADE_MS);
+    },280);
+    frame++;
+    if(frame>=FRAMES){
+      clearInterval(iv);
+      setTimeout(()=>{
+        inputIds.forEach((id,i)=>{
+          const el=document.getElementById(id);
+          setTimeout(()=>{el.style.opacity='0';setTimeout(()=>{el.value='';el.style.opacity='1';},FADE_MS);},OFFSETS[i]);
+        });
+        setTimeout(()=>{goalSel.style.opacity='0';setTimeout(()=>{goalSel.value='';goalSel.style.opacity='1';},FADE_MS);},280);
+      },FRAME_MS);
+    }
+  },FRAME_MS);
+})();
+
+/* ── BUG MODAL ── */
+const FORMSPREE='https://formspree.io/f/xjgaydej';
+function openBugModal(){document.getElementById('bugDescription').value='';document.getElementById('bugEmail').value='';document.getElementById('bugPage').value=window.location.pathname;document.getElementById('bugErr').textContent='';document.getElementById('bugSubmitBtn').textContent='Send Report';document.getElementById('bugSubmitBtn').disabled=false;const m=document.getElementById('bugModal');m.style.display='flex';setTimeout(()=>document.getElementById('bugDescription').focus(),50);}
+function closeBugModal(){document.getElementById('bugModal').style.display='none';}
+async function submitBugReport(){const description=document.getElementById('bugDescription').value.trim();const email=document.getElementById('bugEmail').value.trim();const page=document.getElementById('bugPage').value;const errEl=document.getElementById('bugErr');const btn=document.getElementById('bugSubmitBtn');if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';try{const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page,userAgent:navigator.userAgent})});if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks — we'll look into it.";setTimeout(()=>closeBugModal(),2000);}else throw new Error();}catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';}}
+document.addEventListener('DOMContentLoaded',()=>{const m=document.getElementById('bugModal');let down=false;m.addEventListener('mousedown',e=>{down=e.target===m;});m.addEventListener('click',e=>{if(e.target===m&&down)closeBugModal();down=false;});});
+</script>
+</body>
+</html>
