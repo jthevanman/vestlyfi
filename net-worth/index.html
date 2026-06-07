@@ -114,7 +114,7 @@ body::before {
 .btn-signout:hover { border-color:var(--border); color:var(--cream); }
 
 /* ── MAIN CONTENT ── */
-.main-content { flex:1; min-width:0; padding:32px 36px 80px; display:flex; flex-direction:column; gap:20px; }
+.main-content { flex:1; min-width:0; padding:28px 36px 60px; display:flex; flex-direction:column; gap:16px; max-width:1100px; }
 
 /* ── PAGE HEADER ── */
 .page-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
@@ -128,14 +128,14 @@ body::before {
 .btn-secondary:hover { border-color:var(--border); color:var(--cream); }
 
 /* ── STAT GRID ── */
-.stat-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; }
-.stat-row2 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
-.stat-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:16px 18px; transition:border-color .2s; }
+.stat-grid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; }
+.stat-row2 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.stat-card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:14px 16px; transition:border-color .2s; display:flex; flex-direction:column; justify-content:center; }
 .stat-card:hover { border-color:var(--border); }
 .stat-card.hero { background:linear-gradient(135deg, rgba(201,168,76,0.09) 0%, rgba(201,168,76,0.02) 100%); border-color:rgba(201,168,76,0.22); }
 .stat-card.green-tint { background:rgba(76,175,125,0.07); border-color:rgba(76,175,125,0.2); }
 .stat-card.red-tint { background:rgba(224,92,92,0.07); border-color:rgba(224,92,92,0.2); }
-.stat-label { font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; display:flex; align-items:center; gap:5px; }
+.stat-label { font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:flex; align-items:center; gap:5px; }
 .stat-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
 .stat-value { font-size:1.55rem; font-weight:500; line-height:1; letter-spacing:-0.02em; color:var(--cream); }
 .stat-card.hero .stat-value { font-size:2.2rem; font-weight:600; }
@@ -149,8 +149,8 @@ body::before {
 .stat-change.down { color:var(--red); }
 
 /* ── CARD SHELL ── */
-.card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:20px; }
-.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+.card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:16px; }
+.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:12px; flex-wrap:wrap; }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 
 /* ── LINE CHART ── */
@@ -161,7 +161,7 @@ body::before {
 .period-btn { padding:3px 9px; border-radius:5px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.7rem; cursor:pointer; transition:all .15s; }
 .period-btn:hover { color:var(--cream); border-color:var(--border); }
 .period-btn.active { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
-.chart-wrap { position:relative; height:200px; }
+.chart-wrap { position:relative; height:170px; max-width:860px; }
 .chart-empty { height:100%; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:0.83rem; text-align:center; line-height:1.65; }
 .chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); flex-wrap:wrap; gap:10px; }
 .chart-stat { font-size:0.76rem; color:var(--muted); }
@@ -171,7 +171,7 @@ body::before {
 .btn-share:hover { background:var(--gold-dim); }
 
 /* ── TWO COL ROW ── */
-.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
 /* ── DONUT ── */
 .donut-wrap { display:flex; align-items:center; gap:18px; }
@@ -700,8 +700,8 @@ function renderStats(){
   const s=buildMonthlySnapshots();
   const g1=document.getElementById('statGrid'),g2=document.getElementById('statRow2');
   if(!s.length){
-    g1.innerHTML=`<div class="stat-card hero"><div class="stat-label"><div class="stat-dot" style="background:#c9a84c"></div>Net Worth</div><div class="stat-value">$0</div><div class="stat-change">No data yet</div></div><div class="stat-card green-tint"><div class="stat-label"><div class="stat-dot" style="background:var(--green)"></div>Total Assets</div><div class="stat-value green">$0</div></div><div class="stat-card red-tint"><div class="stat-label"><div class="stat-dot" style="background:var(--red)"></div>Total Liabilities</div><div class="stat-value red">$0</div></div>`;
-    g2.innerHTML=`<div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--blue)"></div>MoM Change</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--gold)"></div>All-Time Gain</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--blue)"></div>Debt-to-Asset</div><div class="stat-value sm">—</div></div>`;
+    g1.innerHTML=`<div class="stat-card hero"><div class="stat-label">Net Worth</div><div class="stat-value">$0</div><div class="stat-change">No data yet</div></div><div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">$0</div></div><div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">$0</div></div>`;
+    g2.innerHTML=`<div class="stat-card sm"><div class="stat-label">MoM Change</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">Debt-to-Asset</div><div class="stat-value sm">—</div></div>`;
     return;
   }
   const last=s[s.length-1],prev=s.length>1?s[s.length-2]:null,first=s[0];
@@ -710,13 +710,13 @@ function renderStats(){
   let ratio='—',ratioColor='var(--cream)';
   if(last.assets>0){const r=(last.liabilities/last.assets)*100;ratio=r.toFixed(1)+'%';ratioColor=r<30?'var(--green)':r<60?'var(--gold-light)':'var(--red)';}
   g1.innerHTML=`
-    <div class="stat-card hero"><div class="stat-label"><div class="stat-dot" style="background:var(--gold)"></div>Net Worth</div><div class="stat-value ${last.netWorth<0?'red':''}">${fmtMoney(last.netWorth)}</div>${prev?`<div class="stat-change ${mom>=0?'up':'down'}">${mom>=0?'+':''}${fmtMoney(mom)} from ${fmtMonthLabel(prev.month)}</div>`:'<div class="stat-change">First entry</div>'}</div>
-    <div class="stat-card green-tint"><div class="stat-label"><div class="stat-dot" style="background:var(--green)"></div>Total Assets</div><div class="stat-value green">${fmtMoney(last.assets)}</div></div>
-    <div class="stat-card red-tint"><div class="stat-label"><div class="stat-dot" style="background:var(--red)"></div>Total Liabilities</div><div class="stat-value red">${fmtMoney(last.liabilities)}</div></div>`;
+    <div class="stat-card hero"><div class="stat-label">Net Worth</div><div class="stat-value ${last.netWorth<0?'red':''}">${fmtMoney(last.netWorth)}</div>${prev?`<div class="stat-change ${mom>=0?'up':'down'}">${mom>=0?'+':''}${fmtMoney(mom)} from ${fmtMonthLabel(prev.month)}</div>`:'<div class="stat-change">First entry</div>'}</div>
+    <div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">${fmtMoney(last.assets)}</div></div>
+    <div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">${fmtMoney(last.liabilities)}</div></div>`;
   g2.innerHTML=`
-    <div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--blue)"></div>MoM Change</div><div class="stat-value sm ${mom!==null?(mom>=0?'green':'red'):''}">${mom!==null?(mom>=0?'+':'')+fmtMoney(mom):'—'}</div></div>
-    <div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--gold)"></div>All-Time Gain</div><div class="stat-value sm ${allTime>=0?'gold':'red'}">${allTime>=0?'+':''}${fmtMoney(allTime)}</div></div>
-    <div class="stat-card sm"><div class="stat-label"><div class="stat-dot" style="background:var(--blue)"></div>Debt-to-Asset <span class="info-icon">i<span class="info-tooltip">Liabilities ÷ Assets. Under 30% is healthy, 30–60% moderate, above 60% high.</span></span></div><div class="stat-value sm" style="color:${ratioColor}">${ratio}</div></div>`;
+    <div class="stat-card sm"><div class="stat-label">MoM Change</div><div class="stat-value sm ${mom!==null?(mom>=0?'green':'red'):''}">${mom!==null?(mom>=0?'+':'')+fmtMoney(mom):'—'}</div></div>
+    <div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm ${allTime>=0?'gold':'red'}">${allTime>=0?'+':''}${fmtMoney(allTime)}</div></div>
+    <div class="stat-card sm"><div class="stat-label">Debt-to-Asset <span class="info-icon">i<span class="info-tooltip">Liabilities ÷ Assets. Under 30% is healthy, 30–60% moderate, above 60% high.</span></span></div><div class="stat-value sm" style="color:${ratioColor}">${ratio}</div></div>`;
 }
 
 // ── DONUT ──
@@ -732,9 +732,97 @@ function renderDonut(){
   const total=items.reduce((s,i)=>s+i.value,0);
   const R=38,cx=50,cy=50,circ=2*Math.PI*R;
   let offset=0;
-  const slices=items.map((item,i)=>{const pct=item.value/total;const dash=pct*circ;const s=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${DONUT_COLORS[i%DONUT_COLORS.length]}" stroke-width="13" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;offset+=dash;return s;}).join('');
-  const legendRows=items.map((item,i)=>{const pct=((item.value/total)*100).toFixed(1);return`<div class="donut-row"><div class="donut-row-left"><div class="donut-dot" style="background:${DONUT_COLORS[i%DONUT_COLORS.length]}"></div><div class="donut-name">${item.name}</div></div><div class="donut-vals"><div class="donut-pct">${pct}%</div><div class="donut-val">${fmtMoney(item.value)}</div></div></div>`;}).join('');
-  wrap.innerHTML=`<div class="donut-wrap"><div class="donut-svg-wrap"><svg viewBox="0 0 100 100" width="110" height="110"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="13"/>${slices}<text x="${cx}" y="47" text-anchor="middle" font-size="11" font-weight="500" fill="#f5f0e8" font-family="Outfit,sans-serif">${fmtMoney(total)}</text><text x="${cx}" y="58" text-anchor="middle" font-size="8" fill="rgba(245,240,232,0.35)" font-family="Outfit,sans-serif">assets</text></svg></div><div class="donut-legend">${legendRows}</div></div>`;
+
+  // Build path-based slices for precise hover detection
+  const slicePaths=items.map((item,idx)=>{
+    const pct=item.value/total;
+    const startAngle=(offset/circ)*2*Math.PI - Math.PI/2;
+    const endAngle=startAngle+(pct*2*Math.PI);
+    const dash=pct*circ;
+    const pathId=`slice-${idx}`;
+    // Use circle stroke for rendering, invisible wider circle for hit area
+    const stroke=`<circle class="donut-slice" id="${pathId}"
+      cx="${cx}" cy="${cy}" r="${R}" fill="none"
+      stroke="${DONUT_COLORS[idx%DONUT_COLORS.length]}"
+      stroke-width="13"
+      stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}"
+      stroke-dashoffset="${(-offset).toFixed(2)}"
+      transform="rotate(-90 ${cx} ${cy})"
+      style="cursor:pointer;transition:stroke-width .15s,opacity .15s;"
+      data-name="${item.name.replace(/"/g,'&quot;')}"
+      data-value="${fmtMoney(item.value)}"
+      data-pct="${((item.value/total)*100).toFixed(1)}"
+      data-color="${DONUT_COLORS[idx%DONUT_COLORS.length]}"
+      onmouseenter="donutHover(this,event)"
+      onmouseleave="donutLeave(this)"
+    />`;
+    offset+=dash;
+    return stroke;
+  }).join('');
+
+  const legendRows=items.map((item,i)=>{
+    const pct=((item.value/total)*100).toFixed(1);
+    return`<div class="donut-row" style="cursor:default">
+      <div class="donut-row-left"><div class="donut-dot" style="background:${DONUT_COLORS[i%DONUT_COLORS.length]}"></div><div class="donut-name">${item.name}</div></div>
+      <div class="donut-vals"><div class="donut-pct">${pct}%</div><div class="donut-val">${fmtMoney(item.value)}</div></div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=`
+    <div class="donut-wrap">
+      <div class="donut-svg-wrap" style="position:relative">
+        <svg viewBox="0 0 100 100" width="120" height="120" style="overflow:visible">
+          <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="13"/>
+          ${slicePaths}
+          <text id="donut-center-val" x="${cx}" y="47" text-anchor="middle" font-size="10" font-weight="500" fill="#f5f0e8" font-family="Outfit,sans-serif">${fmtMoney(total)}</text>
+          <text id="donut-center-lbl" x="${cx}" y="57" text-anchor="middle" font-size="7.5" fill="rgba(245,240,232,0.35)" font-family="Outfit,sans-serif">total assets</text>
+        </svg>
+        <div id="donut-tooltip" style="display:none;position:fixed;background:#141d35;border:1px solid rgba(201,168,76,0.25);border-radius:9px;padding:8px 12px;pointer-events:none;z-index:999;min-width:130px;">
+          <div id="donut-tt-name" style="font-size:0.72rem;color:rgba(245,240,232,0.55);margin-bottom:4px;"></div>
+          <div id="donut-tt-val" style="font-size:0.95rem;font-weight:500;color:#f5f0e8;margin-bottom:2px;"></div>
+          <div id="donut-tt-pct" style="font-size:0.7rem;color:rgba(245,240,232,0.4);"></div>
+        </div>
+      </div>
+      <div class="donut-legend">${legendRows}</div>
+    </div>`;
+}
+
+function donutHover(el,event){
+  // Thicken hovered slice
+  document.querySelectorAll('.donut-slice').forEach(s=>s.style.opacity='0.45');
+  el.style.opacity='1';
+  el.style.strokeWidth='16';
+  // Update center text
+  document.getElementById('donut-center-val').textContent=el.dataset.value;
+  document.getElementById('donut-center-lbl').textContent=el.dataset.pct+'%';
+  // Show tooltip
+  const tt=document.getElementById('donut-tooltip');
+  document.getElementById('donut-tt-name').textContent=el.dataset.name;
+  document.getElementById('donut-tt-val').textContent=el.dataset.value;
+  document.getElementById('donut-tt-val').style.color=el.dataset.color;
+  document.getElementById('donut-tt-pct').textContent='of total assets';
+  tt.style.display='block';
+  tt.style.left=(event.clientX+14)+'px';
+  tt.style.top=(event.clientY-10)+'px';
+  // Follow mouse
+  el._moveHandler=function(e){tt.style.left=(e.clientX+14)+'px';tt.style.top=(e.clientY-10)+'px';};
+  document.addEventListener('mousemove',el._moveHandler);
+}
+
+function donutLeave(el){
+  document.querySelectorAll('.donut-slice').forEach(s=>{s.style.opacity='1';s.style.strokeWidth='13';});
+  document.getElementById('donut-tooltip').style.display='none';
+  // Restore center text
+  const total=allEntries.filter(e=>e.type==='asset').reduce((s,e)=>{
+    const catMap={};for(const x of allEntries){if(x.type==='asset'&&(!catMap[x.category]||x.date>catMap[x.category]))catMap[x.category]=x;}
+    return 0; // will recompute below
+  },0);
+  // Simpler: just re-render
+  const catMap={};for(const e of allEntries){if(e.type!=='asset')continue;if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:Number(e.value),date:e.date};}
+  const t=Object.values(catMap).reduce((s,v)=>s+v.value,0);
+  const valEl=document.getElementById('donut-center-val');const lblEl=document.getElementById('donut-center-lbl');
+  if(valEl)valEl.textContent=fmtMoney(t);if(lblEl)lblEl.textContent='total assets';
+  if(el._moveHandler){document.removeEventListener('mousemove',el._moveHandler);delete el._moveHandler;}
 }
 
 // ── DEBT PAYDOWN ──
