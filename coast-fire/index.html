@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VestlyFi: Coast FIRE Calculator</title>
-<meta name="description" content="Calculate your Coast FIRE number. Find out how much you need saved today so your investments can grow to fund retirement without another contribution.">
+<title>Coast FIRE Calculator with Glide Path | VestlyFi</title>
+<meta name="description" content="Find the amount you need invested today so it grows to fund retirement without further contributions. Includes a glide path option that tapers returns as you approach retirement.">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
@@ -14,6 +14,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="canonical" href="https://vestlyfi.com/coast-fire/">
+
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.vestlyfi.com/coast-fire/">
+<meta property="og:title" content="Coast FIRE Calculator with Glide Path | VestlyFi">
+<meta property="og:description" content="Find the amount you need invested today so it grows to fund retirement on its own. Includes a glide path that tapers returns as you near retirement.">
+<meta property="og:image" content="https://www.vestlyfi.com/og-coast-fire.png">
+<meta property="og:site_name" content="VestlyFi">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Coast FIRE Calculator with Glide Path | VestlyFi">
+<meta name="twitter:description" content="Find the amount you need invested today so it grows to fund retirement on its own.">
+<meta name="twitter:image" content="https://www.vestlyfi.com/og-coast-fire.png">
+
+<!-- Structured data: tool + FAQs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Coast FIRE Calculator",
+  "url": "https://www.vestlyfi.com/coast-fire/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "A Coast FIRE calculator that finds the amount you need invested today so it grows to fund retirement without further contributions, with an optional glide path that tapers returns as you approach retirement.",
+  "featureList": [
+    "Coast FIRE number calculation",
+    "Glide path return tapering",
+    "Inflation adjusted projections",
+    "Adjustable expected return and retirement age"
+  ],
+  "publisher": { "@type": "Organization", "name": "VestlyFi", "url": "https://www.vestlyfi.com/" }
+}
+</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -48,12 +81,21 @@
       "name": "What return rate should I use for Coast FIRE calculations?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Most people use 7% annually as a conservative real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected."
+        "text": "Most people use around 7% annually as a real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a glide path and why does it matter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A glide path gradually lowers your expected rate of return as you approach retirement, reflecting how most people shift from stocks toward bonds and cash over time. Calculators that assume one fixed return for your whole life tend to overstate your ending balance. Tapering the return gives a more honest Coast FIRE number that matches how portfolios are actually managed near retirement."
       }
     }
   ]
 }
 </script>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <style>
@@ -84,8 +126,8 @@
   @keyframes stepIn { from{opacity:0;transform:translateY(26px);} to{opacity:1;transform:translateY(0);} }
 
   .step-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
-  .step h2 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,2.5rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
-  .step h2 em { font-style:italic; color:var(--gold-light); }
+  .step h1, .step h2 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,2.5rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .step h1 .accent, .step h2 .accent { color:var(--gold-light); font-style:normal; }
   .step .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; max-width:540px; }
 
   .input-group { margin-bottom:22px; }
@@ -150,7 +192,17 @@
 
   /* SEO CONTENT */
   .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
+  .seo-body h2 { font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:500; color:var(--cream); margin:28px 0 12px; }
+  .seo-body h2:first-child { margin-top:0; }
   .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .seo-body strong { color:var(--cream-dim); font-weight:500; }
+  .related-tools { margin-top:36px; padding-top:28px; border-top:1px solid var(--border-soft); }
+  .related-tools h2 { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; font-weight:500; }
+  .related-tools ul { list-style:none; }
+  .related-tools li { padding:9px 0; font-size:0.88rem; color:var(--muted); line-height:1.6; border-bottom:1px solid var(--border-soft); }
+  .related-tools li:last-child { border-bottom:none; }
+  .related-tools a { color:var(--gold-light); text-decoration:none; }
+  .related-tools a:hover { color:var(--gold); }
   .faq-section { margin-top:36px; }
   .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
   .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
@@ -160,11 +212,11 @@
 
   footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
   .footer-links { display:flex; gap:18px; align-items:center; }
-  .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
-  .footer-links a:hover { color:var(--gold); }
+  .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
+  .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
   .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
-  @media(max-width:600px) { footer{padding:20px;} }
+  @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
 
   /* Progress */
   .prog-wrap { width:160px; height:2px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; }
@@ -179,7 +231,6 @@
   .input-row-3 { align-items: end; }
   .input-grid { align-items: end; }
   .input-grid-3 { align-items: end; }
-
 
   /* Grid input alignment */
   .input-row > .input-group,
@@ -206,8 +257,8 @@
 
   <!-- Step 0: What is Coast FIRE -->
   <div class="step active" id="step-0">
-    <div class="step-tag">Coast FIRE Calculator</div>
-    <h2>Stop saving for retirement<br><em>sooner than you think.</em></h2>
+    <h1>Coast FIRE Calculator</h1>
+    <h2>Stop saving for retirement<br><span class="accent">sooner than you think.</span></h2>
     <p class="sub">Coast FIRE is a savings milestone. Hit it once, and your investments will grow to fund your retirement without another contribution.</p>
 
     <div style="background:var(--navy-light);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:32px;">
@@ -218,7 +269,7 @@
         </div>
         <div style="border-top:1px solid var(--border-soft);padding-top:20px;">
           <div style="font-size:0.95rem;color:var(--cream);margin-bottom:6px;font-weight:400;">What happens after you hit it</div>
-          <div style="font-size:0.87rem;color:var(--muted);line-height:1.7;">You still work and cover your living expenses, but you're no longer racing to save for retirement. That opens the door to a lower-paying job you actually enjoy, going part-time, or just having breathing room.</div>
+          <div style="font-size:0.87rem;color:var(--muted);line-height:1.7;">You still work and cover your living expenses, but you're no longer racing to save for retirement. That opens the door to a lower paying job you actually enjoy, going part time, or just having breathing room.</div>
         </div>
         <div style="border-top:1px solid var(--border-soft);padding-top:20px;">
           <div style="font-size:0.95rem;color:var(--cream);margin-bottom:6px;font-weight:400;">How this calculator works</div>
@@ -235,7 +286,7 @@
   <!-- Step 1 -->
   <div class="step" id="step-1">
     <div class="step-tag">Step 1 of 2</div>
-    <h2>Your retirement <em>basics</em></h2>
+    <h2>Your retirement <span class="accent">basics</span></h2>
     <p class="sub">These three numbers are all we need to find your Coast FIRE number.</p>
 
     <div class="input-row">
@@ -278,8 +329,8 @@
   <!-- Step 2 -->
   <div class="step" id="step-2">
     <div class="step-tag">Your Investments</div>
-    <h2>How much do you have <em>saved so far?</em></h2>
-    <p class="sub">This is your current invested balance — 401k, IRA, brokerage accounts, anything invested in the market.</p>
+    <h2>How much do you have <span class="accent">saved so far?</span></h2>
+    <p class="sub">This is your current invested balance: 401k, IRA, brokerage accounts, anything invested in the market.</p>
 
     <div class="input-group">
       <label>Current Invested Balance</label>
@@ -300,8 +351,8 @@
     <div class="input-group">
       <label>Expected Annual Return</label>
       <div class="pill-group" id="returnPills">
-        <button class="pill" data-val="6" onclick="selectPill(this,'returnPills',6)">Conservative — 6%</button>
-        <button class="pill selected" data-val="10" onclick="selectPill(this,'returnPills',10)">Average — 10% <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Suggested</span></button>
+        <button class="pill" data-val="6" onclick="selectPill(this,'returnPills',6)">Conservative 6%</button>
+        <button class="pill selected" data-val="10" onclick="selectPill(this,'returnPills',10)">Average 10% <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Suggested</span></button>
         <button class="pill" data-val="0" onclick="selectPill(this,'returnPills',0); showCustomRate()" style="display:none" id="customRatePill">Custom</button>
       </div>
     </div>
@@ -310,8 +361,8 @@
       <label>Inflation Assumption</label>
       <div class="pill-group" id="inflationPills">
         <button class="pill" data-val="2" onclick="selectPill(this,'inflationPills',2)">2%</button>
-        <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills',3)">3% — Typical</button>
-        <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills',4)">4% — High</button>
+        <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills',3)">3% Typical</button>
+        <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills',4)">4% High</button>
       </div>
     </div>
 
@@ -333,9 +384,29 @@
 <!-- SEO CONTENT -->
 <div class="seo-section">
   <div class="seo-body">
-    <p>Coast FIRE is one of the most liberating milestones in personal finance. Once you hit your number, you have effectively taken retirement off the table as a financial worry. Your invested money will do the work from that point forward, growing on its own until you are ready to stop working.</p>
-    <p>The math behind it is straightforward. You need a large enough balance today that, given a reasonable rate of return and enough time, it compounds to your retirement target by the age you want to stop working. The earlier you start, the smaller that number is, because time is doing most of the heavy lifting.</p>
+    <p>Coast FIRE is one of the most liberating milestones in personal finance. Once you hit your number, you have effectively taken retirement off the table as a financial worry. Your invested money does the work from that point forward, compounding on its own until you are ready to stop working.</p>
+
+    <h2>How this calculator finds your number</h2>
+    <p>We start with your annual spending in retirement and project it forward for inflation to the year you plan to stop working. Using the 4% rule, we turn that future spending into the total nest egg you'll need. Then we work backwards: given your expected return and the years you have left, we solve for the single amount you'd need invested <strong>today</strong> for it to compound up to that nest egg on its own. That figure is your Coast FIRE number.</p>
+
+    <h2>Why a glide path matters</h2>
+    <p>Most Coast FIRE calculators assume one fixed rate of return for your entire life, say 7% every year from age 30 to 65. Real portfolios don't work that way. As you approach retirement, the standard approach is to shift from stocks toward bonds and cash to protect against a market drop right before you need the money. That lowers your expected return in the final stretch.</p>
+    <p>A fixed rate calculator quietly overstates your ending balance because it assumes you'll keep earning stock like returns even at 64. A <strong>glide path</strong> tapers your expected return as retirement approaches, so the projection reflects how money is actually managed near the finish line. The result is a more honest, usually slightly higher, Coast FIRE number, which is the safer number to plan around.</p>
+
+    <h2>A worked example</h2>
+    <p>Say you're 30, want to fully retire at 60, and expect to spend $50,000 a year in retirement. With a fixed 7% real return, you might need roughly $130,000 invested today to coast. Taper the return as you move through your fifties and the required amount today rises, because your money grows a little more slowly in the final decade. That difference is exactly the cushion a fixed rate tool hides from you. Try your own numbers above to see how sensitive your Coast FIRE number is to each input.</p>
   </div>
+
+  <div class="related-tools">
+    <h2>Related calculators</h2>
+    <ul>
+      <li>Hit your number? Map the full plan with the <a href="/retirement/">Retirement Planner</a>.</li>
+      <li>See how a single balance grows with the <a href="/compound-interest/">Compound Interest Calculator</a>.</li>
+      <li>Track your invested balance over time with the <a href="/net-worth/">Net Worth Tracker</a>.</li>
+      <li><a href="/calculators/">Browse all calculators →</a></li>
+    </ul>
+  </div>
+
   <div class="faq-section">
     <h2 class="faq-title">Common Questions</h2>
     <div class="faq-item">
@@ -352,7 +423,11 @@
     </div>
     <div class="faq-item">
       <div class="faq-q">What return rate should I use for Coast FIRE calculations?</div>
-      <div class="faq-a">Most people use 7% annually as a conservative real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected.</div>
+      <div class="faq-a">Most people use around 7% annually as a real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is a glide path and why does it matter?</div>
+      <div class="faq-a">A glide path gradually lowers your expected rate of return as you approach retirement, reflecting how most people shift from stocks toward bonds and cash over time. Calculators that assume one fixed return for your whole life tend to overstate your ending balance. Tapering the return gives a more honest Coast FIRE number that matches how portfolios are actually managed near retirement.</div>
     </div>
   </div>
 </div>
@@ -360,6 +435,7 @@
 <footer>
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
+    <button class="link-btn" onclick="showModal('about')">About</button>
     <a href="/privacy/">Privacy</a>
     <button class="btn-bug" onclick="openBugModal()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
@@ -377,7 +453,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -561,12 +637,12 @@ function calculate() {
         : `Even without new contributions, your existing balance will grow and you`;
       coastTimingHtml = `
         <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
-          ${contrib}'ll hit your Coast FIRE number at age <strong style="color:#5bb8f5">${coastAge}</strong> — in <strong style="color:#5bb8f5">${yrsToCoast} year${yrsToCoast !== 1 ? 's' : ''}</strong>. After that, you can stop contributing entirely.
+          ${contrib}'ll hit your Coast FIRE number at age <strong style="color:#5bb8f5">${coastAge}</strong>, in <strong style="color:#5bb8f5">${yrsToCoast} year${yrsToCoast !== 1 ? 's' : ''}</strong>. After that, you can stop contributing entirely.
         </div>`;
     } else {
       coastTimingHtml = `
         <div style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
-          At ${fmt(monthlyContrib)}/month you won't reach Coast FIRE before age ${retireAge}. Increase your monthly savings — see the options below.
+          At ${fmt(monthlyContrib)}/month you won't reach Coast FIRE before age ${retireAge}. Increase your monthly savings to see the options below.
         </div>`;
     }
   }
@@ -584,7 +660,7 @@ function calculate() {
         </div>
       ` : coastAge ? `
         <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:var(--gold-light);margin-bottom:6px;">Age ${coastAge}</div>
-        <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">when you'll hit Coast FIRE — ${coastAge - currentAge} year${coastAge - currentAge !== 1 ? 's' : ''} from now</div>
+        <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">when you'll hit Coast FIRE, ${coastAge - currentAge} year${coastAge - currentAge !== 1 ? 's' : ''} from now</div>
         <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
           ${monthlyContrib > 0
             ? `Saving <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, your portfolio hits <strong style="color:var(--cream)">${fmt(Math.round(coastAtAge(coastAge)))}</strong> at age ${coastAge}. From that point, compound growth alone carries you to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by retirement at age ${retireAge}. Contributions become optional.`
@@ -617,7 +693,7 @@ function calculate() {
       <div style="border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;margin-bottom:28px;">
         <div style="padding:16px 20px;border-bottom:1px solid var(--border-soft);">
           <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">How to get there faster</div>
-          <div style="font-size:0.8rem;color:rgba(245,240,232,0.4);margin-top:3px;">Monthly savings needed to hit Coast FIRE${monthlyContrib > 0 ? ` — you currently save ${fmt(monthlyContrib)}/mo` : ''}</div>
+          <div style="font-size:0.8rem;color:rgba(245,240,232,0.4);margin-top:3px;">Monthly savings needed to hit Coast FIRE${monthlyContrib > 0 ? `, you currently save ${fmt(monthlyContrib)}/mo` : ''}</div>
         </div>
         ${scenarios.map((sc, i) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;${i < scenarios.length - 1 ? 'border-bottom:1px solid var(--border-soft);' : ''}">
@@ -656,6 +732,21 @@ function calculate() {
       <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:14px;padding:18px 22px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
         Any savings from here are optional. Extra contributions mean retiring earlier or spending more in retirement.
       </div>` : ''}
+
+      <!-- ============================================================
+           FUTURE REVENUE SLOT
+           Highest intent spot: the user just calculated their number.
+           Drop affiliate offer cards here (e.g. HYSA / brokerage) using
+           the existing .aff-section styles. Disclose clearly. Uncomment
+           when you have a partner.
+           ============================================================
+      <div class="aff-section">
+        <p style="font-size:0.7rem;color:var(--muted);margin-bottom:14px;">VestlyFi may earn a commission from the links below, at no cost to you.</p>
+        <div class="aff-links">
+          offer cards go here
+        </div>
+      </div>
+      -->
 
       <div style="border-top:1px solid var(--border-soft);padding-top:18px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
         Based on a ${returnRate - inflationRate}% real annual return and the 4% rule (25x your ${fmt(annualSpend)}/year spending).
@@ -823,7 +914,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
