@@ -32,6 +32,12 @@
 
 * { margin:0; padding:0; box-sizing:border-box; }
 
+.visually-hidden {
+  position:absolute; width:1px; height:1px;
+  padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
 body {
   background: var(--navy);
   color: var(--cream);
@@ -360,6 +366,7 @@ footer {
 
 <!-- ── PROMPT ── -->
 <div class="prompt-wrap">
+  <h1 class="visually-hidden">VestlyFi — Free Financial Calculators &amp; Diagrams: Retirement, Mortgage Payoff, Debt Payoff, Coast FIRE &amp; More</h1>
   <div class="prompt-sentence">I am <input type="text" id="age" inputmode="numeric"> years old, I have $<input type="text" id="inv" class="wide" inputmode="numeric"> invested and $<input type="text" id="debt" class="wide" inputmode="numeric"> in debt and my goal is to <select id="goal"><option value=""> </option><option value="grow">see what my money could grow to</option><option value="retire">plan my retirement</option><option value="fire">reach Coast FIRE</option><option value="debt">pay off my debt</option><option value="house">see what house I can afford</option></select><span class="sel-caret">▾</span></div>
 
   <div class="followup" id="followup"></div>
