@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://vestlyfi.com/net-worth/">
 <meta property="og:type" content="website">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"VestlyFi Net Worth Tracker","url":"https://vestlyfi.com/net-worth/","description":"Free net worth tracker.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"VestlyFi","url":"https://vestlyfi.com"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a net worth tracker?","acceptedAnswer":{"@type":"Answer","text":"A net worth tracker is a tool that records your assets (cash, investments, property) and liabilities (loans, credit cards) over time so you can see your true net worth — what you own minus what you owe — and watch it grow month to month."}},{"@type":"Question","name":"How do I calculate my net worth?","acceptedAnswer":{"@type":"Answer","text":"Add up the current value of everything you own, then subtract everything you owe. The result is your net worth. VestlyFi does the math for you: log each asset and liability and it totals your net worth automatically and charts the trend."}},{"@type":"Question","name":"Is the VestlyFi net worth tracker free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Tracking your net worth on VestlyFi is completely free, with no spreadsheet to maintain. Create an account, log your assets and liabilities, and update them whenever you like."}},{"@type":"Question","name":"Is my financial data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your data is tied to your own account and is only visible to you when you're signed in. We never sell your information, and you can update or delete your entries at any time."}},{"@type":"Question","name":"Can I track my net worth without a spreadsheet?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. VestlyFi replaces the manual spreadsheet — it stores your history, calculates monthly changes, shows your asset allocation, and lets you share a clean snapshot of your progress."}}]}</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,10 +63,15 @@ body::before {
 
 /* ══ AUTH ══ */
 #authScreen {
-  min-height:100vh; display:flex; align-items:center;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center;
   justify-content:center; padding:24px; position:relative; z-index:1;
 }
 .auth-panel { width:100%; max-width:420px; }
+.auth-faq { width:100%; max-width:560px; margin:72px auto 8px; }
+.auth-faq h2 { font-size:1.15rem; font-weight:400; margin-bottom:18px; text-align:center; color:var(--cream); }
+.auth-faq-item { border-top:1px solid var(--border-soft); padding:16px 2px; }
+.auth-faq-item h3 { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:7px; }
+.auth-faq-item p { font-size:0.83rem; color:var(--muted); line-height:1.65; }
 .auth-logo { font-family:'Exo 2',sans-serif; font-size:1.1rem; color:var(--gold); text-decoration:none; display:block; margin-bottom:40px; }
 .auth-heading { font-size:1.9rem; font-weight:300; line-height:1.2; margin-bottom:8px; }
 .auth-heading em { color:var(--gold-light); font-style:italic; }
@@ -82,6 +88,11 @@ body::before {
 .auth-msg { font-size:0.8rem; margin-top:10px; text-align:center; min-height:18px; }
 .auth-msg.err { color:var(--red); }
 .auth-msg.ok  { color:var(--green); }
+.auth-alt { text-align:center; margin-top:14px; }
+.auth-link { background:none; border:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.78rem; cursor:pointer; transition:color .15s; padding:2px; }
+.auth-link:hover { color:var(--gold-light); }
+.auth-form-title { font-size:1.2rem; font-weight:400; margin-bottom:6px; }
+.auth-form-sub { font-size:0.8rem; color:var(--muted); line-height:1.6; margin-bottom:22px; }
 
 /* ══ APP SHELL ══ */
 #appScreen { display:none; min-height:100vh; }
@@ -217,6 +228,10 @@ table { width:100%; border-collapse:collapse; }
 thead th { padding:9px 18px; text-align:left; font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,240,232,0.22); font-weight:400; border-bottom:1px solid var(--border-soft); white-space:nowrap; cursor:pointer; user-select:none; transition:color .15s; }
 thead th:hover { color:var(--muted); }
 thead th.sorted { color:var(--gold); }
+thead th.sorted-secondary { color:var(--muted); }
+tfoot .holdings-total-row td { padding:16px 18px; border-top:2px solid var(--gold); background:rgba(201,168,76,0.07); }
+tfoot .holdings-total-lbl { font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light); font-weight:600; }
+tfoot .holdings-total-val { font-size:1.32rem; font-weight:700; letter-spacing:-0.01em; }
 thead th.r { text-align:right; }
 tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background .12s; }
 tbody tr:last-child { border-bottom:none; }
@@ -375,9 +390,9 @@ footer span { color:var(--muted); font-size:0.72rem; }
 <div id="authScreen">
   <div class="auth-panel">
     <a class="auth-logo" href="/">VestlyFi</a>
-    <h1 class="auth-heading">Track your wealth <em>over time</em></h1>
+    <h1 class="auth-heading">Track your net worth <em>over time</em></h1>
     <p class="auth-sub">Log your assets and liabilities each month. Watch your net worth grow. Your data is saved securely to your account.</p>
-    <div class="auth-tabs">
+    <div class="auth-tabs" id="authTabs">
       <button class="auth-tab active" onclick="switchTab('signin')">Sign In</button>
       <button class="auth-tab" onclick="switchTab('signup')">Create Account</button>
     </div>
@@ -385,6 +400,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
       <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
       <button class="btn-auth" onclick="signIn()">Sign In</button>
+      <div class="auth-alt"><button type="button" class="auth-link" onclick="showResetForm()">Forgot your password?</button></div>
       <div class="auth-msg" id="siMsg"></div>
     </div>
     <div id="signupForm" style="display:none">
@@ -394,7 +410,46 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <button class="btn-auth" onclick="signUp()">Create Account</button>
       <div class="auth-msg" id="suMsg"></div>
     </div>
+    <div id="resetForm" style="display:none">
+      <h2 class="auth-form-title">Reset your password</h2>
+      <p class="auth-form-sub">Enter the email you signed up with and we'll send you a secure link to set a new password.</p>
+      <div class="auth-field"><label>Email</label><input type="email" id="rsEmail" placeholder="you@example.com"></div>
+      <button class="btn-auth" onclick="requestReset()">Send reset link</button>
+      <div class="auth-alt"><button type="button" class="auth-link" onclick="showSigninForm()">← Back to sign in</button></div>
+      <div class="auth-msg" id="rsMsg"></div>
+    </div>
+    <div id="newPasswordForm" style="display:none">
+      <h2 class="auth-form-title">Set a new password</h2>
+      <p class="auth-form-sub">You're verified. Choose a new password for your account.</p>
+      <div class="auth-field"><label>New Password</label><input type="password" id="npPassword" placeholder="At least 6 characters"></div>
+      <div class="auth-field"><label>Confirm Password</label><input type="password" id="npPasswordConfirm" placeholder="Re-enter your password"></div>
+      <button class="btn-auth" onclick="updatePassword()">Update password</button>
+      <div class="auth-msg" id="npMsg"></div>
+    </div>
   </div>
+  <section class="auth-faq">
+    <h2>Net worth tracker — common questions</h2>
+    <div class="auth-faq-item">
+      <h3>What is a net worth tracker?</h3>
+      <p>A net worth tracker is a tool that records your assets (cash, investments, property) and liabilities (loans, credit cards) over time so you can see your true net worth — what you own minus what you owe — and watch it grow month to month.</p>
+    </div>
+    <div class="auth-faq-item">
+      <h3>How do I calculate my net worth?</h3>
+      <p>Add up the current value of everything you own, then subtract everything you owe. The result is your net worth. VestlyFi does the math for you: log each asset and liability and it totals your net worth automatically and charts the trend.</p>
+    </div>
+    <div class="auth-faq-item">
+      <h3>Is the VestlyFi net worth tracker free?</h3>
+      <p>Yes. Tracking your net worth on VestlyFi is completely free, with no spreadsheet to maintain. Create an account, log your assets and liabilities, and update them whenever you like.</p>
+    </div>
+    <div class="auth-faq-item">
+      <h3>Is my financial data private and secure?</h3>
+      <p>Your data is tied to your own account and is only visible to you when you're signed in. We never sell your information, and you can update or delete your entries at any time.</p>
+    </div>
+    <div class="auth-faq-item">
+      <h3>Can I track my net worth without a spreadsheet?</h3>
+      <p>Absolutely. VestlyFi replaces the manual spreadsheet — it stores your history, calculates monthly changes, shows your asset allocation, and lets you share a clean snapshot of your progress.</p>
+    </div>
+  </section>
 </div>
 
 <!-- ══ APP ══ -->
@@ -506,15 +561,16 @@ footer span { color:var(--muted); font-size:0.72rem; }
             <div class="table-wrap">
               <table id="holdingsTable">
                 <thead><tr>
-                  <th onclick="sortHoldings('name')">Name</th>
-                  <th onclick="sortHoldings('type')">Type</th>
-                  <th class="r sorted" onclick="sortHoldings('value')">Value ↓</th>
-                  <th class="r" onclick="sortHoldings('change')">Change</th>
+                  <th data-key="name" onclick="sortHoldings('name')">Name</th>
+                  <th data-key="type" onclick="sortHoldings('type')">Type</th>
+                  <th class="r" data-key="value" onclick="sortHoldings('value')">Value</th>
+                  <th class="r" data-key="change" onclick="sortHoldings('change')">Change</th>
                   <th class="r">6M Trend</th>
                   <th class="r">Allocation</th>
-                  <th onclick="sortHoldings('date')">Updated</th>
+                  <th data-key="date" onclick="sortHoldings('date')">Updated</th>
                 </tr></thead>
                 <tbody id="holdingsTbody"><tr><td colspan="7"><div class="empty-state">No entries yet. Add your first asset or liability.</div></td></tr></tbody>
+                <tfoot id="holdingsTfoot"></tfoot>
               </table>
             </div>
           </div>
@@ -634,7 +690,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
 const{createClient}=supabase;
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
-let currentUser=null,allEntries=[],editingId=null,selectedType='asset',chartInstance=null,isLoadingEntries=false,holdingsFilter='all',holdingsSortKey='value',holdingsSortDir=-1;
+let currentUser=null,allEntries=[],editingId=null,selectedType='asset',chartInstance=null,isLoadingEntries=false,holdingsFilter='all',holdingsSortStack=[{key:'value',dir:-1}];
 
 // ── HELPERS ──
 function fmtMoney(n){if(n===0)return'$0';const abs=Math.abs(n);const fmt=abs>=1000000?'$'+(abs/1000000).toFixed(2)+'M':'$'+Math.round(abs).toLocaleString();return n<0?'-'+fmt:fmt;}
@@ -651,9 +707,38 @@ const QUICK_LIABILITIES=['Mortgage','Auto Loan','Student Loan','Credit Card','Pe
 const DONUT_COLORS=['#c9a84c','#4caf7d','#60a5fa','#a78bfa','#fb923c','#f472b6','#34d399','#e8c97a'];
 
 // ── AUTH ──
-function switchTab(t){document.querySelectorAll('.auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));document.getElementById('signinForm').style.display=t==='signin'?'block':'none';document.getElementById('signupForm').style.display=t==='signup'?'block':'none';}
+function switchTab(t){
+  document.getElementById('authTabs').style.display='flex';
+  document.getElementById('resetForm').style.display='none';
+  document.getElementById('newPasswordForm').style.display='none';
+  document.querySelectorAll('.auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
+  document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
+  document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
+}
+function showSigninForm(){switchTab('signin');}
+function showResetForm(){
+  document.getElementById('authTabs').style.display='none';
+  document.getElementById('signinForm').style.display='none';
+  document.getElementById('signupForm').style.display='none';
+  document.getElementById('newPasswordForm').style.display='none';
+  document.getElementById('resetForm').style.display='block';
+  document.getElementById('rsMsg').textContent='';
+  const si=document.getElementById('siEmail').value.trim();if(si)document.getElementById('rsEmail').value=si;
+}
+function showNewPasswordForm(){
+  document.getElementById('authTabs').style.display='none';
+  document.getElementById('signinForm').style.display='none';
+  document.getElementById('signupForm').style.display='none';
+  document.getElementById('resetForm').style.display='none';
+  document.getElementById('newPasswordForm').style.display='block';
+  showAuth();
+}
+async function requestReset(){const email=document.getElementById('rsEmail').value.trim(),msg=document.getElementById('rsMsg');if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';return;}msg.className='auth-msg';msg.textContent='Sending…';const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/net-worth/'});if(error){msg.className='auth-msg err';msg.textContent=error.message;}else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link. It may take a minute — check your spam folder too.';}}
+async function updatePassword(){const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');if(pw!==cf){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}if(pw.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}msg.className='auth-msg';msg.textContent='Updating…';const{error}=await sb.auth.updateUser({password:pw});if(error){msg.className='auth-msg err';msg.textContent=error.message;return;}msg.className='auth-msg ok';msg.textContent='Password updated! Loading your account…';recoveryMode=false;if(history.replaceState)history.replaceState(null,'',window.location.pathname);setTimeout(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else{switchTab('signin');document.getElementById('siMsg').className='auth-msg ok';document.getElementById('siMsg').textContent='Password updated. Please sign in.';}},800);}
 ['siEmail','siPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signIn();}));
 ['suEmail','suPassword','suPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
+document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='Enter')requestReset();});
+['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
 document.getElementById('entryValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
 document.getElementById('entryCategory').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
 async function signIn(){const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');msg.className='auth-msg';msg.textContent='Signing in…';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;}else{msg.className='auth-msg ok';msg.textContent='Success!';}}
@@ -663,9 +748,16 @@ function showAuth(){document.getElementById('authScreen').style.display='flex';d
 function showApp(){document.getElementById('authScreen').style.display='none';document.getElementById('appScreen').style.display='block';}
 function setUserChip(){if(!currentUser)return;const e=currentUser.email||'';document.getElementById('userEmail').textContent=e;document.getElementById('userAvatar').textContent=e.charAt(0).toUpperCase();}
 
-let initDone=false;
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else{showAuth();}initDone=true;})();
-sb.auth.onAuthStateChange(async(event,session)=>{if(!initDone&&event==='SIGNED_IN')return;if(event==='SIGNED_IN'&&session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];showAuth();}});
+let initDone=false,recoveryMode=false;
+if(window.location.hash.includes('type=recovery'))recoveryMode=true;
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else{showAuth();}initDone=true;})();
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
+  if(recoveryMode&&event==='SIGNED_IN')return;
+  if(!initDone&&event==='SIGNED_IN')return;
+  if(event==='SIGNED_IN'&&session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}
+  else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;showAuth();}
+});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUser&&!isLoadingEntries)loadEntries(true);});
 
 // ── LOAD ──
@@ -765,7 +857,7 @@ function renderDonut(){
 
   const legendRows=items.map((item,i)=>{
     const pct=((item.value/total)*100).toFixed(1);
-    return`<div class="donut-row" style="cursor:default">
+    return`<div class="donut-row" style="cursor:pointer" onmouseenter="legendHover(${i})" onmouseleave="legendLeave()">
       <div class="donut-row-left"><div class="donut-dot" style="background:${DONUT_COLORS[i%DONUT_COLORS.length]}"></div><div class="donut-name">${item.name}</div></div>
       <div class="donut-vals"><div class="donut-pct">${pct}%</div><div class="donut-val">${fmtMoney(item.value)}</div></div>
     </div>`;
@@ -774,7 +866,7 @@ function renderDonut(){
   wrap.innerHTML=`
     <div class="donut-wrap">
       <div class="donut-svg-wrap" style="position:relative">
-        <svg viewBox="0 0 100 100" width="120" height="120" style="overflow:visible">
+        <svg viewBox="0 0 100 100" width="165" height="165" style="overflow:visible">
           <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="13"/>
           ${slicePaths}
           <text id="donut-center-val" x="${cx}" y="47" text-anchor="middle" font-size="10" font-weight="500" fill="#f5f0e8" font-family="Outfit,sans-serif">${fmtMoney(total)}</text>
@@ -826,6 +918,24 @@ function donutLeave(el){
   const valEl=document.getElementById('donut-center-val');const lblEl=document.getElementById('donut-center-lbl');
   if(valEl)valEl.textContent=fmtMoney(t);if(lblEl)lblEl.textContent='total assets';
   if(el._moveHandler){document.removeEventListener('mousemove',el._moveHandler);delete el._moveHandler;}
+}
+
+function restoreDonutCenter(){
+  const catMap={};for(const e of allEntries){if(e.type!=='asset')continue;if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:Number(e.value),date:e.date};}
+  const t=Object.values(catMap).reduce((s,v)=>s+v.value,0);
+  const valEl=document.getElementById('donut-center-val'),lblEl=document.getElementById('donut-center-lbl');
+  if(valEl)valEl.textContent=fmtMoney(t);if(lblEl)lblEl.textContent='total assets';
+}
+function legendHover(idx){
+  const el=document.getElementById('slice-'+idx);if(!el)return;
+  document.querySelectorAll('.donut-slice').forEach(s=>s.style.opacity='0.45');
+  el.style.opacity='1';el.style.strokeWidth='16';
+  const valEl=document.getElementById('donut-center-val'),lblEl=document.getElementById('donut-center-lbl');
+  if(valEl)valEl.textContent=el.dataset.value;if(lblEl)lblEl.textContent=el.dataset.pct+'%';
+}
+function legendLeave(){
+  document.querySelectorAll('.donut-slice').forEach(s=>{s.style.opacity='1';s.style.strokeWidth='13';});
+  restoreDonutCenter();
 }
 
 // ── DEBT PAYDOWN ──
@@ -888,10 +998,34 @@ function buildSparkline(entries,type){
 }
 
 function setHoldingsTab(f){holdingsFilter=f;document.querySelectorAll('.h-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.h-tab').forEach(t=>{if(t.textContent.toLowerCase()===f||(f==='all'&&t.textContent==='All'))t.classList.add('active');});renderHoldings();}
-function sortHoldings(key){if(holdingsSortKey===key)holdingsSortDir*=-1;else{holdingsSortKey=key;holdingsSortDir=-1;}document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted'));const idxMap={name:0,type:1,value:2,change:3,date:6};const idx=idxMap[key];if(idx!==undefined)document.querySelectorAll('thead th')[idx].classList.add('sorted');renderHoldings();}
+function defaultSortDir(key){return(key==='name'||key==='type')?1:-1;}
+function sortHoldings(key){
+  const top=holdingsSortStack[0];
+  if(top&&top.key===key){top.dir*=-1;}
+  else{
+    holdingsSortStack=holdingsSortStack.filter(s=>s.key!==key);
+    holdingsSortStack.unshift({key,dir:defaultSortDir(key)});
+    if(holdingsSortStack.length>3)holdingsSortStack.length=3;
+  }
+  updateSortHeaders();
+  renderHoldings();
+}
+function updateSortHeaders(){
+  document.querySelectorAll('#holdingsTable thead th').forEach(th=>{
+    th.classList.remove('sorted','sorted-secondary');
+    const key=th.dataset.key;if(!key)return;
+    const base=th.dataset.label||(th.dataset.label=th.textContent.replace(/[↑↓]\s*$/,'').trim());
+    const pos=holdingsSortStack.findIndex(s=>s.key===key);
+    if(pos===-1){th.textContent=base;return;}
+    th.textContent=base+(holdingsSortStack[pos].dir<0?' ↓':' ↑');
+    th.classList.add(pos===0?'sorted':'sorted-secondary');
+  });
+}
 
 function renderHoldings(){
-  const tbody=document.getElementById('holdingsTbody');
+  const tbody=document.getElementById('holdingsTbody'),tfoot=document.getElementById('holdingsTfoot');
+  updateSortHeaders();
+  if(tfoot)tfoot.innerHTML='';
   if(!allEntries.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state">No entries yet. Add your first asset or liability.</div></td></tr>';return;}
   const catMap={};
   for(const e of allEntries){if(!catMap[e.category]){catMap[e.category]={type:e.type,all:[]};}if(!catMap[e.category].latest||e.date>catMap[e.category].latest.date)catMap[e.category].latest=e;catMap[e.category].all.push(e);}
@@ -899,10 +1033,28 @@ function renderHoldings(){
   const totalA=snaps.length?snaps[snaps.length-1].assets:0,totalL=snaps.length?snaps[snaps.length-1].liabilities:0;
   let rows=Object.entries(catMap).map(([cat,v])=>{const sorted=v.all.slice().sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1],prev2=sorted.length>1?sorted[sorted.length-2]:null,change=prev2?Number(latest.value)-Number(prev2.value):null,total=v.type==='asset'?totalA:totalL,alloc=total>0?(Number(latest.value)/total)*100:0;return{cat,type:v.type,value:Number(latest.value),change,alloc,date:latest.date,all:sorted};});
   if(holdingsFilter!=='all')rows=rows.filter(r=>r.type===holdingsFilter);
-  rows.sort((a,b)=>{let va=a[holdingsSortKey],vb=b[holdingsSortKey];if(holdingsSortKey==='name'){va=a.cat.toLowerCase();vb=b.cat.toLowerCase();}if(holdingsSortKey==='change'){va=a.change??-Infinity;vb=b.change??-Infinity;}if(va<vb)return holdingsSortDir;if(va>vb)return-holdingsSortDir;return 0;});
+  rows.sort((a,b)=>{
+    for(const{key,dir}of holdingsSortStack){
+      let va,vb;
+      if(key==='name'){va=a.cat.toLowerCase();vb=b.cat.toLowerCase();}
+      else if(key==='change'){va=a.change??-Infinity;vb=b.change??-Infinity;}
+      else{va=a[key];vb=b[key];}
+      if(va<vb)return dir;if(va>vb)return-dir;
+    }
+    return 0;
+  });
   if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state">No ${holdingsFilter} entries found.</div></td></tr>`;return;}
   const ac=r=>r.type==='asset'?'#4caf7d':'#e05c5c';
   tbody.innerHTML=rows.map(r=>{const chg=r.change!==null?`<span class="${r.change>=0?'v-g':'v-r'}">${r.change>=0?'+':''}${fmtMoney(r.change)}</span>`:`<span class="v-m">—</span>`;const spark=buildSparkline(r.all,r.type);return`<tr onclick="openCategoryDrawer('${r.cat.replace(/'/g,"\\'")}')"><td class="name-cell">${r.cat}</td><td><span class="type-badge ${r.type}">${r.type}</span></td><td class="r" style="color:${ac(r)};font-weight:500">${fmtMoney(r.value)}</td><td class="r">${chg}</td><td class="r">${spark}</td><td class="r"><div class="alloc-wrap"><div class="alloc-bar"><div class="alloc-fill" style="width:${Math.min(r.alloc,100).toFixed(1)}%;background:${ac(r)}"></div></div><span style="font-size:0.72rem;color:var(--muted)">${r.alloc.toFixed(1)}%</span></div></td><td style="color:var(--muted);font-size:0.76rem">${fmtDateLabel(r.date)}</td></tr>`;}).join('');
+  if(tfoot){
+    const shownA=rows.filter(r=>r.type==='asset').reduce((s,r)=>s+r.value,0);
+    const shownL=rows.filter(r=>r.type==='liability').reduce((s,r)=>s+r.value,0);
+    let lbl,val,col;
+    if(holdingsFilter==='asset'){lbl='Total Assets';val=shownA;col='var(--green)';}
+    else if(holdingsFilter==='liability'){lbl='Total Liabilities';val=shownL;col='var(--red)';}
+    else{lbl='Net Worth';val=shownA-shownL;col=val<0?'var(--red)':'var(--cream)';}
+    tfoot.innerHTML=`<tr class="holdings-total-row"><td class="holdings-total-lbl" colspan="2">${lbl}</td><td class="r holdings-total-val" style="color:${col}">${fmtMoney(val)}</td><td colspan="4"></td></tr>`;
+  }
 }
 
 let activeDrawerCategory=null;
