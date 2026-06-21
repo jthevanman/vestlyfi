@@ -63,6 +63,9 @@
   .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.83rem; font-weight: 300; transition: color 0.15s; }
   .nav-links a:hover { color: var(--cream); }
   .nav-links a.active { color:var(--cream); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .nav-links { display: none; } nav { padding: 0 20px; } }
 
   /* MAIN */
@@ -202,7 +205,12 @@
     <a href="/">Home</a>
     <a href="/calculators/">Calculators</a>
     <a href="/create-a-diagram/" class="active">Diagrams</a>
-    <a href="/net-worth/">Net Worth</a>
+    <div class="nav-trackers">
+      <span class="nav-trackers-lbl">Trackers</span>
+      <a href="/net-worth/">Net Worth</a>
+      <span class="nav-sep">/</span>
+      <a href="/debt-tracker/">Debt</a>
+    </div>
     <a href="/account/">Account</a>
   </div>
 </nav>

@@ -79,6 +79,9 @@ nav {
 .nav-links { display:flex; gap:28px; align-items:center; }
 .nav-links a { color:var(--muted); text-decoration:none; font-size:0.82rem; font-weight:300; transition:color .15s; }
 .nav-links a:hover, .nav-links a.active { color:var(--cream); }
+.nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
+.nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+.nav-sep { color:rgba(255,255,255,0.18); }
 
 /* ── PROMPT AREA ── */
 .prompt-wrap {
@@ -297,6 +300,7 @@ nav {
 .tag-nw   { color:#4caf7d; background:rgba(76,175,125,0.1);  border:1px solid rgba(76,175,125,0.18); }
 .tag-calc { color:#60a5fa; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
 .tag-diag { color:var(--gold); background:var(--gold-dim);   border:1px solid var(--border); }
+.tag-debt { color:#f87171; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.18); }
 
 /* ── FOOTER ── */
 footer {
@@ -360,7 +364,12 @@ footer {
     <a href="/" class="active">Home</a>
     <a href="/calculators/">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
-    <a href="/net-worth/">Net Worth</a>
+    <div class="nav-trackers">
+      <span class="nav-trackers-lbl">Trackers</span>
+      <a href="/net-worth/">Net Worth</a>
+      <span class="nav-sep">/</span>
+      <a href="/debt-tracker/">Debt</a>
+    </div>
     <a href="/account/">Account</a>
   </div>
 </nav>
@@ -407,6 +416,25 @@ footer {
         <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18 L170,92 L14,92 Z" fill="rgba(76,175,125,0.08)"/>
         <circle cx="170" cy="18" r="3.5" fill="#4caf7d" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
         <text x="168" y="13" font-family="Outfit" font-size="8" fill="#4caf7d" text-anchor="end" font-weight="500">+$47,200</text>
+      </svg>
+    </div>
+  </a>
+
+  <a class="card" href="/debt-tracker/">
+    <div class="card-left">
+      <div class="card-tag tag-debt">Debt Tracker</div>
+      <div class="card-title">Track your debt payoff</div>
+    </div>
+    <div class="card-preview">
+      <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;">
+        <line x1="14" y1="12" x2="172" y2="12" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84 L170,92 L14,92 Z" fill="rgba(248,113,113,0.08)"/>
+        <circle cx="170" cy="84" r="3.5" fill="#f87171" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+        <text x="168" y="80" font-family="Outfit" font-size="8" fill="#f87171" text-anchor="end" font-weight="500">−$23,400</text>
       </svg>
     </div>
   </a>

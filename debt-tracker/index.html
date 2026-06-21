@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Debt Tracker — Log & Share Your Payoff Progress | VestlyFi</title>
+<meta name="description" content="Track your debt payoff progress over time. Save your debts, log balance updates as you pay them down, set extra payments per debt, and see exactly how much interest you'll save.">
+<link rel="canonical" href="https://vestlyfi.com/debt-tracker/">
+<meta property="og:title" content="Free Debt Tracker | VestlyFi">
+<meta property="og:description" content="Log your debts, set extra payments, and see your payoff date and interest savings charted over time. Generate a shareable progress card.">
+<meta property="og:url" content="https://vestlyfi.com/debt-tracker/">
+<meta property="og:type" content="website">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"VestlyFi Debt Tracker","url":"https://vestlyfi.com/debt-tracker/","description":"Free debt payoff tracker. Log balance updates, set extra payments, and share your progress.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"VestlyFi","url":"https://vestlyfi.com"}}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+:root {
+  --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
+  --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
+  --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
+  --green:#4ade80; --red:#f87171; --amber:#fbbf24; --blue:#60a5fa;
+  --green-dim:rgba(74,222,128,0.10); --red-dim:rgba(248,113,113,0.10);
+  --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  --sidebar-w:220px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* ══ SIGNED-OUT (auth) ══ */
+.locked-top{position:sticky;top:0;z-index:50;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:rgba(10,15,30,0.85);backdrop-filter:blur(12px);}
+.locked-top a.logo{font-family:'Exo 2',sans-serif;font-size:1.25rem;color:var(--gold);text-decoration:none;}
+.locked-top .back{color:var(--muted);text-decoration:none;font-size:0.82rem;}
+.locked-top .back:hover{color:var(--cream);}
+.locked-wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:56px 24px 80px;}
+.locked-intro{text-align:center;margin-bottom:34px;}
+.locked-intro .page-tag{font-size:0.68rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:500;}
+.locked-intro h1{font-size:clamp(1.8rem,5vw,2.5rem);font-weight:400;line-height:1.2;margin-bottom:10px;}
+.locked-intro h1 em{font-style:italic;color:var(--gold-light);}
+.locked-intro p{color:var(--muted);font-size:0.92rem;line-height:1.65;max-width:520px;margin:0 auto;}
+
+.auth-card{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:16px;padding:32px;max-width:420px;margin:0 auto;}
+.auth-card h2{font-size:1.3rem;font-weight:400;margin-bottom:8px;}
+.auth-card h2 em{color:var(--gold-light);font-style:italic;}
+.auth-card-sub{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:26px;}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border-soft);margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:0.82rem;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif;}
+.auth-tab.active{color:var(--cream);border-bottom-color:var(--gold);}
+.auth-field{margin-bottom:14px;}
+.auth-field label{display:block;font-size:0.7rem;color:var(--muted);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase;}
+.auth-field input{width:100%;padding:11px 13px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:300;outline:none;transition:border-color .15s;}
+.auth-field input:focus{border-color:var(--gold);}
+.btn-auth{width:100%;padding:12px;margin-top:6px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-auth:hover{background:var(--gold-light);}
+.auth-msg{font-size:0.78rem;margin-top:10px;text-align:center;min-height:18px;}
+.auth-msg.err{color:var(--red);}
+.auth-msg.ok{color:var(--green);}
+.auth-alt{text-align:center;margin-top:12px;}
+.auth-link{background:none;border:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.76rem;cursor:pointer;transition:color .15s;padding:2px;}
+.auth-link:hover{color:var(--gold-light);}
+.auth-form-title{font-size:1.05rem;font-weight:400;margin-bottom:6px;}
+.auth-form-sub{font-size:0.8rem;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+
+/* ══ APP SHELL ══ */
+.app-shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--border-soft);background:rgba(10,15,30,0.96);backdrop-filter:blur(12px);z-index:40;}
+.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border-soft);}
+.sidebar-logo a{font-family:'Exo 2',sans-serif;font-size:1.1rem;color:var(--gold);text-decoration:none;}
+.sb-nav{flex:1;padding:6px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.sb-cap{padding:12px 10px 4px;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,240,232,0.2);}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;text-decoration:none;font-size:0.82rem;color:var(--muted);transition:all .15s;font-weight:300;}
+.sb-link:hover{background:rgba(255,255,255,0.04);color:var(--cream);}
+.sb-link.active{background:rgba(201,168,76,0.09);color:var(--gold);}
+.sb-link svg{flex-shrink:0;opacity:0.7;}
+.sb-link.active svg{opacity:1;}
+.sb-trackers{margin:2px 4px 0;border:1px solid rgba(201,168,76,0.15);border-radius:10px;background:rgba(201,168,76,0.03);padding:3px;display:flex;flex-direction:column;gap:2px;}
+.sb-trackers .sb-cap{padding:6px 8px 3px;}
+.sb-div{height:1px;background:var(--border-soft);margin:8px 14px;}
+.sb-bottom{padding:14px 10px;border-top:1px solid var(--border-soft);}
+.user-chip{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-soft);margin-bottom:8px;}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:600;color:var(--gold);flex-shrink:0;}
+.user-email{font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.btn-signout{width:100%;padding:7px;background:none;border:1px solid var(--border-soft);color:var(--muted);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-signout:hover{border-color:var(--border);color:var(--cream);}
+
+.main-outer{flex:1;display:flex;flex-direction:column;min-width:0;align-items:center;overflow-x:hidden;}
+.main-content{width:100%;min-width:0;padding:24px 36px 64px;display:flex;flex-direction:column;gap:16px;max-width:1060px;margin:0 auto;}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.page-title{font-size:1.45rem;font-weight:400;letter-spacing:-0.01em;}
+.page-title span{color:var(--gold-light);}
+.page-subtitle{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+.header-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn-primary{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-primary:hover{filter:brightness(1.06);}
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;background:none;border:1px solid var(--border-soft);color:var(--muted);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.8rem;cursor:pointer;transition:all .15s;}
+.btn-secondary:hover{border-color:var(--border);color:var(--cream);}
+
+.dash-loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:60px 0;color:var(--muted);font-size:0.85rem;}
+.dash-spinner{width:16px;height:16px;border:2px solid var(--border-soft);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.stat-card{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:13px;padding:15px 17px;}
+.stat-label{font-size:0.62rem;letter-spacing:0.11em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:500;}
+.stat-val{font-family:'Outfit',sans-serif;font-size:1.55rem;font-weight:400;line-height:1.05;}
+.stat-val.gold{color:var(--gold-light);}.stat-val.green{color:var(--green);}.stat-val.red{color:var(--red);}
+.stat-val.date{font-size:1.2rem;padding-top:3px;}
+.stat-note{font-size:0.68rem;color:var(--muted);margin-top:4px;}
+.stat-note.good{color:var(--green);}
+
+/* ── CHART + PIE ── */
+.two-col{display:grid;grid-template-columns:1fr 220px;gap:12px;}
+.panel{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:13px;padding:16px 18px;}
+.panel-ttl{font-size:0.62rem;letter-spacing:0.11em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500;}
+.chart-legend{display:flex;gap:14px;margin-bottom:8px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--muted);}
+.leg-line{width:16px;height:2px;border-radius:1px;flex-shrink:0;}
+.chart-area{position:relative;height:188px;}
+.pie-area{position:relative;height:128px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.pleg{display:flex;align-items:center;gap:6px;font-size:0.7rem;color:var(--muted);margin-bottom:5px;}
+.pleg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pleg-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pleg-pct{margin-left:auto;color:var(--cream);padding-left:8px;}
+.chart-empty{text-align:center;color:var(--muted);font-size:0.8rem;padding:46px 10px;line-height:1.6;}
+
+/* ── RECOMMENDATION CARD ── */
+.rec-card{background:rgba(201,168,76,0.04);border:1px solid var(--border);border-radius:13px;padding:14px 17px;}
+.rec-head{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+.rec-head .ico{color:var(--gold);display:flex;flex-shrink:0;}
+.rec-title{font-size:0.84rem;color:var(--cream);}
+.rec-note{font-size:0.66rem;color:var(--muted);margin-left:auto;}
+.rec-dismiss{-webkit-appearance:none;appearance:none;background:transparent;border:0;box-shadow:none;outline:none;color:var(--muted);font-size:13px;line-height:1;width:16px;height:16px;padding:0;margin-left:4px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border-radius:0;font-family:'Outfit',sans-serif;transition:color .15s;}
+.rec-dismiss:hover{color:var(--cream);}
+.rec-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+@media(max-width:680px){.rec-rows{grid-template-columns:1fr;}}
+.rec-row{background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:11px 13px;}
+.rec-row.winner{border-color:rgba(74,222,128,0.22);background:rgba(74,222,128,0.04);}
+.rec-debt{font-size:0.78rem;color:var(--cream);}
+.rec-apr{font-size:0.64rem;color:var(--muted);margin-bottom:7px;}
+.rec-body{font-size:0.72rem;color:var(--cream-dim);line-height:1.55;}
+.rec-body strong{color:var(--cream);font-weight:500;}
+.rec-body .g{color:var(--green);font-weight:500;}
+.rec-badge{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:5px;font-size:0.6rem;font-weight:600;background:rgba(74,222,128,0.14);color:var(--green);}
+
+/* ── DEBT CARDS (V10) ── */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
+.section-head h3{font-size:0.95rem;font-weight:500;color:var(--cream);}
+.debt-list{display:flex;flex-direction:column;gap:8px;}
+.debt-card{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:13px 16px;}
+.dc-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap;}
+.dc-name{font-size:0.9rem;color:var(--cream);font-weight:400;}
+.dc-apr{font-size:0.74rem;color:var(--muted);}
+.dc-badge{margin-left:auto;padding:2px 9px;border-radius:6px;font-size:0.62rem;font-weight:600;letter-spacing:0.03em;flex-shrink:0;}
+.badge-first{background:var(--red-dim);color:var(--red);}
+.badge-ok{background:var(--green-dim);color:var(--green);}
+.badge-paid{background:var(--green-dim);color:var(--green);}
+.badge-excl{background:rgba(255,255,255,0.05);color:var(--muted);}
+.dc-track{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:11px;overflow:hidden;}
+.dc-fill{height:100%;border-radius:2px;transition:width .5s ease;}
+.dc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:11px;}
+.dc-stat{min-width:0;padding-right:10px;}
+.dc-stat label{font-size:0.56rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
+.dc-stat span{font-size:0.82rem;color:var(--cream);}
+.dc-control{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;padding-top:11px;border-top:1px solid rgba(255,255,255,0.05);}
+.dc-extra{display:flex;align-items:center;gap:9px;min-width:0;}
+.dc-extra-lbl{font-size:0.6rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.dc-extra-wrap{position:relative;}
+.dc-extra-wrap .pfx{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:0.78rem;pointer-events:none;}
+.dc-extra-wrap input{width:84px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);border-radius:7px;color:var(--gold-light);font-size:0.8rem;font-family:'Outfit',sans-serif;outline:none;padding:5px 8px 5px 19px;}
+.dc-extra-wrap input:focus{border-color:rgba(201,168,76,0.45);}
+.dc-extra-wrap input::-webkit-outer-spin-button,.dc-extra-wrap input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.saves-tag{font-size:0.68rem;color:var(--green);white-space:nowrap;}
+.dc-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.dc-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:7px;border:1px solid var(--border-soft);background:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.7rem;cursor:pointer;transition:all .15s;}
+.dc-btn:hover{border-color:var(--border);color:var(--cream);}
+.dc-btn.primary{border-color:rgba(201,168,76,0.3);color:var(--gold-light);background:rgba(201,168,76,0.06);}
+.dc-btn.primary:hover{background:rgba(201,168,76,0.12);}
+.dc-btn.danger:hover{border-color:rgba(248,113,113,0.4);color:var(--red);}
+.excl-row{display:flex;align-items:center;gap:5px;}
+.excl-check{width:12px;height:12px;accent-color:var(--gold);cursor:pointer;}
+.excl-label{font-size:0.68rem;color:var(--muted);cursor:pointer;white-space:nowrap;}
+.debt-card.excluded{opacity:.5;border-style:dashed;}
+.debt-card.paid .dc-fill{background:var(--green)!important;}
+.excl-section-hdr{font-size:0.58rem;color:rgba(245,240,232,0.2);letter-spacing:0.1em;text-transform:uppercase;margin:6px 0 2px;display:flex;align-items:center;gap:8px;}
+.excl-section-hdr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.05);}
+
+/* ── EMPTY STATE ── */
+.empty-state{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border:1px solid var(--border);border-radius:14px;padding:44px 32px;text-align:center;}
+.empty-state h3{font-size:1.15rem;font-weight:400;margin-bottom:8px;}
+.empty-state p{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:22px;max-width:420px;margin-left:auto;margin-right:auto;}
+.empty-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+/* ── SHARE BTN ── */
+.share-wrap{text-align:center;margin-top:6px;}
+.btn-share-dash{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;background:none;border:1px solid var(--border);color:var(--gold);border-radius:10px;font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-share-dash:hover{background:var(--gold-dim);}
+
+/* ── IMPORT MODAL ── */
+.import-intro{font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.55;}
+.import-empty{color:var(--muted);font-size:0.84rem;text-align:center;padding:26px 10px;line-height:1.65;}
+.import-row{border:1px solid var(--border-soft);border-radius:11px;padding:12px 13px;margin-bottom:10px;background:var(--navy-card);transition:opacity .15s;}
+.import-row.off{opacity:.45;}
+.import-row-top{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.import-row-name{font-size:0.86rem;color:var(--cream);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.import-fields{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:9px;}
+.import-fields .f label{display:block;font-size:0.56rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.import-fields .iw{position:relative;}
+.import-fields .iw .pfx{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:0.78rem;pointer-events:none;}
+.import-fields .iw .sfx{position:absolute;right:8px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.72rem;pointer-events:none;}
+.import-fields input{width:100%;padding:7px 9px;background:var(--navy);border:1px solid var(--border-soft);border-radius:7px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.82rem;font-weight:300;outline:none;transition:border-color .15s;}
+.import-fields input:focus{border-color:var(--gold);}
+.import-fields input.pf{padding-left:18px;}
+.import-fields input.sf{padding-right:22px;}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:18px;padding:26px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:1rem;font-weight:500;margin-bottom:5px;}
+.modal-sub{font-size:0.78rem;color:var(--muted);margin-bottom:20px;line-height:1.55;}
+.modal-field{margin-bottom:14px;}
+.modal-field label{display:block;font-size:0.68rem;color:var(--muted);margin-bottom:5px;letter-spacing:0.05em;text-transform:uppercase;}
+.modal-field .input-wrap{position:relative;}
+.modal-field .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gold);pointer-events:none;}
+.modal-field .suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.78rem;pointer-events:none;}
+.modal-field input{width:100%;padding:10px 13px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.86rem;font-weight:300;outline:none;transition:border-color .15s;}
+.modal-field input.has-prefix{padding-left:24px;}
+.modal-field input.has-suffix{padding-right:28px;}
+.modal-field input:focus{border-color:var(--gold);}
+.modal-actions{display:flex;gap:8px;margin-top:16px;}
+.btn-modal-save{flex:1;padding:11px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.86rem;font-weight:600;cursor:pointer;transition:background .15s;}
+.btn-modal-save:hover{background:var(--gold-light);}
+.btn-modal-cancel{padding:11px 16px;background:none;border:1px solid var(--border-soft);color:var(--muted);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.86rem;cursor:pointer;transition:all .15s;}
+.btn-modal-cancel:hover{border-color:var(--border);color:var(--cream);}
+.modal-err{font-size:0.76rem;color:var(--red);margin-top:6px;min-height:18px;}
+#sharePreviewWrap{margin-bottom:14px;border-radius:10px;overflow:hidden;background:#0a0f1e;min-height:180px;display:flex;align-items:center;justify-content:center;}
+#shareGenerating{color:var(--muted);font-size:0.82rem;}
+#sharePreviewImg{display:none;width:100%;border-radius:10px;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:18px 36px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);gap:14px;flex-wrap:wrap;}
+.footer-links{display:flex;gap:16px;align-items:center;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
+.footer-links a:hover{color:var(--gold);}
+.btn-bug{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border-soft);background:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.75rem;cursor:pointer;transition:all .15s;}
+.btn-bug:hover{border-color:rgba(201,168,76,0.3);color:var(--cream);}
+
+@media(max-width:860px){.two-col{grid-template-columns:1fr;}.pie-area{height:150px;}}
+@media(max-width:760px){
+  .sidebar{display:none;}
+  .main-content{padding:22px 18px 56px;}
+  .stats-row{grid-template-columns:1fr;}
+  .dc-stats{grid-template-columns:repeat(2,1fr);gap:10px 0;}
+  footer{padding:18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ SIGNED OUT ══════════ -->
+<div id="dashLocked">
+  <div class="locked-top">
+    <a class="logo" href="/">VestlyFi</a>
+    <a class="back" href="/">← Back to site</a>
+  </div>
+  <div class="locked-wrap">
+    <div class="locked-intro">
+      <div class="page-tag">Debt Tracker</div>
+      <h1>Watch your debt <em>disappear</em></h1>
+      <p>Save your debts, set an extra payment on each, and see your payoff date and interest savings update instantly. Log balance updates over time and share a progress card showing how far you've come.</p>
+    </div>
+    <div class="auth-card">
+      <h2>Track your <em>progress</em></h2>
+      <p class="auth-card-sub">Sign in to save your debts, set extra payments, and watch your payoff date move closer.</p>
+      <div class="auth-tabs" id="authTabs">
+        <button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
+      </div>
+      <div id="signinForm">
+        <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
+        <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
+        <button class="btn-auth" onclick="signIn()">Sign In</button>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="showResetForm()">Forgot your password?</button></div>
+        <div class="auth-msg" id="siMsg"></div>
+      </div>
+      <div id="signupForm" style="display:none">
+        <div class="auth-field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
+        <div class="auth-field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 6 characters"></div>
+        <div class="auth-field"><label>Confirm Password</label><input type="password" id="suPasswordConfirm" placeholder="Re-enter your password"></div>
+        <button class="btn-auth" onclick="signUp()">Create Account</button>
+        <div class="auth-msg" id="suMsg"></div>
+      </div>
+      <div id="resetForm" style="display:none">
+        <p class="auth-form-title">Reset your password</p>
+        <p class="auth-form-sub">Enter the email you signed up with and we'll send you a link to set a new password.</p>
+        <div class="auth-field"><label>Email</label><input type="email" id="rsEmail" placeholder="you@example.com"></div>
+        <button class="btn-auth" onclick="requestReset()">Send reset link</button>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="showSigninForm()">← Back to sign in</button></div>
+        <div class="auth-msg" id="rsMsg"></div>
+      </div>
+      <div id="newPasswordForm" style="display:none">
+        <p class="auth-form-title">Set a new password</p>
+        <p class="auth-form-sub">You're verified. Choose a new password for your account.</p>
+        <div class="auth-field"><label>New Password</label><input type="password" id="npPassword" placeholder="At least 6 characters"></div>
+        <div class="auth-field"><label>Confirm Password</label><input type="password" id="npPasswordConfirm" placeholder="Re-enter your password"></div>
+        <button class="btn-auth" onclick="updatePassword()">Update password</button>
+        <div class="auth-msg" id="npMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ SIGNED IN ══════════ -->
+<div id="dashApp" style="display:none">
+  <div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo"><a href="/">VestlyFi</a></div>
+      <div class="sb-nav">
+        <div class="sb-cap">Main</div>
+        <a href="/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a>
+        <div class="sb-trackers">
+          <div class="sb-cap">Trackers</div>
+          <a href="/net-worth/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Net Worth</a>
+          <a href="/debt-tracker/" class="sb-link active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Debt</a>
+        </div>
+        <a href="/calculators/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg>Calculators</a>
+        <a href="/create-a-diagram/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><line x1="12" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="19" y2="17"/></svg>Diagrams</a>
+        <div class="sb-div"></div>
+        <div class="sb-cap">Tools</div>
+        <a href="/coast-fire/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Coast FIRE</a>
+        <a href="/retirement/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Retirement</a>
+        <a href="/debt-payoff/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Debt Payoff</a>
+      </div>
+      <div class="sb-bottom">
+        <div class="user-chip"><div class="user-avatar" id="userAvatar">–</div><div class="user-email" id="userEmail">–</div></div>
+        <button class="btn-signout" onclick="signOut()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-outer">
+      <main class="main-content">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Debt <span>Tracker</span></div>
+            <div class="page-subtitle" id="pageSubtitle">Loading…</div>
+          </div>
+          <div class="header-actions" id="headerActions" style="display:none">
+            <button class="btn-secondary" onclick="openImportModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import from Net Worth</button>
+            <button class="btn-secondary" onclick="openShareModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share progress</button>
+            <button class="btn-primary" onclick="openDebtModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add debt</button>
+          </div>
+        </div>
+
+        <div id="dashLoading" class="dash-loading"><div class="dash-spinner"></div>Loading your dashboard…</div>
+
+        <div id="dashContent" style="display:none;flex-direction:column;gap:16px;">
+
+          <!-- EMPTY -->
+          <div id="dashEmpty" style="display:none">
+            <div class="empty-state">
+              <h3>No debts saved yet</h3>
+              <p>Add your first debt to start tracking. Set an extra payment on any debt to see how much interest you'll save and how much sooner you'll be free.</p>
+              <div class="empty-actions">
+                <button class="btn-primary" onclick="openDebtModal()">+ Add a debt</button>
+                <button class="btn-secondary" onclick="openImportModal()">Import from Net Worth</button>
+                <a class="btn-secondary" href="/debt-payoff/" style="text-decoration:none;">Build a payoff plan →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- FILLED -->
+          <div id="dashFilled" style="display:none;flex-direction:column;gap:16px;">
+
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-label">Tracked Debts</div>
+                <div class="stat-val red" id="statTracked">$0</div>
+                <div class="stat-note" id="statTrackedNote">0 active debts</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Monthly Payment</div>
+                <div class="stat-val" id="statMonthly">$0</div>
+                <div class="stat-note" id="statMonthlyNote"></div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Debt-Free Date</div>
+                <div class="stat-val gold date" id="statDate">—</div>
+                <div class="stat-note" id="statDateNote"></div>
+              </div>
+            </div>
+
+            <div class="two-col">
+              <div class="panel">
+                <div class="panel-ttl">Payoff timeline</div>
+                <div class="chart-legend">
+                  <div class="leg-item"><div class="leg-line" style="border-top:1.5px dashed rgba(245,240,232,0.3);height:0;"></div>Minimums only</div>
+                  <div class="leg-item"><div class="leg-line" style="background:var(--gold);"></div>With extra payments</div>
+                </div>
+                <div id="chartEmpty" class="chart-empty" style="display:none">Add an active debt to chart your payoff.</div>
+                <div class="chart-area" id="chartWrap"><canvas id="payoffChart"></canvas></div>
+              </div>
+              <div class="panel">
+                <div class="panel-ttl">Breakdown</div>
+                <div class="pie-area"><canvas id="breakdownChart"></canvas></div>
+                <div id="pieLegend"></div>
+              </div>
+            </div>
+
+            <div class="rec-card" id="recCard">
+              <div class="rec-head">
+                <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+                <div class="rec-title">Where your extra payments work hardest</div>
+                <div class="rec-note">Based on $100/mo extra</div>
+                <button class="rec-dismiss" type="button" aria-label="Dismiss" onclick="dismissRecCard()">&#10005;</button>
+              </div>
+              <div class="rec-rows" id="recRows"></div>
+            </div>
+
+            <div class="section-head">
+              <h3>Your debts</h3>
+              <button class="btn-secondary" onclick="openDebtModal()">+ Add debt</button>
+            </div>
+            <div class="debt-list" id="debtList"></div>
+
+            <div id="excludedSection" style="display:none">
+              <div class="excl-section-hdr">Excluded from payoff plan</div>
+              <div class="debt-list" id="excludedList"></div>
+            </div>
+
+            <div class="share-wrap">
+              <button class="btn-share-dash" onclick="openShareModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                Share My Progress
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <span>© 2026 VestlyFi</span>
+        <div class="footer-links">
+          <a href="/privacy/">Privacy</a>
+          <a href="/debt-payoff/">Payoff Calculator</a>
+          <button class="btn-bug" onclick="openBugModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+            Report a bug
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT DEBT MODAL -->
+<div class="modal-overlay" id="debtModal">
+  <div class="modal">
+    <div class="modal-title" id="debtModalTitle">Add a Debt</div>
+    <div class="modal-sub">Enter the details for this debt account.</div>
+    <div class="modal-field"><label>Name</label><input type="text" id="dmName" placeholder="e.g. Car Loan"></div>
+    <div class="modal-field">
+      <label>Current Balance</label>
+      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmBalance" oninput="fmtComma(this)"></div>
+    </div>
+    <div class="modal-field">
+      <label>Interest Rate (APR)</label>
+      <div class="input-wrap"><input class="has-suffix" type="number" id="dmRate" min="0" max="100" step="0.1"><span class="suffix">%</span></div>
+    </div>
+    <div class="modal-field">
+      <label>Minimum Monthly Payment</label>
+      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmMin" oninput="fmtComma(this)"></div>
+    </div>
+    <div class="modal-err" id="debtModalErr"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeDebtModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveDebtModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE BALANCE MODAL -->
+<div class="modal-overlay" id="updateBalModal">
+  <div class="modal">
+    <div class="modal-title">Update Balance</div>
+    <div class="modal-sub" id="updateBalSub"></div>
+    <div class="modal-field">
+      <label>New Balance</label>
+      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="ubNewBalance" oninput="fmtComma(this)"></div>
+    </div>
+    <div class="modal-err" id="updateBalErr"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeUpdateBalModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveUpdateBalance()">Save Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal" style="max-width:560px;">
+    <div class="modal-title">Share Your Progress</div>
+    <div class="modal-sub" id="shareModalSub">Generating your progress card…</div>
+    <div id="sharePreviewWrap"><div id="shareGenerating">Building image…</div><img id="sharePreviewImg" alt="Share preview"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeShareModal()">Cancel</button>
+      <button class="btn-modal-save" id="downloadBtn" onclick="downloadShareImage()">Download</button>
+      <button class="btn-modal-save" style="background:var(--navy-light);color:var(--cream);border:1px solid var(--border-soft);" onclick="copyShareImage()">Copy Image</button>
+    </div>
+    <div class="modal-err" id="shareMsg" style="color:var(--green)"></div>
+  </div>
+</div>
+<canvas id="shareCanvas" style="display:none"></canvas>
+
+<!-- IMPORT FROM NET WORTH MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">Import from Net Worth</div>
+    <div class="modal-sub">Pulled from the liabilities you track on your net-worth dashboard. Balances are filled in — just add the interest rate (APR) and minimum payment so we can chart your payoff.</div>
+    <div id="importBody"></div>
+    <div class="modal-err" id="importErr"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeImportModal()">Cancel</button>
+      <button class="btn-modal-save" id="importSaveBtn" onclick="confirmImport()">Import selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUG MODAL -->
+<div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email (optional)</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+    </div>
+    <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
+
+const REC_DISMISS_KEY='vf_debt_rec_dismissed';
+const DEBT_COLORS=['#f87171','#c9a84c','#60a5fa','#4ade80','#a78bfa','#fb923c','#f472b6','#38bdf8'];
+let currentUser=null,myDebts=[],myHistory=[],payoffChartInstance=null,breakdownChartInstance=null,editingDebtId=null,updatingBalDebtId=null;
+
+/* ── HELPERS ── */
+function fmt(n){if(!isFinite(n))return'—';if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+Math.round(n).toLocaleString();}
+function fmtComma(input){let raw=input.value.replace(/[^0-9.]/g,'');const parts=raw.split('.');parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');input.value=parts.length>1?parts[0]+'.'+parts[1]:parts[0];}
+function parseNum(s){return parseFloat((s||'').toString().replace(/,/g,''));}
+function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function fitText(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;let s=t;while(s.length>1&&ctx.measureText(s+'…').width>maxW)s=s.slice(0,-1);return s+'…';}
+function monthLabel(offset){const d=new Date();const t=new Date(d.getFullYear(),d.getMonth()+offset,1);return t.toLocaleDateString('en-US',{month:'short'})+" '"+String(t.getFullYear()).slice(2);}
+function monthsToStr(m){if(!isFinite(m)||m<=0)return'—';const y=Math.floor(m/12),mo=m%12;return(y>0?y+'y ':'')+(mo>0?mo+'m':'')||'<1m';}
+
+/* ── SIMULATION ──
+   Each debt is paid at a fixed monthly amount (min + its own extra).
+   simSingle: months & total interest for one debt at a given payment. */
+function simSingle(balance,annualRate,payment){
+  let bal=balance,interest=0,m=0;const mr=annualRate/100/12;
+  if(bal<=0)return{months:0,interest:0,paysOff:true};
+  while(bal>0.01&&m<600){
+    m++;const i=bal*mr;interest+=i;bal+=i;
+    const pay=Math.min(payment,bal);bal-=pay;
+    if(pay<=i){/* not making progress */ if(m>=600)break;}
+  }
+  return{months:m,interest,paysOff:bal<=0.01};
+}
+/* Portfolio month-by-month total balances. useExtra=true applies each debt's extra. */
+function simPortfolio(debts,useExtra){
+  let ds=debts.map(d=>({bal:d.balance,rate:d.rate,pay:d.min+(useExtra?d.extra:0)}));
+  const totals=[ds.reduce((s,d)=>s+d.bal,0)];let m=0;
+  while(ds.some(d=>d.bal>0.01)&&m<600){
+    m++;
+    ds.forEach(d=>{if(d.bal<=0)return;const i=d.bal*(d.rate/100/12);d.bal+=i;d.bal-=Math.min(d.pay,d.bal);if(d.bal<0)d.bal=0;});
+    totals.push(ds.reduce((s,d)=>s+d.bal,0));
+    if(totals[totals.length-1]>=totals[totals.length-2]&&m>3)break; /* stalled: min < interest */
+  }
+  return totals;
+}
+
+/* ── AUTH ── */
+function switchAuthTab(t){
+  document.getElementById('authTabs').style.display='flex';
+  ['resetForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
+  document.querySelectorAll('#dashLocked .auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
+  document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
+  document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
+}
+function showSigninForm(){switchAuthTab('signin');}
+function showResetForm(){
+  document.getElementById('authTabs').style.display='none';
+  ['signinForm','signupForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('resetForm').style.display='block';
+  document.getElementById('rsMsg').textContent='';
+  const si=document.getElementById('siEmail').value.trim();if(si)document.getElementById('rsEmail').value=si;
+}
+function showNewPasswordForm(){
+  document.getElementById('authTabs').style.display='none';
+  ['signinForm','signupForm','resetForm'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('newPasswordForm').style.display='block';
+  showDashLocked();
+}
+async function requestReset(){
+  const email=document.getElementById('rsEmail').value.trim(),msg=document.getElementById('rsMsg');
+  if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';return;}
+  msg.className='auth-msg';msg.textContent='Sending…';
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/debt-tracker/'});
+  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
+  else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link — check spam too.';}
+}
+async function updatePassword(){
+  const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');
+  if(pw!==cf){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
+  if(pw.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
+  msg.className='auth-msg';msg.textContent='Updating…';
+  const{error}=await sb.auth.updateUser({password:pw});
+  if(error){msg.className='auth-msg err';msg.textContent=error.message;return;}
+  msg.className='auth-msg ok';msg.textContent='Password updated! Loading your dashboard…';
+  recoveryMode=false;if(history.replaceState)history.replaceState(null,'',window.location.pathname);
+  setTimeout(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user)await onSignedIn(session);else{switchAuthTab('signin');document.getElementById('siMsg').className='auth-msg ok';document.getElementById('siMsg').textContent='Password updated. Please sign in.';}},800);
+}
+['siEmail','siPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signIn();}));
+['suEmail','suPassword','suPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
+document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='Enter')requestReset();});
+['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
+
+async function signIn(){
+  const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');
+  msg.className='auth-msg';msg.textContent='Signing in…';
+  const{error}=await sb.auth.signInWithPassword({email,password});
+  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
+  else{msg.className='auth-msg ok';msg.textContent='Success!';}
+}
+async function signUp(){
+  const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');
+  if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
+  if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
+  msg.className='auth-msg';msg.textContent='Creating account…';
+  const{error}=await sb.auth.signUp({email,password});
+  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
+  else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';}
+}
+async function signOut(){await sb.auth.signOut();}
+function showDashLocked(){document.getElementById('dashLocked').style.display='block';document.getElementById('dashApp').style.display='none';}
+function showDashApp(){document.getElementById('dashLocked').style.display='none';document.getElementById('dashApp').style.display='block';}
+function setUserChip(){if(!currentUser)return;const e=currentUser.email||'';document.getElementById('userEmail').textContent=e;document.getElementById('userAvatar').textContent=e.charAt(0).toUpperCase();}
+
+async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();}
+
+let initDone=false,recoveryMode=false;
+if(window.location.hash.includes('type=recovery'))recoveryMode=true;
+(async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(recoveryMode){showNewPasswordForm();}
+  else if(session?.user){await onSignedIn(session);}
+  else{showDashLocked();}
+  initDone=true;
+})();
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
+  if(recoveryMode&&event==='SIGNED_IN')return;
+  if(!initDone&&event==='SIGNED_IN')return;
+  if(event==='SIGNED_IN'&&session?.user){await onSignedIn(session);}
+  else if(event==='SIGNED_OUT'){currentUser=null;myDebts=[];myHistory=[];showDashLocked();}
+});
+
+/* ── LOAD ── */
+async function loadDashboard(){
+  document.getElementById('dashLoading').style.display='flex';
+  document.getElementById('dashContent').style.display='none';
+  document.getElementById('headerActions').style.display='none';
+  const[{data:debts},{data:hist}]=await Promise.all([
+    sb.from('debts').select('*').order('sort_order',{ascending:true}),
+    sb.from('debt_balance_history').select('*').order('date',{ascending:true})
+  ]);
+  myDebts=(debts||[]).map(d=>({...d,extra_payment:Number(d.extra_payment)||0,excluded:!!d.excluded}));
+  myHistory=hist||[];
+  document.getElementById('dashLoading').style.display='none';
+  document.getElementById('dashContent').style.display='flex';
+  renderDashboard();
+}
+
+/* ── RENDER ── */
+function renderDashboard(){
+  const hasDebts=myDebts.length>0;
+  document.getElementById('headerActions').style.display=hasDebts?'flex':'none';
+  if(!hasDebts){
+    document.getElementById('dashEmpty').style.display='block';
+    document.getElementById('dashFilled').style.display='none';
+    document.getElementById('pageSubtitle').textContent='Add your first debt to start tracking.';
+    return;
+  }
+  document.getElementById('dashEmpty').style.display='none';
+  document.getElementById('dashFilled').style.display='flex';
+
+  const included=myDebts.filter(d=>!d.excluded);
+  const excluded=myDebts.filter(d=>d.excluded);
+  // active = included, not paid off, balance>0
+  const active=included.filter(d=>!d.paid_off&&Number(d.balance)>0)
+    .map(d=>({id:d.id,name:d.name,balance:Number(d.balance),rate:Number(d.rate),min:Number(d.min_payment),extra:Number(d.extra_payment)||0}));
+
+  // assign colors (avalanche order: highest APR first)
+  const ordered=[...active].sort((a,b)=>b.rate-a.rate);
+  const colorById={};ordered.forEach((d,i)=>colorById[d.id]=DEBT_COLORS[i%DEBT_COLORS.length]);
+
+  // Render the debt list FIRST so it always updates, even if a chart throws.
+  renderDebtCards(active,included,excluded,colorById,ordered);
+
+  const totalTracked=included.reduce((s,d)=>s+Number(d.balance),0);
+  const totalExtra=active.reduce((s,d)=>s+d.extra,0);
+  const totalMin=active.reduce((s,d)=>s+d.min,0);
+
+  document.getElementById('pageSubtitle').textContent=`${included.length} tracked debt${included.length!==1?'s':''} · ${fmt(totalTracked)} remaining`;
+
+  // STAT 1: tracked
+  document.getElementById('statTracked').textContent=fmt(totalTracked);
+  document.getElementById('statTrackedNote').textContent=`${active.length} active debt${active.length!==1?'s':''}`;
+  // STAT 2: monthly
+  document.getElementById('statMonthly').textContent=fmt(totalMin+totalExtra);
+  document.getElementById('statMonthlyNote').textContent=totalExtra>0?`incl. ${fmt(totalExtra)} extra`:'minimum payments';
+
+  // simulate portfolio (base vs accel)
+  let baseMonths=0,accelMonths=0;
+  const statDate=document.getElementById('statDate'),statDateNote=document.getElementById('statDateNote');
+  if(active.length>0){
+    const baseTotals=simPortfolio(active,false);
+    const accelTotals=simPortfolio(active,true);
+    baseMonths=baseTotals.length-1;accelMonths=accelTotals.length-1;
+    const accelPaysOff=accelTotals[accelTotals.length-1]<=0.01;
+    if(accelPaysOff){
+      statDate.textContent=monthLabel(accelMonths);
+      const faster=baseMonths-accelMonths;
+      if(totalExtra>0&&faster>0){statDateNote.className='stat-note good';statDateNote.textContent=`↓ ${faster} mo faster w/ extras`;}
+      else{statDateNote.className='stat-note';statDateNote.textContent=`${monthsToStr(accelMonths)} to go`;}
+    } else {
+      statDate.textContent='—';statDateNote.className='stat-note';statDateNote.textContent='';
+    }
+    try{renderPayoffChart(baseTotals,accelTotals);renderBreakdown(ordered,colorById);renderRecCard(active,colorById);}catch(e){console.error('Chart render failed:',e);}
+  } else {
+    statDate.textContent='🎉 Done!';statDateNote.className='stat-note good';statDateNote.textContent='All tracked debts paid';
+    if(payoffChartInstance){payoffChartInstance.destroy();payoffChartInstance=null;}
+    document.getElementById('chartWrap').style.display='none';document.getElementById('chartEmpty').style.display='block';
+    renderBreakdown([],{});
+    document.getElementById('recCard').style.display='none';
+  }
+}
+
+function renderPayoffChart(baseTotals,accelTotals){
+  document.getElementById('chartWrap').style.display='block';
+  document.getElementById('chartEmpty').style.display='none';
+  const n=Math.max(baseTotals.length,accelTotals.length);
+  const labels=[],base=[],accel=[];
+  for(let i=0;i<n;i++){
+    labels.push(monthLabel(i));
+    base.push(i<baseTotals.length?Math.round(baseTotals[i]):0);
+    accel.push(i<accelTotals.length?Math.round(accelTotals[i]):0);
+  }
+  const payoffCv=document.getElementById('payoffChart');
+  if(payoffChartInstance){payoffChartInstance.destroy();payoffChartInstance=null;}
+  const strayP=Chart.getChart(payoffCv);if(strayP)strayP.destroy();
+  payoffChartInstance=new Chart(payoffCv.getContext('2d'),{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Minimums only',data:base,borderColor:'rgba(245,240,232,0.3)',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:0,pointHoverRadius:4,tension:0.25},
+      {label:'With extra payments',data:accel,borderColor:'#c9a84c',backgroundColor:'rgba(201,168,76,0.08)',borderWidth:2.5,pointRadius:0,pointHoverRadius:4,fill:true,tension:0.25}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'rgba(245,240,232,0.35)',font:{family:'Outfit',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
+        y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(245,240,232,0.35)',font:{family:'Outfit',size:10},callback:v=>fmt(v)}}
+      }
+    }
+  });
+}
+
+function renderBreakdown(ordered,colorById){
+  const legend=document.getElementById('pieLegend');
+  if(ordered.length===0){
+    if(breakdownChartInstance){breakdownChartInstance.destroy();breakdownChartInstance=null;}
+    legend.innerHTML='<div class="chart-empty" style="padding:10px 0">No active debt.</div>';return;
+  }
+  const total=ordered.reduce((s,d)=>s+d.balance,0);
+  const data=ordered.map(d=>d.balance),colors=ordered.map(d=>colorById[d.id]),names=ordered.map(d=>d.name);
+  const bdCv=document.getElementById('breakdownChart');
+  if(breakdownChartInstance){breakdownChartInstance.destroy();breakdownChartInstance=null;}
+  const strayB=Chart.getChart(bdCv);if(strayB)strayB.destroy();
+  breakdownChartInstance=new Chart(bdCv.getContext('2d'),{
+    type:'doughnut',
+    data:{labels:names,datasets:[{data,backgroundColor:colors.map(c=>c+'d9'),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${fmt(c.parsed)}`}}}}
+  });
+  legend.innerHTML=ordered.map(d=>{
+    const pct=total>0?Math.round((d.balance/total)*100):0;
+    return`<div class="pleg"><span class="pleg-dot" style="background:${colorById[d.id]}"></span><span class="pleg-name">${escHtml(d.name)}</span><span class="pleg-pct">${pct}%</span></div>`;
+  }).join('');
+}
+
+function renderRecCard(active,colorById){
+  const card=document.getElementById('recCard');
+  if(localStorage.getItem(REC_DISMISS_KEY)==='1'||active.length===0){card.style.display='none';return;}
+  card.style.display='block';
+  // savings if $100/mo extra applied to each debt individually
+  const rows=active.map(d=>{
+    const baseI=simSingle(d.balance,d.rate,d.min);
+    const withI=simSingle(d.balance,d.rate,d.min+100);
+    const saved=Math.max(0,baseI.interest-withI.interest);
+    const monthsSaved=Math.max(0,(baseI.months||0)-(withI.months||0));
+    return{...d,saved,monthsSaved};
+  }).sort((a,b)=>b.saved-a.saved).slice(0,3);
+  const winnerId=rows.length?rows[0].id:null;
+  document.getElementById('recRows').innerHTML=rows.map(r=>`
+    <div class="rec-row ${r.id===winnerId?'winner':''}">
+      <div class="rec-debt">${escHtml(r.name)}</div>
+      <div class="rec-apr">${r.rate.toFixed(1)}% APR</div>
+      <div class="rec-body">An extra $100/mo will save you <strong class="${r.id===winnerId?'g':''}">${fmt(r.saved)}</strong> on this debt and pay it off <strong>${r.monthsSaved} month${r.monthsSaved!==1?'s':''} sooner.</strong></div>
+      ${r.id===winnerId?'<div class="rec-badge">Best use of $100</div>':''}
+    </div>`).join('');
+}
+function dismissRecCard(){localStorage.setItem(REC_DISMISS_KEY,'1');document.getElementById('recCard').style.display='none';}
+
+function renderDebtCards(active,included,excluded,colorById,ordered){
+  const firstId=ordered.length?ordered[0].id:null; // highest APR active = pay first
+  const activeById={};active.forEach(a=>activeById[a.id]=a);
+
+  function card(d){
+    const orig=Number(d.original_balance),bal=Number(d.balance),rate=Number(d.rate),min=Number(d.min_payment);
+    const extra=Number(d.extra_payment)||0;
+    const pct=orig>0?Math.min(100,Math.max(0,((orig-bal)/orig)*100)):0;
+    const a=activeById[d.id];
+    const color=colorById[d.id]||'#c9a84c';
+    // badge
+    let badge='';
+    if(d.excluded)badge='<span class="dc-badge badge-excl">Excluded</span>';
+    else if(d.paid_off||bal<=0)badge='<span class="dc-badge badge-paid">Paid off</span>';
+    else if(d.id===firstId)badge='<span class="dc-badge badge-first">Pay first</span>';
+    else badge='<span class="dc-badge badge-ok">On track</span>';
+    // payoff date (this debt alone, min+extra)
+    let payoffStr='—';
+    if(a){const s=simSingle(a.balance,a.rate,a.min+a.extra);payoffStr=s.paysOff?monthLabel(s.months):'—';}
+    else if(d.paid_off||bal<=0)payoffStr='Done';
+    // saves tag
+    let savesTag='';
+    if(a&&extra>0){
+      const baseI=simSingle(a.balance,a.rate,a.min),withI=simSingle(a.balance,a.rate,a.min+a.extra);
+      const saved=Math.max(0,baseI.interest-withI.interest);
+      if(saved>=1)savesTag=`<span class="saves-tag">saves ${fmt(saved)}</span>`;
+    }
+    const fillColor=(d.paid_off||bal<=0)?'var(--green)':color;
+    const canExtra=!!a;
+    return`<div class="debt-card ${d.excluded?'excluded':''} ${(d.paid_off||bal<=0)?'paid':''}">
+      <div class="dc-head">
+        <span class="dc-name">${escHtml(d.name)}</span>
+        <span class="dc-apr">${rate.toFixed(1)}% APR</span>
+        ${badge}
+      </div>
+      <div class="dc-track"><div class="dc-fill" style="width:${pct}%;background:${fillColor};"></div></div>
+      <div class="dc-stats">
+        <div class="dc-stat"><label>Balance</label><span>${fmt(bal)}</span></div>
+        <div class="dc-stat"><label>Original</label><span>${fmt(orig)}</span></div>
+        <div class="dc-stat"><label>Min pay</label><span>${fmt(min)}/mo</span></div>
+        <div class="dc-stat"><label>Payoff</label><span>${payoffStr}</span></div>
+      </div>
+      <div class="dc-control">
+        <div class="dc-extra">
+          ${canExtra?`<span class="dc-extra-lbl">+ Extra/mo</span>
+            <span class="dc-extra-wrap"><span class="pfx">$</span><input type="text" value="${extra?extra.toLocaleString():'0'}" inputmode="numeric" oninput="fmtComma(this)" onchange="setDebtExtra('${d.id}',this.value)"></span>
+            ${savesTag}`
+          :`<span class="dc-extra-lbl" style="opacity:.55">${d.excluded?'Not in payoff plan':'Paid off'}</span>`}
+        </div>
+        <div class="dc-actions">
+          ${(!d.paid_off&&bal>0)?`<button class="dc-btn primary" onclick="openUpdateBalModal('${d.id}')">Update</button>`:''}
+          <button class="dc-btn" onclick="openDebtModal('${d.id}')">Edit</button>
+          <button class="dc-btn danger" title="Delete" onclick="deleteDebt('${d.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+          <div class="excl-row"><input type="checkbox" class="excl-check" id="ex_${d.id}" ${d.excluded?'checked':''} onchange="toggleExclude('${d.id}',this.checked)"><label class="excl-label" for="ex_${d.id}">Exclude</label></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // included list, avalanche order (active first by APR, then paid off)
+  const incSorted=[...included].sort((a,b)=>{
+    const ap=(a.paid_off||Number(a.balance)<=0)?1:0,bp=(b.paid_off||Number(b.balance)<=0)?1:0;
+    if(ap!==bp)return ap-bp;
+    return Number(b.rate)-Number(a.rate);
+  });
+  document.getElementById('debtList').innerHTML=incSorted.map(card).join('');
+
+  const exSec=document.getElementById('excludedSection');
+  if(excluded.length>0){
+    exSec.style.display='block';
+    document.getElementById('excludedList').innerHTML=excluded.map(card).join('');
+  } else exSec.style.display='none';
+}
+
+/* ── PER-DEBT EXTRA + EXCLUDE ── */
+async function setDebtExtra(id,val){
+  const extra=Math.max(0,parseNum(val)||0);
+  const d=myDebts.find(x=>x.id===id);if(d)d.extra_payment=extra;
+  renderDashboard();
+  await sb.from('debts').update({extra_payment:extra,updated_at:new Date().toISOString()}).eq('id',id);
+}
+async function toggleExclude(id,checked){
+  const d=myDebts.find(x=>x.id===id);if(d)d.excluded=checked;
+  renderDashboard();
+  await sb.from('debts').update({excluded:checked,updated_at:new Date().toISOString()}).eq('id',id);
+}
+
+/* ── DEBT MODAL ── */
+function openDebtModal(id){
+  editingDebtId=id||null;
+  const d=id?myDebts.find(x=>x.id===id):null;
+  document.getElementById('debtModalTitle').textContent=id?'Edit Debt':'Add a Debt';
+  document.getElementById('dmName').value=d?d.name:'';
+  document.getElementById('dmBalance').value=d?Number(d.balance).toLocaleString():'';
+  document.getElementById('dmRate').value=d?d.rate:'';
+  document.getElementById('dmMin').value=d?Number(d.min_payment).toLocaleString():'';
+  document.getElementById('debtModalErr').textContent='';
+  document.getElementById('debtModal').classList.add('open');
+  setTimeout(()=>document.getElementById('dmName').focus(),50);
+}
+function closeDebtModal(){document.getElementById('debtModal').classList.remove('open');}
+document.getElementById('dmName').addEventListener('keydown',e=>{if(e.key==='Enter')saveDebtModal();});
+
+async function saveDebtModal(){
+  const name=document.getElementById('dmName').value.trim();
+  const balance=parseNum(document.getElementById('dmBalance').value);
+  const rate=parseFloat(document.getElementById('dmRate').value);
+  const min=parseNum(document.getElementById('dmMin').value);
+  const err=document.getElementById('debtModalErr');
+  if(!name){err.textContent='Please enter a name.';return;}
+  if(!(balance>=0)){err.textContent='Please enter a valid balance.';return;}
+  if(!(rate>=0)){err.textContent='Please enter a valid interest rate.';return;}
+  if(!(min>=0)){err.textContent='Please enter a valid minimum payment.';return;}
+  err.textContent='';
+  if(editingDebtId){
+    const existing=myDebts.find(x=>x.id===editingDebtId);
+    const updates={name,rate,min_payment:min,updated_at:new Date().toISOString()};
+    const balanceChanged=Number(existing.balance)!==balance;
+    if(balanceChanged){updates.balance=balance;updates.paid_off=balance<=0;if(balance<=0)updates.paid_off_date=new Date().toISOString().slice(0,10);}
+    const{error}=await sb.from('debts').update(updates).eq('id',editingDebtId);
+    if(error){err.textContent='Error saving. Please try again.';return;}
+    if(balanceChanged)await sb.from('debt_balance_history').insert([{user_id:currentUser.id,debt_id:editingDebtId,date:new Date().toISOString().slice(0,10),balance}]);
+  } else {
+    const{error}=await sb.from('debts').insert([{user_id:currentUser.id,name,balance,original_balance:balance,rate,min_payment:min,sort_order:myDebts.length,paid_off:balance<=0,extra_payment:0,excluded:false}]);
+    if(error){err.textContent='Error saving. Please try again.';return;}
+  }
+  closeDebtModal();
+  await loadDashboard();
+}
+async function deleteDebt(id){
+  if(!confirm('Delete this debt? This will remove all its balance history too.'))return;
+  await sb.from('debts').delete().eq('id',id);
+  await loadDashboard();
+}
+
+/* ── UPDATE BALANCE MODAL ── */
+function openUpdateBalModal(id){
+  updatingBalDebtId=id;
+  const d=myDebts.find(x=>x.id===id);
+  document.getElementById('updateBalSub').textContent=`${d.name} — current balance ${fmt(Number(d.balance))}`;
+  document.getElementById('ubNewBalance').value=Number(d.balance).toLocaleString();
+  document.getElementById('updateBalErr').textContent='';
+  document.getElementById('updateBalModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ubNewBalance').focus(),50);
+}
+function closeUpdateBalModal(){document.getElementById('updateBalModal').classList.remove('open');}
+document.getElementById('ubNewBalance').addEventListener('keydown',e=>{if(e.key==='Enter')saveUpdateBalance();});
+
+async function saveUpdateBalance(){
+  const newBal=parseNum(document.getElementById('ubNewBalance').value);
+  const err=document.getElementById('updateBalErr');
+  if(!(newBal>=0)){err.textContent='Please enter a valid balance.';return;}
+  err.textContent='';
+  const paidOff=newBal<=0;
+  const updates={balance:newBal,paid_off:paidOff,updated_at:new Date().toISOString()};
+  if(paidOff)updates.paid_off_date=new Date().toISOString().slice(0,10);
+  const{error}=await sb.from('debts').update(updates).eq('id',updatingBalDebtId);
+  if(error){err.textContent='Error saving. Please try again.';return;}
+  await sb.from('debt_balance_history').insert([{user_id:currentUser.id,debt_id:updatingBalDebtId,date:new Date().toISOString().slice(0,10),balance:newBal}]);
+  closeUpdateBalModal();
+  await loadDashboard();
+}
+
+/* ── SHARE HISTORY SERIES (for share card) ── */
+function buildHistorySeries(){
+  if(myDebts.length===0)return[];
+  const inc=myDebts.filter(d=>!d.excluded);
+  const today=new Date().toISOString().slice(0,10);
+  const dates=Array.from(new Set(myHistory.map(h=>h.date)));
+  if(!dates.includes(today))dates.push(today);
+  dates.sort();
+  return dates.map(date=>{
+    let total=0;
+    inc.forEach(d=>{
+      if(date===today){total+=Number(d.balance);return;}
+      const forDebt=myHistory.filter(h=>h.debt_id===d.id&&h.date<=date).sort((a,b)=>a.date<b.date?1:-1);
+      total+=forDebt.length>0?Number(forDebt[0].balance):Number(d.original_balance);
+    });
+    return{date,total};
+  });
+}
+
+/* ── SHARE CARD ── */
+function openShareModal(){
+  document.getElementById('sharePreviewImg').style.display='none';
+  document.getElementById('shareGenerating').style.display='block';
+  document.getElementById('shareMsg').textContent='';
+  const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';
+  const inc=myDebts.filter(d=>!d.excluded);
+  const totalOriginal=inc.reduce((s,d)=>s+Number(d.original_balance),0);
+  const totalRemaining=inc.reduce((s,d)=>s+Number(d.balance),0);
+  const pct=totalOriginal>0?(((totalOriginal-totalRemaining)/totalOriginal)*100):0;
+  document.getElementById('shareModalSub').textContent=`${pct.toFixed(0)}% paid off · ready to share`;
+  document.getElementById('shareModal').classList.add('open');
+  setTimeout(()=>renderShareCanvas(),50);
+}
+function closeShareModal(){document.getElementById('shareModal').classList.remove('open');}
+
+async function renderShareCanvas(){
+  const W=1200,H=630,SC=2,PAD=48,canvas=document.getElementById('shareCanvas');
+  canvas.width=W*SC;canvas.height=H*SC;const ctx=canvas.getContext('2d');ctx.scale(SC,SC);
+  try{await document.fonts.load('700 50px Outfit');await document.fonts.load('600 20px Outfit');await document.fonts.load('700 30px "Exo 2"');await document.fonts.ready;}catch(e){}
+
+  const inc=myDebts.filter(d=>!d.excluded);
+  const totalOriginal=inc.reduce((s,d)=>s+Number(d.original_balance),0);
+  const totalRemaining=inc.reduce((s,d)=>s+Number(d.balance),0);
+  const totalPaid=Math.max(0,totalOriginal-totalRemaining);
+  const pct=totalOriginal>0?Math.min(100,Math.max(0,(totalPaid/totalOriginal)*100)):0;
+
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0e1530');bg.addColorStop(1,'#080c1a');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  let g1=ctx.createRadialGradient(W*.5,-140,0,W*.5,-140,560);g1.addColorStop(0,'rgba(201,168,76,0.15)');g1.addColorStop(1,'transparent');
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(201,168,76,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
+  ctx.textBaseline='alphabetic';ctx.textAlign='left';
+
+  ctx.font='700 30px "Exo 2",sans-serif';ctx.fillStyle='#c9a84c';ctx.fillText('VestlyFi',PAD,52);
+  const dateStr=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  ctx.font='400 18px Outfit,sans-serif';const dW=ctx.measureText(dateStr).width,dX=W-PAD-dW-30;
+  ctx.fillStyle='rgba(255,255,255,0.05)';ctx.beginPath();ctx.roundRect(dX,32,dW+30,32,16);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle='rgba(245,240,232,0.62)';ctx.fillText(dateStr,dX+15,53);
+
+  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(pct.toFixed(0)+'% Paid Off',PAD-1,122);
+  ctx.font='600 20px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.55)';ctx.fillText(`${fmt(totalPaid)} paid · ${fmt(totalRemaining)} remaining`,PAD-1,150);
+
+  const barY=178,barH=22,barX=PAD,barW=W-PAD*2;
+  ctx.fillStyle='rgba(255,255,255,0.06)';ctx.beginPath();ctx.roundRect(barX,barY,barW,barH,11);ctx.fill();
+  const fillW=barW*(pct/100);
+  if(fillW>0){const fg=ctx.createLinearGradient(barX,0,barX+fillW,0);fg.addColorStop(0,'#4ade80');fg.addColorStop(1,'#2d9960');ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(barX,barY,Math.max(fillW,22),barH,11);ctx.fill();}
+
+  const series=buildHistorySeries(),cY=238,cH=170;
+  if(series.length>=2){
+    const yAW=90,cX=PAD+yAW,cW=W-PAD-cX,vals=series.map(s=>s.total),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1,p=range*.1,yMin=Math.max(0,minV-p),yMax=maxV+p,yR=yMax-yMin||1;
+    const ptX=i=>cX+(i/(vals.length-1))*cW,ptY=v=>cY+cH-((v-yMin)/yR)*cH;
+    [minV,(minV+maxV)/2,maxV].forEach(v=>{const y=ptY(v);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cX,y);ctx.lineTo(cX+cW,y);ctx.stroke();ctx.textAlign='right';ctx.font='300 15px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.fillText(fmt(v),cX-14,y+5);});
+    ctx.textAlign='left';
+    const fg=ctx.createLinearGradient(0,cY,0,cY+cH);fg.addColorStop(0,'rgba(248,113,113,0.18)');fg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
+    ctx.lineTo(ptX(vals.length-1),cY+cH);ctx.lineTo(ptX(0),cY+cH);ctx.closePath();ctx.fillStyle=fg;ctx.fill();
+    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
+    ctx.strokeStyle='#f87171';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();
+    ctx.beginPath();ctx.arc(ptX(vals.length-1),ptY(vals[vals.length-1]),7,0,Math.PI*2);ctx.fillStyle='#f87171';ctx.fill();ctx.strokeStyle='#0e1530';ctx.lineWidth=3;ctx.stroke();
+  } else {
+    ctx.textAlign='center';ctx.font='300 20px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.fillText('Log balance updates to see your trend',W/2,cY+cH/2);ctx.textAlign='left';
+  }
+
+  const boxY=430,boxH=150,boxX=PAD,boxW=W-PAD*2;
+  ctx.fillStyle='rgba(255,255,255,0.025)';ctx.beginPath();ctx.roundRect(boxX,boxY,boxW,boxH,16);ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();
+  ctx.font='600 13px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.4)';
+  let cx2=boxX+24;for(const ch of'YOUR DEBTS'){ctx.fillText(ch,cx2,boxY+30);cx2+=ctx.measureText(ch).width+3;}
+  const sortedDebts=[...inc].sort((a,b)=>Number(b.balance)-Number(a.balance));
+  let ry=boxY+58;
+  sortedDebts.slice(0,5).forEach(d=>{
+    const orig=Number(d.original_balance),bal=Number(d.balance),dpct=orig>0?Math.min(100,Math.max(0,((orig-bal)/orig)*100)):0;
+    ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle=d.paid_off?'rgba(245,240,232,0.4)':'rgba(245,240,232,0.85)';
+    ctx.fillText(fitText(ctx,d.name,280),boxX+24,ry);
+    const barX2=boxX+340,barW2=420,barH2=8;
+    ctx.fillStyle='rgba(255,255,255,0.08)';ctx.beginPath();ctx.roundRect(barX2,ry-13,barW2,barH2,4);ctx.fill();
+    if(dpct>0){ctx.fillStyle=d.paid_off?'#4ade80':'#c9a84c';ctx.beginPath();ctx.roundRect(barX2,ry-13,Math.max(barW2*(dpct/100),6),barH2,4);ctx.fill();}
+    ctx.textAlign='right';ctx.fillStyle='rgba(245,240,232,0.7)';ctx.fillText(fmt(bal),boxX+boxW-24,ry);ctx.textAlign='left';
+    ry+=26;
+  });
+  if(sortedDebts.length>5){ctx.font='400 14px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.35)';ctx.fillText(`+${sortedDebts.length-5} more`,boxX+24,ry+2);}
+
+  ctx.font='400 16px Outfit,sans-serif';ctx.fillStyle='rgba(201,168,76,0.5)';ctx.textAlign='right';ctx.fillText('vestlyfi.com/debt-tracker',W-PAD,H-22);
+
+  const dataUrl=canvas.toDataURL('image/png');
+  document.getElementById('shareGenerating').style.display='none';
+  const img=document.getElementById('sharePreviewImg');img.src=dataUrl;img.style.display='block';
+}
+function downloadShareImage(){
+  const canvas=document.getElementById('shareCanvas'),isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent),dataUrl=canvas.toDataURL('image/png');
+  if(isMob){const w=window.open();w.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;"><img src="${dataUrl}" style="max-width:100%"></body></html>`);w.document.close();}
+  else{const a=document.createElement('a');a.download=`vestlyfi-debt-${new Date().toISOString().slice(0,10)}.png`;a.href=dataUrl;a.click();document.getElementById('shareMsg').textContent='Downloaded!';}
+}
+async function copyShareImage(){
+  const msg=document.getElementById('shareMsg');
+  try{document.getElementById('shareCanvas').toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied to clipboard!';});}
+  catch(e){msg.style.color='var(--red)';msg.textContent='Copy not supported — use Download instead.';}
+}
+
+/* ── MODAL BACKDROP ── */
+(function(){
+  const map={debtModal:closeDebtModal,updateBalModal:closeUpdateBalModal,shareModal:closeShareModal,importModal:closeImportModal};
+  Object.keys(map).forEach(id=>{
+    const el=document.getElementById(id);let down=false;
+    el.addEventListener('mousedown',e=>{down=e.target===el;});
+    el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});
+    el.addEventListener('click',e=>{if(e.target===el&&down)map[id]();down=false;});
+  });
+})();
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDebtModal();closeUpdateBalModal();closeShareModal();closeImportModal();}});
+
+/* ── IMPORT FROM NET WORTH ── */
+let importItems=[];
+async function openImportModal(){
+  const modal=document.getElementById('importModal'),body=document.getElementById('importBody'),saveBtn=document.getElementById('importSaveBtn');
+  document.getElementById('importErr').textContent='';
+  saveBtn.style.display='none';
+  body.innerHTML='<div class="import-empty">Loading your net-worth liabilities…</div>';
+  modal.classList.add('open');
+  const{data,error}=await sb.from('net_worth_entries').select('*').eq('type','liability').order('date',{ascending:true});
+  if(error){body.innerHTML='<div class="import-empty">Couldn\'t load your liabilities. Please try again.</div>';return;}
+  // latest entry per category = current balance
+  const latest={};
+  (data||[]).forEach(e=>{latest[e.category]={category:e.category,value:Number(e.value)||0};});
+  const existing=new Set(myDebts.map(d=>(d.name||'').trim().toLowerCase()));
+  importItems=Object.values(latest).filter(i=>i.value>0&&!existing.has((i.category||'').trim().toLowerCase()));
+  if(importItems.length===0){
+    const any=Object.keys(latest).length>0;
+    body.innerHTML=`<div class="import-empty">${any?'Every liability from your net-worth tracker is already here. Nothing new to import.':'No liabilities found on your net-worth tracker yet. Add some there first, or add a debt manually.'}</div>`;
+    return;
+  }
+  saveBtn.style.display='';
+  body.innerHTML=importItems.map((it,idx)=>`
+    <div class="import-row" id="imp_${idx}">
+      <div class="import-row-top">
+        <input type="checkbox" class="excl-check" id="impchk_${idx}" checked onchange="toggleImportRow(${idx},this.checked)">
+        <span class="import-row-name">${escHtml(it.category)}</span>
+      </div>
+      <div class="import-fields">
+        <div class="f"><label>Balance</label><div class="iw"><span class="pfx">$</span><input class="pf" type="text" id="impbal_${idx}" value="${Math.round(it.value).toLocaleString()}" inputmode="numeric" oninput="fmtComma(this)"></div></div>
+        <div class="f"><label>APR</label><div class="iw"><input class="sf" type="number" id="impapr_${idx}" min="0" max="100" step="0.1" placeholder="0.0"><span class="sfx">%</span></div></div>
+        <div class="f"><label>Min / mo</label><div class="iw"><span class="pfx">$</span><input class="pf" type="text" id="impmin_${idx}" inputmode="numeric" placeholder="0" oninput="fmtComma(this)"></div></div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>{const f=document.getElementById('impapr_0');if(f)f.focus();},60);
+}
+function toggleImportRow(idx,on){document.getElementById('imp_'+idx).classList.toggle('off',!on);}
+function closeImportModal(){document.getElementById('importModal').classList.remove('open');}
+async function confirmImport(){
+  const err=document.getElementById('importErr');err.textContent='';
+  const rows=[];
+  for(let idx=0;idx<importItems.length;idx++){
+    const chk=document.getElementById('impchk_'+idx);
+    if(!chk||!chk.checked)continue;
+    const it=importItems[idx];
+    const balance=parseNum(document.getElementById('impbal_'+idx).value);
+    const rate=parseFloat(document.getElementById('impapr_'+idx).value);
+    const min=parseNum(document.getElementById('impmin_'+idx).value);
+    if(!(balance>=0)){err.textContent=`Enter a valid balance for ${it.category}.`;return;}
+    if(!(rate>=0)){err.textContent=`Enter an interest rate (APR) for ${it.category}.`;return;}
+    if(!(min>=0)){err.textContent=`Enter a minimum payment for ${it.category}.`;return;}
+    rows.push({user_id:currentUser.id,name:it.category,balance,original_balance:balance,rate,min_payment:min,sort_order:myDebts.length+rows.length,paid_off:balance<=0,extra_payment:0,excluded:false});
+  }
+  if(rows.length===0){err.textContent='Select at least one liability to import.';return;}
+  const btn=document.getElementById('importSaveBtn');btn.disabled=true;btn.textContent='Importing…';
+  const{error}=await sb.from('debts').insert(rows);
+  btn.disabled=false;btn.textContent='Import selected';
+  if(error){err.textContent='Error importing. Please try again.';return;}
+  closeImportModal();
+  await loadDashboard();
+}
+
+/* ── BUG REPORT ── */
+function openBugModal(){document.getElementById('bugDescription').value='';document.getElementById('bugEmail').value='';document.getElementById('bugErr').textContent='';document.getElementById('bugSubmitBtn').textContent='Send Report';document.getElementById('bugSubmitBtn').disabled=false;const m=document.getElementById('bugModal');m.style.display='flex';setTimeout(()=>document.getElementById('bugDescription').focus(),50);}
+function closeBugModal(){document.getElementById('bugModal').style.display='none';}
+async function submitBugReport(){
+  const description=document.getElementById('bugDescription').value.trim(),email=document.getElementById('bugEmail').value.trim(),errEl=document.getElementById('bugErr'),btn=document.getElementById('bugSubmitBtn');
+  if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}
+  btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';
+  try{
+    const res=await fetch('https://formspree.io/f/xjgaydej',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page:window.location.pathname,userAgent:navigator.userAgent})});
+    if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks — we'll look into it.";setTimeout(()=>closeBugModal(),2000);}
+    else throw new Error();
+  }catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Email vestlyfi@gmail.com.';}
+}
+(function(){const el=document.getElementById('bugModal');let d=false;el.addEventListener('mousedown',e=>{d=e.target===el;});el.addEventListener('click',e=>{if(e.target===el&&d)closeBugModal();d=false;});})();
+document.getElementById('bugDescription').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))submitBugReport();});
+</script>
+</body>
+</html>
