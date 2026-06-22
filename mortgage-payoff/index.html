@@ -400,7 +400,7 @@
     <!-- TARGET PAYOFF (reverse: pick a timeframe, get the payment) -->
     <div class="extra-section" id="targetSection">
       <h3>Want to pay it off in a set number of years?</h3>
-      <p>Pick a target — like paying off your mortgage in 5 years — and we'll show the monthly payment you'd need and how much extra that is versus your current payment.</p>
+      <p>Pick a target, like paying off your mortgage in 5 years, and we'll show the monthly payment you'd need and how much extra that is versus your current payment.</p>
       <div class="target-presets">
         <button type="button" class="target-preset" onclick="setTargetYears(5,this)">5 years</button>
         <button type="button" class="target-preset" onclick="setTargetYears(10,this)">10 years</button>
@@ -408,13 +408,12 @@
       </div>
       <div class="extra-input-row">
         <div class="input-group">
-          <label>Pay Off In</label>
+          <label>Or set a custom target</label>
           <div class="input-wrap">
-            <input type="number" id="targetYears" min="1" max="40" step="1" class="has-suffix" onkeydown="if(event.key==='Enter')applyTarget()">
+            <input type="number" id="targetYears" min="1" max="40" step="1" class="has-suffix" placeholder="e.g. 7" oninput="onTargetInput()">
             <span class="input-suffix">years</span>
           </div>
         </div>
-        <button class="btn-apply" onclick="applyTarget()">Show payment →</button>
       </div>
       <div class="target-result" id="targetResult" style="display:none;"></div>
     </div>
@@ -746,6 +745,12 @@ function setTargetYears(yrs, btn) {
   document.getElementById('targetYears').value = yrs;
   document.querySelectorAll('.target-preset').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  applyTarget();
+}
+
+// Live recalculation when typing a custom target (clears any preset highlight).
+function onTargetInput() {
+  document.querySelectorAll('.target-preset').forEach(b => b.classList.remove('active'));
   applyTarget();
 }
 
