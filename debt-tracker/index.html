@@ -239,6 +239,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .modal-field input.has-prefix{padding-left:24px;}
 .modal-field input.has-suffix{padding-right:28px;}
 .modal-field input:focus{border-color:var(--gold);}
+.field-hint{font-size:0.68rem;color:var(--muted);margin-top:6px;line-height:1.45;}
+.field-hint strong{color:var(--cream-dim);font-weight:500;}
 .modal-actions{display:flex;gap:8px;margin-top:16px;}
 .btn-modal-save{flex:1;padding:11px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.86rem;font-weight:600;cursor:pointer;transition:background .15s;}
 .btn-modal-save:hover{background:var(--gold-light);}
@@ -484,6 +486,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <div class="modal-field">
       <label>Minimum Monthly Payment</label>
       <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmMin" oninput="fmtComma(this)"></div>
+      <div class="field-hint">For mortgages, enter <strong>principal &amp; interest only</strong> — not your full payment with escrow (property tax/insurance), or the payoff date will read too soon.</div>
     </div>
     <div class="modal-err" id="debtModalErr"></div>
     <div class="modal-actions">
@@ -530,7 +533,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 <div class="modal-overlay" id="importModal">
   <div class="modal" style="max-width:520px;">
     <div class="modal-title">Import from Net Worth</div>
-    <div class="modal-sub">Pulled from the liabilities you track on your net-worth dashboard. Balances are filled in — just add the interest rate (APR) and minimum payment so we can chart your payoff.</div>
+    <div class="modal-sub">Pulled from the liabilities you track on your net-worth dashboard. Balances are filled in — just add the interest rate (APR) and minimum payment so we can chart your payoff. For mortgages, use <strong style="color:var(--cream-dim);font-weight:500;">principal &amp; interest only</strong> (not the full payment incl. escrow).</div>
     <div id="importBody"></div>
     <div class="modal-err" id="importErr"></div>
     <div class="modal-actions">
