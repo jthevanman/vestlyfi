@@ -41,7 +41,7 @@
       "name": "Should I pay extra on my mortgage or invest?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It depends on your interest rate. If your mortgage rate is higher than what you would reasonably expect to earn investing — historically around 7-10% in index funds — paying down the mortgage is the safer bet. If your rate is low, investing the difference often wins mathematically. Most people do a mix of both."
+        "text": "It depends on your interest rate. If your mortgage rate is higher than what you would reasonably expect to earn investing (historically around 7-10% in index funds), paying down the mortgage is the safer bet. If your rate is low, investing the difference often wins mathematically. Most people do a mix of both."
       }
     },
     {
@@ -57,7 +57,7 @@
       "name": "What is the difference between extra monthly payments and a lump sum?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Extra monthly payments reduce your balance gradually and consistently. A lump sum payment reduces your balance all at once, which can have a bigger immediate impact on interest since interest is calculated on your remaining balance. Both strategies save money — a lump sum just front-loads the benefit."
+        "text": "Extra monthly payments reduce your balance gradually and consistently. A lump sum payment reduces your balance all at once, which can have a bigger immediate impact on interest since interest is calculated on your remaining balance. Both strategies save money; a lump sum just front-loads the benefit."
       }
     }
   ]
@@ -91,7 +91,8 @@
   .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
-  .site-nav-links { display:flex; gap:24px; align-items:center; }
+  .site-nav-links { display:flex; align-items:center; gap:24px; }
+  .site-nav-links > a { display:inline-flex; align-items:center; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
   .site-nav-links a:hover { color:var(--cream); }
   .site-nav-links a.active { color:var(--cream); }
@@ -147,6 +148,14 @@
 
   .input-note { font-size:0.72rem; color:var(--muted); margin-top:5px; }
 
+  /* PAY-OFF-EARLY CHIPS */
+  .payoff-early-label { font-size:0.72rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:10px; font-weight:500; }
+  .payoff-early-label .opt { color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0; }
+  .chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { padding:8px 15px; background:var(--navy-light); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream-dim); font-size:0.82rem; cursor:pointer; transition:all .15s; font-family:'Outfit',sans-serif; }
+  .chip:hover { border-color:var(--gold); color:var(--cream); }
+  .chip.active { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
+
   /* BUTTONS */
   .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
   .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
@@ -162,6 +171,26 @@
   .results-header { margin-bottom:32px; }
   .results-header .step-tag { margin-bottom:8px; }
   .results-header h2 { font-size:clamp(1.5rem,4vw,2rem); font-weight:400; }
+
+  /* GOAL CALLOUT */
+  .goal-callout { display:none; background:linear-gradient(135deg,rgba(201,168,76,0.14),rgba(201,168,76,0.04)); border:1px solid var(--gold); border-radius:16px; padding:26px 28px; margin-bottom:28px; }
+  .goal-callout.visible { display:block; animation:stepIn .35s ease forwards; }
+  .goal-callout-tag { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; font-weight:600; }
+  .goal-callout-headline { font-size:1.2rem; font-weight:500; color:var(--cream); margin-bottom:20px; line-height:1.4; }
+  .goal-callout-headline em { font-style:normal; color:var(--gold-light); font-weight:600; }
+  .goal-callout-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  @media(max-width:480px) { .goal-callout-grid { grid-template-columns:1fr; } }
+  .goal-box { background:rgba(10,15,30,0.4); border:1px solid var(--border); border-radius:12px; padding:18px 20px; }
+  .goal-box.primary { background:var(--gold-dim); border-color:var(--gold); }
+  .goal-num { font-size:1.85rem; font-weight:600; color:var(--gold-light); line-height:1.1; }
+  .goal-box.primary .goal-num { color:var(--gold-light); }
+  .goal-lbl { font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--cream-dim); margin-top:6px; }
+  .goal-sub { font-size:0.83rem; color:var(--muted); line-height:1.65; }
+  .goal-sub strong { color:var(--cream); font-weight:500; }
+
+  /* SECTION HELPER NOTE */
+  .section-note { font-size:0.78rem; color:var(--muted); line-height:1.55; margin:-14px 0 20px; }
+  .section-note strong { color:var(--cream-dim); font-weight:500; }
 
   /* STAT GRID */
   .stat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:28px; }
@@ -231,14 +260,6 @@
   tbody td.balance { color:var(--cream-dim); }
   .year-row td { color:var(--cream-dim); }
 
-  /* AFFILIATE */
-  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
-  .aff-section h3 { font-size:1.05rem; font-weight:500; margin-bottom:5px; }
-  .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
-  .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
-  .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-light); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
-  .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
-
   .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
@@ -280,7 +301,7 @@
       <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;color:#e8c97a;">About VestlyFi</div>
       <button class="modal-close" onclick="closeModal('about')">×</button>
     </div>
-    <p>VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+    <p>VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
     <p>Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
     <p>Questions? <span style="color:var(--gold);">VestlyFi@gmail.com</span></p>
   </div>
@@ -355,6 +376,24 @@
         </div>
       </div>
       <div id="payoffPreview" style="display:none;font-size:0.85rem;color:var(--gold);margin-bottom:16px;margin-top:2px;font-weight:500;"></div>
+
+      <div class="divider"></div>
+      <div class="payoff-early-label">Want to pay it off early?</div>
+      <div class="chip-row">
+        <button type="button" class="chip" id="chip-5" onclick="pickYears(this,5)">In 5 years</button>
+        <button type="button" class="chip" id="chip-10" onclick="pickYears(this,10)">In 10 years</button>
+        <button type="button" class="chip" id="chip-15" onclick="pickYears(this,15)">In 15 years</button>
+        <button type="button" class="chip" id="chip-custom" onclick="toggleCustom(this)">Custom</button>
+      </div>
+      <div id="customPayoff" style="display:none;margin-top:16px;">
+        <div class="input-group" style="max-width:240px;">
+          <label>Pay off in</label>
+          <div class="input-wrap">
+            <input type="number" id="customYears" min="1" max="50" class="has-suffix" oninput="onCustomYears()">
+            <span class="input-suffix">years</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="calcErr" style="display:none;color:var(--red);font-size:0.82rem;margin-bottom:12px;">Please fill in balance, rate, and years remaining.</div>
 
@@ -371,13 +410,31 @@
       <h2 id="resultsTitle">Mortgage Breakdown</h2>
     </div>
 
+    <!-- GOAL CALLOUT (shows when an early-payoff timeframe was chosen) -->
+    <div class="goal-callout" id="goalCallout">
+      <div class="goal-callout-tag">Your Early Payoff Plan</div>
+      <div class="goal-callout-headline">To pay off your mortgage in <em id="goalYears">5 years</em>, here's what it takes:</div>
+      <div class="goal-callout-grid">
+        <div class="goal-box primary">
+          <div class="goal-num" id="goalExtra">—</div>
+          <div class="goal-lbl">Extra Per Month</div>
+        </div>
+        <div class="goal-box">
+          <div class="goal-num" id="goalTotal">—</div>
+          <div class="goal-lbl">New Total Monthly Payment</div>
+        </div>
+      </div>
+      <div class="goal-sub" id="goalSub"></div>
+    </div>
+
     <!-- SUMMARY STATS -->
     <div class="stat-grid" id="statGrid"></div>
+    <p class="section-note"><strong>These figures are for your loan as it stands today</strong>: your current payment with no extra payments. The early-payoff impact is shown separately above and below.</p>
 
     <!-- EXTRA PAYMENT -->
     <div class="extra-section">
-      <h3>What would happen if you paid more?</h3>
-      <p>Add a recurring monthly amount, a one-time lump sum, or both. Hit Apply to see the impact on your payoff date and total interest.</p>
+      <h3>Adjust the numbers</h3>
+      <p>Want to try a different plan? Change the extra monthly amount, add a one-time lump sum, or both, then hit Apply to see the new impact. <span id="extraPrefillNote" style="display:none;color:var(--gold-light);">We've pre-filled the extra payment needed to hit your goal above.</span></p>
       <div class="extra-input-row">
         <div class="input-group">
           <label>Extra Monthly Payment</label>
@@ -457,22 +514,12 @@
     <!-- AMORTIZATION TABLE -->
     <div class="amort-card">
       <h3>Amortization Schedule</h3>
+      <p class="section-note" style="margin:0 0 16px;">Based on your <strong>current payment with no extra payments</strong>. Extra payments shorten this schedule. See the savings above.</p>
       <div class="amort-controls">
         <button class="amort-filter active" onclick="setView('monthly', this)">Monthly</button>
         <button class="amort-filter" onclick="setView('yearly', this)">Yearly Summary</button>
       </div>
       <div class="amort-table-wrap" id="amortTableWrap"></div>
-    </div>
-
-    <!-- AFFILIATE -->
-    <div class="aff-section">
-      <h3>Looking to refinance?</h3>
-      <p>A lower rate could save you thousands. Compare current rates and get pre-approved in minutes.</p>
-      <div class="aff-links">
-        <a class="aff-link" href="https://www.rocketmortgage.com" target="_blank">Rocket Mortgage ↗</a>
-        <a class="aff-link" href="https://www.better.com" target="_blank">Better ↗</a>
-        <a class="aff-link" href="https://www.lendingtree.com" target="_blank">LendingTree ↗</a>
-      </div>
     </div>
 
     <button class="btn-recalc" onclick="goToStep(1)">← Edit my mortgage details</button>
@@ -483,7 +530,7 @@
   <!-- SEO CONTENT -->
   <div class="seo-section">
     <div class="seo-body">
-      <p>Most homeowners focus on the monthly payment when they buy a house. The number that actually matters is the total interest — and for most 30 year mortgages, that number is startling. On a $350,000 loan at 7%, you'll pay over $490,000 by the time it's done. Almost half a million dollars for a house that costs $350,000.</p>
+      <p>Most homeowners focus on the monthly payment when they buy a house. The number that actually matters is the total interest, and for most 30 year mortgages that number is startling. On a $350,000 loan at 7%, you'll pay over $490,000 by the time it's done. Almost half a million dollars for a house that costs $350,000.</p>
       <p>The good news is that extra payments hit harder than most people expect. An extra $200 a month on that same loan cuts over 5 years off the payoff date and saves around $70,000 in interest. A lump sum payment early in the loan has an even bigger effect because it reduces the principal before years of interest can compound on top of it.</p>
       <p>If you have a specific goal — like paying off your mortgage in 5 years, 10 years, or 15 years — work backwards instead. Use the "pay it off in a set number of years" tool above to enter your target, and it shows the exact monthly payment you'd need and how much more that is than your current payment. Paying a mortgage off in 5 years takes a large monthly commitment, but the interest savings are enormous because you cut off decades of compounding. Even a more modest 15-year target typically saves well over $100,000 on a mid-size loan compared with running a 30-year mortgage to term.</p>
     </div>
@@ -508,7 +555,7 @@
 
       <div class="faq-item">
         <div class="faq-q">Should I pay extra on my mortgage or invest?</div>
-        <div class="faq-a">It depends on your interest rate. If your mortgage rate is higher than what you'd reasonably expect to earn investing — historically around 7-10% in index funds — paying down the mortgage is the safer bet. If your rate is low, investing the difference often wins mathematically. Most people do a mix of both.</div>
+        <div class="faq-a">It depends on your interest rate. If your mortgage rate is higher than what you'd reasonably expect to earn investing (historically around 7-10% in index funds), paying down the mortgage is the safer bet. If your rate is low, investing the difference often wins mathematically. Most people do a mix of both.</div>
       </div>
 
       <div class="faq-item">
@@ -518,7 +565,7 @@
 
       <div class="faq-item">
         <div class="faq-q">What's the difference between extra monthly payments and a lump sum?</div>
-        <div class="faq-a">Extra monthly payments reduce your balance gradually and consistently. A lump sum payment reduces your balance all at once, which can have a bigger immediate impact on interest since interest is calculated on your remaining balance. Both strategies save money — a lump sum just front-loads the benefit.</div>
+        <div class="faq-a">Extra monthly payments reduce your balance gradually and consistently. A lump sum payment reduces your balance all at once, which can have a bigger immediate impact on interest since interest is calculated on your remaining balance. Both strategies save money; a lump sum just front-loads the benefit.</div>
       </div>
     </div>
   </div>
@@ -572,6 +619,39 @@ function fmtComma(input) {
 
 function parseMoney(str) {
   return parseFloat((str || '').replace(/,/g, '')) || 0;
+}
+
+// ── Pay-off-early chips (target payoff timeframe) ──
+let payoffTargetYears = null;
+function clearChips() {
+  document.querySelectorAll('.chip-row .chip').forEach(c => c.classList.remove('active'));
+}
+function pickYears(btn, years) {
+  const already = btn.classList.contains('active');
+  clearChips();
+  document.getElementById('customPayoff').style.display = 'none';
+  document.getElementById('customYears').value = '';
+  if (already) { payoffTargetYears = null; return; }
+  payoffTargetYears = years;
+  btn.classList.add('active');
+}
+function toggleCustom(btn) {
+  const custom = document.getElementById('customPayoff');
+  const opening = custom.style.display === 'none';
+  clearChips();
+  if (opening) {
+    custom.style.display = 'block';
+    btn.classList.add('active');
+    payoffTargetYears = parseInt(document.getElementById('customYears').value) || null;
+    setTimeout(() => document.getElementById('customYears').focus(), 30);
+  } else {
+    custom.style.display = 'none';
+    document.getElementById('customYears').value = '';
+    payoffTargetYears = null;
+  }
+}
+function onCustomYears() {
+  payoffTargetYears = parseInt(document.getElementById('customYears').value) || null;
 }
 
 function fmt(n) {
@@ -687,16 +767,47 @@ function calculate() {
     </div>
   `;
 
-  // Reset extra
-  document.getElementById('extraPayment').value = '';
+  // If they picked a target payoff timeframe up front, work out the extra
+  // monthly payment needed to hit it and carry it into the results screen.
+  let startExtra = 0;
+  if (payoffTargetYears) {
+    const targetMonths = payoffTargetYears * 12;
+    if (targetMonths < months) {
+      const monthlyRate = rate / 100 / 12;
+      const reqPayment = balance * monthlyRate / (1 - Math.pow(1 + monthlyRate, -targetMonths));
+      startExtra = Math.max(0, Math.round(reqPayment - result.basePayment));
+    }
+  }
+  document.getElementById('extraPayment').value = startExtra > 0 ? startExtra.toLocaleString() : '';
   document.getElementById('lumpSum').value = '';
   const prev = document.getElementById('payoffPreview'); if (prev) prev.style.display = 'none';
   document.getElementById('savingsBanner').classList.remove('visible');
   document.getElementById('legendExtra').style.display = 'none';
 
+  // Populate the early-payoff goal callout
+  const goalCallout = document.getElementById('goalCallout');
+  if (startExtra > 0) {
+    const yrs = payoffTargetYears;
+    document.getElementById('goalYears').textContent = yrs + (yrs === 1 ? ' year' : ' years');
+    document.getElementById('goalExtra').textContent = '+' + fmt(startExtra) + '/mo';
+    document.getElementById('goalTotal').textContent = fmt(result.basePayment + startExtra) + '/mo';
+    document.getElementById('goalSub').innerHTML =
+      `That's <strong>${fmt(startExtra)} extra</strong> on top of your regular ${fmt(result.basePayment)} payment, for a total of <strong>${fmt(result.basePayment + startExtra)} per month</strong>. The full breakdown is below.`;
+    goalCallout.classList.add('visible');
+    document.getElementById('extraPrefillNote').style.display = 'inline';
+  } else {
+    goalCallout.classList.remove('visible');
+    document.getElementById('extraPrefillNote').style.display = 'none';
+  }
+
   renderChart(result.rows, null);
   renderTable('monthly');
   goToStep('results');
+
+  // Show the early-payoff savings immediately
+  if (startExtra > 0) {
+    applyExtra();
+  }
 }
 
 // ── Extra Payment ──
@@ -972,7 +1083,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
