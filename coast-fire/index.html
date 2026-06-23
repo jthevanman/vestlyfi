@@ -372,6 +372,17 @@
       </div>
     </div>
 
+    <div class="input-group">
+      <label>Return Over Time <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">how your return is modeled as you age</span></label>
+      <div class="pill-group" id="glidePills">
+        <button class="pill selected" data-val="1" onclick="selectPill(this,'glidePills',1)">Glide path <span style="font-size:.75rem;color:var(--gold);margin-left:4px">Recommended</span></button>
+        <button class="pill" data-val="0" onclick="selectPill(this,'glidePills',0)">Flat return</button>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:9px;line-height:1.6;">
+        A glide path tapers your return toward bonds over the 10 years before retirement, the way target-date funds do. It gives a more realistic, slightly safer Coast FIRE number. Flat return keeps one fixed rate for life.
+      </div>
+    </div>
+
     <div id="err-2" class="err">Please enter your current balance.</div>
     <div class="step-nav">
       <button class="btn-back" onclick="showStep(1)">← Back</button>
@@ -406,6 +417,7 @@
   <div class="related-tools">
     <h2>Related calculators</h2>
     <ul>
+      <li>Compare your number against others with <a href="/coast-fire-by-age/">Coast FIRE by age</a>.</li>
       <li>Hit your number? Map the full plan with the <a href="/retirement/">Retirement Planner</a>.</li>
       <li>See how a single balance grows with the <a href="/compound-interest/">Compound Interest Calculator</a>.</li>
       <li>Track your invested balance over time with the <a href="/net-worth/">Net Worth Tracker</a>.</li>
@@ -481,7 +493,7 @@
 </div>
 
 <script>
-const S = { returnRate: 10, inflationRate: 3 };
+const S = { returnRate: 10, inflationRate: 3, glidePath: true };
 let currentStep = 0;
 
 function showStep(n) {
@@ -496,6 +508,7 @@ function selectPill(btn, groupId, val) {
   btn.classList.add('selected');
   if (groupId === 'returnPills') S.returnRate = val;
   if (groupId === 'inflationPills') S.inflationRate = val;
+  if (groupId === 'glidePills') S.glidePath = val === 1;
 }
 
 function parseVal(id) {
@@ -541,13 +554,31 @@ function fmt(n) {
 function calculate() {
   const { currentAge, retireAge, annualSpend, currentSavings, returnRate, inflationRate } = S;
   const monthlyContrib = S.monthlyContrib || 0;
-  const yearsToRetire = retireAge - currentAge;
-  const realReturn = (returnRate - inflationRate) / 100;
-  const monthlyR = Math.pow(1 + realReturn, 1/12) - 1;
+  const glidePath = S.glidePath !== false;
+  const baseReal = (returnRate - inflationRate) / 100;
+  // Glide path tapers the real return toward a conservative ~2.5% over the final 10 years
+  const GLIDE_YEARS = 10;
+  const endReal = Math.min(baseReal, 0.025);
+
+  // Real return applied during the year that starts at `age`
+  function realReturnForAge(age) {
+    if (!glidePath) return baseReal;
+    const yearsLeft = retireAge - age;
+    if (yearsLeft >= GLIDE_YEARS) return baseReal;
+    const t = (GLIDE_YEARS - yearsLeft) / GLIDE_YEARS; // 0 → 1 as retirement nears
+    return baseReal + (endReal - baseReal) * t;
+  }
+
+  // Real growth factor compounding each year's return from `from` to `to`
+  function growthFactor(from, to) {
+    let g = 1;
+    for (let age = from; age < to; age++) g *= 1 + realReturnForAge(age);
+    return g;
+  }
 
   const fireNumber = annualSpend / 0.04;
   // Coast number = what you need invested TODAY so it grows to fireNumber by retireAge
-  const coastNumber = fireNumber / Math.pow(1 + realReturn, yearsToRetire);
+  const coastNumber = fireNumber / growthFactor(currentAge, retireAge);
   const alreadyCoasted = currentSavings >= coastNumber;
   const gap = coastNumber - currentSavings;
   const pct = Math.min(100, (currentSavings / coastNumber) * 100);
@@ -557,11 +588,12 @@ function calculate() {
   function simulate(monthly) {
     const ages = [currentAge], bals = [currentSavings];
     let bal = currentSavings;
-    for (let age = currentAge + 1; age <= retireAge; age++) {
+    for (let age = currentAge; age < retireAge; age++) {
+      const mr = Math.pow(1 + Math.max(0, realReturnForAge(age)), 1/12) - 1;
       for (let m = 0; m < 12; m++) {
-        bal = bal * (1 + (monthlyR > 0 ? monthlyR : 0)) + monthly;
+        bal = bal * (1 + mr) + monthly;
       }
-      ages.push(age);
+      ages.push(age + 1);
       bals.push(Math.round(bal));
     }
     return { ages, bals };
@@ -569,7 +601,7 @@ function calculate() {
 
   // Coast threshold at each age (declining line — less needed the older you are)
   function coastAtAge(age) {
-    return fireNumber / Math.pow(1 + realReturn, retireAge - age);
+    return fireNumber / growthFactor(age, retireAge);
   }
 
   // Find the age where a given simulation crosses the coast threshold
@@ -755,7 +787,9 @@ function calculate() {
       -->
 
       <div style="border-top:1px solid var(--border-soft);padding-top:18px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
-        Based on a ${returnRate - inflationRate}% real annual return and the 4% rule (25x your ${fmt(annualSpend)}/year spending).
+        ${glidePath
+          ? `Based on a glide path that tapers your real return from ${(baseReal*100).toFixed(1)}% toward ${(endReal*100).toFixed(1)}% over the 10 years before retirement, plus the 4% rule (25x your ${fmt(annualSpend)}/year spending).`
+          : `Based on a flat ${(baseReal*100).toFixed(1)}% real annual return and the 4% rule (25x your ${fmt(annualSpend)}/year spending).`}
       </div>
 
       <button class="btn-restart" onclick="restartWizard()">← Change my inputs</button>
@@ -772,8 +806,21 @@ function calculate() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const allVals = [...chartPortfolio, ...chartThreshold];
-    const yMin = Math.max(0, Math.min(...allVals) * 0.85);
-    const yMax = Math.max(...allVals) * 1.08;
+    // Build a "nice" y-axis: round bounds to a clean step so gridlines are evenly spaced
+    function niceAxis(min, max, targetSteps) {
+      const rawStep = (max - min) / targetSteps;
+      const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+      const norm = rawStep / mag;
+      const niceStep = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 2.5 ? 2.5 : norm <= 5 ? 5 : 10) * mag;
+      return {
+        lo: Math.max(0, Math.floor(min / niceStep) * niceStep),
+        hi: Math.ceil(max / niceStep) * niceStep,
+        step: niceStep
+      };
+    }
+    const yAxis = niceAxis(Math.max(0, Math.min(...allVals) * 0.85), Math.max(...allVals) * 1.08, 4);
+    // Show ~6 evenly spaced age labels (and matching gridlines) across the x-axis
+    const xStep = Math.max(1, Math.round((chartAges.length - 1) / 6));
 
     let crossIdx = null;
     if (coastAge) crossIdx = chartAges.indexOf(coastAge);
@@ -782,33 +829,35 @@ function calculate() {
     const markersPlugin = {
       id: 'markers',
       afterDraw(chart) {
-        const { ctx: c, scales: { x, y }, chartArea: { top, bottom } } = chart;
+        const { ctx: c, chartArea: { top, bottom } } = chart;
+        const meta = chart.getDatasetMeta(0); // portfolio dataset — its points hold the true pixel positions
+        const midY = (top + bottom) / 2; // dots sit at the vertical center of the chart
 
-        function drawMarker({ age, idx, color, dotColor }) {
-          if (idx < 0) return;
-          const xPx = x.getPixelForValue(age);
-          const yPx = y.getPixelForValue(chartPortfolio[idx]);
+        function drawMarker({ idx, color, dotColor }) {
+          const point = meta.data[idx];
+          if (idx < 0 || !point) return;
+          const xPx = point.x;
           c.save();
           // Vertical dashed line full height
           c.strokeStyle = color; c.lineWidth = 1.5; c.setLineDash([4,3]);
           c.beginPath(); c.moveTo(xPx, top); c.lineTo(xPx, bottom); c.stroke();
           c.setLineDash([]);
-          // Dot on portfolio line
-          c.beginPath(); c.arc(xPx, yPx, 5, 0, Math.PI*2);
+          // Dot centered vertically on the line
+          c.beginPath(); c.arc(xPx, midY, 5, 0, Math.PI*2);
           c.fillStyle = dotColor; c.fill();
           c.strokeStyle = '#0a0f1e'; c.lineWidth = 2; c.stroke();
           c.restore();
         }
 
         drawMarker({
-          age: retireAge, idx: retireIdx,
+          idx: retireIdx,
           color: 'rgba(201,168,76,0.6)',
           dotColor: '#c9a84c',
         });
 
         if (crossIdx !== null) {
           drawMarker({
-            age: coastAge, idx: crossIdx,
+            idx: crossIdx,
             color: 'rgba(76,175,125,0.6)',
             dotColor: '#4caf7d',
           });
@@ -831,8 +880,16 @@ function calculate() {
         interaction: { mode: 'index', intersect: false },
         plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { title: i => `Age ${i[0].label}`, label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
         scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, maxTicksLimit:8 } },
-          y: { min: yMin, max: yMax, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, callback: v => fmt(v) } }
+          x: {
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            afterBuildTicks: axis => { axis.ticks = axis.ticks.filter((t, i) => i % xStep === 0); },
+            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
+          },
+          y: {
+            min: yAxis.lo, max: yAxis.hi,
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, stepSize: yAxis.step, padding: 8, callback: v => fmt(v) }
+          }
         }
       }
     });
