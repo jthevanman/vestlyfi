@@ -25,7 +25,7 @@
       "name": "How do I pay off my mortgage in 5 years?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "To pay off a mortgage in 5 years you need a monthly payment large enough to clear the balance over 60 months. Enter your balance and rate, then set the target to 5 years — the calculator shows the exact payment required and how much extra that is versus your current payment. The trade-off is a much higher monthly payment, but you avoid decades of interest, which on a typical loan can mean saving six figures."
+        "text": "To pay off a mortgage in 5 years you need a monthly payment large enough to clear the balance over 60 months. Enter your balance and rate, then choose the In 5 years option under Want to pay it off early? on the calculator, and it shows the exact payment required and how much extra that is versus your current payment. The trade-off is a much higher monthly payment, but you avoid decades of interest, which on a typical loan can mean saving six figures."
       }
     },
     {
@@ -211,14 +211,6 @@
   .extra-input-row .input-group { flex:1; }
   .btn-apply { padding:12px 22px; background:var(--gold-dim); border:1px solid var(--border); color:var(--gold-light); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .18s; white-space:nowrap; }
   .btn-apply:hover { background:rgba(201,168,76,0.2); }
-  .target-presets { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:16px; }
-  .target-preset { padding:8px 16px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream-dim); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .15s; }
-  .target-preset:hover { border-color:var(--gold); color:var(--cream); }
-  .target-preset.active { background:var(--gold-dim); border-color:var(--border); color:var(--gold-light); }
-  .target-result { margin-top:18px; padding:16px 18px; background:var(--navy-card); border:1px solid var(--border); border-radius:11px; font-size:0.9rem; line-height:1.6; color:var(--cream-dim); }
-  .target-result strong { color:var(--gold-light); font-weight:600; }
-  .target-result.over { color:var(--muted); }
-  .target-result.over strong { color:var(--cream); }
 
   /* SAVINGS BANNER */
   .savings-banner { display:none; background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(74,222,128,0.03)); border:1px solid rgba(74,222,128,0.2); border-radius:14px; padding:22px 24px; margin-bottom:28px; }
@@ -341,7 +333,7 @@
   <div class="step active" id="step-1">
     <div class="step-tag">Mortgage Payoff</div>
     <h1>Mortgage Payoff <em>Calculator</em></h1>
-    <p class="sub">Most of your early payments go almost entirely to interest, not your home. Enter your details to see where every dollar goes — and find out exactly what it takes to pay your mortgage off in 5, 10, or 15 years.</p>
+    <p class="sub">Most of your early payments go almost entirely to interest, not your home. Enter your details to see where every dollar goes, plus exactly what it takes to pay your mortgage off in 5, 10, or 15 years.</p>
 
     <div class="input-card">
       <div class="section-label">Loan Details</div>
@@ -429,7 +421,7 @@
 
     <!-- SUMMARY STATS -->
     <div class="stat-grid" id="statGrid"></div>
-    <p class="section-note"><strong>These figures are for your loan as it stands today</strong>: your current payment with no extra payments. The early-payoff impact is shown separately above and below.</p>
+    <p class="section-note" id="statNote"><strong>These figures are for your loan as it stands today</strong>: your current payment with no extra payments.</p>
 
     <!-- EXTRA PAYMENT -->
     <div class="extra-section">
@@ -453,28 +445,6 @@
         <button class="btn-apply" onclick="applyExtra()">Apply →</button>
       </div>
     </div>
-
-    <!-- TARGET PAYOFF (reverse: pick a timeframe, get the payment) -->
-    <div class="extra-section" id="targetSection">
-      <h3>Want to pay it off in a set number of years?</h3>
-      <p>Pick a target, like paying off your mortgage in 5 years, and we'll show the monthly payment you'd need and how much extra that is versus your current payment.</p>
-      <div class="target-presets">
-        <button type="button" class="target-preset" onclick="setTargetYears(5,this)">5 years</button>
-        <button type="button" class="target-preset" onclick="setTargetYears(10,this)">10 years</button>
-        <button type="button" class="target-preset" onclick="setTargetYears(15,this)">15 years</button>
-      </div>
-      <div class="extra-input-row">
-        <div class="input-group">
-          <label>Or set a custom target</label>
-          <div class="input-wrap">
-            <input type="number" id="targetYears" min="1" max="40" step="1" class="has-suffix" placeholder="e.g. 7" oninput="onTargetInput()">
-            <span class="input-suffix">years</span>
-          </div>
-        </div>
-      </div>
-      <div class="target-result" id="targetResult" style="display:none;"></div>
-    </div>
-
 
     <!-- SAVINGS BANNER -->
     <div class="savings-banner" id="savingsBanner">
@@ -514,7 +484,7 @@
     <!-- AMORTIZATION TABLE -->
     <div class="amort-card">
       <h3>Amortization Schedule</h3>
-      <p class="section-note" style="margin:0 0 16px;">Based on your <strong>current payment with no extra payments</strong>. Extra payments shorten this schedule. See the savings above.</p>
+      <p class="section-note" id="amortNote" style="margin:0 0 16px;">Based on your <strong>current payment with no extra payments</strong>.</p>
       <div class="amort-controls">
         <button class="amort-filter active" onclick="setView('monthly', this)">Monthly</button>
         <button class="amort-filter" onclick="setView('yearly', this)">Yearly Summary</button>
@@ -532,7 +502,7 @@
     <div class="seo-body">
       <p>Most homeowners focus on the monthly payment when they buy a house. The number that actually matters is the total interest, and for most 30 year mortgages that number is startling. On a $350,000 loan at 7%, you'll pay over $490,000 by the time it's done. Almost half a million dollars for a house that costs $350,000.</p>
       <p>The good news is that extra payments hit harder than most people expect. An extra $200 a month on that same loan cuts over 5 years off the payoff date and saves around $70,000 in interest. A lump sum payment early in the loan has an even bigger effect because it reduces the principal before years of interest can compound on top of it.</p>
-      <p>If you have a specific goal — like paying off your mortgage in 5 years, 10 years, or 15 years — work backwards instead. Use the "pay it off in a set number of years" tool above to enter your target, and it shows the exact monthly payment you'd need and how much more that is than your current payment. Paying a mortgage off in 5 years takes a large monthly commitment, but the interest savings are enormous because you cut off decades of compounding. Even a more modest 15-year target typically saves well over $100,000 on a mid-size loan compared with running a 30-year mortgage to term.</p>
+      <p>If you have a specific goal, like paying off your mortgage in 5 years, 10 years, or 15 years, work backwards instead. Use the "Want to pay it off early?" buttons on the calculator to pick your target, and it shows the exact monthly payment you'd need and how much more that is than your current payment. Paying a mortgage off in 5 years takes a large monthly commitment, but the interest savings are enormous because you cut off decades of compounding. Even a more modest 15-year target typically saves well over $100,000 on a mid-size loan compared with running a 30-year mortgage to term.</p>
     </div>
 
     <div class="faq-section">
@@ -545,7 +515,7 @@
 
       <div class="faq-item">
         <div class="faq-q">How do I pay off my mortgage in 5 years?</div>
-        <div class="faq-a">To pay off a mortgage in 5 years you need a monthly payment large enough to clear the balance over 60 months. Enter your balance and rate above, then use the "pay it off in a set number of years" tool and set the target to 5 — it shows the exact payment required and how much extra that is versus your current payment. The trade-off is a much higher monthly payment, but you avoid decades of interest. On a typical loan that can mean saving six figures.</div>
+        <div class="faq-a">To pay off a mortgage in 5 years you need a monthly payment large enough to clear the balance over 60 months. Enter your balance and rate, then choose "In 5 years" under "Want to pay it off early?" on the calculator, and it shows the exact payment required and how much extra that is versus your current payment. The trade-off is a much higher monthly payment, but you avoid decades of interest. On a typical loan that can mean saving six figures.</div>
       </div>
 
       <div class="faq-item">
@@ -723,6 +693,16 @@ function getPayoffDate(months) {
   return start.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 }
 
+// Show the cross-reference sentences only when extra payments are in play
+function setExtraNotes(hasExtra) {
+  const statNote = document.getElementById('statNote');
+  const amortNote = document.getElementById('amortNote');
+  statNote.innerHTML = '<strong>These figures are for your loan as it stands today</strong>: your current payment with no extra payments.'
+    + (hasExtra ? ' Your early-payoff savings are shown below.' : '');
+  amortNote.innerHTML = 'Based on your <strong>current payment with no extra payments</strong>.'
+    + (hasExtra ? ' Your extra payments shorten this schedule; see the savings above.' : '');
+}
+
 // ── Main Calculate ──
 function calculate() {
   const balance = parseMoney(document.getElementById('balance').value);
@@ -783,6 +763,7 @@ function calculate() {
   const prev = document.getElementById('payoffPreview'); if (prev) prev.style.display = 'none';
   document.getElementById('savingsBanner').classList.remove('visible');
   document.getElementById('legendExtra').style.display = 'none';
+  setExtraNotes(false);
 
   // Populate the early-payoff goal callout
   const goalCallout = document.getElementById('goalCallout');
@@ -815,6 +796,7 @@ function applyExtra() {
   const extra = parseMoney(document.getElementById('extraPayment').value) || 0;
   const lump = parseMoney(document.getElementById('lumpSum').value) || 0;
   if (extra <= 0 && lump <= 0) return;
+  setExtraNotes(true);
 
   const balance = parseMoney(document.getElementById('balance').value);
   const rate = parseFloat(document.getElementById('rate').value);
@@ -849,61 +831,6 @@ function applyExtra() {
   document.getElementById('legendExtra').style.display = 'flex';
 
   renderChart(base.rows, withExtra.rows);
-}
-
-// ── Target Payoff (reverse calc) ──
-function setTargetYears(yrs, btn) {
-  document.getElementById('targetYears').value = yrs;
-  document.querySelectorAll('.target-preset').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  applyTarget();
-}
-
-// Live recalculation when typing a custom target (clears any preset highlight).
-function onTargetInput() {
-  document.querySelectorAll('.target-preset').forEach(b => b.classList.remove('active'));
-  applyTarget();
-}
-
-function applyTarget() {
-  const balance = parseMoney(document.getElementById('balance').value);
-  const rate = parseFloat(document.getElementById('rate').value);
-  const years = parseInt(document.getElementById('yearsRemaining').value) || 0;
-  const extraMonths = parseInt(document.getElementById('monthsRemaining').value) || 0;
-  const months = years * 12 + extraMonths;
-  const targetYears = parseFloat(document.getElementById('targetYears').value);
-  const resEl = document.getElementById('targetResult');
-  if (!balance || !rate || !months) return;
-  if (!targetYears || targetYears <= 0) { resEl.style.display = 'none'; return; }
-
-  const targetMonths = Math.round(targetYears * 12);
-  const yrLabel = targetYears + (targetYears === 1 ? ' year' : ' years');
-  const base = buildAmort(balance, rate, months, 0, 0);
-
-  // If the target is at/after the current payoff, no acceleration is needed.
-  if (targetMonths >= base.months) {
-    const cy = Math.floor(base.months / 12), cm = base.months % 12;
-    const curStr = (cy > 0 ? cy + 'y ' : '') + (cm > 0 ? cm + 'mo' : '') || '< 1mo';
-    resEl.className = 'target-result over';
-    resEl.innerHTML = `At your current payment you're already on track to be mortgage-free in about <strong>${curStr.trim()}</strong> (by <strong>${getPayoffDate(base.months)}</strong>). Enter a shorter target to see what it takes to pay it off faster.`;
-    resEl.style.display = 'block';
-    return;
-  }
-
-  const mr = rate / 100 / 12;
-  const reqPayment = mr === 0 ? balance / targetMonths : balance * mr / (1 - Math.pow(1 + mr, -targetMonths));
-  const extraNeeded = Math.max(0, reqPayment - base.basePayment);
-  const targetTotalInterest = reqPayment * targetMonths - balance;
-  const interestSaved = Math.max(0, base.totalInterest - targetTotalInterest);
-
-  resEl.className = 'target-result';
-  resEl.innerHTML = `To pay off your mortgage in <strong>${yrLabel}</strong> (by <strong>${getPayoffDate(targetMonths)}</strong>), pay <strong>${fmt(reqPayment)}/mo</strong> — about <strong>${fmt(extraNeeded)} extra</strong> each month. That saves you roughly <strong>${fmt(interestSaved)}</strong> in interest.`;
-  resEl.style.display = 'block';
-
-  // Drive the existing extra-payment view (chart + savings banner) with the computed extra.
-  document.getElementById('extraPayment').value = Math.round(extraNeeded).toLocaleString();
-  document.getElementById('lumpSum').value = '';
-  applyExtra();
 }
 
 // ── Chart ──
