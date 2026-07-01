@@ -7,12 +7,67 @@
 <title>Budget Sankey Chart Maker | VestlyFi</title>
 <meta name="description" content="Create a shareable Sankey diagram of your budget. Enter your income and expenses and download a chart showing exactly where your money flows.">
 <link rel="canonical" href="https://vestlyfi.com/create-a-diagram/budget-sankey/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vestlyfi.com/create-a-diagram/budget-sankey/">
+<meta property="og:title" content="Budget Sankey Chart Maker | VestlyFi">
+<meta property="og:description" content="Create a shareable Sankey diagram of your budget. Enter your income and expenses and download a chart showing exactly where your money flows.">
+<meta property="og:site_name" content="VestlyFi">
+<meta property="og:image" content="https://vestlyfi.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Budget Sankey Chart Maker | VestlyFi">
+<meta name="twitter:description" content="Create a shareable Sankey diagram of your budget. Enter your income and expenses and download a chart showing exactly where your money flows.">
+<meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Budget Sankey Chart Maker",
+  "url": "https://vestlyfi.com/create-a-diagram/budget-sankey/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Free tool that turns your income and expenses into a downloadable Sankey diagram showing where your money flows each month."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a budget Sankey diagram?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A budget Sankey diagram is a flow chart that shows your income on the left and your spending categories on the right, with ribbon widths proportional to dollar amounts. It makes it obvious at a glance where your money goes each month and which categories dominate your budget." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this Sankey chart maker free?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The tool is completely free, with no account, no signup, and no paid upsells. You can generate, download, and share as many diagrams as you like." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my financial data saved anywhere?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. The diagram is drawn entirely in your browser. The income and expense numbers you enter are never sent to a server, and nothing is stored after you close the page." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I share my budget Sankey on Reddit?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Click Download Image to save the diagram as a PNG, then attach it to your post. Monthly budget Sankey posts are a popular format in communities like r/personalfinance, r/MiddleClassFinance, and r/Fire. Round your numbers or use percentages if you prefer not to share exact figures." }
+    },
+    {
+      "@type": "Question",
+      "name": "How is this different from SankeyMATIC?",
+      "acceptedAnswer": { "@type": "Answer", "text": "SankeyMATIC is a general-purpose Sankey builder that requires writing flows in a text syntax. This tool is purpose-built for budgets: you type income and expense amounts into a simple form and get a styled, share-ready chart with percentages. There is no syntax to learn and no styling work." }
+    }
+  ]
+}
+</script>
 <style>
   :root {
     --navy: #0a0f1e;
@@ -162,6 +217,28 @@
   .btn-copy:hover { border-color:var(--gold); color:var(--gold); }
   .share-note { font-size:0.75rem; color:var(--muted); text-align:center; margin-top:8px; }
 
+  /* SEO CONTENT */
+  .seo-section { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:8px 24px 60px; }
+  .seo-body h2 { font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:500; color:var(--cream); margin:28px 0 12px; }
+  .seo-body h2:first-child { margin-top:0; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .seo-body strong { color:var(--cream-dim); font-weight:500; }
+  .seo-body a { color:var(--gold-light); text-decoration:none; }
+  .seo-body a:hover { color:var(--gold); }
+  .related-tools { margin-top:36px; padding-top:28px; border-top:1px solid var(--border-soft); }
+  .related-tools h2 { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; font-weight:500; }
+  .related-tools ul { list-style:none; }
+  .related-tools li { padding:9px 0; font-size:0.88rem; color:var(--muted); line-height:1.6; border-bottom:1px solid var(--border-soft); }
+  .related-tools li:last-child { border-bottom:none; }
+  .related-tools a { color:var(--gold-light); text-decoration:none; }
+  .related-tools a:hover { color:var(--gold); }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
   /* FOOTER */
   footer {
     position:relative; z-index:1; border-top:1px solid var(--border-soft);
@@ -234,6 +311,57 @@
     </div>
   </div>
 
+</div>
+
+<!-- ── SEO CONTENT ── -->
+<div class="seo-section">
+  <div class="seo-body">
+    <h2>What is a budget Sankey diagram?</h2>
+    <p>A Sankey diagram is a flow chart where the width of each ribbon is proportional to the amount flowing through it. Applied to a budget, your income enters on the left and fans out into your spending categories on the right, like rent, food, debt payments, and savings. The biggest drains on your money become visually obvious in a way a spreadsheet never is. If one ribbon dwarfs the rest, you know exactly where to look first.</p>
+
+    <h2>How to make your budget Sankey</h2>
+    <p>Enter your take-home income (add a second source if you have one), then list your monthly expenses by category. The chart generates instantly, and anything you haven't allocated shows up as an Unallocated flow. That is often the most revealing part, since it's money leaking out of your plan. When it looks right, download it as a PNG or copy it straight to your clipboard.</p>
+
+    <h2>Keep the diagram readable</h2>
+    <p>The best budget Sankeys use 6 to 10 categories. Group small line items ("streaming," "music," "apps") into one bucket like Subscriptions, and keep savings and investing as their own flows so progress is visible. If you're posting publicly, a common trick is to enter percentages of income instead of dollars. The shape of the chart stays honest without revealing your salary.</p>
+
+    <h2>Why people share these</h2>
+    <p>Monthly budget flow charts are a staple format in personal finance communities because they invite specific, useful feedback. Commenters can point at a ribbon and say "that's high for your income." Post yours, compare it against others in your income range, and regenerate it each month to watch the savings ribbon widen.</p>
+  </div>
+
+  <div class="related-tools">
+    <h2>Related tools</h2>
+    <ul>
+      <li><a href="/net-worth/">Net Worth Tracker</a>: log assets and liabilities and watch your wealth trend over time.</li>
+      <li><a href="/debt-payoff/">Debt Payoff Calculator</a>: compare avalanche vs. snowball and see your debt-free date.</li>
+      <li><a href="/house-affordability/">House Affordability Calculator</a>: check what home price fits the housing ribbon of your budget.</li>
+      <li><a href="/compound-interest/">Compound Interest Calculator</a>: see what the savings flow in your diagram could grow into.</li>
+    </ul>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is a budget Sankey diagram?</div>
+      <div class="faq-a">A flow chart that shows your income on the left and your spending categories on the right, with ribbon widths proportional to dollar amounts. It makes it obvious at a glance where your money goes each month and which categories dominate your budget.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is this Sankey chart maker free?</div>
+      <div class="faq-a">Yes. The tool is completely free, with no account, no signup, and no paid upsells. Generate, download, and share as many diagrams as you like.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my financial data saved anywhere?</div>
+      <div class="faq-a">No. The diagram is drawn entirely in your browser. The income and expense numbers you enter are never sent to a server, and nothing is stored after you close the page.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How do I share my budget Sankey on Reddit?</div>
+      <div class="faq-a">Click Download Image to save the diagram as a PNG, then attach it to your post. Budget Sankey posts are a popular format in communities like r/personalfinance, r/MiddleClassFinance, and r/Fire. Round your numbers or use percentages if you prefer not to share exact figures.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is this different from SankeyMATIC?</div>
+      <div class="faq-a">SankeyMATIC is a general-purpose Sankey builder where you write flows in a text syntax. This tool is purpose-built for budgets: type income and expense amounts into a simple form and get a styled, share-ready chart with percentages. There is no syntax to learn and no styling work.</div>
+    </div>
+  </div>
 </div>
 
 <footer>
