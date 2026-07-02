@@ -670,7 +670,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
     <div class="modal-title">Share Your Progress</div>
     <div class="modal-sub" id="shareModalSub"></div>
     <div id="sharePreviewWrap"><div id="shareGenerating">Generating image…</div><img id="sharePreviewImg" alt="Share preview"></div>
-    <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:0.8rem;color:var(--muted);cursor:pointer;user-select:none;"><input type="checkbox" id="sharePrivacy" onchange="onPrivacyToggle()" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer;">Hide dollar amounts — share percentages only</label>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:0.8rem;color:var(--muted);cursor:pointer;user-select:none;"><input type="checkbox" id="sharePrivacy" onchange="onPrivacyToggle()" style="accent-color:var(--gold);width:15px;height:15px;cursor:pointer;">Hide dollar amounts</label>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeShareModal()">Cancel</button>
       <button class="btn-modal-save" id="downloadBtn" onclick="downloadShareImage()">Download</button>
@@ -1160,11 +1160,9 @@ async function renderShareCanvas(snapshots){
     else dTxt=`Assets ${fmtMoney(totA)}   ·   Liabilities ${fmtMoney(totL)}`;
     ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.45)';ctx.fillText(dTxt,PAD,150);
   }
-  if(!(heroDiff===0&&heroSpan===null)&&!(priv&&!heroSpan)){
+  if(!priv&&!(heroDiff===0&&heroSpan===null)){
     const arrow=isUp?'▲':'▼';
-    let gTxt;
-    if(priv)gTxt=`${arrow} ${heroSpan}`;
-    else{gTxt=`${arrow} ${isUp?'+':'-'}${fmtMoney(Math.abs(heroDiff))}`;if(pct!==null)gTxt+=`  (${isUp?'+':''}${pct.toFixed(1)}%)`;if(heroSpan)gTxt+=`  ${heroSpan}`;}
+    let gTxt=`${arrow} ${isUp?'+':'-'}${fmtMoney(Math.abs(heroDiff))}`;if(pct!==null)gTxt+=`  (${isUp?'+':''}${pct.toFixed(1)}%)`;if(heroSpan)gTxt+=`  ${heroSpan}`;
     ctx.font='600 22px Outfit,sans-serif';const gw=ctx.measureText(gTxt).width,pillW=gw+30,pillH=38,pillX=W-PAD-pillW,pillY=88;
     ctx.fillStyle=`rgba(${accentRGB},0.16)`;ctx.beginPath();ctx.roundRect(pillX,pillY,pillW,pillH,19);ctx.fill();
     ctx.fillStyle=accent;ctx.textBaseline='middle';ctx.fillText(gTxt,pillX+15,pillY+pillH/2+1);ctx.textBaseline='alphabetic';
