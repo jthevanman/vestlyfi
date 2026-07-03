@@ -68,10 +68,46 @@
   .container { max-width:560px; margin:0 auto; padding:48px 24px 80px; position:relative; z-index:1; }
 
   /* ── PAGE HEADER ── */
-  .page-eyebrow { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:500; }
-  .page-title { font-size:1.8rem; font-weight:300; line-height:1.2; margin-bottom:4px; }
-  .page-title em { color:var(--gold-light); font-style:italic; }
-  .page-email { font-size:0.85rem; color:var(--muted); margin-bottom:40px; }
+  .page-eyebrow { font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; font-weight:500; }
+
+  /* ── IDENTITY HEADER ── */
+  .identity { display:flex; align-items:center; gap:16px; margin-bottom:32px; }
+  .avatar {
+    flex-shrink:0; width:52px; height:52px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(145deg, var(--gold) 0%, var(--gold-light) 100%);
+    color:var(--navy); font-family:'Exo 2',sans-serif; font-size:1.15rem; letter-spacing:0.02em;
+    box-shadow:0 4px 16px rgba(201,168,76,0.18);
+  }
+  .identity-text { min-width:0; }
+  .identity-email { font-size:1.05rem; font-weight:400; color:var(--cream); line-height:1.3; word-break:break-all; }
+  .identity-since { font-size:0.78rem; color:var(--muted); margin-top:2px; }
+
+  /* ── SNAPSHOT STRIP ── */
+  .snapshot { margin-bottom:32px; }
+  .snapshot-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px; }
+  .snap-card {
+    background:var(--navy-card); border:1px solid var(--border-soft);
+    border-radius:14px; padding:18px 20px;
+  }
+  .snap-label { font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .snap-value { font-size:1.5rem; font-weight:300; line-height:1.1; }
+  .snap-value.red { color:var(--red); }
+  .snap-change { font-size:0.74rem; margin-top:6px; color:var(--muted); }
+  .snap-change.up { color:var(--green); }
+  .snap-change.down { color:var(--red); }
+  .snap-link {
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:0.78rem; color:var(--gold); text-decoration:none; transition:color .15s;
+  }
+  .snap-link:hover { color:var(--gold-light); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase;
+    color:var(--muted); font-weight:500; margin-bottom:14px;
+  }
+  @media(max-width:480px) { .snapshot-grid { grid-template-columns:1fr; } }
 
   /* ── LOADING / REDIRECT ── */
   .loading { text-align:center; padding:80px 0; color:var(--muted); font-size:0.88rem; }
@@ -225,8 +261,33 @@
   <div id="pageContent" style="display:none">
 
     <div class="page-eyebrow">Account</div>
-    <h1 class="page-title">Your <em>settings</em></h1>
-    <div class="page-email" id="accountEmail"></div>
+
+    <!-- ── IDENTITY ── -->
+    <div class="identity">
+      <div class="avatar" id="avatar"></div>
+      <div class="identity-text">
+        <div class="identity-email" id="accountEmail"></div>
+        <div class="identity-since" id="accountSince"></div>
+      </div>
+    </div>
+
+    <!-- ── SNAPSHOT (hidden until data loads) ── -->
+    <div class="snapshot" id="snapshot" style="display:none">
+      <div class="snapshot-grid">
+        <div class="snap-card">
+          <div class="snap-label">Net Worth</div>
+          <div class="snap-value" id="snapNetWorth">—</div>
+          <div class="snap-change" id="snapChange"></div>
+        </div>
+        <div class="snap-card">
+          <div class="snap-label">Total Liabilities</div>
+          <div class="snap-value" id="snapLiabilities">—</div>
+        </div>
+      </div>
+      <a class="snap-link" href="/net-worth/">View net worth tracker →</a>
+    </div>
+
+    <div class="section-label">Account &amp; Security</div>
 
     <!-- ── CHANGE EMAIL ── -->
     <div class="card">
@@ -329,6 +390,71 @@ function showPage() {
   document.getElementById('accountEmail').textContent = email;
   document.getElementById('signoutEmail').textContent = email;
   document.getElementById('newEmail').placeholder = email;
+
+  // Avatar monogram from email
+  const namePart = (email.split('@')[0] || '').replace(/[^a-zA-Z]/g, '');
+  const initials = namePart ? (namePart.length > 1 ? (namePart[0] + namePart[1]) : namePart[0]) : email[0];
+  document.getElementById('avatar').textContent = initials.toUpperCase();
+
+  // Member since
+  if (currentUser.created_at) {
+    const d = new Date(currentUser.created_at);
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('accountSince').textContent = `Member since ${mo[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  loadSnapshot();
+}
+
+// ── SNAPSHOT ──
+function fmtMoney(n){if(n===0)return'$0';const abs=Math.abs(n);const fmt=abs>=1000000?'$'+(abs/1000000).toFixed(2)+'M':'$'+Math.round(abs).toLocaleString();return n<0?'-'+fmt:fmt;}
+function dateToMonthStr(s){return s?s.slice(0,7):'';}
+function currentMonthStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
+function fmtMonthLabel(s){const[y,m]=s.split('-');const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mo[parseInt(m)-1]} ${y}`;}
+
+async function loadSnapshot() {
+  let entries = [];
+  try {
+    const { data, error } = await sb.from('net_worth_entries').select('category,value,type,date').order('date', { ascending: true });
+    if (error) throw error;
+    entries = data || [];
+  } catch (e) { console.error(e); return; }
+
+  if (!entries.length) return; // no data — leave snapshot hidden
+
+  // Build monthly snapshots (mirrors the net worth tracker's logic)
+  const allMonths = [...new Set(entries.map(e => dateToMonthStr(e.date)))].sort();
+  const now = currentMonthStr(); const months = []; let cur = allMonths[0];
+  while (cur <= now) { months.push(cur); const [y,m] = cur.split('-').map(Number); cur = m===12 ? `${y+1}-01` : `${y}-${String(m+1).padStart(2,'0')}`; }
+
+  const snapshots = [], lastKnown = {};
+  for (const month of months) {
+    const me = entries.filter(e => dateToMonthStr(e.date) === month);
+    for (const e of me) lastKnown[e.category] = { value: Number(e.value), type: e.type };
+    let a = 0, l = 0;
+    for (const c of Object.values(lastKnown)) { if (c.type === 'asset') a += c.value; else l += c.value; }
+    snapshots.push({ month, assets: a, liabilities: l, netWorth: a - l });
+  }
+
+  const last = snapshots[snapshots.length - 1];
+  const prev = snapshots.length > 1 ? snapshots[snapshots.length - 2] : null;
+
+  const nwEl = document.getElementById('snapNetWorth');
+  nwEl.textContent = fmtMoney(last.netWorth);
+  if (last.netWorth < 0) nwEl.classList.add('red');
+
+  document.getElementById('snapLiabilities').textContent = fmtMoney(last.liabilities);
+
+  const changeEl = document.getElementById('snapChange');
+  if (prev) {
+    const mom = last.netWorth - prev.netWorth;
+    changeEl.className = 'snap-change ' + (mom >= 0 ? 'up' : 'down');
+    changeEl.textContent = `${mom >= 0 ? '↑ +' : '↓ '}${fmtMoney(Math.abs(mom))} from ${fmtMonthLabel(prev.month)}`;
+  } else {
+    changeEl.textContent = 'First entry';
+  }
+
+  document.getElementById('snapshot').style.display = 'block';
 }
 
 // ── SIGN OUT ──
