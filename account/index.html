@@ -133,6 +133,28 @@
     line-height: 1.5;
   }
 
+  /* ── COLLAPSED CARD ROW ── */
+  .card-collapsed-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+  }
+  .btn-reveal {
+    flex-shrink: 0;
+    background: none;
+    border: 1px solid var(--border-soft);
+    color: var(--cream-dim);
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .card-collapsed-row:hover .btn-reveal { border-color: var(--border); color: var(--cream); }
+
   /* ── FIELDS ── */
   .field { margin-bottom: 14px; }
   .field label {
@@ -289,51 +311,44 @@
 
     <div class="section-label">Account &amp; Security</div>
 
-    <!-- ── CHANGE EMAIL ── -->
+    <!-- ── CHANGE PASSWORD (collapsed by default) ── -->
     <div class="card">
-      <div class="card-title">Email Address</div>
-      <div class="card-sub">Update the email you use to sign in. A confirmation link will be sent to your new address.</div>
-
-      <div class="field">
-        <label>New Email</label>
-        <input type="email" id="newEmail" placeholder="you@example.com">
-      </div>
-      <div class="field">
-        <label>Current Password</label>
-        <input type="password" id="emailCurrentPassword" placeholder="Confirm your password">
-      </div>
-
-      <button class="btn-save" onclick="changeEmail()">Update Email</button>
-      <div class="status" id="emailStatus"></div>
-    </div>
-
-    <!-- ── CHANGE PASSWORD ── -->
-    <div class="card">
-      <div class="card-title">Password</div>
-      <div class="card-sub">Choose a strong password with at least 8 characters.</div>
-
-      <div class="field">
-        <label>Current Password</label>
-        <input type="password" id="currentPassword" placeholder="Your current password">
-      </div>
-      <div class="field">
-        <label>New Password</label>
-        <input type="password" id="newPassword" placeholder="At least 8 characters" oninput="checkStrength()">
-        <div class="pw-strength">
-          <div class="pw-bar" id="bar1"></div>
-          <div class="pw-bar" id="bar2"></div>
-          <div class="pw-bar" id="bar3"></div>
-          <div class="pw-bar" id="bar4"></div>
+      <div class="card-collapsed-row" id="passwordCollapsed" onclick="openPasswordForm()">
+        <div>
+          <div class="card-title">Password</div>
+          <div class="card-sub" style="margin-bottom:0">Change the password you use to sign in.</div>
         </div>
-        <div class="pw-hint" id="pwHint"></div>
-      </div>
-      <div class="field">
-        <label>Confirm New Password</label>
-        <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+        <button class="btn-reveal" type="button">Change password</button>
       </div>
 
-      <button class="btn-save" onclick="changePassword()">Update Password</button>
-      <div class="status" id="passwordStatus"></div>
+      <div id="passwordForm" style="display:none">
+        <hr class="divider">
+        <div class="field">
+          <label>Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Your current password">
+        </div>
+        <div class="field">
+          <label>New Password</label>
+          <input type="password" id="newPassword" placeholder="At least 8 characters" oninput="checkStrength()">
+          <div class="pw-strength">
+            <div class="pw-bar" id="bar1"></div>
+            <div class="pw-bar" id="bar2"></div>
+            <div class="pw-bar" id="bar3"></div>
+            <div class="pw-bar" id="bar4"></div>
+          </div>
+          <div class="pw-hint" id="pwHint"></div>
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+          <button class="btn-save" style="margin-top:0" onclick="changePassword()">Update Password</button>
+          <button class="btn-signout" type="button" onclick="closePasswordForm()">Cancel</button>
+        </div>
+        <div class="status" id="passwordStatus"></div>
+      </div>
     </div>
 
     <!-- ── SIGN OUT ── -->
@@ -389,7 +404,6 @@ function showPage() {
   const email = currentUser.email;
   document.getElementById('accountEmail').textContent = email;
   document.getElementById('signoutEmail').textContent = email;
-  document.getElementById('newEmail').placeholder = email;
 
   // Avatar monogram from email
   const namePart = (email.split('@')[0] || '').replace(/[^a-zA-Z]/g, '');
@@ -462,37 +476,20 @@ async function signOut() {
   await sb.auth.signOut();
 }
 
-// ── CHANGE EMAIL ──
-async function changeEmail() {
-  const newEmail = document.getElementById('newEmail').value.trim();
-  const password = document.getElementById('emailCurrentPassword').value;
-  const status = document.getElementById('emailStatus');
-
-  status.className = 'status';
-  status.textContent = '';
-
-  if (!newEmail) { status.className = 'status err'; status.textContent = 'Please enter a new email address.'; return; }
-  if (newEmail === currentUser.email) { status.className = 'status err'; status.textContent = 'That\'s already your current email.'; return; }
-  if (!password) { status.className = 'status err'; status.textContent = 'Please enter your current password to confirm.'; return; }
-
-  // Re-authenticate first to confirm identity
-  const { error: reAuthError } = await sb.auth.signInWithPassword({
-    email: currentUser.email,
-    password
-  });
-  if (reAuthError) { status.className = 'status err'; status.textContent = 'Current password is incorrect.'; return; }
-
-  status.textContent = 'Updating…';
-  const { error } = await sb.auth.updateUser({ email: newEmail });
-  if (error) {
-    status.className = 'status err';
-    status.textContent = error.message;
-  } else {
-    status.className = 'status ok';
-    status.textContent = 'Confirmation sent to ' + newEmail + '. Check your inbox and click the link to complete the change.';
-    document.getElementById('newEmail').value = '';
-    document.getElementById('emailCurrentPassword').value = '';
-  }
+// ── TOGGLE PASSWORD FORM ──
+function openPasswordForm() {
+  const form = document.getElementById('passwordForm');
+  if (form.style.display !== 'none') return; // already open
+  form.style.display = 'block';
+  document.getElementById('passwordCollapsed').style.cursor = 'default';
+  setTimeout(() => document.getElementById('currentPassword').focus(), 50);
+}
+function closePasswordForm() {
+  document.getElementById('passwordForm').style.display = 'none';
+  document.getElementById('passwordCollapsed').style.cursor = 'pointer';
+  ['currentPassword','newPassword','confirmPassword'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('passwordStatus').textContent = '';
+  checkStrength();
 }
 
 // ── CHANGE PASSWORD ──
@@ -559,8 +556,6 @@ async function changePassword() {
 }
 
 // Enter key support
-document.getElementById('emailCurrentPassword').addEventListener('keydown', e => { if (e.key === 'Enter') changeEmail(); });
-document.getElementById('newEmail').addEventListener('keydown', e => { if (e.key === 'Enter') changeEmail(); });
 document.getElementById('confirmPassword').addEventListener('keydown', e => { if (e.key === 'Enter') changePassword(); });
 document.getElementById('newPassword').addEventListener('keydown', e => { if (e.key === 'Enter') changePassword(); });
 document.getElementById('currentPassword').addEventListener('keydown', e => { if (e.key === 'Enter') changePassword(); });
