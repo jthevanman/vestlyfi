@@ -398,6 +398,7 @@ function fmt(n) {
   if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
   return '$' + Math.round(n).toLocaleString();
 }
+function fmtK(n) { return fmt(Math.round(n/1000)*1000); }
 
 function fmtComma(input) {
   let raw = input.value.replace(/[^0-9.]/g, '');
@@ -487,9 +488,9 @@ function calculate() {
   document.getElementById('resultBanner').innerHTML = `
     <div class="result-banner ${statusClass}">
       <div class="result-badge ${badgeClass}">${badgeText}</div>
-      <div class="result-price ${statusClass}">${fmt(maxHomePrice)}</div>
+      <div class="result-price ${statusClass}">${fmtK(maxHomePrice)}</div>
       <div class="result-label">maximum home price (bank approval estimate)</div>
-      <p class="result-sub">For a more comfortable payment that leaves room for life, aim for <strong style="color:var(--cream)">${fmt(comfortablePrice)}</strong> or less.</p>
+      <p class="result-sub">For a more comfortable payment that leaves room for life, aim for <strong style="color:var(--cream)">${fmtK(comfortablePrice)}</strong> or less.</p>
     </div>
   `;
 
@@ -501,12 +502,12 @@ function calculate() {
     </div>
     <div class="stat-card">
       <div class="stat-label">Comfortable Budget</div>
-      <div class="stat-val green">${fmt(comfortablePrice)}</div>
+      <div class="stat-val green">${fmtK(comfortablePrice)}</div>
       <div class="stat-note">a more conservative target</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Max Loan Amount</div>
-      <div class="stat-val">${fmt(maxLoan)}</div>
+      <div class="stat-val">${fmtK(maxLoan)}</div>
       <div class="stat-note">before down payment</div>
     </div>
     <div class="stat-card">
