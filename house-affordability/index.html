@@ -462,8 +462,8 @@ function calculate() {
   }
   const maxHomePrice = maxLoan + downPayment;
 
-  // Comfortable = 25% of gross (more conservative)
-  const comfortableHousing = monthlyIncome * 0.25;
+  // Comfortable = more conservative than max: 25% front-end and 33% back-end (after existing debts)
+  const comfortableHousing = Math.min(monthlyIncome * 0.25, monthlyIncome * 0.33 - monthlyDebt);
   const comfortableAvailablePI = comfortableHousing - monthlyTax - monthlyInsurance - hoa;
   let comfortableLoan = 0;
   if (monthlyRate > 0 && comfortableAvailablePI > 0) {
@@ -502,7 +502,7 @@ function calculate() {
     <div class="stat-card">
       <div class="stat-label">Comfortable Budget</div>
       <div class="stat-val green">${fmt(comfortablePrice)}</div>
-      <div class="stat-note">at 25% of gross income</div>
+      <div class="stat-note">a more conservative target</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Max Loan Amount</div>
@@ -571,9 +571,9 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
   <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:420px;">
     <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share Your Result</div>
     <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget — great for Reddit or socials.</div>
-    <div style="border-radius:12px;overflow:hidden;background:#0a0f1e;min-height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
-      <div id="shareGenerating" style="color:rgba(245,240,232,0.35);font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
-      <img id="sharePreviewImg" style="display:none;width:100%;border-radius:12px;" alt="Share preview">
+    <div style="border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+      <div id="shareGenerating" style="padding:80px 0;color:rgba(245,240,232,0.35);font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+      <img id="sharePreviewImg" style="display:none;width:100%;border-radius:12px;vertical-align:top;" alt="Share preview">
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
