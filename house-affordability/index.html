@@ -129,7 +129,8 @@
   .result-label { font-size:0.88rem; color:var(--cream-dim); margin-bottom:10px; }
   .result-sub { font-size:0.85rem; color:var(--muted); line-height:1.6; max-width:420px; margin:0 auto; }
 
-  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:24px; }
+  @media(max-width:620px) { .stat-grid{grid-template-columns:1fr 1fr;} }
   @media(max-width:460px) { .stat-grid{grid-template-columns:1fr;} }
   .stat-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:12px; padding:18px; }
   .stat-label { font-size:0.67rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:500; }
@@ -150,7 +151,7 @@
   .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 
   .insight-list { list-style:none; margin-bottom:24px; }
-  .insight-list li { display:flex; gap:13px; padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); align-items:flex-start; }
+  .insight-list li { padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); }
   .insight-list li:last-child { border-bottom:none; }
 
   .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
@@ -506,11 +507,6 @@ function calculate() {
       <div class="stat-note">a more conservative target</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Max Loan Amount</div>
-      <div class="stat-val">${fmtK(maxLoan)}</div>
-      <div class="stat-note">before down payment</div>
-    </div>
-    <div class="stat-card">
       <div class="stat-label">Down Payment</div>
       <div class="stat-val ${downPayment >= maxHomePrice * 0.2 ? 'green' : 'amber'}">${fmt(downPayment)}</div>
       <div class="stat-note">${maxHomePrice > 0 ? ((downPayment/maxHomePrice)*100).toFixed(1) : 0}% of max price</div>
@@ -542,17 +538,17 @@ function calculate() {
 
   const insights = [];
   if (downPayment < maxHomePrice * 0.2) {
-    insights.push({ icon: '⚠️', text: `Your down payment is under 20% of the max price. This usually means you'll need to pay <strong>PMI (Private Mortgage Insurance)</strong> — typically $50–200/month added on top until you reach 20% equity.` });
+    insights.push(`Your down payment is under 20% of the max price. This usually means you'll need to pay <strong>PMI (Private Mortgage Insurance)</strong> — typically $50–200/month added on top until you reach 20% equity.`);
   }
-  insights.push({ icon: '💡', text: `Banks use two DTI rules: your housing costs should be under <strong>28% of gross income</strong>, and all debts combined should be under <strong>36%</strong>. Staying well below these thresholds gives you financial flexibility.` });
+  insights.push(`Banks use two DTI rules: your housing costs should be under <strong>28% of gross income</strong>, and all debts combined should be under <strong>36%</strong>. Staying well below these thresholds gives you financial flexibility.`);
   if (monthlyDebt > monthlyIncome * 0.1) {
-    insights.push({ icon: '📉', text: `Your existing debt payments of ${fmt(monthlyDebt)}/mo are reducing your home buying power. Paying these off first could increase your max home price significantly.` });
+    insights.push(`Your existing debt payments of ${fmt(monthlyDebt)}/mo are reducing your home buying power. Paying these off first could increase your max home price significantly.`);
   }
-  insights.push({ icon: '📊', text: `Property tax and home insurance are estimated at <strong>1.1% and 0.5%</strong> of the home price respectively — close to US averages. Your actual costs will vary by location.` });
-    insights.push({ icon: '🏦', text: `This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.` });
+  insights.push(`Property tax and home insurance are estimated at <strong>1.1% and 0.5%</strong> of the home price respectively — close to US averages. Your actual costs will vary by location.`);
+  insights.push(`This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.`);
 
-  document.getElementById('insightList').innerHTML = insights.map(i =>
-    `<li><span>${i.icon}</span><span>${i.text}</span></li>`
+  document.getElementById('insightList').innerHTML = insights.map(text =>
+    `<li>${text}</li>`
   ).join('');
 
   window.shareData = { maxHomePrice, comfortablePrice, maxMonthlyTotal, downPayment, rate, statusClass };
