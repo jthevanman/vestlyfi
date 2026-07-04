@@ -10,7 +10,7 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="canonical" href="https://vestlyfi.com/house-affordability/">
 <meta property="og:type" content="website">
@@ -160,6 +160,8 @@
   .aff-link { display:inline-flex; align-items:center; gap:5px; padding:9px 16px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border); color:var(--gold-light); text-decoration:none; font-size:0.82rem; font-weight:500; transition:all .18s; }
   .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
 
+  .btn-share-result { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:13px; margin-bottom:24px; background:var(--gold-dim); border:1px solid var(--border); border-radius:10px; color:var(--gold-light); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:500; cursor:pointer; transition:all .18s; }
+  .btn-share-result:hover { background:rgba(201,168,76,0.2); border-color:var(--gold); }
   .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
   .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
@@ -303,6 +305,7 @@
 
   <div class="results-section" id="resultsSection">
     <div id="resultBanner"></div>
+    <button class="btn-share-result" onclick="openShareModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share my result</button>
     <div class="stat-grid" id="statGrid"></div>
     <div class="breakdown-card" id="breakdownCard"></div>
     <ul class="insight-list" id="insightList"></ul>
@@ -551,6 +554,8 @@ function calculate() {
     `<li><span>${i.icon}</span><span>${i.text}</span></li>`
   ).join('');
 
+  window.shareData = { maxHomePrice, comfortablePrice, maxMonthlyTotal, downPayment, rate, statusClass };
+
   document.getElementById('resultsSection').classList.add('visible');
   setTimeout(() => document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 }
@@ -560,6 +565,75 @@ window.addEventListener("load", () => checkBtn());
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+
+<div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:20px;overflow-y:auto;" onclick="if(event.target===this)closeShareModal()">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:420px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share Your Result</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget — great for Reddit or socials.</div>
+    <div style="border-radius:12px;overflow:hidden;background:#0a0f1e;min-height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+      <div id="shareGenerating" style="color:rgba(245,240,232,0.35);font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+      <img id="sharePreviewImg" style="display:none;width:100%;border-radius:12px;" alt="Share preview">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
+      <button onclick="copyShareImage()" style="padding:12px 16px;background:#1a2540;color:#f5f0e8;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy Image</button>
+    </div>
+    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:18px;color:#4ade80;font-family:'Outfit',sans-serif;"></div>
+  </div>
+</div>
+<canvas id="shareCanvas" style="display:none"></canvas>
+
+<script>
+function shareDrawSpaced(ctx,text,x,y,sp){let cx=x;for(const ch of text){ctx.fillText(ch,cx,y);cx+=ctx.measureText(ch).width+sp;}return cx;}
+async function renderShareCanvas(){
+  const d = window.shareData; if(!d) return;
+  const W=1080,H=560,PAD=64,canvas=document.getElementById('shareCanvas');
+  canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
+  try{await document.fonts.load('700 100px Outfit');await document.fonts.load('600 22px Outfit');await document.fonts.load('400 18px Outfit');await document.fonts.load('700 32px "Exo 2"');await document.fonts.ready;}catch(e){}
+  const accent = d.statusClass==='good'?'#4ade80':d.statusClass==='warn'?'#fbbf24':'#f87171';
+  const rk = n => Math.round(n/1000)*1000;
+  ctx.fillStyle='#0e1530';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(201,168,76,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.font='700 32px "Exo 2",sans-serif';ctx.fillStyle='#c9a84c';ctx.fillText('VestlyFi',PAD,86);
+  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.5)';ctx.fillText('Your home buying budget',PAD,176);
+  ctx.font='700 100px Outfit,sans-serif';ctx.fillStyle=accent;ctx.fillText(fmt(rk(d.maxHomePrice)),PAD-3,282);
+  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText('Comfortable ',PAD,326);const cLblW=ctx.measureText('Comfortable ').width;
+  ctx.font='600 22px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(fmt(rk(d.comfortablePrice)),PAD+cLblW,326);
+  ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD,384);ctx.lineTo(W-PAD,384);ctx.stroke();
+  const stats=[['EST. MONTHLY PAYMENT',fmt(d.maxMonthlyTotal)+'/mo'],['DOWN PAYMENT',fmt(d.downPayment)],['INTEREST RATE',d.rate.toFixed(2)+'%']];
+  const colW=(W-PAD*2)/3;
+  stats.forEach((s,i)=>{
+    const cx=PAD+colW*i;
+    ctx.font='600 15px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.42)';shareDrawSpaced(ctx,s[0],cx,450,2);
+    ctx.font='700 42px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(s[1],cx,506);
+  });
+  const dataUrl=canvas.toDataURL('image/png');
+  document.getElementById('shareGenerating').style.display='none';
+  const img=document.getElementById('sharePreviewImg');img.src=dataUrl;img.style.display='block';
+}
+function openShareModal(){
+  if(!window.shareData) return;
+  document.getElementById('sharePreviewImg').style.display='none';
+  document.getElementById('shareGenerating').style.display='block';
+  document.getElementById('shareMsg').textContent='';
+  const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.getElementById('shareDownloadBtn').textContent=isMob?'Save Image':'Download';
+  document.getElementById('shareModal').style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(renderShareCanvas,50);
+}
+function closeShareModal(){document.getElementById('shareModal').style.display='none';document.body.style.overflow='';}
+function downloadShareImage(){
+  const canvas=document.getElementById('shareCanvas'),dataUrl=canvas.toDataURL('image/png');
+  const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(isMob){const w=window.open();if(w){w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}}
+  else{const a=document.createElement('a');a.download='vestlyfi-home-affordability.png';a.href=dataUrl;a.click();const msg=document.getElementById('shareMsg');msg.style.color='#4ade80';msg.textContent='Downloaded!';}
+}
+async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.style.color='#4ade80';msg.textContent='Copied to clipboard!';});}catch(e){msg.style.color='#f87171';msg.textContent='Copy not supported — use Download instead.';}}
+document.addEventListener('keydown', e => { if(e.key==='Escape' && document.getElementById('shareModal').style.display==='flex') closeShareModal(); });
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
