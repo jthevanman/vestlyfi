@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**32 of 51 pages pending verification.**
+**31 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -21,7 +21,6 @@ all been checked against the state tax agency for tax year 2026.
 | Georgia | GA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Georgia Department of Revenue / Taxation (official .gov) |
 | Hawaii | HI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Hawaii Department of Revenue / Taxation (official .gov) |
 | Idaho | ID | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Idaho Department of Revenue / Taxation (official .gov) |
-| Iowa | IA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Iowa Department of Revenue / Taxation (official .gov) |
 | Kansas | KS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Kansas Department of Revenue / Taxation (official .gov) |
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
 | Maryland | MD | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maryland Department of Revenue / Taxation (official .gov) |
@@ -65,9 +64,13 @@ source, or that are modeled as a documented approximation:
   surtax threshold are confirmed, but the official personal-exemption page returned
   HTTP 403 and MA uses its own gross-income base (not federal AGI). Needs the
   exemption amount + base rules confirmed before indexing.
-- **Iowa — deferred (still noindex).** Conflicting official signals for the 2026 rate:
-  the Oct 2025 IDR press release / SF2442 say 3.8%, but the older provisions page
-  (HF2317) says 3.9%. Standard deduction also unconfirmed. Resolve the rate before indexing.
+- **Iowa — indexed, with a documented approximation.** 2026 flat rate 3.8% confirmed by
+  the Oct 2025 IDR press release (authoritative over the stale 3.9% provisions page); the
+  $1,000 estimated-payment threshold is confirmed. Iowa's standard deduction was not
+  published in the sources checked and is omitted (estimate runs slightly high); confirm and add it.
+- **Mississippi — deferred (still noindex).** 4.4%-over-$10,000 structure is confirmed but the
+  exact 2026 rate is unclear mid-phasedown, and MS layers its own standard deduction +
+  personal exemption on top of the $10,000 zero bracket. Confirm all four before indexing.
 - **Georgia — deferred (still noindex).** The 2026 Employer's Tax Guide shows 5.19%, but
   other DOR text references a 4.99% floor and a $15,000/$30,000 standard deduction whose
   effective year is unclear. Confirm the exact 2026 rate + deduction before indexing.

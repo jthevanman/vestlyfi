@@ -4,22 +4,28 @@
   "abbreviation": "IA",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.038 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.038 }],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Iowa Department of Revenue",
+  "stateTaxAgencyUrl": "https://revenue.iowa.gov/",
+  "statePaymentPortalUrl": "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/estimated-income-tax-payments",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Iowa follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Iowa taxes your income at a flat 3.8% for 2026. Iowa's standard deduction is not reflected in this estimate, so your actual Iowa tax may be slightly lower.",
   "uniqueFacts": [
-    "Iowa levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Iowa bracket and agency data is pending verification from official sources before this page is indexed."
+    "Iowa finished phasing in a flat 3.8% income tax for 2026, replacing its old graduated brackets.",
+    "Starting in 2026, Iowa only requires estimated payments once you expect to owe $1,000 or more (up from the old $200 threshold).",
+    "Iowa does not tax retirement income for residents 55 and older, though that break does not apply to self-employment earnings."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://revenue.iowa.gov/press-release/2025-10-21/idr-announces-2026-individual-income-tax-and-interest-rates",
+    "https://revenue.iowa.gov/taxes/tax-guidance/individual-income-tax/estimated-income-tax-payments"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
