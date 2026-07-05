@@ -4,22 +4,28 @@
   "abbreviation": "KY",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.035 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.035 }],
+  "standardDeduction_single": 3360,
+  "standardDeduction_married": 3360,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Kentucky Department of Revenue",
+  "stateTaxAgencyUrl": "https://revenue.ky.gov/",
+  "statePaymentPortalUrl": "https://revenue.ky.gov/Individual/Pages/Estimated-Individual-Income-Tax-Payments.aspx",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Kentucky follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Kentucky taxes your federal AGI at a flat 3.5% (2026) after a $3,360 standard deduction. Kentucky applies one standard deduction per return, so joint filers should confirm their exact figure.",
   "uniqueFacts": [
-    "Kentucky levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Kentucky bracket and agency data is pending verification from official sources before this page is indexed."
+    "Kentucky has a flat 3.5% income tax for 2026, down from 4% two years earlier.",
+    "Kentucky's 2026 standard deduction is $3,360, subtracted before the flat rate applies.",
+    "Kentucky only requires estimated payments if your estimated tax after withholding is more than $500."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://revenue.ky.gov/News/Pages/Kentucky-DOR-Announces-2026-Standard-Deduction.aspx",
+    "https://revenue.ky.gov/Individual/Pages/Estimated-Individual-Income-Tax-Payments.aspx"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

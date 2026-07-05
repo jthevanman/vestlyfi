@@ -4,22 +4,28 @@
   "abbreviation": "LA",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.03 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.03 }],
+  "standardDeduction_single": 12500,
+  "standardDeduction_married": 25000,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Louisiana Department of Revenue",
+  "stateTaxAgencyUrl": "https://revenue.louisiana.gov/",
+  "statePaymentPortalUrl": "https://latap.revenue.louisiana.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Louisiana follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Louisiana taxes your income at a flat 3% (2025 reform) after a $12,500 standard deduction ($25,000 for joint filers).",
   "uniqueFacts": [
-    "Louisiana levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Louisiana bracket and agency data is pending verification from official sources before this page is indexed."
+    "Louisiana replaced its old graduated brackets with a flat 3% income tax starting in 2025.",
+    "Louisiana's standard deduction is a generous $12,500 for single filers and $25,000 for joint filers.",
+    "Louisiana requires estimated payments once you expect to owe more than $1,000 in state tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://revenue.louisiana.gov/tax-education-and-faqs/faqs/income-tax-reform/what-are-the-individual-income-tax-rates-and-brackets/",
+    "https://revenue.louisiana.gov/individuals/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

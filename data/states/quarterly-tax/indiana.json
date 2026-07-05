@@ -4,22 +4,28 @@
   "abbreviation": "IN",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0295 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0295 }],
+  "standardDeduction_single": 1000,
+  "standardDeduction_married": 2000,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Indiana Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.in.gov/dor/",
+  "statePaymentPortalUrl": "https://intime.dor.in.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Indiana follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Indiana taxes your federal AGI at a flat 2.95% (2026) after a $1,000 personal exemption per person. Most Indiana counties add their own local income tax, which this estimate does not include.",
   "uniqueFacts": [
-    "Indiana levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Indiana bracket and agency data is pending verification from official sources before this page is indexed."
+    "Indiana's flat state income tax rate fell to 2.95% for 2026, with a further cut to 2.90% scheduled for 2027.",
+    "Almost every Indiana county adds its own local income tax on top of the state rate, so your true rate is higher than 2.95%.",
+    "Indiana requires estimated payments once you expect to owe $1,000 or more in combined state and county tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://www.in.gov/dor/resources/tax-rates-and-reports/rates-fees-and-penalties/",
+    "https://www.in.gov/dor/i-am-a/individual/payments-and-billing/estimated-payments/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

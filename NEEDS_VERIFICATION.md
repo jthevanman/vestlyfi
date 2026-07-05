@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**36 of 51 pages pending verification.**
+**33 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -21,11 +21,8 @@ all been checked against the state tax agency for tax year 2026.
 | Georgia | GA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Georgia Department of Revenue / Taxation (official .gov) |
 | Hawaii | HI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Hawaii Department of Revenue / Taxation (official .gov) |
 | Idaho | ID | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Idaho Department of Revenue / Taxation (official .gov) |
-| Indiana | IN | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Indiana Department of Revenue / Taxation (official .gov) |
 | Iowa | IA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Iowa Department of Revenue / Taxation (official .gov) |
 | Kansas | KS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Kansas Department of Revenue / Taxation (official .gov) |
-| Kentucky | KY | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Kentucky Department of Revenue / Taxation (official .gov) |
-| Louisiana | LA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Louisiana Department of Revenue / Taxation (official .gov) |
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
 | Maryland | MD | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maryland Department of Revenue / Taxation (official .gov) |
 | Massachusetts | MA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Massachusetts Department of Revenue / Taxation (official .gov) |
@@ -61,6 +58,12 @@ source, or that are modeled as a documented approximation:
   surtax threshold are confirmed, but the official personal-exemption page returned
   HTTP 403 and MA uses its own gross-income base (not federal AGI). Needs the
   exemption amount + base rules confirmed before indexing.
+- **Iowa — deferred (still noindex).** Conflicting official signals for the 2026 rate:
+  the Oct 2025 IDR press release / SF2442 say 3.8%, but the older provisions page
+  (HF2317) says 3.9%. Standard deduction also unconfirmed. Resolve the rate before indexing.
+- **Georgia — deferred (still noindex).** The 2026 Employer's Tax Guide shows 5.19%, but
+  other DOR text references a 4.99% floor and a $15,000/$30,000 standard deduction whose
+  effective year is unclear. Confirm the exact 2026 rate + deduction before indexing.
 - **Illinois (indexed).** Rate 4.95% and $1,000 threshold confirmed official. The IL
   personal exemption allowance (~$2,850/person) is NOT modeled, so the estimate runs
   slightly high; documented in selfEmploymentNotes. Add the exemption to refine.

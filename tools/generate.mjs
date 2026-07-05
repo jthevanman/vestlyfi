@@ -128,6 +128,12 @@ function writeNeedsVerification(states) {
   lines.push('  surtax threshold are confirmed, but the official personal-exemption page returned');
   lines.push('  HTTP 403 and MA uses its own gross-income base (not federal AGI). Needs the');
   lines.push('  exemption amount + base rules confirmed before indexing.');
+  lines.push('- **Iowa — deferred (still noindex).** Conflicting official signals for the 2026 rate:');
+  lines.push('  the Oct 2025 IDR press release / SF2442 say 3.8%, but the older provisions page');
+  lines.push('  (HF2317) says 3.9%. Standard deduction also unconfirmed. Resolve the rate before indexing.');
+  lines.push('- **Georgia — deferred (still noindex).** The 2026 Employer\'s Tax Guide shows 5.19%, but');
+  lines.push('  other DOR text references a 4.99% floor and a $15,000/$30,000 standard deduction whose');
+  lines.push('  effective year is unclear. Confirm the exact 2026 rate + deduction before indexing.');
   lines.push('- **Illinois (indexed).** Rate 4.95% and $1,000 threshold confirmed official. The IL');
   lines.push('  personal exemption allowance (~$2,850/person) is NOT modeled, so the estimate runs');
   lines.push('  slightly high; documented in selfEmploymentNotes. Add the exemption to refine.');
