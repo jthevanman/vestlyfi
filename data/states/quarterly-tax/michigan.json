@@ -4,22 +4,28 @@
   "abbreviation": "MI",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0425 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0425 }],
+  "standardDeduction_single": 5900,
+  "standardDeduction_married": 11800,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Michigan Department of Treasury",
+  "stateTaxAgencyUrl": "https://www.michigan.gov/taxes",
+  "statePaymentPortalUrl": "https://www.michigan.gov/taxes/iit",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Michigan follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Michigan taxes your federal AGI at a flat 4.25% after a $5,900 personal exemption per person (2026).",
   "uniqueFacts": [
-    "Michigan levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Michigan bracket and agency data is pending verification from official sources before this page is indexed."
+    "Michigan has a flat 4.25% income tax and gives each person a $5,900 personal exemption for 2026.",
+    "Michigan only requires estimated payments if you expect to owe more than $500 in state tax for the year.",
+    "A few Michigan cities, including Detroit and Grand Rapids, add a separate local income tax that is not included here."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://www.michigan.gov/treasury/reference/taxpayer-notices/2026/04/15/425-income-tax-rate-for-individuals-and-fiduciaries-in-2026-tax-year",
+    "https://www.michigan.gov/taxes/iit"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

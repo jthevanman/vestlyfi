@@ -129,6 +129,7 @@ function noTaxState(slug, name, abbr) {
     dueDateNotes: 'Federal estimated payments are due April 15, June 15, September 15, and the following January 15.',
     selfEmploymentNotes: `${name} does not tax personal income, so your quarterly estimates cover federal self-employment and income tax only.`,
     uniqueFacts: NO_TAX_FACTS[abbr],
+    sources: ['https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes'],
     needsVerification: false,
     lastVerified: '2026-07-05',
   };
@@ -159,6 +160,10 @@ function colorado() {
       'Colorado only requires estimated payments if you expect to owe more than $1,000 in state tax for the year.',
       "Colorado's flat rate is protected by TABOR, which can trigger temporary rate reductions in state surplus years.",
     ],
+    sources: [
+      'https://tax.colorado.gov/individual-income-tax',
+      'https://tax.colorado.gov/individual-estimated-income-tax',
+    ],
     needsVerification: false,
     lastVerified: '2026-07-05',
   };
@@ -186,6 +191,7 @@ function stubState(slug, name, abbr) {
       `${name} levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.`,
       `${name} bracket and agency data is pending verification from official sources before this page is indexed.`,
     ],
+    sources: [],
     needsVerification: true,
     lastVerified: null,
   };

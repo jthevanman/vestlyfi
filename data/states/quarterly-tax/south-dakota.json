@@ -20,6 +20,9 @@
     "South Dakota has no state income tax, so self-employed residents only owe federal quarterly estimates.",
     "There is no South Dakota estimated-tax return to file."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

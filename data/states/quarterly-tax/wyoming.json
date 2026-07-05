@@ -20,6 +20,9 @@
     "Wyoming has no state income tax, so self-employed residents make only federal quarterly payments.",
     "There is no Wyoming estimated-tax return to file."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

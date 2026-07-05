@@ -20,6 +20,9 @@
     "New Hampshire does not tax earned or self-employment income, so 1099 income owes only federal quarterly taxes.",
     "New Hampshire's old Interest & Dividends tax was fully repealed effective 2025, removing its last income-style tax."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

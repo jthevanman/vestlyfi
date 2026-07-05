@@ -20,6 +20,9 @@
     "Alaska has no state income tax, so on your self-employment income you only owe federal quarterly estimated taxes.",
     "Alaska also has no statewide sales tax — but your Permanent Fund Dividend is still federally taxable."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

@@ -294,7 +294,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <h2>How quarterly taxes work in Colorado</h2>
     <p>Self-employment income has no tax withheld for you, so both the IRS and Colorado Department of Revenue ask you to prepay in quarterly installments. On the federal side you owe self-employment tax (15.3% Social Security and Medicare on 92.35% of your net profit, up to the Social Security wage base) plus federal income tax on your profit after the standard deduction. On top of that, Colorado applies its own income tax.</p>
     <p>Colorado generally requires estimated payments once you expect to owe more than $1,000 in state tax for the year. Colorado follows the federal schedule: April 15, June 15, September 15, and January 15. Colorado follows the standard four-installment schedule.</p>
-    <p>You avoid an IRS underpayment penalty by hitting a &quot;safe harbor&quot;: paying at least 90% of this year's total tax, or 100% of last year's (110% if your income is higher). Colorado taxes your federal taxable income at a flat 4.4%, so this estimate applies the federal standard deduction before the state rate. You can pay online through the Colorado Department of Revenue portal, and the calculator above breaks your total into the federal and Colorado pieces so you can send each to the right place. You can pay online at the <a href="https://tax.colorado.gov/" target="_blank" rel="noopener">Colorado Department of Revenue</a> (<a href="https://tax.colorado.gov/individual-estimated-income-tax" target="_blank" rel="noopener">payment portal</a>).</p>
+    <p>You avoid an IRS underpayment penalty by hitting a &quot;safe harbor&quot;: paying at least 90% of this year's total tax, or 100% of last year's (110% if your income is higher). Colorado starts from your federal taxable income and applies a flat 4.4% rate, so the federal standard deduction and the deductible half of self-employment tax are already reflected before the state rate. You can pay online through the Colorado Department of Revenue portal, and the calculator above breaks your total into the federal and Colorado pieces so you can send each to the right place. You can pay online at the <a href="https://tax.colorado.gov/" target="_blank" rel="noopener">Colorado Department of Revenue</a> (<a href="https://tax.colorado.gov/individual-estimated-income-tax" target="_blank" rel="noopener">payment portal</a>).</p>
   </div>
 
   <div class="section">
@@ -320,7 +320,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   </div>
   </div>
 
-  <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the Colorado Department of Revenue before filing. State tax data last verified 2026-07-05.</p>
+  <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the Colorado Department of Revenue before filing. State tax data last verified 2026-07-05. <br>Sources: <a href="https://tax.colorado.gov/individual-income-tax" target="_blank" rel="noopener">tax.colorado.gov</a>, <a href="https://tax.colorado.gov/individual-estimated-income-tax" target="_blank" rel="noopener">tax.colorado.gov</a>.</p>
 </div>
 <footer>
   <span>© 2026 VestlyFi</span>
@@ -471,10 +471,17 @@ function estimateQuarterly(input, stateData) {
     ? num(stateData.standardDeduction_married)
     : num(stateData.standardDeduction_single);
   const stateComputable = hasState && Array.isArray(stateBrackets) && stateBrackets.length > 0;
-  // State AGI approximation: SE + W-2 (states generally do not allow the federal
-  // 1/2 SE-tax deduction; v1 uses gross to stay conservative, noted in FAQ).
+  // The starting point for a state's tax base varies. `stateTaxBasis` selects it:
+  //   'federal_taxable_income' - conforms to federal taxable income (e.g. CO, ID)
+  //   'federal_agi'            - starts from federal AGI, then a state exemption/deduction (e.g. MI, IL, NC, AZ)
+  //   'state_gross' (default)  - taxes gross earned income directly, minus any state deduction (e.g. PA)
+  const basis = stateData.stateTaxBasis || 'state_gross';
+  let stateBaseIncome;
+  if (basis === 'federal_taxable_income') stateBaseIncome = federalTaxable;
+  else if (basis === 'federal_agi') stateBaseIncome = federalAGI;
+  else stateBaseIncome = seIncome + w2;
   const stateTaxable = stateComputable
-    ? Math.max(0, seIncome + w2 - stateStdDeduction)
+    ? Math.max(0, stateBaseIncome - stateStdDeduction)
     : 0;
   const stateIncomeTax = stateComputable ? applyBrackets(stateTaxable, stateBrackets) : 0;
 
@@ -547,8 +554,9 @@ var STATE_DATA={
       "rate": 0.044
     }
   ],
-  "standardDeduction_single": 16100,
-  "standardDeduction_married": 32200,
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "stateTaxBasis": "federal_taxable_income",
   "quarterlyWeights": null
 };
 var STATE_NAME="Colorado";

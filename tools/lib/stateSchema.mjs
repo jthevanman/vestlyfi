@@ -29,6 +29,7 @@
  * @property {string} dueDateNotes
  * @property {string} selfEmploymentNotes
  * @property {string[]} uniqueFacts
+ * @property {string[]} [sources] - official source URLs the data was verified against
  * @property {boolean} needsVerification - true => page ships noindex
  * @property {string|null} lastVerified  - ISO date the data was verified
  */
@@ -82,6 +83,18 @@ export function validateState(s) {
     }
   }
 
+  if (s.stateTaxBasis != null &&
+      !['federal_taxable_income', 'federal_agi', 'state_gross'].includes(s.stateTaxBasis)) {
+    e.push(at(`stateTaxBasis must be one of federal_taxable_income | federal_agi | state_gross`));
+  }
+
+  if (s.sources != null) {
+    if (!Array.isArray(s.sources)) e.push(at(`sources must be an array of https URLs`));
+    else s.sources.forEach((u, i) => {
+      if (typeof u !== 'string' || !/^https:\/\//.test(u)) e.push(at(`sources[${i}] must be an https URL`));
+    });
+  }
+
   if (s.quarterlyWeights != null) {
     if (!Array.isArray(s.quarterlyWeights) || s.quarterlyWeights.length !== 4) {
       e.push(at(`quarterlyWeights must be null or an array of 4 numbers`));
@@ -101,6 +114,9 @@ export function validateState(s) {
       e.push(at(`income-tax state marked verified but agency name/URL missing`));
     }
     if (!s.lastVerified) e.push(at(`verified state must set lastVerified date`));
+    if (!Array.isArray(s.sources) || s.sources.length === 0) {
+      e.push(at(`verified income-tax state must cite at least one official source URL`));
+    }
   }
 
   // A no-income-tax state should not carry brackets.

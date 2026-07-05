@@ -116,6 +116,28 @@ function writeNeedsVerification(states) {
     lines.push(`| ${s.name} | ${s.abbreviation} | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | ${s.name} Department of Revenue / Taxation (official .gov) |`);
   }
   lines.push('');
+  lines.push('## Known caveats & deferrals (verified pages)');
+  lines.push('');
+  lines.push('Items flagged during verification that could not be confirmed from an official');
+  lines.push('source, or that are modeled as a documented approximation:');
+  lines.push('');
+  lines.push('- **Idaho — deferred (still noindex).** The official 2026 individual rate was not');
+  lines.push('  yet published on tax.idaho.gov (rate schedule only ran through 2025). Do not');
+  lines.push('  verify until the 2026 rate is posted.');
+  lines.push('- **Massachusetts — deferred (still noindex).** 2026 flat rate (5.0%) and $1,107,750');
+  lines.push('  surtax threshold are confirmed, but the official personal-exemption page returned');
+  lines.push('  HTTP 403 and MA uses its own gross-income base (not federal AGI). Needs the');
+  lines.push('  exemption amount + base rules confirmed before indexing.');
+  lines.push('- **Illinois (indexed).** Rate 4.95% and $1,000 threshold confirmed official. The IL');
+  lines.push('  personal exemption allowance (~$2,850/person) is NOT modeled, so the estimate runs');
+  lines.push('  slightly high; documented in selfEmploymentNotes. Add the exemption to refine.');
+  lines.push('- **North Carolina (indexed).** Rate 3.99% confirmed official for 2026. Standard');
+  lines.push('  deduction ($12,750 / $25,500) is the latest published (2025) amount; confirm the');
+  lines.push('  2026 figure when NCDOR posts it.');
+  lines.push('- **Arizona (indexed).** Rate 2.5% confirmed; standard deduction modeled as equal to');
+  lines.push('  the federal amount per ADOR guidance ("matches the federal amount"). Confirm the');
+  lines.push('  exact 2026 AZ figure when the Form 140 instructions are posted.');
+  lines.push('');
   lines.push('## Verification checklist per state');
   lines.push('');
   lines.push('1. Pull 2026 bracket table from the state tax agency (single + married).');

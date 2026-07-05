@@ -20,6 +20,9 @@
     "Tennessee has no state income tax, so your quarterly estimated payments are federal only.",
     "Tennessee's Hall Tax on interest and dividends was fully repealed in 2021."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

@@ -4,22 +4,28 @@
   "abbreviation": "PA",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "state_gross",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0307 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0307 }],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
   "hasQuarterlyRequirement": true,
   "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateTaxAgencyName": "Pennsylvania Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.pa.gov/agencies/revenue.html",
+  "statePaymentPortalUrl": "https://mypath.pa.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Pennsylvania requires estimated payments if you expect more than $8,000 of income not subject to withholding. Payments are due April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Pennsylvania taxes net business profit directly at a flat 3.07% with no standard deduction or personal exemption, so your state estimate is simply 3.07% of your net self-employment income.",
   "uniqueFacts": [
-    "Pennsylvania levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Pennsylvania bracket and agency data is pending verification from official sources before this page is indexed."
+    "Pennsylvania has a flat 3.07% income tax and allows no standard deduction or personal exemptions, so it taxes your full net self-employment profit.",
+    "Pennsylvania requires quarterly estimated payments once you expect more than $8,000 of income that isn't subject to withholding.",
+    "Many Pennsylvania municipalities add a local earned income tax on top of the 3.07% state rate."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://www.pa.gov/agencies/revenue/resources/tax-rates/personal-income-tax-rates",
+    "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforindividuals/pit/documents/2026/2026_rev-413i.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

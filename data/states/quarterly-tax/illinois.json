@@ -4,22 +4,28 @@
   "abbreviation": "IL",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0495 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0495 }],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Illinois Department of Revenue",
+  "stateTaxAgencyUrl": "https://tax.illinois.gov/",
+  "statePaymentPortalUrl": "https://mytax.illinois.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Illinois follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Illinois taxes your federal adjusted gross income at a flat 4.95%. It also allows a personal exemption allowance (about $2,850 per person) that is not reflected here, so your actual Illinois tax may be slightly lower.",
   "uniqueFacts": [
-    "Illinois levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Illinois bracket and agency data is pending verification from official sources before this page is indexed."
+    "Illinois has a flat 4.95% income tax, so every dollar of your self-employment profit is taxed at the same state rate.",
+    "Illinois requires estimated payments once you expect to owe more than $1,000 in state tax after withholding.",
+    "Illinois does not tax retirement income, but that break does not apply to your self-employment earnings."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://tax.illinois.gov/",
+    "https://tax.illinois.gov/research/publications/pubs/illinois-estimated-payments-requirements-for-individuals-and-businesses.html"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

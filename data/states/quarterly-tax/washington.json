@@ -20,6 +20,9 @@
     "Washington has no tax on wages or self-employment income, so 1099 earners owe only federal quarterly taxes.",
     "Washington does levy a 7% capital-gains excise tax on large investment gains, but that does not apply to earned or self-employment income."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

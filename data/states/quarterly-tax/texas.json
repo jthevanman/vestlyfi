@@ -20,6 +20,9 @@
     "Texas has no state income tax, so freelancers and gig workers only make federal quarterly payments.",
     "There is no Texas state estimated-tax form — you file IRS Form 1040-ES only."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

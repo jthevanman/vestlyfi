@@ -4,22 +4,28 @@
   "abbreviation": "AZ",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.025 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.025 }],
+  "standardDeduction_single": 16100,
+  "standardDeduction_married": 32200,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Arizona Department of Revenue",
+  "stateTaxAgencyUrl": "https://azdor.gov/",
+  "statePaymentPortalUrl": "https://www.aztaxes.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Arizona follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Arizona starts from your federal AGI and matches the federal standard deduction ($16,100 single / $32,200 married for 2026), then applies a flat 2.5% rate.",
   "uniqueFacts": [
-    "Arizona levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Arizona bracket and agency data is pending verification from official sources before this page is indexed."
+    "Arizona has one of the lowest flat income tax rates in the country at 2.5%.",
+    "Arizona's standard deduction matches the federal amount, so most filers subtract $16,100 (single) or $32,200 (married) before the 2.5% rate.",
+    "Arizona requires estimated payments once you expect to owe more than $1,000 in state tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://azdor.gov/forms/individual-income-tax-highlights",
+    "https://azdor.gov/individuals/individual-estimated-tax-payments"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

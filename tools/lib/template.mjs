@@ -344,6 +344,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
     brackets_married: state.brackets_married,
     standardDeduction_single: state.standardDeduction_single,
     standardDeduction_married: state.standardDeduction_married,
+    stateTaxBasis: state.stateTaxBasis || 'state_gross',
     quarterlyWeights: state.quarterlyWeights,
   };
 
@@ -385,7 +386,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
     ${relatedHtml}
   </div>
 
-  <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the ${esc(state.stateTaxAgencyName || 'IRS')} before filing. State tax data last verified ${esc(state.lastVerified || 'pending')}.</p>
+  <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the ${esc(state.stateTaxAgencyName || 'IRS')} before filing. State tax data last verified ${esc(state.lastVerified || 'pending')}.${sourcesHtml(state.sources)}</p>
 </div>
 ${FOOTER}
 ${scriptBlock({ engineSource, stateData: stateDataSlim, stateName: state.name, stateAbbr: state.abbreviation })}
@@ -455,4 +456,14 @@ ${scriptBlock({ engineSource, stateData: federalOnly, stateName: 'Federal', stat
 
 function linkCard(t) {
   return `<a class="related-card" href="${esc(t.href)}"><div class="rc-title">${esc(t.label)}</div><div class="rc-hook">${esc(t.hook)}</div></a>`;
+}
+
+function sourcesHtml(sources) {
+  if (!Array.isArray(sources) || sources.length === 0) return '';
+  const links = sources.map((u) => {
+    let host = u;
+    try { host = new URL(u).hostname.replace(/^www\./, ''); } catch { /* keep raw */ }
+    return `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(host)}</a>`;
+  }).join(', ');
+  return ` <br>Sources: ${links}.`;
 }

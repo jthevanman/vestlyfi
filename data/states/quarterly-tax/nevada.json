@@ -20,6 +20,9 @@
     "Nevada has no state income tax, so your only quarterly estimated payments are federal.",
     "Nevada funds itself largely through sales and gaming taxes rather than an income tax."
   ],
+  "sources": [
+    "https://www.irs.gov/businesses/small-businesses-self-employed/estimated-taxes"
+  ],
   "needsVerification": false,
   "lastVerified": "2026-07-05"
 }

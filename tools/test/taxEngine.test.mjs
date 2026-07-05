@@ -68,6 +68,36 @@ test('estimateQuarterly: Colorado flat 4.4% state layer', () => {
   close(r.totalAnnual, r.federalTotal + r.stateIncomeTax);
 });
 
+test('estimateQuarterly: federal_taxable_income basis taxes federal taxable income', () => {
+  const st = {
+    hasStateIncomeTax: true,
+    stateTaxBasis: 'federal_taxable_income',
+    brackets_single: [{ min: 0, max: null, rate: 0.044 }],
+    brackets_married: [{ min: 0, max: null, rate: 0.044 }],
+    standardDeduction_single: 0,
+    standardDeduction_married: 0,
+    quarterlyWeights: null,
+  };
+  const r = estimateQuarterly({ selfEmploymentIncome: 80000, filingStatus: 'single' }, st);
+  // federal taxable = 80000 - halfSE(5651.82) - 16100 = 58248.18 ; *0.044 = 2562.92
+  close(r.stateIncomeTax, 2562.92, 1);
+});
+
+test('estimateQuarterly: federal_agi basis minus a state exemption', () => {
+  const st = {
+    hasStateIncomeTax: true,
+    stateTaxBasis: 'federal_agi',
+    brackets_single: [{ min: 0, max: null, rate: 0.0425 }],
+    brackets_married: [{ min: 0, max: null, rate: 0.0425 }],
+    standardDeduction_single: 5900,   // Michigan personal exemption
+    standardDeduction_married: 11800,
+    quarterlyWeights: null,
+  };
+  const r = estimateQuarterly({ selfEmploymentIncome: 80000, filingStatus: 'single' }, st);
+  // federal AGI = 80000 - 5651.82 = 74348.18 ; minus 5900 = 68448.18 ; *0.0425 = 2909.05
+  close(r.stateIncomeTax, 2909.05, 1);
+});
+
 // --- No-tax state (Texas): federal only -------------------------------------
 test('estimateQuarterly: Texas (no state income tax) = federal only', () => {
   const tx = {

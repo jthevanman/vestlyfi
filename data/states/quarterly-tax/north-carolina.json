@@ -4,22 +4,28 @@
   "abbreviation": "NC",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0399 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0399 }],
+  "standardDeduction_single": 12750,
+  "standardDeduction_married": 25500,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "North Carolina Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.ncdor.gov/",
+  "statePaymentPortalUrl": "https://www.ncdor.gov/file-pay",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "North Carolina follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "North Carolina taxes your federal AGI at a flat 3.99% after its standard deduction ($12,750 single / $25,500 married), based on the most recently published amounts.",
   "uniqueFacts": [
-    "North Carolina levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "North Carolina bracket and agency data is pending verification from official sources before this page is indexed."
+    "North Carolina's flat income tax rate dropped to 3.99% for 2026 and is scheduled to keep falling in future years.",
+    "North Carolina gives a standard deduction of $12,750 for single filers and $25,500 for married couples before applying the flat rate.",
+    "North Carolina requires estimated payments once you expect to owe $1,000 or more in state tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://www.ncdor.gov/taxes-forms/individual-income-tax/tax-rate-schedules",
+    "https://www.ncdor.gov/taxes-forms/individual-income-tax/filing-topics/north-carolina-standard-deduction-or-north-carolina-itemized-deductions"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

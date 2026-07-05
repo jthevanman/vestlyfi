@@ -471,10 +471,17 @@ function estimateQuarterly(input, stateData) {
     ? num(stateData.standardDeduction_married)
     : num(stateData.standardDeduction_single);
   const stateComputable = hasState && Array.isArray(stateBrackets) && stateBrackets.length > 0;
-  // State AGI approximation: SE + W-2 (states generally do not allow the federal
-  // 1/2 SE-tax deduction; v1 uses gross to stay conservative, noted in FAQ).
+  // The starting point for a state's tax base varies. `stateTaxBasis` selects it:
+  //   'federal_taxable_income' - conforms to federal taxable income (e.g. CO, ID)
+  //   'federal_agi'            - starts from federal AGI, then a state exemption/deduction (e.g. MI, IL, NC, AZ)
+  //   'state_gross' (default)  - taxes gross earned income directly, minus any state deduction (e.g. PA)
+  const basis = stateData.stateTaxBasis || 'state_gross';
+  let stateBaseIncome;
+  if (basis === 'federal_taxable_income') stateBaseIncome = federalTaxable;
+  else if (basis === 'federal_agi') stateBaseIncome = federalAGI;
+  else stateBaseIncome = seIncome + w2;
   const stateTaxable = stateComputable
-    ? Math.max(0, seIncome + w2 - stateStdDeduction)
+    ? Math.max(0, stateBaseIncome - stateStdDeduction)
     : 0;
   const stateIncomeTax = stateComputable ? applyBrackets(stateTaxable, stateBrackets) : 0;
 
@@ -537,6 +544,7 @@ var STATE_DATA={
   "brackets_married": null,
   "standardDeduction_single": null,
   "standardDeduction_married": null,
+  "stateTaxBasis": "state_gross",
   "quarterlyWeights": null
 };
 var STATE_NAME="District of Columbia";
