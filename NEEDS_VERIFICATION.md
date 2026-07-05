@@ -77,12 +77,16 @@ source, or that are modeled as a documented approximation:
   the Oct 2025 IDR press release (authoritative over the stale 3.9% provisions page); the
   $1,000 estimated-payment threshold is confirmed. Iowa's standard deduction was not
   published in the sources checked and is omitted (estimate runs slightly high); confirm and add it.
-- **Mississippi — deferred (still noindex).** 4.4%-over-$10,000 structure is confirmed but the
-  exact 2026 rate is unclear mid-phasedown, and MS layers its own standard deduction +
-  personal exemption on top of the $10,000 zero bracket. Confirm all four before indexing.
-- **Georgia — deferred (still noindex).** The 2026 Employer's Tax Guide shows 5.19%, but
-  other DOR text references a 4.99% floor and a $15,000/$30,000 standard deduction whose
-  effective year is unclear. Confirm the exact 2026 rate + deduction before indexing.
+- **Mississippi — rate resolved, still noindex.** DOR's own FAQ confirms the structure:
+  first $10,000 of taxable income exempt, remainder taxed at 4.4% (the tax-year-2026 rate).
+  Model as brackets [0–10,000 @ 0%, 10,000+ @ 4.4%]. Still pending: MS standard deduction
+  ($2,300/$4,600 believed) + personal exemption ($6,000/$12,000 believed) + estimated
+  threshold — dor.ms.gov returned a TLS certificate error, so these were not confirmed.
+- **Georgia — genuine official-source conflict, still noindex.** Standard deduction is
+  consistently $15,000/$30,000, but the 2026 RATE conflicts within DOR sources: the 2026
+  Employer's Tax Guide summary says withhold at 5.19%, while the DOR standard-deductions
+  page references a 4.99% flat rate. The authoritative 2026 Employer's Guide PDF 403s.
+  Do not index until the exact tax-year-2026 rate is confirmed from the rate schedule.
 - **Illinois (indexed).** Rate 4.95% and $1,000 threshold confirmed official. The IL
   personal exemption allowance (~$2,850/person) is NOT modeled, so the estimate runs
   slightly high; documented in selfEmploymentNotes. Add the exemption to refine.
