@@ -1,0 +1,25 @@
+{
+  "slug": "washington",
+  "name": "Washington",
+  "abbreviation": "WA",
+  "hasStateIncomeTax": false,
+  "taxYear": 2026,
+  "brackets_single": [],
+  "brackets_married": [],
+  "standardDeduction_single": null,
+  "standardDeduction_married": null,
+  "hasQuarterlyRequirement": false,
+  "stateQuarterlyThreshold": null,
+  "stateTaxAgencyName": "Internal Revenue Service (federal only)",
+  "stateTaxAgencyUrl": "https://www.irs.gov/",
+  "statePaymentPortalUrl": "https://www.irs.gov/payments",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Federal estimated payments are due April 15, June 15, September 15, and the following January 15.",
+  "selfEmploymentNotes": "Washington does not tax personal income, so your quarterly estimates cover federal self-employment and income tax only.",
+  "uniqueFacts": [
+    "Washington has no tax on wages or self-employment income, so 1099 earners owe only federal quarterly taxes.",
+    "Washington does levy a 7% capital-gains excise tax on large investment gains, but that does not apply to earned or self-employment income."
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
+}

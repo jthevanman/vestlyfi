@@ -1,0 +1,13 @@
+{
+  "name": "vestlyfi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "VestlyFi static site + programmatic page generator (no runtime dependencies).",
+  "scripts": {
+    "test": "node --test tools/test/",
+    "seed": "node tools/seed-states.mjs",
+    "generate": "node tools/generate.mjs",
+    "build": "npm test && node tools/generate.mjs"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "colorado",
+  "name": "Colorado",
+  "abbreviation": "CO",
+  "hasStateIncomeTax": true,
+  "taxYear": 2026,
+  "brackets_single": [
+    {
+      "min": 0,
+      "max": null,
+      "rate": 0.044
+    }
+  ],
+  "brackets_married": [
+    {
+      "min": 0,
+      "max": null,
+      "rate": 0.044
+    }
+  ],
+  "standardDeduction_single": 16100,
+  "standardDeduction_married": 32200,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Colorado Department of Revenue",
+  "stateTaxAgencyUrl": "https://tax.colorado.gov/",
+  "statePaymentPortalUrl": "https://tax.colorado.gov/individual-estimated-income-tax",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Colorado follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Colorado taxes your federal taxable income at a flat 4.4%, so this estimate applies the federal standard deduction before the state rate.",
+  "uniqueFacts": [
+    "Colorado has a flat 4.4% income tax, so your effective state rate is the same at every income level.",
+    "Colorado only requires estimated payments if you expect to owe more than $1,000 in state tax for the year.",
+    "Colorado's flat rate is protected by TABOR, which can trigger temporary rate reductions in state surplus years."
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
+}

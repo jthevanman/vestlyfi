@@ -1,0 +1,25 @@
+{
+  "slug": "idaho",
+  "name": "Idaho",
+  "abbreviation": "ID",
+  "hasStateIncomeTax": true,
+  "taxYear": 2026,
+  "brackets_single": null,
+  "brackets_married": null,
+  "standardDeduction_single": null,
+  "standardDeduction_married": null,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": null,
+  "stateTaxAgencyName": null,
+  "stateTaxAgencyUrl": null,
+  "statePaymentPortalUrl": null,
+  "quarterlyWeights": null,
+  "dueDateNotes": "",
+  "selfEmploymentNotes": "",
+  "uniqueFacts": [
+    "Idaho levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
+    "Idaho bracket and agency data is pending verification from official sources before this page is indexed."
+  ],
+  "needsVerification": true,
+  "lastVerified": null
+}

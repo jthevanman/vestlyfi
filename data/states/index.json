@@ -1,0 +1,308 @@
+[
+  {
+    "slug": "alabama",
+    "name": "Alabama",
+    "abbreviation": "AL",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "alaska",
+    "name": "Alaska",
+    "abbreviation": "AK",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "arizona",
+    "name": "Arizona",
+    "abbreviation": "AZ",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "arkansas",
+    "name": "Arkansas",
+    "abbreviation": "AR",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "california",
+    "name": "California",
+    "abbreviation": "CA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "colorado",
+    "name": "Colorado",
+    "abbreviation": "CO",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "connecticut",
+    "name": "Connecticut",
+    "abbreviation": "CT",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "delaware",
+    "name": "Delaware",
+    "abbreviation": "DE",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "district-of-columbia",
+    "name": "District of Columbia",
+    "abbreviation": "DC",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "florida",
+    "name": "Florida",
+    "abbreviation": "FL",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "georgia",
+    "name": "Georgia",
+    "abbreviation": "GA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "hawaii",
+    "name": "Hawaii",
+    "abbreviation": "HI",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "idaho",
+    "name": "Idaho",
+    "abbreviation": "ID",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "illinois",
+    "name": "Illinois",
+    "abbreviation": "IL",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "indiana",
+    "name": "Indiana",
+    "abbreviation": "IN",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "iowa",
+    "name": "Iowa",
+    "abbreviation": "IA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "kansas",
+    "name": "Kansas",
+    "abbreviation": "KS",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "kentucky",
+    "name": "Kentucky",
+    "abbreviation": "KY",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "louisiana",
+    "name": "Louisiana",
+    "abbreviation": "LA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "maine",
+    "name": "Maine",
+    "abbreviation": "ME",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "maryland",
+    "name": "Maryland",
+    "abbreviation": "MD",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "massachusetts",
+    "name": "Massachusetts",
+    "abbreviation": "MA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "michigan",
+    "name": "Michigan",
+    "abbreviation": "MI",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "minnesota",
+    "name": "Minnesota",
+    "abbreviation": "MN",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "mississippi",
+    "name": "Mississippi",
+    "abbreviation": "MS",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "missouri",
+    "name": "Missouri",
+    "abbreviation": "MO",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "montana",
+    "name": "Montana",
+    "abbreviation": "MT",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "nebraska",
+    "name": "Nebraska",
+    "abbreviation": "NE",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "nevada",
+    "name": "Nevada",
+    "abbreviation": "NV",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "new-hampshire",
+    "name": "New Hampshire",
+    "abbreviation": "NH",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "new-jersey",
+    "name": "New Jersey",
+    "abbreviation": "NJ",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "new-mexico",
+    "name": "New Mexico",
+    "abbreviation": "NM",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "new-york",
+    "name": "New York",
+    "abbreviation": "NY",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "north-carolina",
+    "name": "North Carolina",
+    "abbreviation": "NC",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "north-dakota",
+    "name": "North Dakota",
+    "abbreviation": "ND",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "ohio",
+    "name": "Ohio",
+    "abbreviation": "OH",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "oklahoma",
+    "name": "Oklahoma",
+    "abbreviation": "OK",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "oregon",
+    "name": "Oregon",
+    "abbreviation": "OR",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "pennsylvania",
+    "name": "Pennsylvania",
+    "abbreviation": "PA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "rhode-island",
+    "name": "Rhode Island",
+    "abbreviation": "RI",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "south-carolina",
+    "name": "South Carolina",
+    "abbreviation": "SC",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "south-dakota",
+    "name": "South Dakota",
+    "abbreviation": "SD",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "tennessee",
+    "name": "Tennessee",
+    "abbreviation": "TN",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "texas",
+    "name": "Texas",
+    "abbreviation": "TX",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "utah",
+    "name": "Utah",
+    "abbreviation": "UT",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "vermont",
+    "name": "Vermont",
+    "abbreviation": "VT",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "virginia",
+    "name": "Virginia",
+    "abbreviation": "VA",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "washington",
+    "name": "Washington",
+    "abbreviation": "WA",
+    "hasStateIncomeTax": false
+  },
+  {
+    "slug": "west-virginia",
+    "name": "West Virginia",
+    "abbreviation": "WV",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "wisconsin",
+    "name": "Wisconsin",
+    "abbreviation": "WI",
+    "hasStateIncomeTax": true
+  },
+  {
+    "slug": "wyoming",
+    "name": "Wyoming",
+    "abbreviation": "WY",
+    "hasStateIncomeTax": false
+  }
+]
