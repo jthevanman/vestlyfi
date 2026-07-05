@@ -479,6 +479,10 @@ function calculate(birthYear, pia) {
     return { ...s, monthly: pia * mult, pct: Math.round(mult * 100) };
   });
 
+  // Current age (approx, from birth year) — flag any claiming age already passed
+  const currentAge = new Date().getFullYear() - birthYear;
+  strat.forEach(s => { s.passed = currentAge > s.age; });
+
   const s62 = strat[0], sFra = strat[1], s70 = strat[2];
 
   // Break-even ages
@@ -491,8 +495,10 @@ function calculate(birthYear, pia) {
 
   const rows = rowAges.map(age => {
     const vals = strat.map(s => collected(s, age));
-    const max = Math.max(...vals);
-    return { age, vals, winIdx: vals.indexOf(max) };
+    // Winner among strategies still available (a passed claiming age can never win)
+    let winIdx = -1, max = -Infinity;
+    strat.forEach((s, i) => { if (!s.passed && vals[i] > max) { max = vals[i]; winIdx = i; } });
+    return { age, vals, winIdx };
   });
 
   // Chart data: cumulative benefits from 62 to 95
@@ -504,23 +510,31 @@ function calculate(birthYear, pia) {
 
   const fmtBe = v => v == null ? '—' : Math.round(v);
 
+  // Break-even callout — only show comparisons still available to the user
+  const calloutLines = [];
+  if (currentAge > 62) calloutLines.push(`<div class="be-line">Based on your birth year, you're about <strong>${currentAge}</strong> this year, so claiming ages you've already passed are grayed out below.</div>`);
+  if (!s62.passed && !sFra.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>${sFra.label.replace('FRA ','age ')}</strong> beats claiming at <strong>62</strong> once you live past age <strong>${fmtBe(be62Fra)}</strong>.</div>`);
+  if (!sFra.passed && !s70.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>70</strong> beats <strong>${sFra.label.replace('FRA ','')}</strong> once you live past age <strong>${fmtBe(beFra70)}</strong>.</div>`);
+  if (s62.passed && sFra.passed) calloutLines.push(currentAge >= 70
+    ? `<div class="be-line hi">At about ${currentAge}, you're at or past 70. Claiming now gives your maximum benefit — waiting longer adds nothing.</div>`
+    : `<div class="be-line hi">Your remaining choice is to claim now or wait toward 70. Each month you delay adds about two-thirds of 1% to your benefit, up to age 70.</div>`);
+
   const html = `
     <div style="margin-bottom:32px;">
       <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:500;">Your monthly benefit at each age</div>
 
       <div class="be-grid">
         ${strat.map(s => `
-          <div class="be-card">
+          <div class="be-card"${s.passed ? ' style="opacity:0.4;"' : ''}>
             <div class="be-age">${s.label}</div>
             <div class="be-amt">${dollars(s.monthly)}</div>
-            <div class="be-per">${s.pct}% of full benefit</div>
+            <div class="be-per">${s.passed ? 'No longer available' : s.pct + '% of full benefit'}</div>
             <div class="be-yr">${dollars(s.monthly * 12)}/yr</div>
           </div>`).join('')}
       </div>
 
       <div class="be-callout">
-        <div class="be-line hi">Waiting until <strong>${sFra.label.replace('FRA ','age ')}</strong> beats claiming at <strong>62</strong> once you live past age <strong>${fmtBe(be62Fra)}</strong>.</div>
-        <div class="be-line hi">Waiting until <strong>70</strong> beats <strong>${sFra.label.replace('FRA ','')}</strong> once you live past age <strong>${fmtBe(beFra70)}</strong>.</div>
+        ${calloutLines.join('')}
       </div>
 
       <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Total collected by age</div>
@@ -529,16 +543,16 @@ function calculate(birthYear, pia) {
           <thead>
             <tr>
               <th>If you live to…</th>
-              <th>Claim ${s62.label.replace('Age ','')}</th>
-              <th>Claim ${sFra.label.replace('FRA ','').replace('Age ','')}</th>
-              <th>Claim ${s70.label.replace('Age ','')}</th>
+              <th${s62.passed ? ' style="opacity:0.45;"' : ''}>Claim ${s62.label.replace('Age ','')}</th>
+              <th${sFra.passed ? ' style="opacity:0.45;"' : ''}>Claim ${sFra.label.replace('FRA ','').replace('Age ','')}</th>
+              <th${s70.passed ? ' style="opacity:0.45;"' : ''}>Claim ${s70.label.replace('Age ','')}</th>
             </tr>
           </thead>
           <tbody>
             ${rows.map(r => `
               <tr>
                 <td class="rowlbl">${r.age}</td>
-                ${r.vals.map((v, i) => `<td class="${i === r.winIdx ? 'win' : ''}">${dollars(v)}</td>`).join('')}
+                ${r.vals.map((v, i) => `<td class="${i === r.winIdx ? 'win' : ''}"${strat[i].passed ? ' style="opacity:0.4;"' : ''}>${dollars(v)}</td>`).join('')}
               </tr>`).join('')}
           </tbody>
         </table>
@@ -553,9 +567,9 @@ function calculate(birthYear, pia) {
       <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Cumulative benefits by claiming age</div>
       <div class="chart-box"><canvas id="ssChart"></canvas></div>
       <div class="chart-legend">
-        <span><span class="lg-swatch" style="background:#5bb8f5;"></span>Claim at ${s62.age}</span>
-        <span><span class="lg-swatch" style="background:#c9a84c;"></span>Claim at ${sFra.label.replace('FRA ','').replace('Age ','')}</span>
-        <span><span class="lg-swatch" style="background:#4ade80;"></span>Claim at ${s70.age}</span>
+        <span${s62.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#5bb8f5;"></span>Claim at ${s62.age}</span>
+        <span${sFra.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#c9a84c;"></span>Claim at ${sFra.label.replace('FRA ','').replace('Age ','')}</span>
+        <span${s70.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#4ade80;"></span>Claim at ${s70.age}</span>
       </div>
 
       <!-- ============================================================
@@ -588,7 +602,7 @@ function calculate(birthYear, pia) {
         labels: chartAges,
         datasets: series.map((data, i) => ({
           label: 'Claim at ' + [s62.age, (fraM % 12 === 0 ? fraY : fraLabel(fraM)), s70.age][i],
-          data, borderColor: colors[i], backgroundColor: 'transparent',
+          data, borderColor: strat[i].passed ? 'rgba(245,240,232,0.2)' : colors[i], backgroundColor: 'transparent',
           borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15
         }))
       },
