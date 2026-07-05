@@ -1,0 +1,54 @@
+/**
+ * Regression guard: recomputes engine outputs for every verified state and
+ * asserts they exactly match the committed snapshot (to the cent). This locks
+ * live math so an engine refactor cannot silently shift what real users see.
+ *
+ * If this test fails after an INTENTIONAL change, review the diff, then
+ * regenerate with `node tools/gen-snapshot.mjs` and commit the new snapshot.
+ */
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { loadAllStates } from '../lib/getStateData.mjs';
+import { snapshotState, SCENARIOS } from '../lib/snapshotScenarios.mjs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const snapshot = JSON.parse(
+  readFileSync(join(__dirname, 'snapshots', 'verified-states.snapshot.json'), 'utf8'),
+);
+
+test('snapshot scenario set is unchanged', () => {
+  assert.deepEqual(snapshot.scenarios, SCENARIOS);
+});
+
+test('every verified state matches its locked snapshot outputs', () => {
+  const states = loadAllStates().filter((s) => !s.needsVerification);
+  const missing = [];
+  for (const s of states) {
+    const expected = snapshot.states[s.slug];
+    if (!expected) { missing.push(s.slug); continue; }
+    assert.deepEqual(snapshotState(s), expected, `outputs shifted for ${s.slug}`);
+  }
+  assert.equal(missing.length, 0, `verified states missing from snapshot (regenerate): ${missing.join(', ')}`);
+});
+
+// Explicit hand-checked known-answer anchors ($80k self-employment, single).
+// These pin the figures I verified by hand so intent is legible in the test.
+const HAND_CHECKED = {
+  'new-york': 3417.8,
+  iowa: 2825.23,
+  virginia: 3514.4,
+  minnesota: 3532.29,
+};
+test('hand-checked $80k single state tax anchors', () => {
+  const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));
+  for (const [slug, expected] of Object.entries(HAND_CHECKED)) {
+    const s = byslug[slug];
+    assert.ok(s && !s.needsVerification, `${slug} should be verified`);
+    const r = snapshotState(s)[0]; // scenario 0 = $80k single
+    assert.ok(Math.abs(r.stateIncomeTax - expected) < 0.5,
+      `${slug} $80k single state tax expected ~${expected}, got ${r.stateIncomeTax}`);
+  }
+});
