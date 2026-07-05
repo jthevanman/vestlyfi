@@ -252,7 +252,7 @@
   <div class="step active" id="step-0">
     <h1>Social Security Break-Even Calculator</h1>
     <h2>Claim at 62, 67, or 70?<br><span class="accent">See which pays more.</span></h2>
-    <p class="sub">Start Social Security any time from 62 to 70. Enter two numbers and see the age where waiting starts to pay off. How it works is explained below.</p>
+    <p class="sub">Start Social Security any time from 62 to 70. Enter two numbers and see the age where waiting starts to pay off.</p>
 
     <div class="input-row">
       <div class="input-group">
@@ -260,7 +260,6 @@
         <div class="input-wrap">
           <input type="number" id="birthYear" min="1940" max="2005" placeholder="1962" oninput="checkStep1()">
         </div>
-        <div id="fraHint" style="font-size:0.75rem;color:var(--muted);margin-top:8px;line-height:1.5;"></div>
       </div>
       <div class="input-group">
         <label>Benefit at Full Retirement Age
@@ -273,9 +272,9 @@
       </div>
     </div>
 
-    <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;line-height:1.6;background:var(--navy-light);border:1px solid var(--border-soft);border-radius:10px;padding:13px 16px;">
-      Don't have your statement handy? Create a free account at <strong style="color:var(--cream-dim);font-weight:400;">ssa.gov</strong> to see your estimate, or enter a rough number to explore. The typical benefit at full retirement age is around $1,900 to $2,000 a month.
-    </div>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:4px;line-height:1.6;">
+      Don't have your statement handy? Create a free account at ssa.gov to see your estimate, or enter a rough number to explore. The typical benefit at full retirement age is around $1,900 to $2,000 a month.
+    </p>
 
     <div id="err-1" class="err">Please enter a valid birth year and a benefit amount above $0.</div>
     <div class="step-nav">
@@ -297,11 +296,11 @@
     <p>Deciding when to claim Social Security is one of the largest and most permanent money decisions you will ever make. The difference between claiming at 62 and waiting until 70 can be worth six figures over a lifetime, and once you start, the choice is very hard to undo. The catch is that the "right" answer depends on how long you live, which nobody knows in advance. A break-even comparison turns that uncertainty into a single, usable number.</p>
 
     <h2>How claiming age changes your check</h2>
-    <p>Your benefit is anchored to your <strong>full retirement age</strong>, which is 67 for anyone born in 1960 or later. Claim before then and Social Security permanently reduces your monthly benefit. Claim after, up to age 70, and it permanently increases it. The reductions and increases follow fixed formulas from the Social Security Administration: your benefit is cut by <strong>5/9 of 1% for each of the first 36 months</strong> you claim early and <strong>5/12 of 1% for each additional month</strong>, and it grows by <strong>8% per year</strong> of delayed retirement credits after full retirement age.</p>
+    <p>Your benefit is anchored to your full retirement age, which is 67 for anyone born in 1960 or later. Claim before then and Social Security permanently reduces your monthly benefit. Claim after, up to age 70, and it permanently increases it. The reductions and increases follow fixed formulas from the Social Security Administration: your benefit is cut by 5/9 of 1% for each of the first 36 months you claim early and 5/12 of 1% for each additional month, and it grows by 8% per year of delayed retirement credits after full retirement age.</p>
     <p>For a full retirement age of 67, that means claiming at 62 pays roughly 70% of your full benefit, while waiting until 70 pays about 124%. Same lifetime earnings record, a check that differs by more than 50% depending only on when you start.</p>
 
     <h2>How the break-even works</h2>
-    <p>Claiming early gives you a head start: years of checks the person who waits does not receive. The person who waits eventually collects a larger monthly amount and slowly closes that gap. The <strong>break-even age</strong> is the point where their cumulative total catches up to yours. Before that age, claiming earlier has paid more in total dollars. After it, waiting pulls ahead and keeps widening the lead for the rest of your life.</p>
+    <p>Claiming early gives you a head start: years of checks the person who waits does not receive. The person who waits eventually collects a larger monthly amount and slowly closes that gap. The break-even age is the point where their cumulative total catches up to yours. Before that age, claiming earlier has paid more in total dollars. After it, waiting pulls ahead and keeps widening the lead for the rest of your life.</p>
     <p>For a full retirement age of 67, claiming at 67 instead of 62 typically breaks even somewhere around age 78 to 79. Waiting from 67 to 70 usually breaks even around 82 to 83. Your exact numbers depend on your benefit amount, which is why the calculator computes them from your figures rather than quoting an average.</p>
 
     <h2>Reading the "total collected by age" table</h2>
@@ -394,6 +393,7 @@
 
 <script>
 let currentStep = 0;
+let lastShare = null;
 
 function showStep(n) {
   document.getElementById('step-' + currentStep)?.classList.remove('active');
@@ -452,12 +452,6 @@ function breakEven(benE, ageE, benL, ageL) {
 function checkStep1() {
   const by = parseInt(document.getElementById('birthYear').value);
   const pia = parseVal('pia');
-  const hint = document.getElementById('fraHint');
-  if (by >= 1940 && by <= 2005) {
-    hint.textContent = 'Full retirement age: ' + fraLabel(fraMonths(by));
-  } else {
-    hint.textContent = '';
-  }
   const btn = document.getElementById('btn-step1');
   if (btn) btn.disabled = !(by >= 1940 && by <= 2005 && pia > 0);
 }
@@ -506,6 +500,8 @@ function calculate(birthYear, pia) {
   for (let a = 62; a <= 95; a++) chartAges.push(a);
   const series = strat.map(s => chartAges.map(a => Math.round(collected(s, a))));
 
+  lastShare = { strat, s62, sFra, s70, rows, be62Fra, beFra70, pia, fraM, fraLabelStr: fraLabel(fraM) };
+
   const fmtBe = v => v == null ? '—' : Math.round(v);
 
   const html = `
@@ -547,7 +543,12 @@ function calculate(birthYear, pia) {
           </tbody>
         </table>
       </div>
-      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:28px;line-height:1.6;">Green marks the strategy that collects the most total dollars by that age. In today's dollars, before taxes and cost-of-living adjustments.</div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">Green marks the strategy that collects the most total dollars by that age. In today's dollars, before taxes and cost-of-living adjustments.</div>
+
+      <button onclick="openShareModal()" style="width:100%;padding:12px;background:var(--navy-light);border:1px solid var(--border);border-radius:10px;color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;margin-bottom:28px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:border-color .18s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        Share this table as an image
+      </button>
 
       <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Cumulative benefits by claiming age</div>
       <div class="chart-box"><canvas id="ssChart"></canvas></div>
@@ -614,6 +615,102 @@ function restartWizard() {
   showStep(0);
 }
 
+/* ---- Shareable image of the "total collected by age" table ---- */
+function drawSpacedText(ctx, text, x, y, sp) { let cx = x; for (const ch of text) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; } return cx; }
+
+function openShareModal() {
+  if (!lastShare) return;
+  document.getElementById('sharePreviewImg').style.display = 'none';
+  document.getElementById('shareGenerating').style.display = 'block';
+  document.getElementById('shareMsg').textContent = '';
+  const isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.getElementById('shareDownloadBtn').textContent = isMob ? 'Save Image' : 'Download';
+  document.getElementById('shareModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(renderShareCanvas, 50);
+}
+function closeShareModal() { document.getElementById('shareModal').style.display = 'none'; document.body.style.overflow = ''; }
+
+async function renderShareCanvas() {
+  const d = lastShare; if (!d) return;
+  const W = 1200, H = 640, SC = 2, PAD = 56;
+  const canvas = document.getElementById('shareCanvas');
+  canvas.width = W * SC; canvas.height = H * SC;
+  const ctx = canvas.getContext('2d'); ctx.scale(SC, SC);
+  try { await document.fonts.load('700 40px Outfit'); await document.fonts.load('600 22px Outfit'); await document.fonts.load('400 19px Outfit'); await document.fonts.load('700 30px "Exo 2"'); await document.fonts.ready; } catch (e) {}
+
+  const accent = ['#5bb8f5', '#c9a84c', '#4ade80'];
+  const fraCol = d.sFra.label.replace('FRA ', '').replace('Age ', '');
+
+  // background
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0e1530'); bg.addColorStop(1, '#080c1a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const g1 = ctx.createRadialGradient(W * 0.15, -100, 0, W * 0.15, -100, 540); g1.addColorStop(0, 'rgba(201,168,76,0.13)'); g1.addColorStop(1, 'transparent'); ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(201,168,76,0.18)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2);
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+
+  // header
+  ctx.font = '700 30px "Exo 2",sans-serif'; ctx.fillStyle = '#c9a84c'; ctx.fillText('VestlyFi', PAD, 58);
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(201,168,76,0.85)'; drawSpacedText(ctx, 'SOCIAL SECURITY BREAK-EVEN', PAD, 98, 2);
+  let headline = `Claiming at 62 vs ${fraCol} vs 70`;
+  let hs = 40; ctx.font = '600 40px Outfit,sans-serif'; while (ctx.measureText(headline).width > W - PAD * 2 && hs > 26) { hs -= 2; ctx.font = '600 ' + hs + 'px Outfit,sans-serif'; }
+  ctx.fillStyle = '#f5f0e8'; ctx.fillText(headline, PAD, 148);
+  ctx.font = '400 19px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.5)'; ctx.fillText(`Full retirement benefit ${dollars(d.pia)}/mo  ·  FRA ${d.fraLabelStr}`, PAD, 180);
+
+  // benefit cards
+  const cardY = 206, cardH = 96, gap = 20, cardW = (W - PAD * 2 - gap * 2) / 3;
+  d.strat.forEach((s, i) => {
+    const bx = PAD + i * (cardW + gap);
+    ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.beginPath(); ctx.roundRect(bx, cardY, cardW, cardH, 12); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.textAlign = 'left';
+    ctx.font = '600 13px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+    drawSpacedText(ctx, ('CLAIM AT ' + s.label.replace('FRA ', '').replace('Age ', '')).toUpperCase(), bx + 20, cardY + 32, 1);
+    ctx.font = '700 30px Outfit,sans-serif'; ctx.fillStyle = accent[i]; ctx.fillText(dollars(s.monthly), bx + 20, cardY + 68);
+    ctx.font = '400 14px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.4)'; ctx.fillText(`${s.pct}% of full benefit`, bx + 20, cardY + 88);
+  });
+
+  // table
+  const tblTop = cardY + cardH + 42, rowH = 44, liveX = PAD + 6;
+  const span = W - PAD * 2, colR = [PAD + span * 0.50, PAD + span * 0.75, W - PAD - 6];
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+  ctx.textAlign = 'left'; drawSpacedText(ctx, 'IF YOU LIVE TO', liveX, tblTop, 1);
+  ctx.textAlign = 'right'; ['62', fraCol, '70'].forEach((c, i) => ctx.fillText('Claim ' + c, colR[i], tblTop));
+  ctx.strokeStyle = 'rgba(255,255,255,0.09)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, tblTop + 14); ctx.lineTo(W - PAD, tblTop + 14); ctx.stroke();
+  d.rows.forEach((r, ri) => {
+    const ry = tblTop + 32 + ri * rowH;
+    ctx.textAlign = 'left'; ctx.font = '400 20px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.72)'; ctx.fillText('Age ' + r.age, liveX, ry);
+    ctx.textAlign = 'right';
+    r.vals.forEach((v, ci) => {
+      const win = ci === r.winIdx;
+      ctx.font = (win ? '700 20px' : '400 20px') + ' Outfit,sans-serif';
+      ctx.fillStyle = win ? accent[ci] : 'rgba(245,240,232,0.78)';
+      ctx.fillText(dollars(v), colR[ci], ry);
+    });
+    if (ri < d.rows.length - 1) { ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, ry + 14); ctx.lineTo(W - PAD, ry + 14); ctx.stroke(); }
+  });
+
+  const dataUrl = canvas.toDataURL('image/png');
+  document.getElementById('shareGenerating').style.display = 'none';
+  const img = document.getElementById('sharePreviewImg'); img.src = dataUrl; img.style.display = 'block';
+}
+
+function downloadShareImage() {
+  const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
+  const dataUrl = canvas.toDataURL('image/png'), isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMob) {
+    const w = window.open();
+    if (w) { w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`); w.document.close(); }
+  } else {
+    const a = document.createElement('a'); a.download = 'vestlyfi-social-security-break-even.png'; a.href = dataUrl; a.click();
+    msg.style.color = '#4ade80'; msg.textContent = 'Downloaded!';
+  }
+}
+async function copyShareImage() {
+  const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
+  try { canvas.toBlob(async blob => { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); msg.style.color = '#4ade80'; msg.textContent = 'Copied to clipboard!'; }); }
+  catch (e) { msg.style.color = '#f87171'; msg.textContent = 'Copy not supported — use Download instead.'; }
+}
+
 document.addEventListener('keydown', function(e) {
   if (e.key !== 'Enter') return;
   if (document.querySelector('[id^="modal-"][style*="block"]')) return;
@@ -624,6 +721,27 @@ function showModal(id) { document.getElementById('modal-'+id).style.display='blo
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 </script>
+
+<div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:24px;width:100%;max-width:660px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:1.1rem;font-weight:500;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share your results</div>
+      <button onclick="closeShareModal()" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.5rem;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A shareable image of your total-collected-by-age table.</div>
+    <div style="background:#0a0f1e;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;margin-bottom:16px;min-height:140px;display:flex;align-items:center;justify-content:center;">
+      <div id="shareGenerating" style="color:rgba(245,240,232,0.4);font-size:0.85rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+      <img id="sharePreviewImg" alt="Share preview" style="display:none;max-width:100%;border-radius:6px;">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Close</button>
+      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
+      <button onclick="copyShareImage()" style="padding:12px 18px;background:#1a2540;color:#f5f0e8;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy</button>
+    </div>
+    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:16px;color:#4ade80;font-family:'Outfit',sans-serif;"></div>
+  </div>
+</div>
+<canvas id="shareCanvas" style="display:none"></canvas>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
