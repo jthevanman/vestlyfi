@@ -30,6 +30,11 @@
  * @property {string} selfEmploymentNotes
  * @property {string[]} uniqueFacts
  * @property {string[]} [sources] - official source URLs the data was verified against
+ * @property {number} [taxYearBasis] - the tax year the rate figures are actually from.
+ *   Defaults to taxYear. When < taxYear (e.g. 2025 figures on a 2026 page because the
+ *   state hasn't published 2026 brackets yet), the page shows a prominent "figures
+ *   pending" banner but is still indexed; sweep-update when the new year publishes.
+ * @property {string} [stateTaxBasis] - 'federal_taxable_income' | 'federal_agi' | 'state_gross'
  * @property {boolean} needsVerification - true => page ships noindex
  * @property {string|null} lastVerified  - ISO date the data was verified
  */
@@ -86,6 +91,17 @@ export function validateState(s) {
   if (s.stateTaxBasis != null &&
       !['federal_taxable_income', 'federal_agi', 'state_gross'].includes(s.stateTaxBasis)) {
     e.push(at(`stateTaxBasis must be one of federal_taxable_income | federal_agi | state_gross`));
+  }
+
+  if (s.taxYearBasis != null) {
+    if (typeof s.taxYearBasis !== 'number' || s.taxYearBasis > s.taxYear || s.taxYearBasis < 2000) {
+      e.push(at(`taxYearBasis must be a year <= taxYear`));
+    }
+  }
+
+  if (s.stateTaxBasis != null &&
+      !['federal_taxable_income', 'federal_agi', 'state_gross'].includes(s.stateTaxBasis)) {
+    e.push(at(`stateTaxBasis must be federal_taxable_income, federal_agi, or state_gross`));
   }
 
   if (s.sources != null) {

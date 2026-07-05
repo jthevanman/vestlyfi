@@ -42,6 +42,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .page-tag{font-size:0.68rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:500;}
 .page h1{font-family:'Outfit',sans-serif;font-size:clamp(1.7rem,4.6vw,2.4rem);font-weight:400;line-height:1.22;margin-bottom:14px;}
 .intro{color:var(--cream-dim);font-size:0.93rem;line-height:1.75;margin-bottom:34px;}
+.pending-banner{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,rgba(251,191,36,0.10),rgba(251,191,36,0.03));border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:14px 16px;margin-bottom:28px;font-size:0.84rem;line-height:1.6;color:var(--cream-dim);}
+.pending-banner svg{flex-shrink:0;margin-top:1px;color:var(--amber);}
+.pending-banner strong{color:var(--amber);font-weight:500;}
 .calc-panel{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:16px;padding:26px;margin-bottom:26px;}
 .panel-section-title{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:500;}
 .divider{height:1px;background:var(--border-soft);margin:22px 0;}
@@ -367,6 +370,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
   ${crumbsHtml(crumbs)}
   <div class="page-tag">${esc(copy.tag)}</div>
   <h1>${esc(copy.h1)}</h1>
+  ${pendingBanner(state)}
   <p class="intro">${esc(copy.intro)}</p>
 
   ${calcMarkup(state.name)}
@@ -456,6 +460,15 @@ ${scriptBlock({ engineSource, stateData: federalOnly, stateName: 'Federal', stat
 
 function linkCard(t) {
   return `<a class="related-card" href="${esc(t.href)}"><div class="rc-title">${esc(t.label)}</div><div class="rc-hook">${esc(t.hook)}</div></a>`;
+}
+
+function pendingBanner(state) {
+  const basis = state.taxYearBasis;
+  if (!basis || basis >= state.taxYear) return '';
+  return `<div class="pending-banner">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div><strong>${esc(state.name)}'s ${state.taxYear} tax figures aren't published yet.</strong> This calculator uses ${esc(state.name)}'s latest official ${basis} rates and will be updated as soon as the ${state.taxYear} numbers are released. Federal figures are already ${state.taxYear}.</div>
+  </div>`;
 }
 
 function sourcesHtml(sources) {

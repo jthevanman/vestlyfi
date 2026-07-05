@@ -161,6 +161,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .page-tag{font-size:0.68rem;letter-spacing:0.17em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;font-weight:500;}
 .page h1{font-family:'Outfit',sans-serif;font-size:clamp(1.7rem,4.6vw,2.4rem);font-weight:400;line-height:1.22;margin-bottom:14px;}
 .intro{color:var(--cream-dim);font-size:0.93rem;line-height:1.75;margin-bottom:34px;}
+.pending-banner{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,rgba(251,191,36,0.10),rgba(251,191,36,0.03));border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:14px 16px;margin-bottom:28px;font-size:0.84rem;line-height:1.6;color:var(--cream-dim);}
+.pending-banner svg{flex-shrink:0;margin-top:1px;color:var(--amber);}
+.pending-banner strong{color:var(--amber);font-weight:500;}
 .calc-panel{background:var(--navy-light);border:1px solid var(--border-soft);border-radius:16px;padding:26px;margin-bottom:26px;}
 .panel-section-title{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:500;}
 .divider{height:1px;background:var(--border-soft);margin:22px 0;}
@@ -244,6 +247,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   <div class="crumbs"><a href="/">Home</a><span class="sep">/</span><a href="/calculators/">Calculators</a><span class="sep">/</span><a href="/calculators/quarterly-tax/">Quarterly Estimated Tax</a><span class="sep">/</span><span class="current">Arkansas</span></div>
   <div class="page-tag">Side-Income Tools</div>
   <h1>Arkansas Quarterly Estimated Tax Calculator (2026)</h1>
+  
   <p class="intro">If you earn 1099 or self-employment income in Arkansas, the IRS and the state both expect you to pay taxes as you go — in four quarterly installments rather than one April bill. This calculator estimates your 2026 quarterly payments across all three pieces: federal self-employment tax, federal income tax, and Arkansas state income tax. Arkansas levies a state income tax that applies to self-employment income in addition to your federal quarterly payments. Enter your expected net self-employment income, any W-2 wages, and your filing status to see what to send each quarter, your due dates, and how the safe-harbor rules protect you from an underpayment penalty. Everything is an estimate for planning — always confirm with the state tax agency before you file.</p>
 
   <div class="calc-panel">

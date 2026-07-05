@@ -121,6 +121,17 @@ function writeNeedsVerification(states) {
   lines.push('Items flagged during verification that could not be confirmed from an official');
   lines.push('source, or that are modeled as a documented approximation:');
   lines.push('');
+  lines.push('- **Traffic-first batch, modeling needs (deferred until handled correctly):**');
+  lines.push('  - **Ohio** — self-employment income qualifies for Ohio\'s Business Income Deduction');
+  lines.push('    (first $250,000 deducted, remainder taxed at a flat 3%); the graduated nonbusiness');
+  lines.push('    brackets would badly overstate a 1099 filer. Model the BID before indexing.');
+  lines.push('  - **Oregon & Missouri** — both allow a federal income-tax-liability subtraction (OR up to');
+  lines.push('    ~$8,250, MO up to $5,000/$10,000, both phased out by AGI). Needs a federalTaxDeduction');
+  lines.push('    engine feature; without it the estimate runs materially high. OR 2026 also unpublished (use 2025 + banner).');
+  lines.push('  - **Wisconsin** — standard deduction phases down as income rises (not a flat amount);');
+  lines.push('    the flat-deduction model would be off across the income range.');
+  lines.push('  - **Maryland** — every county levies a local income tax (2.25%–3.20%) on top of the state');
+  lines.push('    rate, and 2025 added new 6.25%/6.5% top brackets; model state brackets + disclose local tax.');
   lines.push('- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403');
   lines.push('  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically');
   lines.push('  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual');

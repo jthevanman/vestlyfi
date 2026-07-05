@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**31 of 51 pages pending verification.**
+**29 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -25,7 +25,6 @@ all been checked against the state tax agency for tax year 2026.
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
 | Maryland | MD | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maryland Department of Revenue / Taxation (official .gov) |
 | Massachusetts | MA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Massachusetts Department of Revenue / Taxation (official .gov) |
-| Minnesota | MN | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Minnesota Department of Revenue / Taxation (official .gov) |
 | Mississippi | MS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Mississippi Department of Revenue / Taxation (official .gov) |
 | Missouri | MO | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Missouri Department of Revenue / Taxation (official .gov) |
 | Montana | MT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Montana Department of Revenue / Taxation (official .gov) |
@@ -40,7 +39,6 @@ all been checked against the state tax agency for tax year 2026.
 | South Carolina | SC | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | South Carolina Department of Revenue / Taxation (official .gov) |
 | Utah | UT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Utah Department of Revenue / Taxation (official .gov) |
 | Vermont | VT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Vermont Department of Revenue / Taxation (official .gov) |
-| Virginia | VA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Virginia Department of Revenue / Taxation (official .gov) |
 | West Virginia | WV | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | West Virginia Department of Revenue / Taxation (official .gov) |
 | Wisconsin | WI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Wisconsin Department of Revenue / Taxation (official .gov) |
 
@@ -49,6 +47,17 @@ all been checked against the state tax agency for tax year 2026.
 Items flagged during verification that could not be confirmed from an official
 source, or that are modeled as a documented approximation:
 
+- **Traffic-first batch, modeling needs (deferred until handled correctly):**
+  - **Ohio** — self-employment income qualifies for Ohio's Business Income Deduction
+    (first $250,000 deducted, remainder taxed at a flat 3%); the graduated nonbusiness
+    brackets would badly overstate a 1099 filer. Model the BID before indexing.
+  - **Oregon & Missouri** — both allow a federal income-tax-liability subtraction (OR up to
+    ~$8,250, MO up to $5,000/$10,000, both phased out by AGI). Needs a federalTaxDeduction
+    engine feature; without it the estimate runs materially high. OR 2026 also unpublished (use 2025 + banner).
+  - **Wisconsin** — standard deduction phases down as income rises (not a flat amount);
+    the flat-deduction model would be off across the income range.
+  - **Maryland** — every county levies a local income tax (2.25%–3.20%) on top of the state
+    rate, and 2025 added new 6.25%/6.5% top brackets; model state brackets + disclose local tax.
 - **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403
   on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically
   does not publish inflation-adjusted 2026 brackets until ~August. Needs manual
