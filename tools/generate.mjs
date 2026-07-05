@@ -121,6 +121,14 @@ function writeNeedsVerification(states) {
   lines.push('Items flagged during verification that could not be confirmed from an official');
   lines.push('source, or that are modeled as a documented approximation:');
   lines.push('');
+  lines.push('- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403');
+  lines.push('  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically');
+  lines.push('  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual');
+  lines.push('  transcription of the full FTB schedule plus the 30/40/0/30 weighting and 1% MHS surtax.');
+  lines.push('- **New York — indexed, with a documented limitation.** 2026 brackets transcribed from the');
+  lines.push('  official IT-2105-I (2026) instructions. The tax-benefit-recapture supplemental tax above');
+  lines.push('  NYAGI $107,650, the MCTMT, and NYC/Yonkers local taxes are NOT modeled (noted on-page);');
+  lines.push('  the estimate can run slightly low for high earners in the NYC metro.');
   lines.push('- **Idaho — deferred (still noindex).** The official 2026 individual rate was not');
   lines.push('  yet published on tax.idaho.gov (rate schedule only ran through 2025). Do not');
   lines.push('  verify until the 2026 rate is posted.');

@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**33 of 51 pages pending verification.**
+**32 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -33,7 +33,6 @@ all been checked against the state tax agency for tax year 2026.
 | Nebraska | NE | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Nebraska Department of Revenue / Taxation (official .gov) |
 | New Jersey | NJ | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Jersey Department of Revenue / Taxation (official .gov) |
 | New Mexico | NM | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Mexico Department of Revenue / Taxation (official .gov) |
-| New York | NY | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New York Department of Revenue / Taxation (official .gov) |
 | North Dakota | ND | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | North Dakota Department of Revenue / Taxation (official .gov) |
 | Ohio | OH | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Ohio Department of Revenue / Taxation (official .gov) |
 | Oklahoma | OK | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oklahoma Department of Revenue / Taxation (official .gov) |
@@ -51,6 +50,14 @@ all been checked against the state tax agency for tax year 2026.
 Items flagged during verification that could not be confirmed from an official
 source, or that are modeled as a documented approximation:
 
+- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403
+  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically
+  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual
+  transcription of the full FTB schedule plus the 30/40/0/30 weighting and 1% MHS surtax.
+- **New York — indexed, with a documented limitation.** 2026 brackets transcribed from the
+  official IT-2105-I (2026) instructions. The tax-benefit-recapture supplemental tax above
+  NYAGI $107,650, the MCTMT, and NYC/Yonkers local taxes are NOT modeled (noted on-page);
+  the estimate can run slightly low for high earners in the NYC metro.
 - **Idaho — deferred (still noindex).** The official 2026 individual rate was not
   yet published on tax.idaho.gov (rate schedule only ran through 2025). Do not
   verify until the 2026 rate is posted.
