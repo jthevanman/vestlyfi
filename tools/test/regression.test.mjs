@@ -44,6 +44,7 @@ const HAND_CHECKED = {
   'south-carolina': 2853.19,
   oklahoma: 2993.91,
   'new-jersey': 2906.05,
+  kansas: 3348.94,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));
