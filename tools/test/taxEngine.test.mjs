@@ -190,6 +190,21 @@ test('ohioBid: business income over $250k taxed at 3%, W-2 at 2.75% over exempti
   close(r.stateIncomeTax, 2158.625, 0.01);
 });
 
+// --- Utah Taxpayer Tax Credit -----------------------------------------------
+test('utahTaxpayerCredit: flat 4.45% minus phased credit ($80k single)', () => {
+  const ut = {
+    hasStateIncomeTax: true, stateTaxBasis: 'federal_agi',
+    brackets_single: [{ min: 0, max: null, rate: 0.0445 }],
+    brackets_married: [{ min: 0, max: null, rate: 0.0445 }],
+    standardDeduction_single: 0, standardDeduction_married: 0,
+    utahTaxpayerCredit: { creditRate: 0.06, phaseoutRate: 0.013, baseSingle: 18213, baseMarried: 36426, perDependent: 2111 },
+  };
+  const r = estimateQuarterly({ selfEmploymentIncome: 80000, filingStatus: 'single' }, ut);
+  // AGI 74348.18 ; tax 4.45% = 3308.49 ; credit = 0.06*16100 - 0.013*(74348.18-18213)
+  //   = 966 - 729.76 = 236.24 ; net = 3072.25
+  close(r.stateIncomeTax, 3072.25, 1);
+});
+
 // --- No-tax state (Texas): federal only -------------------------------------
 test('estimateQuarterly: Texas (no state income tax) = federal only', () => {
   const tx = {

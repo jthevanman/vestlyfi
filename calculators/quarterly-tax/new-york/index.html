@@ -504,6 +504,12 @@ function estimateQuarterly(input, stateData) {
     stateIncomeTax = stateComputable ? applyBrackets(stateTaxable, stateBrackets) : 0;
   }
 
+  // Optional state tax credit that reduces computed tax and phases out with
+  // income (e.g. Utah's Taxpayer Tax Credit). No-op unless the state defines it.
+  if (stateComputable && stateData.utahTaxpayerCredit) {
+    stateIncomeTax = Math.max(0, stateIncomeTax - utahTaxpayerCreditAmount(stateData, status, stateBaseIncome));
+  }
+
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
   const totalAnnual = federalTotal + stateIncomeTax;
@@ -596,6 +602,22 @@ function slidingStandardDeduction(stateData, status, federalAGI) {
   if (!p) return null;
   const over = Math.max(0, federalAGI - num(p.phaseoutStart));
   return Math.max(0, num(p.base) - num(p.rate) * over);
+}
+
+/**
+ * Utah Taxpayer Tax Credit (TC-40). Initial credit = creditRate × (federal
+ * standard deduction + perDependent × dependents), reduced by phaseoutRate ×
+ * (income over the filing-status base), floored at 0.
+ * Config: stateData.utahTaxpayerCredit = { creditRate, phaseoutRate, baseSingle, baseMarried, perDependent }
+ */
+function utahTaxpayerCreditAmount(stateData, status, stateBaseIncome, dependents = 0) {
+  const c = stateData.utahTaxpayerCredit;
+  if (!c) return 0;
+  const fedDed = FEDERAL_2026.standardDeduction[status];
+  const base = num(status === 'married' ? c.baseMarried : c.baseSingle);
+  const initial = num(c.creditRate) * (fedDed + num(c.perDependent) * dependents);
+  const phaseout = num(c.phaseoutRate) * Math.max(0, stateBaseIncome - base);
+  return Math.max(0, initial - phaseout);
 }
 
 /**
