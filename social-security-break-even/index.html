@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Security Break-Even Calculator: 62 vs 67 vs 70 | VestlyFi</title>
+<meta name="description" content="See whether claiming Social Security at 62, 67, or 70 pays more over your lifetime. Free break-even calculator that shows your total benefits collected by age. No signup.">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/social-security-break-even/">
+
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vestlyfi.com/social-security-break-even/">
+<meta property="og:title" content="Social Security Break-Even Calculator: 62 vs 67 vs 70 | VestlyFi">
+<meta property="og:description" content="See whether claiming Social Security at 62, 67, or 70 pays more over your lifetime, and the age you break even.">
+<meta property="og:site_name" content="VestlyFi">
+<meta property="og:image" content="https://vestlyfi.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Social Security Break-Even Calculator: 62 vs 67 vs 70 | VestlyFi">
+<meta name="twitter:description" content="See whether claiming Social Security at 62, 67, or 70 pays more over your lifetime.">
+<meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
+
+<!-- Structured data: tool + FAQs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Social Security Break-Even Calculator",
+  "url": "https://vestlyfi.com/social-security-break-even/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "A Social Security break-even calculator that compares claiming at 62, your full retirement age, and 70, showing your total lifetime benefits collected at each age and the break-even age where waiting pays off.",
+  "featureList": [
+    "Compare claiming at 62, full retirement age, and 70",
+    "Break-even age calculation",
+    "Total benefits collected by age table",
+    "Automatic full retirement age from birth year",
+    "SSA early-claim reduction and delayed retirement credit formulas"
+  ],
+  "publisher": { "@type": "Organization", "name": "VestlyFi", "url": "https://vestlyfi.com/" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "At what age do you break even on Social Security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For someone with a full retirement age of 67, claiming at 67 instead of 62 usually breaks even around age 78 to 79, meaning the larger checks catch up to the five-year head start by then. Waiting from 67 to 70 typically breaks even around age 82 to 83. If you expect to live past the break-even age, waiting collects more over your lifetime. If not, claiming earlier does."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it better to take Social Security at 62, 67, or 70?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends entirely on how long you live. Claiming at 62 gives smaller checks that start sooner, so it wins on total dollars if you die before your break-even age. Waiting until 70 gives the largest checks, about 24% more than at full retirement age, and wins if you live well into your 80s or beyond. There is no universally correct answer, which is why a break-even comparison is useful."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much more is Social Security if I wait until 70?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Delaying past your full retirement age earns delayed retirement credits of 8% per year, up to age 70. For someone with a full retirement age of 67, waiting until 70 raises the monthly benefit to 124% of the full amount. There is no additional credit for waiting beyond age 70, so 70 is the latest it makes sense to start."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the full retirement age for Social Security?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Full retirement age is 67 for anyone born in 1960 or later. For people born between 1955 and 1959 it rises in two-month steps from 66 and 2 months up to 66 and 10 months. For those born between 1943 and 1954 it is 66. This calculator sets your full retirement age automatically from your birth year."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does this calculator estimate my benefit at each age?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You enter your estimated benefit at full retirement age, which appears on your Social Security statement at ssa.gov. The calculator then applies the official SSA formulas: benefits are reduced by 5/9 of 1% per month for the first 36 months you claim early and 5/12 of 1% for each earlier month, and increased by 8% per year of delayed retirement credits after full retirement age. It uses today's dollars and does not add cost-of-living adjustments or taxes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why would anyone claim Social Security at 62?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Claiming at 62 makes sense if you need the income, have a shorter life expectancy, want to let investments keep growing, or plan to stop working early and would otherwise draw down savings. It also collects the most total dollars for anyone who does not live past their break-even age. The trade-off is a permanently smaller monthly check."
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
+    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
+    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
+    --green:#4ade80; --red:#f87171; --blue:#5bb8f5; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; align-items:center; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  .site-nav-links a.active { color:var(--cream); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-sep { color:rgba(255,255,255,0.18); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+  .container { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
+  .wizard { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0 80px; }
+
+  .step { display:none; }
+  .step.active { display:block; animation:stepIn 0.42s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn { from{opacity:0;transform:translateY(26px);} to{opacity:1;transform:translateY(0);} }
+
+  .step-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .step h1, .step h2 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,2.5rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .step h1 .accent, .step h2 .accent { color:var(--gold-light); font-style:normal; }
+  .step .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; max-width:540px; }
+
+  .input-group { margin-bottom:22px; display:flex; flex-direction:column; }
+  .input-group label { display:block; font-size:0.75rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:9px; font-weight:500; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:16px; color:var(--gold); font-size:1rem; pointer-events:none; font-family:'Outfit',sans-serif; }
+  .input-suffix { position:absolute; right:16px; color:var(--muted); font-size:0.82rem; pointer-events:none; }
+  input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input.has-prefix { padding-left:30px; }
+  input.has-suffix { padding-right:48px; }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:end; }
+  @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
+
+  .step-nav { display:flex; gap:10px; margin-top:36px; }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
+  .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
+  .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
+  .err { color:var(--red); font-size:0.8rem; margin-top:8px; display:none; }
+
+  /* RESULTS */
+  .be-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:26px; }
+  @media(max-width:520px) { .be-grid{grid-template-columns:1fr;} }
+  .be-card { background:var(--navy-light); border:1px solid var(--border); border-radius:12px; padding:18px 16px; text-align:center; }
+  .be-card .be-age { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; font-weight:500; }
+  .be-card .be-amt { font-family:'Outfit',sans-serif; font-size:1.7rem; font-weight:600; color:var(--gold-light); line-height:1; }
+  .be-card .be-per { font-size:0.72rem; color:var(--muted); margin-top:6px; }
+  .be-card .be-yr { font-size:0.74rem; color:var(--cream-dim); margin-top:8px; }
+
+  .be-callout { background:rgba(91,184,245,0.07); border:1px solid rgba(91,184,245,0.18); border-radius:12px; padding:18px 20px; margin-bottom:26px; }
+  .be-callout .be-line { font-size:0.9rem; color:var(--cream-dim); line-height:1.7; padding:5px 0; }
+  .be-callout .be-line strong { color:var(--cream); font-weight:500; }
+  .be-callout .be-line.hi strong { color:var(--blue); }
+
+  .sstable-wrap { border:1px solid var(--border-soft); border-radius:12px; overflow:hidden; margin-bottom:12px; }
+  .sstable { width:100%; border-collapse:collapse; font-size:0.86rem; }
+  .sstable th, .sstable td { padding:12px 12px; text-align:right; border-bottom:1px solid var(--border-soft); }
+  .sstable th:first-child, .sstable td:first-child { text-align:left; }
+  .sstable tr:last-child td { border-bottom:none; }
+  .sstable thead th { color:var(--muted); font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:500; background:var(--navy-mid); }
+  .sstable td.win { color:var(--green); font-weight:600; }
+  .sstable .rowlbl { color:var(--cream-dim); }
+
+  .chart-box { position:relative; height:240px; background:var(--navy-light); border:1px solid var(--border-soft); border-radius:12px; padding:16px; }
+  .chart-legend { display:flex; gap:18px; flex-wrap:wrap; margin-top:10px; font-size:0.75rem; color:var(--muted); }
+  .chart-legend span { display:flex; align-items:center; gap:6px; }
+  .lg-swatch { display:inline-block; width:14px; height:3px; border-radius:2px; }
+
+  .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
+  .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
+  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+
+  /* SEO CONTENT */
+  .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
+  .seo-body h2 { font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:500; color:var(--cream); margin:28px 0 12px; }
+  .seo-body h2:first-child { margin-top:0; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .seo-body strong { color:var(--cream-dim); font-weight:500; }
+  .seo-body a { color:var(--gold-light); text-decoration:none; }
+  .seo-body a:hover { color:var(--gold); }
+  .related-tools { margin-top:36px; padding-top:28px; border-top:1px solid var(--border-soft); }
+  .related-tools h2 { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; font-weight:500; }
+  .related-tools ul { list-style:none; }
+  .related-tools li { padding:9px 0; font-size:0.88rem; color:var(--muted); line-height:1.6; border-bottom:1px solid var(--border-soft); }
+  .related-tools li:last-child { border-bottom:none; }
+  .related-tools a { color:var(--gold-light); text-decoration:none; }
+  .related-tools a:hover { color:var(--gold); }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
+  .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
+  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
+  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="/calculators/" class="active">Calculators</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+    <div class="nav-trackers">
+      <span class="nav-trackers-lbl">Trackers</span>
+      <a href="/net-worth/">Net Worth</a>
+      <span class="nav-sep">/</span>
+      <a href="/debt-tracker/">Debt</a>
+    </div>
+    <a href="/account/">Account</a>
+  </div>
+</nav>
+
+<div class="container">
+<div class="wizard">
+
+  <!-- Landing: inputs first -->
+  <div class="step active" id="step-0">
+    <h1>Social Security Break-Even Calculator</h1>
+    <h2>Claim at 62, 67, or 70?<br><span class="accent">See which pays more.</span></h2>
+    <p class="sub">Start Social Security any time from 62 to 70. Enter two numbers and see the age where waiting starts to pay off.</p>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Birth Year</label>
+        <div class="input-wrap">
+          <input type="number" id="birthYear" min="1940" max="2005" placeholder="1962" oninput="checkStep1()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Benefit at Full Retirement Age
+          <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">monthly</span>
+        </label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="pia" class="has-prefix" placeholder="2,000" oninput="handleCommaInput(this,'checkStep1')">
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:4px;line-height:1.6;">
+      Don't have your statement handy? Create a free account at ssa.gov to see your estimate, or enter a rough number to explore. The typical benefit at full retirement age is around $1,900 to $2,000 a month.
+    </p>
+
+    <div id="err-1" class="err">Please enter a valid birth year and a benefit amount above $0.</div>
+    <div class="step-nav">
+      <button class="btn-next" id="btn-step1" onclick="validateStep1()" disabled>See my break-even →</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="step" id="step-results">
+    <div id="resultsContent"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>Deciding when to claim Social Security is one of the largest and most permanent money decisions you will ever make. The difference between claiming at 62 and waiting until 70 can be worth six figures over a lifetime, and once you start, the choice is very hard to undo. The catch is that the "right" answer depends on how long you live, which nobody knows in advance. A break-even comparison turns that uncertainty into a single, usable number.</p>
+
+    <h2>How claiming age changes your check</h2>
+    <p>Your benefit is anchored to your full retirement age, which is 67 for anyone born in 1960 or later. Claim before then and Social Security permanently reduces your monthly benefit. Claim after, up to age 70, and it permanently increases it. The reductions and increases follow fixed formulas from the Social Security Administration: your benefit is cut by 5/9 of 1% for each of the first 36 months you claim early and 5/12 of 1% for each additional month, and it grows by 8% per year of delayed retirement credits after full retirement age.</p>
+    <p>For a full retirement age of 67, that means claiming at 62 pays roughly 70% of your full benefit, while waiting until 70 pays about 124%. Same lifetime earnings record, a check that differs by more than 50% depending only on when you start.</p>
+
+    <h2>How the break-even works</h2>
+    <p>Claiming early gives you a head start: years of checks the person who waits does not receive. The person who waits eventually collects a larger monthly amount and slowly closes that gap. The break-even age is the point where their cumulative total catches up to yours. Before that age, claiming earlier has paid more in total dollars. After it, waiting pulls ahead and keeps widening the lead for the rest of your life.</p>
+    <p>For a full retirement age of 67, claiming at 67 instead of 62 typically breaks even somewhere around age 78 to 79. Waiting from 67 to 70 usually breaks even around 82 to 83. Your exact numbers depend on your benefit amount, which is why the calculator computes them from your figures rather than quoting an average.</p>
+
+    <h2>Reading the "total collected by age" table</h2>
+    <p>Instead of asking you to guess your life expectancy, the calculator shows the total benefits you would collect under each strategy if you lived to 70, 75, 80, 85, 90, or 95. Scan down to the age that feels realistic for you and the winning strategy for that row is highlighted. If longevity runs in your family, look at the later rows. If your health or family history points the other way, the earlier rows tell the story. You stay in control of the one assumption that actually drives the answer.</p>
+
+    <h2>What this calculator leaves out</h2>
+    <p>To keep the comparison clean, it uses today's dollars and does not layer in annual cost-of-living adjustments, income taxes on benefits, spousal or survivor benefits, or the return you might earn by investing early checks. Cost-of-living adjustments apply to every claiming age, so they tend to push break-even ages a little later but rarely change which strategy wins for a given lifespan. For most people the plain comparison shown here is the decision-maker; the finer details refine it at the edges. Always confirm your own numbers against your Social Security statement and consider talking to a financial or tax professional before you file.</p>
+  </div>
+
+  <div class="related-tools">
+    <h2>Related calculators</h2>
+    <ul>
+      <li>Map your full retirement drawdown with the <a href="/retirement/">Retirement Planner</a>.</li>
+      <li>See if your investments can carry you to retirement on their own with the <a href="/coast-fire/">Coast FIRE Calculator</a>.</li>
+      <li>Project how a lump sum grows with the <a href="/compound-interest/">Compound Interest Calculator</a>.</li>
+      <li>Track your assets over time with the <a href="/net-worth/">Net Worth Tracker</a>.</li>
+      <li><a href="/calculators/">Browse all calculators →</a></li>
+    </ul>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">At what age do you break even on Social Security?</div>
+      <div class="faq-a">For someone with a full retirement age of 67, claiming at 67 instead of 62 usually breaks even around age 78 to 79, meaning the larger checks catch up to the five-year head start by then. Waiting from 67 to 70 typically breaks even around age 82 to 83. If you expect to live past the break-even age, waiting collects more over your lifetime. If not, claiming earlier does.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is it better to take Social Security at 62, 67, or 70?</div>
+      <div class="faq-a">It depends entirely on how long you live. Claiming at 62 gives smaller checks that start sooner, so it wins on total dollars if you die before your break-even age. Waiting until 70 gives the largest checks, about 24% more than at full retirement age, and wins if you live well into your 80s or beyond. There is no universally correct answer, which is why a break-even comparison is useful.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much more is Social Security if I wait until 70?</div>
+      <div class="faq-a">Delaying past your full retirement age earns delayed retirement credits of 8% per year, up to age 70. For someone with a full retirement age of 67, waiting until 70 raises the monthly benefit to 124% of the full amount. There is no additional credit for waiting beyond age 70, so 70 is the latest it makes sense to start.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the full retirement age for Social Security?</div>
+      <div class="faq-a">Full retirement age is 67 for anyone born in 1960 or later. For people born between 1955 and 1959 it rises in two-month steps from 66 and 2 months up to 66 and 10 months. For those born between 1943 and 1954 it is 66. This calculator sets your full retirement age automatically from your birth year.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does this calculator estimate my benefit at each age?</div>
+      <div class="faq-a">You enter your estimated benefit at full retirement age, which appears on your Social Security statement at ssa.gov. The calculator then applies the official SSA formulas: benefits are reduced by 5/9 of 1% per month for the first 36 months you claim early and 5/12 of 1% for each earlier month, and increased by 8% per year of delayed retirement credits after full retirement age. It uses today's dollars and does not add cost-of-living adjustments or taxes.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why would anyone claim Social Security at 62?</div>
+      <div class="faq-a">Claiming at 62 makes sense if you need the income, have a shorter life expectancy, want to let investments keep growing, or plan to stop working early and would otherwise draw down savings. It also collects the most total dollars for anyone who does not live past their break-even age. The trade-off is a permanently smaller monthly check.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <button class="link-btn" onclick="showModal('about')">About</button>
+    <a href="/privacy/">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+      Report a bug
+    </button>
+  </div>
+</footer>
+
+<!-- About Modal -->
+<div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
+      <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
+      <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    </div>
+  </div>
+</div>
+
+<div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+let lastShare = null;
+
+function showStep(n) {
+  document.getElementById('step-' + currentStep)?.classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function parseVal(id) {
+  return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+}
+
+function handleCommaInput(el, checkFn) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  if (raw === '') { el.value = ''; } else {
+    el.value = parseInt(raw, 10).toLocaleString('en-US');
+  }
+  if (checkFn) window[checkFn]();
+}
+
+function dollars(n) { return '$' + Math.round(n).toLocaleString(); }
+
+// Full retirement age in months, from birth year (SSA schedule)
+function fraMonths(by) {
+  if (by <= 1937) return 65 * 12;
+  if (by >= 1943 && by <= 1954) return 66 * 12;
+  if (by >= 1960) return 67 * 12;
+  const t = { 1938:782, 1939:784, 1940:786, 1941:788, 1942:790, 1955:794, 1956:796, 1957:798, 1958:800, 1959:802 };
+  return t[by] || 67 * 12;
+}
+
+function fraLabel(fm) {
+  const y = Math.floor(fm / 12), m = fm % 12;
+  return m === 0 ? (y + '') : (y + ' yr ' + m + ' mo');
+}
+
+// SSA benefit multiplier at a claiming age (in months), given FRA in months
+function multiplier(claimM, fraM) {
+  claimM = Math.min(claimM, 70 * 12); // no credit past 70
+  const diff = claimM - fraM;
+  if (diff < 0) {
+    const early = -diff;
+    const first = Math.min(early, 36);
+    const beyond = Math.max(0, early - 36);
+    return 1 - (first * (5 / 9) / 100 + beyond * (5 / 12) / 100);
+  }
+  return 1 + diff * (2 / 3) / 100; // 8% per year
+}
+
+// Break-even age (years) between an earlier/lower strategy e and a later/higher strategy l
+function breakEven(benE, ageE, benL, ageL) {
+  if (benL <= benE) return null;
+  return (benL * ageL - benE * ageE) / (benL - benE);
+}
+
+function checkStep1() {
+  const by = parseInt(document.getElementById('birthYear').value);
+  const pia = parseVal('pia');
+  const btn = document.getElementById('btn-step1');
+  if (btn) btn.disabled = !(by >= 1940 && by <= 2005 && pia > 0);
+}
+
+function validateStep1() {
+  const by = parseInt(document.getElementById('birthYear').value);
+  const pia = parseVal('pia');
+  const err = document.getElementById('err-1');
+  if (!(by >= 1940 && by <= 2005) || !(pia > 0)) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  calculate(by, pia);
+}
+
+function calculate(birthYear, pia) {
+  const fraM = fraMonths(birthYear);
+  const fraY = fraM / 12;
+
+  // Three headline strategies: 62, full retirement age, 70
+  const strat = [
+    { age: 62,   label: 'Age 62' },
+    { age: fraY, label: fraM % 12 === 0 ? ('Age ' + fraY) : ('FRA ' + fraLabel(fraM)) },
+    { age: 70,   label: 'Age 70' }
+  ].map(s => {
+    const mult = multiplier(Math.round(s.age * 12), fraM);
+    return { ...s, monthly: pia * mult, pct: Math.round(mult * 100) };
+  });
+
+  // Current age (approx, from birth year) — flag any claiming age already passed
+  const currentAge = new Date().getFullYear() - birthYear;
+  strat.forEach(s => { s.passed = currentAge > s.age; });
+
+  const s62 = strat[0], sFra = strat[1], s70 = strat[2];
+
+  // Break-even ages
+  const be62Fra = breakEven(s62.monthly, s62.age, sFra.monthly, sFra.age);
+  const beFra70 = breakEven(sFra.monthly, sFra.age, s70.monthly, s70.age);
+
+  // "Total collected by age" table
+  const rowAges = [70, 75, 80, 85, 90, 95];
+  function collected(s, liveTo) { return s.monthly * 12 * Math.max(0, liveTo - s.age); }
+
+  const rows = rowAges.map(age => {
+    const vals = strat.map(s => collected(s, age));
+    // Winner among strategies still available (a passed claiming age can never win)
+    let winIdx = -1, max = -Infinity;
+    strat.forEach((s, i) => { if (!s.passed && vals[i] > max) { max = vals[i]; winIdx = i; } });
+    return { age, vals, winIdx };
+  });
+
+  // Chart data: cumulative benefits from 62 to 95
+  const chartAges = [];
+  for (let a = 62; a <= 95; a++) chartAges.push(a);
+  const series = strat.map(s => chartAges.map(a => Math.round(collected(s, a))));
+
+  lastShare = { strat, s62, sFra, s70, rows, be62Fra, beFra70, pia, fraM, fraLabelStr: fraLabel(fraM) };
+
+  const fmtBe = v => v == null ? '—' : Math.round(v);
+
+  // Break-even callout — only show comparisons still available to the user
+  const calloutLines = [];
+  if (currentAge > 62) calloutLines.push(`<div class="be-line">Based on your birth year, you're about <strong>${currentAge}</strong> this year, so claiming ages you've already passed are grayed out below.</div>`);
+  if (!s62.passed && !sFra.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>${sFra.label.replace('FRA ','age ')}</strong> beats claiming at <strong>62</strong> once you live past age <strong>${fmtBe(be62Fra)}</strong>.</div>`);
+  if (!sFra.passed && !s70.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>70</strong> beats <strong>${sFra.label.replace('FRA ','')}</strong> once you live past age <strong>${fmtBe(beFra70)}</strong>.</div>`);
+  if (s62.passed && sFra.passed) calloutLines.push(currentAge >= 70
+    ? `<div class="be-line hi">At about ${currentAge}, you're at or past 70. Claiming now gives your maximum benefit — waiting longer adds nothing.</div>`
+    : `<div class="be-line hi">Your remaining choice is to claim now or wait toward 70. Each month you delay adds about two-thirds of 1% to your benefit, up to age 70.</div>`);
+
+  const html = `
+    <div style="margin-bottom:32px;">
+      <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;font-weight:500;">Your monthly benefit at each age</div>
+
+      <div class="be-grid">
+        ${strat.map(s => `
+          <div class="be-card"${s.passed ? ' style="opacity:0.4;"' : ''}>
+            <div class="be-age">${s.label}</div>
+            <div class="be-amt">${dollars(s.monthly)}</div>
+            <div class="be-per">${s.passed ? 'No longer available' : s.pct + '% of full benefit'}</div>
+            <div class="be-yr">${dollars(s.monthly * 12)}/yr</div>
+          </div>`).join('')}
+      </div>
+
+      <div class="be-callout">
+        ${calloutLines.join('')}
+      </div>
+
+      <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Total collected by age</div>
+      <div class="sstable-wrap">
+        <table class="sstable">
+          <thead>
+            <tr>
+              <th>If you live to…</th>
+              <th${s62.passed ? ' style="opacity:0.45;"' : ''}>Claim ${s62.label.replace('Age ','')}</th>
+              <th${sFra.passed ? ' style="opacity:0.45;"' : ''}>Claim ${sFra.label.replace('FRA ','').replace('Age ','')}</th>
+              <th${s70.passed ? ' style="opacity:0.45;"' : ''}>Claim ${s70.label.replace('Age ','')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td class="rowlbl">${r.age}</td>
+                ${r.vals.map((v, i) => `<td class="${i === r.winIdx ? 'win' : ''}"${strat[i].passed ? ' style="opacity:0.4;"' : ''}>${dollars(v)}</td>`).join('')}
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:14px;line-height:1.6;">Green marks the strategy that collects the most total dollars by that age. In today's dollars, before taxes and cost-of-living adjustments.</div>
+
+      <button onclick="openShareModal()" style="width:100%;padding:12px;background:var(--navy-light);border:1px solid var(--border);border-radius:10px;color:var(--gold-light);font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;margin-bottom:28px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:border-color .18s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        Share this table as an image
+      </button>
+
+      <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Cumulative benefits by claiming age</div>
+      <div class="chart-box"><canvas id="ssChart"></canvas></div>
+      <div class="chart-legend">
+        <span${s62.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#5bb8f5;"></span>Claim at ${s62.age}</span>
+        <span${sFra.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#c9a84c;"></span>Claim at ${sFra.label.replace('FRA ','').replace('Age ','')}</span>
+        <span${s70.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#4ade80;"></span>Claim at ${s70.age}</span>
+      </div>
+
+      <!-- ============================================================
+           FUTURE REVENUE SLOT
+           High intent: user just modeled a six-figure retirement
+           decision. Drop advisor-match or annuity/brokerage affiliate
+           cards here using the .be-card / callout styles. Disclose.
+           ============================================================ -->
+
+      <div style="border-top:1px solid var(--border-soft);padding-top:18px;margin:28px 0 24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
+        Based on your full retirement age of ${fraLabel(fraM)} and a full benefit of ${dollars(pia)}/month. Early-claim reductions of 5/9 of 1% per month (5/12 beyond 36 months) and delayed retirement credits of 8% per year are applied per the SSA formulas. Figures are in today's dollars and exclude taxes, cost-of-living adjustments, and spousal benefits.
+      </div>
+
+      <button class="btn-restart" onclick="restartWizard()">← Change my inputs</button>
+      <p class="disclaimer">For educational purposes only. Not financial advice. Verify your figures on your Social Security statement at ssa.gov and consult a qualified professional before deciding when to claim.</p>
+    </div>
+  `;
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showStep('results');
+
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('ssChart');
+    if (!canvas) return;
+    const colors = ['#5bb8f5', '#c9a84c', '#4ade80'];
+    const fmtAxis = v => v >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : '$' + Math.round(v / 1000) + 'k';
+    new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: chartAges,
+        datasets: series.map((data, i) => ({
+          label: 'Claim at ' + [s62.age, (fraM % 12 === 0 ? fraY : fraLabel(fraM)), s70.age][i],
+          data, borderColor: strat[i].passed ? 'rgba(245,240,232,0.2)' : colors[i], backgroundColor: 'transparent',
+          borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { title: i => 'By age ' + i[0].label, label: i => ' ' + i.dataset.label + ': ' + dollars(i.raw) } }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family: 'Outfit', size: 10 }, maxTicksLimit: 8, padding: 8 } },
+          y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family: 'Outfit', size: 10 }, padding: 8, callback: fmtAxis } }
+        }
+      }
+    });
+  });
+}
+
+function restartWizard() {
+  document.getElementById('resultsContent').innerHTML = '';
+  document.getElementById('step-results').classList.remove('active');
+  currentStep = 0;
+  showStep(0);
+}
+
+/* ---- Shareable image of the "total collected by age" table ---- */
+function drawSpacedText(ctx, text, x, y, sp) { let cx = x; for (const ch of text) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; } return cx; }
+
+function openShareModal() {
+  if (!lastShare) return;
+  document.getElementById('sharePreviewImg').style.display = 'none';
+  document.getElementById('shareGenerating').style.display = 'block';
+  document.getElementById('shareMsg').textContent = '';
+  const isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.getElementById('shareDownloadBtn').textContent = isMob ? 'Save Image' : 'Download';
+  document.getElementById('shareModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  setTimeout(renderShareCanvas, 50);
+}
+function closeShareModal() { document.getElementById('shareModal').style.display = 'none'; document.body.style.overflow = ''; }
+
+async function renderShareCanvas() {
+  const d = lastShare; if (!d) return;
+  const W = 1200, H = 640, SC = 2, PAD = 56;
+  const canvas = document.getElementById('shareCanvas');
+  canvas.width = W * SC; canvas.height = H * SC;
+  const ctx = canvas.getContext('2d'); ctx.scale(SC, SC);
+  try { await document.fonts.load('700 40px Outfit'); await document.fonts.load('600 22px Outfit'); await document.fonts.load('400 19px Outfit'); await document.fonts.load('700 30px "Exo 2"'); await document.fonts.ready; } catch (e) {}
+
+  const accent = ['#5bb8f5', '#c9a84c', '#4ade80'];
+  const fraCol = d.sFra.label.replace('FRA ', '').replace('Age ', '');
+
+  // background
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0e1530'); bg.addColorStop(1, '#080c1a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const g1 = ctx.createRadialGradient(W * 0.15, -100, 0, W * 0.15, -100, 540); g1.addColorStop(0, 'rgba(201,168,76,0.13)'); g1.addColorStop(1, 'transparent'); ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(201,168,76,0.18)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2);
+  ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+
+  // header
+  ctx.font = '700 30px "Exo 2",sans-serif'; ctx.fillStyle = '#c9a84c'; ctx.fillText('VestlyFi', PAD, 58);
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(201,168,76,0.85)'; drawSpacedText(ctx, 'SOCIAL SECURITY BREAK-EVEN', PAD, 98, 2);
+  let headline = `Claiming at 62 vs ${fraCol} vs 70`;
+  let hs = 40; ctx.font = '600 40px Outfit,sans-serif'; while (ctx.measureText(headline).width > W - PAD * 2 && hs > 26) { hs -= 2; ctx.font = '600 ' + hs + 'px Outfit,sans-serif'; }
+  ctx.fillStyle = '#f5f0e8'; ctx.fillText(headline, PAD, 148);
+  ctx.font = '400 19px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.5)'; ctx.fillText(`Full retirement benefit ${dollars(d.pia)}/mo  ·  FRA ${d.fraLabelStr}`, PAD, 180);
+
+  // benefit cards
+  const cardY = 206, cardH = 96, gap = 20, cardW = (W - PAD * 2 - gap * 2) / 3;
+  d.strat.forEach((s, i) => {
+    const bx = PAD + i * (cardW + gap);
+    ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.beginPath(); ctx.roundRect(bx, cardY, cardW, cardH, 12); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.textAlign = 'left';
+    ctx.font = '600 13px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+    drawSpacedText(ctx, ('CLAIM AT ' + s.label.replace('FRA ', '').replace('Age ', '')).toUpperCase(), bx + 20, cardY + 32, 1);
+    ctx.font = '700 30px Outfit,sans-serif'; ctx.fillStyle = accent[i]; ctx.fillText(dollars(s.monthly), bx + 20, cardY + 68);
+    ctx.font = '400 14px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.4)'; ctx.fillText(`${s.pct}% of full benefit`, bx + 20, cardY + 88);
+  });
+
+  // table
+  const tblTop = cardY + cardH + 42, rowH = 44, liveX = PAD + 6;
+  const span = W - PAD * 2, colR = [PAD + span * 0.50, PAD + span * 0.75, W - PAD - 6];
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+  ctx.textAlign = 'left'; drawSpacedText(ctx, 'IF YOU LIVE TO', liveX, tblTop, 1);
+  ctx.textAlign = 'right'; ['62', fraCol, '70'].forEach((c, i) => ctx.fillText('Claim ' + c, colR[i], tblTop));
+  ctx.strokeStyle = 'rgba(255,255,255,0.09)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, tblTop + 14); ctx.lineTo(W - PAD, tblTop + 14); ctx.stroke();
+  d.rows.forEach((r, ri) => {
+    const ry = tblTop + 32 + ri * rowH;
+    ctx.textAlign = 'left'; ctx.font = '400 20px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.72)'; ctx.fillText('Age ' + r.age, liveX, ry);
+    ctx.textAlign = 'right';
+    r.vals.forEach((v, ci) => {
+      const win = ci === r.winIdx;
+      ctx.font = (win ? '700 20px' : '400 20px') + ' Outfit,sans-serif';
+      ctx.fillStyle = win ? accent[ci] : 'rgba(245,240,232,0.78)';
+      ctx.fillText(dollars(v), colR[ci], ry);
+    });
+    if (ri < d.rows.length - 1) { ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, ry + 14); ctx.lineTo(W - PAD, ry + 14); ctx.stroke(); }
+  });
+
+  const dataUrl = canvas.toDataURL('image/png');
+  document.getElementById('shareGenerating').style.display = 'none';
+  const img = document.getElementById('sharePreviewImg'); img.src = dataUrl; img.style.display = 'block';
+}
+
+function downloadShareImage() {
+  const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
+  const dataUrl = canvas.toDataURL('image/png'), isMob = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMob) {
+    const w = window.open();
+    if (w) { w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`); w.document.close(); }
+  } else {
+    const a = document.createElement('a'); a.download = 'vestlyfi-social-security-break-even.png'; a.href = dataUrl; a.click();
+    msg.style.color = '#4ade80'; msg.textContent = 'Downloaded!';
+  }
+}
+async function copyShareImage() {
+  const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
+  try { canvas.toBlob(async blob => { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); msg.style.color = '#4ade80'; msg.textContent = 'Copied to clipboard!'; }); }
+  catch (e) { msg.style.color = '#f87171'; msg.textContent = 'Copy not supported — use Download instead.'; }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  if (currentStep === 0) { const b = document.getElementById('btn-step1'); if (b && !b.disabled) validateStep1(); }
+});
+
+function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
+function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+
+<div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:24px;width:100%;max-width:660px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-size:1.1rem;font-weight:500;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share your results</div>
+      <button onclick="closeShareModal()" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.5rem;cursor:pointer;line-height:1;">×</button>
+    </div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A shareable image of your total-collected-by-age table.</div>
+    <div style="background:#0a0f1e;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;margin-bottom:16px;min-height:140px;display:flex;align-items:center;justify-content:center;">
+      <div id="shareGenerating" style="color:rgba(245,240,232,0.4);font-size:0.85rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+      <img id="sharePreviewImg" alt="Share preview" style="display:none;max-width:100%;border-radius:6px;">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Close</button>
+      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
+      <button onclick="copyShareImage()" style="padding:12px 18px;background:#1a2540;color:#f5f0e8;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy</button>
+    </div>
+    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:16px;color:#4ade80;font-family:'Outfit',sans-serif;"></div>
+  </div>
+</div>
+<canvas id="shareCanvas" style="display:none"></canvas>
+
+<div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  document.getElementById('bugModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+function closeBugModal() { document.getElementById('bugModal').style.display = 'none'; }
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
+  try {
+    const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    else throw new Error();
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('bugModal');
+  let downOnBackdrop = false;
+  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+  document.getElementById('bugDescription').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) submitBugReport(); });
+});
+</script>
+</body>
+</html>
