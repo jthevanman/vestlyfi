@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**13 of 51 pages pending verification.**
+**11 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -17,14 +17,12 @@ all been checked against the state tax agency for tax year 2026.
 | District of Columbia | DC | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | District of Columbia Department of Revenue / Taxation (official .gov) |
 | Hawaii | HI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Hawaii Department of Revenue / Taxation (official .gov) |
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
-| Mississippi | MS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Mississippi Department of Revenue / Taxation (official .gov) |
 | Montana | MT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Montana Department of Revenue / Taxation (official .gov) |
 | Nebraska | NE | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Nebraska Department of Revenue / Taxation (official .gov) |
 | New Mexico | NM | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Mexico Department of Revenue / Taxation (official .gov) |
 | North Dakota | ND | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | North Dakota Department of Revenue / Taxation (official .gov) |
 | Rhode Island | RI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Rhode Island Department of Revenue / Taxation (official .gov) |
 | Vermont | VT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Vermont Department of Revenue / Taxation (official .gov) |
-| West Virginia | WV | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | West Virginia Department of Revenue / Taxation (official .gov) |
 
 ## Known caveats & deferrals (verified pages)
 

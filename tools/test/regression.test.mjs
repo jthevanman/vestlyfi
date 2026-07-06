@@ -49,6 +49,8 @@ const HAND_CHECKED = {
   alabama: 3101.08,
   connecticut: 3339.15,
   arkansas: 2385.59,
+  mississippi: 2241.93,
+  'west-virginia': 2516.05,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

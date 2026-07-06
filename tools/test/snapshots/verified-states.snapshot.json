@@ -591,6 +591,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "mississippi": [
+      {
+        "stateIncomeTax": 2241.93,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21072.17,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 4512.11,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 38715.06,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1554.96,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 11887.67,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 8676.53,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 84822.17,
+        "safeHarborTarget": 44000
+      }
+    ],
     "missouri": [
       {
         "stateIncomeTax": 2560.36,
@@ -1098,6 +1128,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 76145.64,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "west-virginia": [
+      {
+        "stateIncomeTax": 2516.05,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21346.29,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5403.95,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39606.9,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1746.85,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12079.56,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 9883.67,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 86029.3,
         "safeHarborTarget": 44000
       }
     ],

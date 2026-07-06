@@ -4,22 +4,40 @@
   "abbreviation": "WV",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 10000, "rate": 0.0211 },
+    { "min": 10000, "max": 25000, "rate": 0.0281 },
+    { "min": 25000, "max": 40000, "rate": 0.0316 },
+    { "min": 40000, "max": 60000, "rate": 0.0422 },
+    { "min": 60000, "max": null, "rate": 0.0458 }
+  ],
+  "brackets_married": [
+    { "min": 0, "max": 10000, "rate": 0.0211 },
+    { "min": 10000, "max": 25000, "rate": 0.0281 },
+    { "min": 25000, "max": 40000, "rate": 0.0316 },
+    { "min": 40000, "max": 60000, "rate": 0.0422 },
+    { "min": 60000, "max": null, "rate": 0.0458 }
+  ],
+  "standardDeduction_single": 2000,
+  "standardDeduction_married": 4000,
   "hasQuarterlyRequirement": true,
   "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateTaxAgencyName": "West Virginia Tax Division",
+  "stateTaxAgencyUrl": "https://tax.wv.gov/",
+  "statePaymentPortalUrl": "https://mytaxes.wvtax.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "West Virginia follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "West Virginia applies graduated rates (2.11%-4.58%) to your federal AGI after a $2,000-per-person exemption; it has no separate standard deduction. Rates reflect the 2026 cut under SB 392. Single and married filers use the same brackets.",
   "uniqueFacts": [
-    "West Virginia levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "West Virginia bracket and agency data is pending verification from official sources before this page is indexed."
+    "West Virginia cut its income tax rates again for 2026 under SB 392, with a new top rate of 4.58%.",
+    "West Virginia uses the same tax brackets for single and married-filing-jointly filers, which creates a marriage penalty for two-earner couples.",
+    "West Virginia has no state standard deduction — it starts from your federal income and gives a $2,000 exemption per person instead."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://tax.wv.gov/Individuals/Pages/PersonalIncomeTaxReductionBill.aspx"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
