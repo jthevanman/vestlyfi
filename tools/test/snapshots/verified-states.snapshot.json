@@ -561,6 +561,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "new-jersey": [
+      {
+        "stateIncomeTax": 2906.05,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21736.29,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5402,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39604.95,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1767.25,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12099.96,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 13735.05,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 89880.69,
+        "safeHarborTarget": 44000
+      }
+    ],
     "new-york": [
       {
         "stateIncomeTax": 3417.8,
@@ -651,6 +681,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "oklahoma": [
+      {
+        "stateIncomeTax": 2993.91,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21824.15,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5546.38,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39749.33,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2178.14,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12510.86,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 10635.01,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 86780.64,
+        "safeHarborTarget": 44000
+      }
+    ],
     "oregon": [
       {
         "stateIncomeTax": 5288.83,
@@ -708,6 +768,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 83820.64,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "south-carolina": [
+      {
+        "stateIncomeTax": 2853.19,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21683.43,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5790.47,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39993.42,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1822.75,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12155.46,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 12505.1,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 88650.73,
         "safeHarborTarget": 44000
       }
     ],

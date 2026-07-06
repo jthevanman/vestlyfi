@@ -4,22 +4,46 @@
   "abbreviation": "NJ",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "New Jersey levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "New Jersey bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "state_gross",
+  "brackets_single": [
+    { "min": 0, "max": 20000, "rate": 0.014 },
+    { "min": 20000, "max": 35000, "rate": 0.0175 },
+    { "min": 35000, "max": 40000, "rate": 0.035 },
+    { "min": 40000, "max": 75000, "rate": 0.05525 },
+    { "min": 75000, "max": 500000, "rate": 0.0637 },
+    { "min": 500000, "max": 1000000, "rate": 0.0897 },
+    { "min": 1000000, "max": null, "rate": 0.1075 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 20000, "rate": 0.014 },
+    { "min": 20000, "max": 50000, "rate": 0.0175 },
+    { "min": 50000, "max": 70000, "rate": 0.0245 },
+    { "min": 70000, "max": 80000, "rate": 0.035 },
+    { "min": 80000, "max": 150000, "rate": 0.05525 },
+    { "min": 150000, "max": 500000, "rate": 0.0637 },
+    { "min": 500000, "max": 1000000, "rate": 0.0897 },
+    { "min": 1000000, "max": null, "rate": 0.1075 }
+  ],
+  "standardDeduction_single": 1000,
+  "standardDeduction_married": 2000,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 400,
+  "stateTaxAgencyName": "New Jersey Division of Taxation",
+  "stateTaxAgencyUrl": "https://www.nj.gov/treasury/taxation/",
+  "statePaymentPortalUrl": "https://www.nj.gov/treasury/taxation/payments-notices.shtml",
+  "quarterlyWeights": null,
+  "dueDateNotes": "New Jersey follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "New Jersey taxes its own definition of gross income (net business profit plus wages) with a $1,000 personal exemption and no standard deduction. It does not allow the federal deduction for half your self-employment tax, so the New Jersey base can be higher than your federal AGI; this estimate uses gross self-employment income minus the exemption.",
+  "uniqueFacts": [
+    "New Jersey has no standard deduction — it gives a $1,000 personal exemption instead — and its tax rates have been unchanged since 2020.",
+    "New Jersey's top rate is 10.75% on income over $1,000,000, among the highest state rates in the nation.",
+    "New Jersey taxes its own definition of gross income and does not allow the federal write-off for half of your self-employment tax, so your New Jersey base can exceed your federal AGI."
+  ],
+  "sources": [
+    "https://www.nj.gov/treasury/taxation/taxtables.shtml",
+    "https://www.nj.gov/treasury/taxation/pdf/current/1040i.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

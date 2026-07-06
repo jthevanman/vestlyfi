@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**21 of 51 pages pending verification.**
+**18 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -24,12 +24,9 @@ all been checked against the state tax agency for tax year 2026.
 | Mississippi | MS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Mississippi Department of Revenue / Taxation (official .gov) |
 | Montana | MT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Montana Department of Revenue / Taxation (official .gov) |
 | Nebraska | NE | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Nebraska Department of Revenue / Taxation (official .gov) |
-| New Jersey | NJ | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Jersey Department of Revenue / Taxation (official .gov) |
 | New Mexico | NM | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Mexico Department of Revenue / Taxation (official .gov) |
 | North Dakota | ND | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | North Dakota Department of Revenue / Taxation (official .gov) |
-| Oklahoma | OK | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oklahoma Department of Revenue / Taxation (official .gov) |
 | Rhode Island | RI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Rhode Island Department of Revenue / Taxation (official .gov) |
-| South Carolina | SC | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | South Carolina Department of Revenue / Taxation (official .gov) |
 | Utah | UT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Utah Department of Revenue / Taxation (official .gov) |
 | Vermont | VT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Vermont Department of Revenue / Taxation (official .gov) |
 | West Virginia | WV | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | West Virginia Department of Revenue / Taxation (official .gov) |
@@ -59,6 +56,15 @@ source, or that are modeled as a documented approximation:
     (2.25%-3.20%) is disclosed but NOT computed. NOTE: marylandtaxes.gov blocks automated
     fetch (JS page + dead PDF link + redirects), so these rest on stable statute + the
     provided BRFA change; human should spot-check the std-deduction max and BRFA thresholds.
+  - **South Carolina (taxYearBasis 2025)** — 0%/3%/6% on federal taxable income. TY2025
+    top rate 6% is a temporary cut scheduled to REVERT to 6.2% in July 2026 — re-check for
+    TY2026. The 44% capital-gains deduction and 3% active-business election are not modeled.
+  - **Oklahoma (taxYearBasis 2025)** — 2025 six-bracket schedule (top 4.75% over $7,200/$14,400)
+    on federal AGI after std deduction + $1,000 exemption. TY2026 changes to three brackets
+    (top 4.5%, HB 2764) — extract the 2026 thresholds from the OTC Legislative Update and re-index.
+  - **New Jersey** — statutory unindexed schedule (unchanged since 2020), top 10.75%. NOTE:
+    NJ gross income is NOT federal AGI (no half-SE-tax deduction, no standard deduction); modeled
+    as gross SE income minus the $1,000 exemption. Estimated-payment trigger $400 (NJ-1040-ES).
 - **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403
   on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically
   does not publish inflation-adjusted 2026 brackets until ~August. Needs manual

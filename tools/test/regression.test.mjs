@@ -41,6 +41,9 @@ const HAND_CHECKED = {
   iowa: 2825.23,
   virginia: 3514.4,
   minnesota: 3532.29,
+  'south-carolina': 2853.19,
+  oklahoma: 2993.91,
+  'new-jersey': 2906.05,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

@@ -4,22 +4,43 @@
   "abbreviation": "OK",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Oklahoma levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Oklahoma bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 1000, "rate": 0.0025 },
+    { "min": 1000, "max": 2500, "rate": 0.0075 },
+    { "min": 2500, "max": 3750, "rate": 0.0175 },
+    { "min": 3750, "max": 4900, "rate": 0.0275 },
+    { "min": 4900, "max": 7200, "rate": 0.0375 },
+    { "min": 7200, "max": null, "rate": 0.0475 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 2000, "rate": 0.0025 },
+    { "min": 2000, "max": 5000, "rate": 0.0075 },
+    { "min": 5000, "max": 7500, "rate": 0.0175 },
+    { "min": 7500, "max": 9800, "rate": 0.0275 },
+    { "min": 9800, "max": 14400, "rate": 0.0375 },
+    { "min": 14400, "max": null, "rate": 0.0475 }
+  ],
+  "standardDeduction_single": 7350,
+  "standardDeduction_married": 14700,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Oklahoma Tax Commission",
+  "stateTaxAgencyUrl": "https://oklahoma.gov/tax.html",
+  "statePaymentPortalUrl": "https://oklahoma.gov/tax/individuals/pay-taxes.html",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Oklahoma follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Oklahoma applies graduated rates topping out at 4.75% (2025) to your federal AGI after the standard deduction ($6,350 single / $12,700 joint) and a $1,000 personal exemption per person. For 2026 Oklahoma moves to three brackets with a 4.5% top rate, which this page does not yet reflect.",
+  "uniqueFacts": [
+    "Oklahoma's brackets are not adjusted for inflation, and most self-employment income lands in the top 4.75% bracket, which starts at just $7,200 (single) / $14,400 (joint) for 2025.",
+    "Oklahoma gives a $6,350 standard deduction (single) or $12,700 (joint), plus a $1,000 personal exemption per person.",
+    "For 2026, Oklahoma collapses to three brackets with a lower 4.5% top rate under HB 2764 — this page uses the 2025 schedule."
+  ],
+  "sources": [
+    "https://oklahoma.gov/content/dam/ok/en/tax/documents/forms/individuals/current/511-Pkt.pdf",
+    "https://oklahoma.gov/content/dam/ok/en/tax/documents/resources/publications/legislation/2025LegislativeUpdate.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

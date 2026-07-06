@@ -141,6 +141,15 @@ function writeNeedsVerification(states) {
   lines.push('    (2.25%-3.20%) is disclosed but NOT computed. NOTE: marylandtaxes.gov blocks automated');
   lines.push('    fetch (JS page + dead PDF link + redirects), so these rest on stable statute + the');
   lines.push('    provided BRFA change; human should spot-check the std-deduction max and BRFA thresholds.');
+  lines.push('  - **South Carolina (taxYearBasis 2025)** — 0%/3%/6% on federal taxable income. TY2025');
+  lines.push('    top rate 6% is a temporary cut scheduled to REVERT to 6.2% in July 2026 — re-check for');
+  lines.push('    TY2026. The 44% capital-gains deduction and 3% active-business election are not modeled.');
+  lines.push('  - **Oklahoma (taxYearBasis 2025)** — 2025 six-bracket schedule (top 4.75% over $7,200/$14,400)');
+  lines.push('    on federal AGI after std deduction + $1,000 exemption. TY2026 changes to three brackets');
+  lines.push('    (top 4.5%, HB 2764) — extract the 2026 thresholds from the OTC Legislative Update and re-index.');
+  lines.push('  - **New Jersey** — statutory unindexed schedule (unchanged since 2020), top 10.75%. NOTE:');
+  lines.push('    NJ gross income is NOT federal AGI (no half-SE-tax deduction, no standard deduction); modeled');
+  lines.push('    as gross SE income minus the $1,000 exemption. Estimated-payment trigger $400 (NJ-1040-ES).');
   lines.push('- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403');
   lines.push('  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically');
   lines.push('  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual');
