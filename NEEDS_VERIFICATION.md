@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**22 of 51 pages pending verification.**
+**21 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -21,7 +21,6 @@ all been checked against the state tax agency for tax year 2026.
 | Hawaii | HI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Hawaii Department of Revenue / Taxation (official .gov) |
 | Kansas | KS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Kansas Department of Revenue / Taxation (official .gov) |
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
-| Maryland | MD | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maryland Department of Revenue / Taxation (official .gov) |
 | Mississippi | MS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Mississippi Department of Revenue / Taxation (official .gov) |
 | Montana | MT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Montana Department of Revenue / Taxation (official .gov) |
 | Nebraska | NE | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Nebraska Department of Revenue / Taxation (official .gov) |
@@ -54,9 +53,12 @@ source, or that are modeled as a documented approximation:
   - **Georgia** — conflict RESOLVED: HB 463 (signed 5/11/2026) cut the flat rate to 4.99%
     retroactive to 1/1/2026 (the 5.19% Employer's Guide predates it). Std deduction $15k/$30k
     applies to TY2026; $1,750 tip/overtime exclusion 2026-2028 noted.
-  - **Maryland (next)** — every county levies a local income tax (2.25%–3.20%) on top of the
-    state rate, and BRFA 2025 added 6.25%/6.50% brackets retroactive to 1/1/2025; model state
-    brackets + disclose local tax.
+  - **Maryland — INDEXED (taxYearBasis 2025), with a source caveat.** Fixed statutory
+    2%-5.75% brackets + BRFA-2025 top brackets (6.25% >$500k / 6.5% >$1M single; >$600k/>$1.2M
+    joint), capped standard deduction (~$2,700/$5,450). Every county's local income tax
+    (2.25%-3.20%) is disclosed but NOT computed. NOTE: marylandtaxes.gov blocks automated
+    fetch (JS page + dead PDF link + redirects), so these rest on stable statute + the
+    provided BRFA change; human should spot-check the std-deduction max and BRFA thresholds.
 - **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403
   on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically
   does not publish inflation-adjusted 2026 brackets until ~August. Needs manual

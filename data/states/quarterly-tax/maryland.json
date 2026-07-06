@@ -4,22 +4,50 @@
   "abbreviation": "MD",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Maryland levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Maryland bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 1000, "rate": 0.02 },
+    { "min": 1000, "max": 2000, "rate": 0.03 },
+    { "min": 2000, "max": 3000, "rate": 0.04 },
+    { "min": 3000, "max": 100000, "rate": 0.0475 },
+    { "min": 100000, "max": 125000, "rate": 0.05 },
+    { "min": 125000, "max": 150000, "rate": 0.0525 },
+    { "min": 150000, "max": 250000, "rate": 0.055 },
+    { "min": 250000, "max": 500000, "rate": 0.0575 },
+    { "min": 500000, "max": 1000000, "rate": 0.0625 },
+    { "min": 1000000, "max": null, "rate": 0.065 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 1000, "rate": 0.02 },
+    { "min": 1000, "max": 2000, "rate": 0.03 },
+    { "min": 2000, "max": 3000, "rate": 0.04 },
+    { "min": 3000, "max": 150000, "rate": 0.0475 },
+    { "min": 150000, "max": 175000, "rate": 0.05 },
+    { "min": 175000, "max": 225000, "rate": 0.0525 },
+    { "min": 225000, "max": 300000, "rate": 0.055 },
+    { "min": 300000, "max": 600000, "rate": 0.0575 },
+    { "min": 600000, "max": 1200000, "rate": 0.0625 },
+    { "min": 1200000, "max": null, "rate": 0.065 }
+  ],
+  "standardDeduction_single": 2700,
+  "standardDeduction_married": 5450,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Comptroller of Maryland",
+  "stateTaxAgencyUrl": "https://www.marylandtaxes.gov/",
+  "statePaymentPortalUrl": "https://www.marylandtaxes.gov/individual/index.php",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Maryland follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Maryland applies graduated 2%-6.5% rates to your federal AGI after a capped standard deduction. Important: every Maryland county also charges a local income tax (about 2.25%-3.20%) on the same return, which this estimate does NOT include — your real Maryland bill will be higher.",
+  "uniqueFacts": [
+    "Every Maryland county and Baltimore City charges a local income tax of about 2.25%-3.20% on top of the state rate — this state estimate does not include it, so budget extra.",
+    "Maryland's 2025 budget (the BRFA) added two new top brackets: 6.25% on income over $500,000 and 6.5% over $1,000,000 (single).",
+    "Maryland's standard deduction is capped low (about $2,700 single / $5,450 joint), so most self-employed Marylanders receive the maximum."
+  ],
+  "sources": [
+    "https://www.marylandtaxes.gov/individual/income/tax-info/tax-rates.php"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

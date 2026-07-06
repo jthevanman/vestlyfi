@@ -351,6 +351,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "maryland": [
+      {
+        "stateIncomeTax": 3350.79,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 22181.03,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 6310.26,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 40513.21,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2535.02,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12867.73,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 11798.23,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 87943.87,
+        "safeHarborTarget": 44000
+      }
+    ],
     "massachusetts": [
       {
         "stateIncomeTax": 3780,

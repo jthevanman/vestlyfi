@@ -135,9 +135,12 @@ function writeNeedsVerification(states) {
   lines.push('  - **Georgia** — conflict RESOLVED: HB 463 (signed 5/11/2026) cut the flat rate to 4.99%');
   lines.push('    retroactive to 1/1/2026 (the 5.19% Employer\'s Guide predates it). Std deduction $15k/$30k');
   lines.push('    applies to TY2026; $1,750 tip/overtime exclusion 2026-2028 noted.');
-  lines.push('  - **Maryland (next)** — every county levies a local income tax (2.25%–3.20%) on top of the');
-  lines.push('    state rate, and BRFA 2025 added 6.25%/6.50% brackets retroactive to 1/1/2025; model state');
-  lines.push('    brackets + disclose local tax.');
+  lines.push('  - **Maryland — INDEXED (taxYearBasis 2025), with a source caveat.** Fixed statutory');
+  lines.push('    2%-5.75% brackets + BRFA-2025 top brackets (6.25% >$500k / 6.5% >$1M single; >$600k/>$1.2M');
+  lines.push('    joint), capped standard deduction (~$2,700/$5,450). Every county\'s local income tax');
+  lines.push('    (2.25%-3.20%) is disclosed but NOT computed. NOTE: marylandtaxes.gov blocks automated');
+  lines.push('    fetch (JS page + dead PDF link + redirects), so these rest on stable statute + the');
+  lines.push('    provided BRFA change; human should spot-check the std-deduction max and BRFA thresholds.');
   lines.push('- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403');
   lines.push('  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically');
   lines.push('  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual');
