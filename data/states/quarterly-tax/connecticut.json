@@ -4,22 +4,48 @@
   "abbreviation": "CT",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Connecticut levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Connecticut bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 10000, "rate": 0.02 },
+    { "min": 10000, "max": 50000, "rate": 0.045 },
+    { "min": 50000, "max": 100000, "rate": 0.055 },
+    { "min": 100000, "max": 200000, "rate": 0.06 },
+    { "min": 200000, "max": 250000, "rate": 0.065 },
+    { "min": 250000, "max": 500000, "rate": 0.069 },
+    { "min": 500000, "max": null, "rate": 0.0699 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 20000, "rate": 0.02 },
+    { "min": 20000, "max": 100000, "rate": 0.045 },
+    { "min": 100000, "max": 200000, "rate": 0.055 },
+    { "min": 200000, "max": 400000, "rate": 0.06 },
+    { "min": 400000, "max": 500000, "rate": 0.065 },
+    { "min": 500000, "max": 1000000, "rate": 0.069 },
+    { "min": 1000000, "max": null, "rate": 0.0699 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "slidingStandardDeduction": {
+    "single": { "base": 15000, "phaseoutStart": 30000, "rate": 1.0, "floor": 0 },
+    "married": { "base": 24000, "phaseoutStart": 48000, "rate": 1.0, "floor": 0 }
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Connecticut Department of Revenue Services",
+  "stateTaxAgencyUrl": "https://portal.ct.gov/drs",
+  "statePaymentPortalUrl": "https://portal.ct.gov/DRS-myconneCT",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Connecticut follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Connecticut applies 2%-6.99% to your federal AGI after a personal exemption that phases out as income rises. For higher incomes, Connecticut's benefit-recapture (its 2% phase-out add-back and tax recapture) adds tax that this estimate does not model, so above roughly $105,000 your actual Connecticut tax may be somewhat higher.",
+  "uniqueFacts": [
+    "Connecticut's income tax starts at 2% and tops out at 6.99%, with a personal exemption that fully phases out by $45,000 of income (single) / $71,000 (joint).",
+    "Connecticut recaptures the benefit of its lowest rates for higher earners (a 2% phase-out add-back and a tax recapture), which this estimate does not model — so above roughly $105,000 your real tax can be higher.",
+    "Connecticut cut its two lowest rates in 2024, to 2% and 4.5% — the first income-tax rate cut since the state's tax began."
+  ],
+  "sources": [
+    "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040-tcs_1225.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
