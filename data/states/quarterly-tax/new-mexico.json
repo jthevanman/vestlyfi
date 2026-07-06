@@ -4,22 +4,42 @@
   "abbreviation": "NM",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "New Mexico levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "New Mexico bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_taxable_income",
+  "brackets_single": [
+    { "min": 0, "max": 5500, "rate": 0.015 },
+    { "min": 5500, "max": 16500, "rate": 0.032 },
+    { "min": 16500, "max": 33500, "rate": 0.043 },
+    { "min": 33500, "max": 66500, "rate": 0.047 },
+    { "min": 66500, "max": 210000, "rate": 0.049 },
+    { "min": 210000, "max": null, "rate": 0.059 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 8000, "rate": 0.015 },
+    { "min": 8000, "max": 25000, "rate": 0.032 },
+    { "min": 25000, "max": 50000, "rate": 0.043 },
+    { "min": 50000, "max": 100000, "rate": 0.047 },
+    { "min": 100000, "max": 315000, "rate": 0.049 },
+    { "min": 315000, "max": null, "rate": 0.059 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "New Mexico Taxation and Revenue Department",
+  "stateTaxAgencyUrl": "https://www.tax.newmexico.gov/",
+  "statePaymentPortalUrl": "https://tap.state.nm.us/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "New Mexico follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "New Mexico restructured its rates for 2025 (HB 252) into six brackets from 1.5% to 5.9%. It conforms to the federal standard deduction and starts from your federal taxable income.",
+  "uniqueFacts": [
+    "New Mexico restructured its income tax for 2025 (HB 252) into six brackets from 1.5% to 5.9%, cutting taxes for most middle-income filers.",
+    "New Mexico starts from your federal taxable income, so your federal standard deduction is already built into the calculation.",
+    "New Mexico's top 5.9% rate does not apply until $210,000 of taxable income (single) / $315,000 (joint)."
+  ],
+  "sources": [
+    "https://www.tax.newmexico.gov/individuals/file-your-taxes-overview/personal-income-tax-rates/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

@@ -532,6 +532,13 @@ function estimateQuarterly(input, stateData) {
     stateIncomeTax = Math.max(0, stateIncomeTax - utahTaxpayerCreditAmount(stateData, status, stateBaseIncome));
   }
 
+  // Optional flat personal-exemption credit subtracted from tax (e.g. Nebraska's
+  // $171/exemption credit). Config: personalTaxCredit = { single, married }.
+  if (stateComputable && stateData.personalTaxCredit) {
+    const pc = stateData.personalTaxCredit;
+    stateIncomeTax = Math.max(0, stateIncomeTax - num(status === 'married' ? pc.married : pc.single));
+  }
+
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
   const totalAnnual = federalTotal + stateIncomeTax;

@@ -4,22 +4,55 @@
   "abbreviation": "HI",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Hawaii levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Hawaii bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 9600, "rate": 0.014 },
+    { "min": 9600, "max": 14400, "rate": 0.032 },
+    { "min": 14400, "max": 19200, "rate": 0.055 },
+    { "min": 19200, "max": 24000, "rate": 0.064 },
+    { "min": 24000, "max": 36000, "rate": 0.068 },
+    { "min": 36000, "max": 48000, "rate": 0.072 },
+    { "min": 48000, "max": 125000, "rate": 0.076 },
+    { "min": 125000, "max": 175000, "rate": 0.079 },
+    { "min": 175000, "max": 225000, "rate": 0.0825 },
+    { "min": 225000, "max": 275000, "rate": 0.09 },
+    { "min": 275000, "max": 325000, "rate": 0.10 },
+    { "min": 325000, "max": null, "rate": 0.11 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 19200, "rate": 0.014 },
+    { "min": 19200, "max": 28800, "rate": 0.032 },
+    { "min": 28800, "max": 38400, "rate": 0.055 },
+    { "min": 38400, "max": 48000, "rate": 0.064 },
+    { "min": 48000, "max": 72000, "rate": 0.068 },
+    { "min": 72000, "max": 96000, "rate": 0.072 },
+    { "min": 96000, "max": 250000, "rate": 0.076 },
+    { "min": 250000, "max": 350000, "rate": 0.079 },
+    { "min": 350000, "max": 450000, "rate": 0.0825 },
+    { "min": 450000, "max": 550000, "rate": 0.09 },
+    { "min": 550000, "max": 650000, "rate": 0.10 },
+    { "min": 650000, "max": null, "rate": 0.11 }
+  ],
+  "standardDeduction_single": 9144,
+  "standardDeduction_married": 18288,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Hawaii Department of Taxation",
+  "stateTaxAgencyUrl": "https://tax.hawaii.gov/",
+  "statePaymentPortalUrl": "https://hitax.hawaii.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Hawaii estimated payments are due on the 20th — April 20, June 20, September 20, and January 20 — not the 15th like federal.",
+  "selfEmploymentNotes": "Hawaii applies graduated 1.4%-11% rates to your federal AGI after the 2026 standard deduction ($8,000 single / $16,000 joint) plus a $1,144 personal exemption. It does NOT include Hawaii's General Excise Tax, which self-employed residents owe separately on gross receipts.",
+  "uniqueFacts": [
+    "Hawaii has 12 income tax brackets — among the most of any state — topping out at 11%, one of the highest state rates in the country.",
+    "Hawaii self-employed people also owe the General Excise Tax (GET) of about 4%-4.5% on their gross business receipts, on top of income tax — a major cost this income-tax estimate does not include.",
+    "Hawaii's tax deadlines fall on the 20th (April 20, June 20, September 20, January 20), not the 15th."
+  ],
+  "sources": [
+    "https://taxcuthawaii.org/new-hawaii-tax-brackets",
+    "https://tax.hawaii.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
