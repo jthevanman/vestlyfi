@@ -53,6 +53,7 @@ const HAND_CHECKED = {
   'west-virginia': 2516.05,
   hawaii: 3846.72,
   'new-mexico': 2328.66,
+  nebraska: 2527.38,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));
