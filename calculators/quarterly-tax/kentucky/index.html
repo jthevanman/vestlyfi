@@ -484,10 +484,25 @@ function estimateQuarterly(input, stateData) {
   if (basis === 'federal_taxable_income') stateBaseIncome = federalTaxable;
   else if (basis === 'federal_agi') stateBaseIncome = federalAGI;
   else stateBaseIncome = seIncome + w2;
-  const stateTaxable = stateComputable
-    ? Math.max(0, stateBaseIncome - stateStdDeduction)
-    : 0;
-  const stateIncomeTax = stateComputable ? applyBrackets(stateTaxable, stateBrackets) : 0;
+
+  // Optional state-specific adjustments (all no-ops unless the state opts in, so
+  // states without these fields produce byte-identical output to the base model):
+  //  - federalTaxDeduction: OR/MO subtract some federal income tax from the base.
+  //  - slidingStandardDeduction: WI's standard deduction shrinks as income rises.
+  //  - ohioBid: Ohio's Business Income Deduction taxes 1099 income differently.
+  const fedTaxDed = federalTaxDeductionAmount(stateData, status, federalAGI, federalIncomeTax);
+  const slidingDed = slidingStandardDeduction(stateData, status, federalAGI);
+  const effectiveStdDeduction = slidingDed != null ? slidingDed : stateStdDeduction;
+
+  let stateTaxable, stateIncomeTax;
+  if (stateComputable && stateData.ohioBid) {
+    ({ stateTaxable, stateIncomeTax } = ohioBusinessIncomeTax(stateData, seIncome, w2, status));
+  } else {
+    stateTaxable = stateComputable
+      ? Math.max(0, stateBaseIncome - effectiveStdDeduction - fedTaxDed)
+      : 0;
+    stateIncomeTax = stateComputable ? applyBrackets(stateTaxable, stateBrackets) : 0;
+  }
 
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
@@ -540,6 +555,62 @@ function num(v) {
   if (v == null) return 0;
   const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
   return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * Amount of federal income tax a state lets you subtract from its tax base.
+ * Returns 0 unless the state defines `federalTaxDeduction`.
+ *
+ * Config: { mode, capSingle, capMarried, tiers:[{agiUpTo, factor}] }
+ *   mode 'cap-phaseout'      (Oregon): deduction = min(fedIncomeTax, cap * factor)
+ *   mode 'percent-of-federal'(Missouri): deduction = min(fedIncomeTax * factor, cap)
+ *   tiers: first entry whose agiUpTo (null = infinity) is >= AGI supplies `factor`.
+ */
+function federalTaxDeductionAmount(stateData, status, federalAGI, federalIncomeTax) {
+  const c = stateData.federalTaxDeduction;
+  if (!c) return 0;
+  const cap = num(status === 'married' ? c.capMarried : c.capSingle);
+  const factor = tierFactor(c.tiers, federalAGI);
+  if (c.mode === 'percent-of-federal') return Math.min(federalIncomeTax * factor, cap);
+  return Math.min(federalIncomeTax, cap * factor); // cap-phaseout (default)
+}
+
+function tierFactor(tiers, agi) {
+  if (!Array.isArray(tiers) || tiers.length === 0) return 1;
+  for (const t of tiers) {
+    if (t.agiUpTo == null || agi <= t.agiUpTo) return t.factor;
+  }
+  return 0;
+}
+
+/**
+ * A standard deduction that shrinks as income rises (e.g. Wisconsin).
+ * Returns null unless the state defines `slidingStandardDeduction`.
+ * Config: { single:{base, phaseoutStart, rate}, married:{...} }
+ *   deduction = clamp(base - rate * max(0, AGI - phaseoutStart), 0, base)
+ */
+function slidingStandardDeduction(stateData, status, federalAGI) {
+  const c = stateData.slidingStandardDeduction;
+  if (!c) return null;
+  const p = status === 'married' ? c.married : c.single;
+  if (!p) return null;
+  const over = Math.max(0, federalAGI - num(p.phaseoutStart));
+  return Math.max(0, num(p.base) - num(p.rate) * over);
+}
+
+/**
+ * Ohio Business Income Deduction model. Self-employment (business) income gets
+ * the first `bidThreshold` deducted, with the remainder taxed at `businessRate`.
+ * W-2 (nonbusiness) income is taxed at `nonbusinessRate` above `nonbusinessExemption`.
+ * Config: stateData.ohioBid = { bidThresholdSingle, bidThresholdMarried, businessRate, nonbusinessExemption, nonbusinessRate }
+ */
+function ohioBusinessIncomeTax(stateData, seIncome, w2, status = 'single') {
+  const p = stateData.ohioBid;
+  const bid = num(status === 'married' ? p.bidThresholdMarried : p.bidThresholdSingle);
+  const taxableBusiness = Math.max(0, seIncome - bid);
+  const taxableNonbusiness = Math.max(0, w2 - num(p.nonbusinessExemption));
+  const stateIncomeTax = taxableBusiness * num(p.businessRate) + taxableNonbusiness * num(p.nonbusinessRate);
+  return { stateTaxable: taxableBusiness + taxableNonbusiness, stateIncomeTax };
 }
 
 var STATE_DATA={

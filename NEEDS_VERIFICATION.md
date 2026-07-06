@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**29 of 51 pages pending verification.**
+**26 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -20,11 +20,9 @@ all been checked against the state tax agency for tax year 2026.
 | District of Columbia | DC | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | District of Columbia Department of Revenue / Taxation (official .gov) |
 | Georgia | GA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Georgia Department of Revenue / Taxation (official .gov) |
 | Hawaii | HI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Hawaii Department of Revenue / Taxation (official .gov) |
-| Idaho | ID | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Idaho Department of Revenue / Taxation (official .gov) |
 | Kansas | KS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Kansas Department of Revenue / Taxation (official .gov) |
 | Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
 | Maryland | MD | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maryland Department of Revenue / Taxation (official .gov) |
-| Massachusetts | MA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Massachusetts Department of Revenue / Taxation (official .gov) |
 | Mississippi | MS | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Mississippi Department of Revenue / Taxation (official .gov) |
 | Missouri | MO | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Missouri Department of Revenue / Taxation (official .gov) |
 | Montana | MT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Montana Department of Revenue / Taxation (official .gov) |
@@ -32,7 +30,6 @@ all been checked against the state tax agency for tax year 2026.
 | New Jersey | NJ | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Jersey Department of Revenue / Taxation (official .gov) |
 | New Mexico | NM | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Mexico Department of Revenue / Taxation (official .gov) |
 | North Dakota | ND | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | North Dakota Department of Revenue / Taxation (official .gov) |
-| Ohio | OH | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Ohio Department of Revenue / Taxation (official .gov) |
 | Oklahoma | OK | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oklahoma Department of Revenue / Taxation (official .gov) |
 | Oregon | OR | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oregon Department of Revenue / Taxation (official .gov) |
 | Rhode Island | RI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Rhode Island Department of Revenue / Taxation (official .gov) |

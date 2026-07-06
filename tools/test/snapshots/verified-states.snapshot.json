@@ -141,6 +141,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "idaho": [
+      {
+        "stateIncomeTax": 2832.17,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21662.41,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5171.78,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39374.73,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1921.94,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12254.65,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 11358.02,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 87503.66,
+        "safeHarborTarget": 44000
+      }
+    ],
     "illinois": [
       {
         "stateIncomeTax": 3680.23,
@@ -288,6 +318,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 82827.03,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "massachusetts": [
+      {
+        "stateIncomeTax": 3780,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 22610.24,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 7060,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 41262.95,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2780,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 13112.71,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 12280,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 88425.64,
         "safeHarborTarget": 44000
       }
     ],
@@ -468,6 +528,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 85021.92,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "ohio": [
+      {
+        "stateIncomeTax": 0,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 18830.24,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 0,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 34202.95,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 0,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 10332.71,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 0,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 76145.64,
         "safeHarborTarget": 44000
       }
     ],

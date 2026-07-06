@@ -4,22 +4,42 @@
   "abbreviation": "OH",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Ohio levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Ohio bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "state_gross",
+  "brackets_single": [
+    { "min": 0, "max": 26050, "rate": 0 },
+    { "min": 26050, "max": null, "rate": 0.0275 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 26050, "rate": 0 },
+    { "min": 26050, "max": null, "rate": 0.0275 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "ohioBid": {
+    "bidThresholdSingle": 250000,
+    "bidThresholdMarried": 250000,
+    "businessRate": 0.03,
+    "nonbusinessExemption": 26050,
+    "nonbusinessRate": 0.0275
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Ohio Department of Taxation",
+  "stateTaxAgencyUrl": "https://tax.ohio.gov/",
+  "statePaymentPortalUrl": "https://tax.ohio.gov/individual/payments/estimated-payments",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Ohio follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Ohio's Business Income Deduction lets you deduct the first $250,000 of self-employment (business) income; anything above that is taxed at a flat 3%. Other (nonbusiness) income is taxed at a flat 2.75% for 2026 above a $26,050 exemption. This estimate does not include Ohio municipal or school-district income taxes.",
+  "uniqueFacts": [
+    "Ohio's Business Income Deduction lets you deduct the first $250,000 of self-employment income, so many 1099 Ohioans owe $0 in state income tax on their business profit.",
+    "Self-employment income above $250,000 is taxed at a flat 3%, while other income is taxed at a flat 2.75% for 2026 (over a $26,050 exemption) after Ohio moved to a two-rate flat structure under HB96.",
+    "Ohio cities and school districts levy their own income taxes on top of the state tax, which this estimate does not include."
+  ],
+  "sources": [
+    "https://tax.ohio.gov/individual/resources/BusinessIncomeDeduction",
+    "https://tax.ohio.gov/individual/resources/individual-income-tax-tables"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

@@ -116,6 +116,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/idaho/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/illinois/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -141,6 +147,12 @@
   </url>
   <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/louisiana/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/massachusetts/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -177,6 +189,12 @@
   </url>
   <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/north-carolina/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/ohio/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

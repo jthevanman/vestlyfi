@@ -4,22 +4,35 @@
   "abbreviation": "MA",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Massachusetts levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Massachusetts bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "state_gross",
+  "brackets_single": [
+    { "min": 0, "max": 1083150, "rate": 0.05 },
+    { "min": 1083150, "max": null, "rate": 0.09 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 1083150, "rate": 0.05 },
+    { "min": 1083150, "max": null, "rate": 0.09 }
+  ],
+  "standardDeduction_single": 4400,
+  "standardDeduction_married": 8800,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 400,
+  "stateTaxAgencyName": "Massachusetts Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.mass.gov/orgs/massachusetts-department-of-revenue",
+  "statePaymentPortalUrl": "https://www.mass.gov/how-to/pay-your-personal-income-tax",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Massachusetts follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Massachusetts applies its flat 5.0% rate to your income after a personal exemption ($4,400 single / $8,800 joint) — it grants that exemption instead of a standard deduction. Income over $1,083,150 is taxed at 9% (the 4% surtax). The surtax threshold shown is the 2025-basis amount and adjusts yearly.",
+  "uniqueFacts": [
+    "Massachusetts taxes most income at a flat 5.0% rate, effective January 1, 2026.",
+    "Massachusetts adds a 4% 'millionaire' surtax on taxable income over $1,083,150, bringing the top rate to 9% on income above that line.",
+    "Massachusetts gives personal exemptions ($4,400 single / $8,800 joint) in place of a standard deduction."
+  ],
+  "sources": [
+    "https://www.mass.gov/info-details/massachusetts-personal-income-tax-exemptions",
+    "https://www.mass.gov/guides/personal-income-tax-for-residents"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
