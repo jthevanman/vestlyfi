@@ -8,7 +8,7 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**26 of 51 pages pending verification.**
+**25 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
@@ -31,7 +31,6 @@ all been checked against the state tax agency for tax year 2026.
 | New Mexico | NM | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | New Mexico Department of Revenue / Taxation (official .gov) |
 | North Dakota | ND | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | North Dakota Department of Revenue / Taxation (official .gov) |
 | Oklahoma | OK | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oklahoma Department of Revenue / Taxation (official .gov) |
-| Oregon | OR | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Oregon Department of Revenue / Taxation (official .gov) |
 | Rhode Island | RI | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Rhode Island Department of Revenue / Taxation (official .gov) |
 | South Carolina | SC | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | South Carolina Department of Revenue / Taxation (official .gov) |
 | Utah | UT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Utah Department of Revenue / Taxation (official .gov) |
@@ -48,11 +47,15 @@ source, or that are modeled as a documented approximation:
   - **Ohio** — self-employment income qualifies for Ohio's Business Income Deduction
     (first $250,000 deducted, remainder taxed at a flat 3%); the graduated nonbusiness
     brackets would badly overstate a 1099 filer. Model the BID before indexing.
-  - **Oregon & Missouri** — both allow a federal income-tax-liability subtraction (OR up to
-    ~$8,250, MO up to $5,000/$10,000, both phased out by AGI). Needs a federalTaxDeduction
-    engine feature; without it the estimate runs materially high. OR 2026 also unpublished (use 2025 + banner).
-  - **Wisconsin** — standard deduction phases down as income rises (not a flat amount);
-    the flat-deduction model would be off across the income range.
+  - **Oregon — INDEXED (taxYearBasis 2025).** Now uses the federalTaxDeduction
+    cap-phaseout mode: 2025 cap $8,500, phased out $125k–$145k AGI (official OR-40 Table 4).
+  - **Missouri — deferred.** federalTaxDeduction percent-of-federal mode is ready (35/25/15/5/0%
+    by MO AGI, cap $5,000/$10,000, confirmed). Still pending: the exact 2025 MO graduated
+    bracket thresholds + top rate (4.7% believed) — the 4711 reference guide did not
+    contain an extractable rate table. Pull the MO-1040 rate schedule before indexing.
+  - **Wisconsin — deferred.** slidingStandardDeduction engine support is ready, but WI's
+    exact 2025/2026 standard-deduction formula (base, phase-out start, rate per filing
+    status) and bracket thresholds were not captured. Pull the WI Form 1 std-deduction table.
   - **Maryland** — every county levies a local income tax (2.25%–3.20%) on top of the state
     rate, and 2025 added new 6.25%/6.5% top brackets; model state brackets + disclose local tax.
 - **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403

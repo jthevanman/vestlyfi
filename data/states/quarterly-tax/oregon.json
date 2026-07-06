@@ -4,23 +4,52 @@
   "abbreviation": "OR",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Oregon levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Oregon bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 4400, "rate": 0.0475 },
+    { "min": 4400, "max": 11100, "rate": 0.0675 },
+    { "min": 11100, "max": 125000, "rate": 0.0875 },
+    { "min": 125000, "max": null, "rate": 0.099 }
   ],
-  "sources": [],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 8800, "rate": 0.0475 },
+    { "min": 8800, "max": 22200, "rate": 0.0675 },
+    { "min": 22200, "max": 250000, "rate": 0.0875 },
+    { "min": 250000, "max": null, "rate": 0.099 }
+  ],
+  "standardDeduction_single": 2835,
+  "standardDeduction_married": 5670,
+  "federalTaxDeduction": {
+    "mode": "cap-phaseout",
+    "capSingle": 8500,
+    "capMarried": 8500,
+    "tiers": [
+      { "agiUpTo": 125000, "factor": 1 },
+      { "agiUpTo": 130000, "factor": 0.8 },
+      { "agiUpTo": 135000, "factor": 0.6 },
+      { "agiUpTo": 140000, "factor": 0.4 },
+      { "agiUpTo": 145000, "factor": 0.2 },
+      { "agiUpTo": null, "factor": 0 }
+    ]
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Oregon Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.oregon.gov/dor/",
+  "statePaymentPortalUrl": "https://www.oregon.gov/dor/programs/individuals/Pages/estimated-payments.aspx",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Oregon follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Oregon applies graduated rates to your federal AGI after its standard deduction and a federal income-tax subtraction (up to $8,500 for 2025, phased out between $125,000 and $145,000 of AGI), which this estimate includes. It does not include Portland-area local taxes or Oregon's optional reduced pass-through rate.",
+  "uniqueFacts": [
+    "Oregon has no sales tax but among the nation's highest income tax rates, topping out at 9.9%.",
+    "Oregon lets you subtract some of the federal income tax you owe (up to $8,500 for 2025, phased out above $125,000 of income), which lowers your Oregon tax — this calculator factors it in.",
+    "Portland-area residents may owe additional local taxes (Metro Supportive Housing and Multnomah County Preschool) that this state estimate does not include."
+  ],
+  "sources": [
+    "https://www.oregon.gov/dor/forms/FormsPubs/form-or-40-inst_101-040-1_2025.pdf",
+    "https://www.oregon.gov/dor/programs/individuals/pages/pit.aspx"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

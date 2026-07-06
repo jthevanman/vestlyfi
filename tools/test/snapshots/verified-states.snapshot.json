@@ -561,6 +561,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "oregon": [
+      {
+        "stateIncomeTax": 5288.83,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 24119.07,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 10784.12,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 44987.07,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 4035.09,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 14367.8,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 21257.95,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 97403.59,
+        "safeHarborTarget": 44000
+      }
+    ],
     "pennsylvania": [
       {
         "stateIncomeTax": 2456,
