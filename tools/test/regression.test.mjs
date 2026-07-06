@@ -48,6 +48,7 @@ const HAND_CHECKED = {
   utah: 3072.25,
   alabama: 3101.08,
   connecticut: 3339.15,
+  arkansas: 2385.59,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

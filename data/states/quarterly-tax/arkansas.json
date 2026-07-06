@@ -4,22 +4,41 @@
   "abbreviation": "AR",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Arkansas levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Arkansas bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 5600, "rate": 0 },
+    { "min": 5600, "max": 11200, "rate": 0.02 },
+    { "min": 11200, "max": 16000, "rate": 0.03 },
+    { "min": 16000, "max": 26400, "rate": 0.034 },
+    { "min": 26400, "max": null, "rate": 0.039 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 5600, "rate": 0 },
+    { "min": 5600, "max": 11200, "rate": 0.02 },
+    { "min": 11200, "max": 16000, "rate": 0.03 },
+    { "min": 16000, "max": 26400, "rate": 0.034 },
+    { "min": 26400, "max": null, "rate": 0.039 }
+  ],
+  "standardDeduction_single": 2410,
+  "standardDeduction_married": 4820,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Arkansas Department of Finance and Administration",
+  "stateTaxAgencyUrl": "https://www.dfa.arkansas.gov/",
+  "statePaymentPortalUrl": "https://atap.arkansas.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Arkansas follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Arkansas applies graduated rates (0% up to 3.9%) to your federal AGI after the $2,410 standard deduction. For net income above about $94,700, Arkansas taxes all income at the top 3.9% rate; this estimate approximates that with the graduated schedule, so very high earners may owe slightly more. The $29-per-person personal tax credit is not subtracted.",
+  "uniqueFacts": [
+    "Arkansas's top income tax rate is just 3.9%, and the first bracket of income is taxed at 0%.",
+    "Arkansas uses a graduated table up to about $94,700 of net income, then taxes all income at 3.9% above that (a recapture this estimate does not fully model), so high earners may owe a bit more.",
+    "Arkansas gives a $29 personal tax credit per person that slightly lowers your tax, which this estimate does not include."
+  ],
+  "sources": [
+    "https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxBrackets.pdf",
+    "https://www.dfa.arkansas.gov/wp-content/uploads/2025_TaxTables.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
