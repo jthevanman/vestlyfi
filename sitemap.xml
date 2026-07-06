@@ -134,6 +134,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/delaware/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/district-of-columbia/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/florida/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -230,6 +242,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/montana/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/nebraska/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -272,6 +290,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/north-dakota/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/ohio/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
@@ -291,6 +315,12 @@
   </url>
   <url>
     <loc>https://vestlyfi.com/calculators/quarterly-tax/pennsylvania/</loc>
+    <lastmod>2026-07-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://vestlyfi.com/calculators/quarterly-tax/rhode-island/</loc>
     <lastmod>2026-07-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

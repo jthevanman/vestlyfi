@@ -4,22 +4,37 @@
   "abbreviation": "RI",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Rhode Island levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Rhode Island bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 79900, "rate": 0.0375 },
+    { "min": 79900, "max": 181650, "rate": 0.0475 },
+    { "min": 181650, "max": null, "rate": 0.0599 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 79900, "rate": 0.0375 },
+    { "min": 79900, "max": 181650, "rate": 0.0475 },
+    { "min": 181650, "max": null, "rate": 0.0599 }
+  ],
+  "standardDeduction_single": 16000,
+  "standardDeduction_married": 32000,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 250,
+  "stateTaxAgencyName": "Rhode Island Division of Taxation",
+  "stateTaxAgencyUrl": "https://tax.ri.gov/",
+  "statePaymentPortalUrl": "https://taxportal.ri.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Rhode Island follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "Rhode Island applies graduated rates (3.75%, 4.75%, 5.99%) to your federal AGI after a combined standard deduction and personal exemption ($10,900 + $5,100 = $16,000 for a single filer; $21,800 + two $5,100 exemptions = $32,000 for a married couple). Single and married filers use the same brackets. Note: at high incomes (roughly $246,000-$275,000 of AGI, 2024 figures) the standard deduction and exemptions phase out to zero; this calculator does not model that phase-out, so it can understate tax for very high earners.",
+  "uniqueFacts": [
+    "Rhode Island uses the same tax brackets for single and married-filing-jointly filers, which creates a marriage penalty for two-earner couples.",
+    "Rhode Island is one of the few states that can tax Social Security benefits, following the federal taxable amount, though lower-income retirees qualify for a full exemption.",
+    "Rhode Island phases out its standard deduction and personal exemptions entirely for high earners, so the effective tax rate climbs faster than the posted 5.99% top rate suggests."
+  ],
+  "sources": [
+    "https://tax.ri.gov/tax-sections/personal-income-tax",
+    "https://tax.ri.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

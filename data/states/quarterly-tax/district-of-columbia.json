@@ -4,22 +4,45 @@
   "abbreviation": "DC",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "District of Columbia levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "District of Columbia bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 10000, "rate": 0.04 },
+    { "min": 10000, "max": 40000, "rate": 0.06 },
+    { "min": 40000, "max": 60000, "rate": 0.065 },
+    { "min": 60000, "max": 250000, "rate": 0.085 },
+    { "min": 250000, "max": 500000, "rate": 0.0925 },
+    { "min": 500000, "max": 1000000, "rate": 0.0975 },
+    { "min": 1000000, "max": null, "rate": 0.1075 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 10000, "rate": 0.04 },
+    { "min": 10000, "max": 40000, "rate": 0.06 },
+    { "min": 40000, "max": 60000, "rate": 0.065 },
+    { "min": 60000, "max": 250000, "rate": 0.085 },
+    { "min": 250000, "max": 500000, "rate": 0.0925 },
+    { "min": 500000, "max": 1000000, "rate": 0.0975 },
+    { "min": 1000000, "max": null, "rate": 0.1075 }
+  ],
+  "standardDeduction_single": 15000,
+  "standardDeduction_married": 30000,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 100,
+  "stateTaxAgencyName": "DC Office of Tax and Revenue",
+  "stateTaxAgencyUrl": "https://otr.cfo.dc.gov/",
+  "statePaymentPortalUrl": "https://mytax.dc.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "DC follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "The District of Columbia applies a seven-bracket graduated tax (4% to 10.75%) to your federal AGI after DC's own standard deduction. Starting in 2025, DC decoupled from the federal standard deduction and set its own amounts: $15,000 single, $30,000 married, $22,500 head of household. Single and married filers use the same brackets. This page is written for DC residents — DC cannot tax the wages of non-resident commuters.",
+  "uniqueFacts": [
+    "DC decoupled from the federal standard deduction for 2025, setting its own amounts ($15,000 single / $30,000 married) rather than following the larger federal figures.",
+    "DC has no commuter tax — federal law bars the District from taxing the income of people who work in DC but live in Maryland or Virginia, so this calculator is for DC residents.",
+    "DC's top rate of 10.75% on income over $1 million is one of the highest state-level rates in the country, and its brackets have been unchanged since 2022."
+  ],
+  "sources": [
+    "https://otr.cfo.dc.gov/",
+    "https://otr.cfo.dc.gov/page/individual-income-tax-forms"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

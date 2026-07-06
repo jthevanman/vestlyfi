@@ -54,6 +54,11 @@ const HAND_CHECKED = {
   hawaii: 3846.72,
   'new-mexico': 2328.66,
   nebraska: 2527.38,
+  'rhode-island': 2188.06,
+  montana: 2839.77,
+  'district-of-columbia': 3457.63,
+  delaware: 3565.98,
+  'north-dakota': 190.58,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

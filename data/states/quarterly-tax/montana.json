@@ -4,22 +4,35 @@
   "abbreviation": "MT",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Montana levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Montana bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_taxable_income",
+  "brackets_single": [
+    { "min": 0, "max": 47500, "rate": 0.047 },
+    { "min": 47500, "max": null, "rate": 0.0565 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 95000, "rate": 0.047 },
+    { "min": 95000, "max": null, "rate": 0.0565 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Montana Department of Revenue",
+  "stateTaxAgencyUrl": "https://mtrevenue.gov/",
+  "statePaymentPortalUrl": "https://tap.dor.mt.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Montana follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "Montana starts from your federal taxable income (so the federal standard deduction is already baked in — there is no separate Montana deduction to subtract) and applies a two-rate schedule: 4.7% up to $47,500 (single) or $95,000 (married), and 5.65% above. The top rate is scheduled to fall to 5.4% in 2027. Long-term capital gains are taxed at separate, lower rates (3.0% / 4.1%), not the ordinary rates shown here.",
+  "uniqueFacts": [
+    "Montana taxes long-term capital gains at separate, lower rates (3.0% and 4.1%) instead of the ordinary income rates.",
+    "Montana's top income tax rate is scheduled to drop from 5.65% to 5.4% in 2027.",
+    "Montana begins from your federal taxable income, so it has no separate state standard deduction to claim on top of the federal one."
+  ],
+  "sources": [
+    "https://mtrevenue.gov/taxes/individual-income-tax/",
+    "https://mtrevenue.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

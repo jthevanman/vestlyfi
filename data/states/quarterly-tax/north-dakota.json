@@ -4,22 +4,37 @@
   "abbreviation": "ND",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_taxable_income",
+  "brackets_single": [
+    { "min": 0, "max": 48475, "rate": 0 },
+    { "min": 48475, "max": 244825, "rate": 0.0195 },
+    { "min": 244825, "max": null, "rate": 0.025 }
+  ],
+  "brackets_married": [
+    { "min": 0, "max": 80975, "rate": 0 },
+    { "min": 80975, "max": 298075, "rate": 0.0195 },
+    { "min": 298075, "max": null, "rate": 0.025 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
   "hasQuarterlyRequirement": true,
   "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateTaxAgencyName": "North Dakota Office of State Tax Commissioner",
+  "stateTaxAgencyUrl": "https://www.tax.nd.gov/",
+  "statePaymentPortalUrl": "https://apps.nd.gov/tax/tap/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "North Dakota follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "North Dakota starts from your federal taxable income (the federal standard deduction is already applied — there is no separate state deduction) and applies just three rates: 0%, 1.95%, and 2.5%. A large zero-rate bracket means the first $48,475 (single) or $80,975 (married) of taxable income is tax-free at the state level. Long-term capital gains get a 40% exclusion before these rates apply.",
   "uniqueFacts": [
-    "North Dakota levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "North Dakota bracket and agency data is pending verification from official sources before this page is indexed."
+    "North Dakota has one of the lowest income tax structures in the country — just three rates topping out at 2.5%, with a large 0% bracket that exempts the first $48,475 (single) or $80,975 (married) of taxable income.",
+    "North Dakota excludes 40% of net long-term capital gains from taxable income.",
+    "North Dakota begins from your federal taxable income, so it has no separate state standard deduction."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://www.tax.nd.gov/sites/www/files/documents/forms/individual/2025-iit/tax-tables-2025.pdf",
+    "https://www.tax.nd.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

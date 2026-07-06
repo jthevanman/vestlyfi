@@ -4,22 +4,47 @@
   "abbreviation": "DE",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 2000, "rate": 0 },
+    { "min": 2000, "max": 5000, "rate": 0.022 },
+    { "min": 5000, "max": 10000, "rate": 0.039 },
+    { "min": 10000, "max": 20000, "rate": 0.048 },
+    { "min": 20000, "max": 25000, "rate": 0.052 },
+    { "min": 25000, "max": 60000, "rate": 0.0555 },
+    { "min": 60000, "max": null, "rate": 0.066 }
+  ],
+  "brackets_married": [
+    { "min": 0, "max": 2000, "rate": 0 },
+    { "min": 2000, "max": 5000, "rate": 0.022 },
+    { "min": 5000, "max": 10000, "rate": 0.039 },
+    { "min": 10000, "max": 20000, "rate": 0.048 },
+    { "min": 20000, "max": 25000, "rate": 0.052 },
+    { "min": 25000, "max": 60000, "rate": 0.0555 },
+    { "min": 60000, "max": null, "rate": 0.066 }
+  ],
+  "standardDeduction_single": 3250,
+  "standardDeduction_married": 6500,
+  "personalTaxCredit": { "single": 110, "married": 220 },
   "hasQuarterlyRequirement": true,
   "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateTaxAgencyName": "Delaware Division of Revenue",
+  "stateTaxAgencyUrl": "https://revenue.delaware.gov/",
+  "statePaymentPortalUrl": "https://dorweb.revenue.delaware.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Heads up: while the schedule below uses the federal dates, Delaware's own first-quarter estimated payment is due April 30 (not April 15). The remaining Delaware due dates — June 15, September 15, and January 15 — match the federal ones.",
+  "selfEmploymentNotes": "Delaware applies graduated rates (2.2% to 6.6%) to your federal AGI after a modest standard deduction ($3,250 single / $6,500 married) and a $110-per-person personal credit that is subtracted from your calculated tax. Single and married filers use the same brackets. Self-employed Delawareans also owe the state's gross receipts tax on business revenue, and those working in Wilmington owe an additional city wage/earned-income tax of about 1.25% that this calculator does not include.",
   "uniqueFacts": [
-    "Delaware levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Delaware bracket and agency data is pending verification from official sources before this page is indexed."
+    "Delaware levies a gross receipts tax on the total revenue of a business, in addition to income tax — self-employed people can owe it on their gross 1099 income.",
+    "Delaware gives a $110-per-exemption personal credit that is subtracted from your tax, not your income.",
+    "Wilmington imposes its own earned-income (wage) tax of roughly 1.25% on residents and people who work in the city, on top of the state income tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://delcode.delaware.gov/title30/c011/sc01/index.html",
+    "https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf",
+    "https://revenue.delaware.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

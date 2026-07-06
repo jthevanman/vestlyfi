@@ -201,6 +201,66 @@
         "safeHarborTarget": 44000
       }
     ],
+    "delaware": [
+      {
+        "stateIncomeTax": 3565.98,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 22396.22,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 7535.09,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 41738.04,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2496.29,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12829,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 14183.08,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 90328.71,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "district-of-columbia": [
+      {
+        "stateIncomeTax": 3457.63,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 22287.87,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 7699.24,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 41902.19,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2341.32,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12674.03,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 17118.13,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 93263.77,
+        "safeHarborTarget": 44000
+      }
+    ],
     "florida": [
       {
         "stateIncomeTax": 0,
@@ -681,6 +741,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "montana": [
+      {
+        "stateIncomeTax": 2839.77,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21670.01,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5154.46,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39357.41,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1930.48,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12263.19,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 11928.65,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 88074.29,
+        "safeHarborTarget": 44000
+      }
+    ],
     "nebraska": [
       {
         "stateIncomeTax": 2527.38,
@@ -891,6 +981,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "north-dakota": [
+      {
+        "stateIncomeTax": 190.58,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 19020.82,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 511.44,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 34714.39,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 0,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 10332.71,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 3327.45,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 79473.08,
+        "safeHarborTarget": 44000
+      }
+    ],
     "ohio": [
       {
         "stateIncomeTax": 0,
@@ -1008,6 +1128,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 83820.64,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "rhode-island": [
+      {
+        "stateIncomeTax": 2188.06,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21018.3,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 4302.63,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 38505.58,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1544.03,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 11876.74,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 10079.42,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 86225.05,
         "safeHarborTarget": 44000
       }
     ],
