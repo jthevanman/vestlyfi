@@ -21,6 +21,36 @@
     }
   ],
   "states": {
+    "alabama": [
+      {
+        "stateIncomeTax": 3101.08,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21931.32,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5839.71,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 40042.66,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2384.66,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12717.37,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 9192.05,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 85337.69,
+        "safeHarborTarget": 44000
+      }
+    ],
     "alaska": [
       {
         "stateIncomeTax": 0,

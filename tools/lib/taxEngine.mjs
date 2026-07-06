@@ -264,7 +264,8 @@ export function slidingStandardDeduction(stateData, status, federalAGI) {
   const p = status === 'married' ? c.married : c.single;
   if (!p) return null;
   const over = Math.max(0, federalAGI - num(p.phaseoutStart));
-  return Math.max(0, num(p.base) - num(p.rate) * over);
+  const reduced = num(p.base) - num(p.rate) * over;
+  return Math.max(num(p.floor), reduced); // floor defaults to 0 when unset (e.g. WI)
 }
 
 /**

@@ -4,22 +4,47 @@
   "abbreviation": "AL",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Alabama levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Alabama bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 500, "rate": 0.02 },
+    { "min": 500, "max": 3000, "rate": 0.04 },
+    { "min": 3000, "max": null, "rate": 0.05 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 1000, "rate": 0.02 },
+    { "min": 1000, "max": 6000, "rate": 0.04 },
+    { "min": 6000, "max": null, "rate": 0.05 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "slidingStandardDeduction": {
+    "single": { "base": 4500, "phaseoutStart": 25500, "rate": 0.05, "floor": 4000 },
+    "married": { "base": 11500, "phaseoutStart": 26000, "rate": 0.35, "floor": 8000 }
+  },
+  "federalTaxDeduction": {
+    "mode": "cap-phaseout",
+    "capSingle": 100000000,
+    "capMarried": 100000000,
+    "tiers": [{ "agiUpTo": null, "factor": 1 }]
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Alabama Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.revenue.alabama.gov/",
+  "statePaymentPortalUrl": "https://myalabamataxes.alabama.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Alabama follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Alabama applies 2%/4%/5% to your federal AGI after a sliding standard deduction plus personal exemption (folded together here) and a full deduction for the federal income tax you owe. Standard-deduction amounts are from the latest published (2025) chart. Birmingham and Bessemer occupational taxes are not included.",
+  "uniqueFacts": [
+    "Alabama is one of the few states that lets you deduct your entire federal income tax from your state taxable income — a large break that this calculator applies.",
+    "Alabama's top rate is only 5%, but it starts at just $3,000 of taxable income ($6,000 joint), so most income is taxed at 5%.",
+    "If you work in Birmingham or Bessemer, a 1% occupational tax may apply to your earnings on top of the state tax; this estimate does not include it."
+  ],
+  "sources": [
+    "https://www.revenue.alabama.gov/forms/standard-deduction-chart-40-3/",
+    "https://www.revenue.alabama.gov/faqs/how-much-is-the-alabama-standard-deduction/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }
