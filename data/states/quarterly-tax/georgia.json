@@ -4,22 +4,28 @@
   "abbreviation": "GA",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [{ "min": 0, "max": null, "rate": 0.0499 }],
+  "brackets_married": [{ "min": 0, "max": null, "rate": 0.0499 }],
+  "standardDeduction_single": 15000,
+  "standardDeduction_married": 30000,
   "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Georgia Department of Revenue",
+  "stateTaxAgencyUrl": "https://dor.georgia.gov/",
+  "statePaymentPortalUrl": "https://dor.georgia.gov/pay-individual-income-tax",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Georgia follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Georgia applies a single flat 4.99% rate to your federal AGI after the standard deduction ($15,000 single / $30,000 joint for 2026).",
   "uniqueFacts": [
-    "Georgia levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Georgia bracket and agency data is pending verification from official sources before this page is indexed."
+    "Georgia cut its flat income tax rate to 4.99% for 2026 under HB 463 (signed May 2026), down from the previously scheduled 5.19%.",
+    "Georgia's standard deduction is $15,000 for single filers and $30,000 for married couples filing jointly in 2026.",
+    "For 2026 through 2028, Georgia lets you exclude up to $1,750 each of tip income and overtime pay from your taxable income."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://dor.georgia.gov/taxes/important-tax-updates"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

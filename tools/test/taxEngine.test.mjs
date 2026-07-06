@@ -4,6 +4,7 @@ import {
   applyBrackets,
   computeSelfEmploymentTax,
   estimateQuarterly,
+  slidingStandardDeduction,
   FEDERAL_2026,
 } from '../lib/taxEngine.mjs';
 
@@ -155,6 +156,12 @@ test('slidingStandardDeduction (Wisconsin): shrinks with income, floors at 0', (
   // AGI 74348.18 ; deduction = 12760 - 0.12*(74348.18-19310) = 12760 - 6604.58 = 6155.42
   // base 74348.18 - 6155.42 = 68192.76 ; *0.053 = 3614.22
   close(r.stateIncomeTax, 3614.22, 1);
+});
+
+// Wisconsin 2025 sliding standard deduction, MFJ anchor from the official table.
+test('slidingStandardDeduction: Wisconsin MFJ at $60k WAGI = $18,823', () => {
+  const wi = { slidingStandardDeduction: { single: { base: 13560, phaseoutStart: 19050, rate: 0.12 }, married: { base: 25110, phaseoutStart: 28210, rate: 0.19778 } } };
+  assert.equal(Math.round(slidingStandardDeduction(wi, 'married', 60000)), 18823);
 });
 
 // --- Ohio Business Income Deduction -----------------------------------------

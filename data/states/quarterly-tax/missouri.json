@@ -4,22 +4,60 @@
   "abbreviation": "MO",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 1313, "rate": 0 },
+    { "min": 1313, "max": 2626, "rate": 0.02 },
+    { "min": 2626, "max": 3939, "rate": 0.025 },
+    { "min": 3939, "max": 5252, "rate": 0.03 },
+    { "min": 5252, "max": 6565, "rate": 0.035 },
+    { "min": 6565, "max": 7878, "rate": 0.04 },
+    { "min": 7878, "max": 9191, "rate": 0.045 },
+    { "min": 9191, "max": null, "rate": 0.047 }
+  ],
+  "brackets_married": [
+    { "min": 0, "max": 1313, "rate": 0 },
+    { "min": 1313, "max": 2626, "rate": 0.02 },
+    { "min": 2626, "max": 3939, "rate": 0.025 },
+    { "min": 3939, "max": 5252, "rate": 0.03 },
+    { "min": 5252, "max": 6565, "rate": 0.035 },
+    { "min": 6565, "max": 7878, "rate": 0.04 },
+    { "min": 7878, "max": 9191, "rate": 0.045 },
+    { "min": 9191, "max": null, "rate": 0.047 }
+  ],
+  "standardDeduction_single": 15000,
+  "standardDeduction_married": 30000,
+  "federalTaxDeduction": {
+    "mode": "percent-of-federal",
+    "capSingle": 5000,
+    "capMarried": 10000,
+    "tiers": [
+      { "agiUpTo": 25000, "factor": 0.35 },
+      { "agiUpTo": 50000, "factor": 0.25 },
+      { "agiUpTo": 100000, "factor": 0.15 },
+      { "agiUpTo": 125000, "factor": 0.05 },
+      { "agiUpTo": null, "factor": 0 }
+    ]
+  },
   "hasQuarterlyRequirement": true,
   "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
+  "stateTaxAgencyName": "Missouri Department of Revenue",
+  "stateTaxAgencyUrl": "https://dor.mo.gov/",
+  "statePaymentPortalUrl": "https://mytax.mo.gov/rptp/portal/home/individual/",
   "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
+  "dueDateNotes": "Missouri follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Missouri starts from your federal AGI, subtracts the standard deduction and part of your federal income tax, then applies graduated rates topping out at 4.7% (2025). The Kansas City and St. Louis 1% earnings taxes are not included.",
   "uniqueFacts": [
-    "Missouri levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Missouri bracket and agency data is pending verification from official sources before this page is indexed."
+    "Missouri's top rate is 4.7% for 2025, and the first $1,313 of income is taxed at 0%.",
+    "Missouri lets you subtract part of your federal income tax (up to $5,000 single / $10,000 joint, phased down as income rises), which this calculator includes.",
+    "Starting in 2025, Missouri fully exempts capital gains from state income tax — the first state to do so.",
+    "If you work in Kansas City or St. Louis, a 1% local earnings tax applies to your self-employment income on top of the state tax."
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "sources": [
+    "https://dor.mo.gov/forms/",
+    "https://dor.mo.gov/taxation/individual/tax-types/income/fit-deduction.html"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

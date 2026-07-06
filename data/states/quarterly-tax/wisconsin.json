@@ -4,22 +4,42 @@
   "abbreviation": "WI",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Wisconsin levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Wisconsin bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 14680, "rate": 0.035 },
+    { "min": 14680, "max": 50480, "rate": 0.044 },
+    { "min": 50480, "max": 323290, "rate": 0.053 },
+    { "min": 323290, "max": null, "rate": 0.0765 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 19580, "rate": 0.035 },
+    { "min": 19580, "max": 67300, "rate": 0.044 },
+    { "min": 67300, "max": 431060, "rate": 0.053 },
+    { "min": 431060, "max": null, "rate": 0.0765 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "slidingStandardDeduction": {
+    "single": { "base": 13560, "phaseoutStart": 19050, "rate": 0.12 },
+    "married": { "base": 25110, "phaseoutStart": 28210, "rate": 0.19778 }
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Wisconsin Department of Revenue",
+  "stateTaxAgencyUrl": "https://www.revenue.wi.gov/",
+  "statePaymentPortalUrl": "https://tap.revenue.wi.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Wisconsin follows the federal schedule: April 15, June 15, September 15, and January 15.",
+  "selfEmploymentNotes": "Wisconsin applies graduated 3.5%-7.65% rates to your federal AGI after an income-based standard deduction that shrinks as you earn more (computed here). Its 2026 figures were not yet published, so this uses the 2025 amounts after Act 15.",
+  "uniqueFacts": [
+    "Wisconsin's 2025 budget (Act 15) retroactively widened the 4.40% bracket, so more of your income is taxed at 4.40% instead of 5.30% for 2025.",
+    "Wisconsin's standard deduction shrinks as your income rises and phases out entirely at higher incomes — this calculator computes it from your income.",
+    "Wisconsin's top rate is 7.65%, but it does not apply until taxable income tops about $323,290 (single) or $431,060 (married)."
+  ],
+  "sources": [
+    "https://www.revenue.wi.gov/TaxForms2025/2025-Form1-Inst.pdf"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-05"
 }

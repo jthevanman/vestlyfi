@@ -141,6 +141,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "georgia": [
+      {
+        "stateIncomeTax": 2961.47,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21791.71,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 5459.2,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39662.15,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2104.49,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12437.2,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 10988.64,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 87134.28,
+        "safeHarborTarget": 44000
+      }
+    ],
     "idaho": [
       {
         "stateIncomeTax": 2832.17,
@@ -408,6 +438,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 92112.09,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "missouri": [
+      {
+        "stateIncomeTax": 2560.36,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21390.6,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 4965.99,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 39168.94,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1773.24,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12105.95,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 10174.08,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 86319.72,
         "safeHarborTarget": 44000
       }
     ],
@@ -768,6 +828,36 @@
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
         "totalAnnual": 76145.64,
+        "safeHarborTarget": 44000
+      }
+    ],
+    "wisconsin": [
+      {
+        "stateIncomeTax": 2987.03,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 21817.27,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 6441.16,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 40644.11,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 1988.2,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12320.91,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 11879.87,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 88025.5,
         "safeHarborTarget": 44000
       }
     ],
