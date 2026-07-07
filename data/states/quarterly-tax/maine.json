@@ -4,22 +4,41 @@
   "abbreviation": "ME",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Maine levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Maine bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2026,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 27400, "rate": 0.058 },
+    { "min": 27400, "max": 64850, "rate": 0.0675 },
+    { "min": 64850, "max": null, "rate": 0.0715 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 54850, "rate": 0.058 },
+    { "min": 54850, "max": 129750, "rate": 0.0675 },
+    { "min": 129750, "max": null, "rate": 0.0715 }
+  ],
+  "standardDeduction_single": 0,
+  "standardDeduction_married": 0,
+  "slidingStandardDeduction": {
+    "single": { "base": 20600, "phaseoutStart": 100000, "rate": 0.204, "floor": 5300 },
+    "married": { "base": 41200, "phaseoutStart": 200050, "rate": 0.204, "floor": 10600 }
+  },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 1000,
+  "stateTaxAgencyName": "Maine Revenue Services",
+  "stateTaxAgencyUrl": "https://www.maine.gov/revenue/",
+  "statePaymentPortalUrl": "https://www.maine.gov/revenue/tax-return-forms/mainetax-portal",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Maine follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "Maine applies graduated rates (5.8%, 6.75%, 7.15%) to your federal AGI after a standard deduction ($15,300 single / $30,600 married for 2026) plus a $5,300 personal exemption per person. Both are folded together here. Important: Maine's standard deduction phases out as income rises (starting around $100,000 single / $200,050 married) and is fully gone about $75,000 (single) or $150,000 (married) later, leaving only the personal exemption; this calculator models that phase-out, so high earners see a larger effective deduction reduction. The personal exemption itself also phases out at very high incomes (roughly $324,000 single), which is not modeled here.",
+  "uniqueFacts": [
+    "Maine does not tax Social Security benefits at all.",
+    "Maine indexes its brackets and deductions each year using chained CPI, rounded down to the nearest $50.",
+    "Roughly a third of Maine filers owe no state income tax because their income falls within the combined standard deduction and personal exemption."
+  ],
+  "sources": [
+    "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf",
+    "https://www.maine.gov/revenue/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

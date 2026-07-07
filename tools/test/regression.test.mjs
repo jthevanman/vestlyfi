@@ -59,6 +59,7 @@ const HAND_CHECKED = {
   'district-of-columbia': 3457.63,
   delaware: 3565.98,
   'north-dakota': 190.58,
+  maine: 3367.7,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

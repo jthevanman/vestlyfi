@@ -8,12 +8,11 @@ Wrong tax numbers are worse than no page. Do not clear a flag until brackets,
 standard deductions, the estimated-payment threshold, and the agency links have
 all been checked against the state tax agency for tax year 2026.
 
-**3 of 51 pages pending verification.**
+**2 of 51 pages pending verification.**
 
 | State | Abbr | What to verify | Official source to use |
 | --- | --- | --- | --- |
 | California | CA | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | California Department of Revenue / Taxation (official .gov) |
-| Maine | ME | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Maine Department of Revenue / Taxation (official .gov) |
 | Vermont | VT | brackets_single, brackets_married, standard deductions, threshold, agency name + URL, payment portal, quarterly weights | Vermont Department of Revenue / Taxation (official .gov) |
 
 ## Known caveats & deferrals (verified pages)

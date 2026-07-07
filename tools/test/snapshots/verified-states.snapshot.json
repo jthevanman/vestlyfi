@@ -561,6 +561,36 @@
         "safeHarborTarget": 44000
       }
     ],
+    "maine": [
+      {
+        "stateIncomeTax": 3367.7,
+        "federalIncomeTax": 7526.6,
+        "seTax": 11303.64,
+        "totalAnnual": 22197.94,
+        "safeHarborTarget": 16947.22
+      },
+      {
+        "stateIncomeTax": 6107.62,
+        "federalIncomeTax": 13008.62,
+        "seTax": 21194.32,
+        "totalAnnual": 40310.57,
+        "safeHarborTarget": 30782.65
+      },
+      {
+        "stateIncomeTax": 2208.45,
+        "federalIncomeTax": 4680.89,
+        "seTax": 5651.82,
+        "totalAnnual": 12541.16,
+        "safeHarborTarget": 9299.44
+      },
+      {
+        "stateIncomeTax": 15919.1,
+        "federalIncomeTax": 46572.26,
+        "seTax": 29573.38,
+        "totalAnnual": 92064.74,
+        "safeHarborTarget": 44000
+      }
+    ],
     "maryland": [
       {
         "stateIncomeTax": 3350.79,
