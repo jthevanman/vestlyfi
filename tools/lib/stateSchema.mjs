@@ -111,6 +111,13 @@ export function validateState(s) {
     });
   }
 
+  if (s.localFlatRate != null) {
+    const d = s.localFlatRate && s.localFlatRate.default;
+    if (typeof d !== 'number' || d < 0 || d > 0.1) {
+      e.push(at(`localFlatRate.default must be a fraction between 0 and 0.1 (e.g. 0.032 for 3.2%)`));
+    }
+  }
+
   if (s.quarterlyWeights != null) {
     if (!Array.isArray(s.quarterlyWeights) || s.quarterlyWeights.length !== 4) {
       e.push(at(`quarterlyWeights must be null or an array of 4 numbers`));

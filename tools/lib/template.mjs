@@ -233,6 +233,8 @@ const CALC_UI = `
       filingStatus:$('filingStatus').value,
       priorYearTax:parseNum($('priorTax').value)
     };
+    var lrEl=$('localRate');
+    if(lrEl){input.localRate=parseNum(lrEl.value)/100;}
     var r=estimateQuarterly(input,STATE_DATA);
     var hasState=STATE_DATA.hasStateIncomeTax;
     var stateReady=r.stateComputable;
@@ -240,7 +242,7 @@ const CALC_UI = `
     $('rTotal').textContent=money(r.totalAnnual);
     // stats
     var stateStat = !hasState ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val green">$0</div><div class="stat-note">No state income tax</div></div>'
-      : (stateReady ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val gold">'+money(r.stateIncomeTax)+'</div></div>'
+      : (stateReady ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val gold">'+money(r.stateIncomeTax)+'</div>'+(STATE_DATA.localFlatRate?'<div class="stat-note">includes county local tax</div>':'')+'</div>'
         : '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val">—</div><div class="stat-note">Rates pending verification</div></div>');
     $('statGrid').innerHTML=
       '<div class="stat-card"><div class="stat-label">Federal SE Tax</div><div class="stat-val blue">'+money(r.se.seTax)+'</div><div class="stat-note">Social Security + Medicare</div></div>'+
@@ -266,7 +268,21 @@ const CALC_UI = `
 })();
 `;
 
-function calcMarkup(stateName) {
+function calcMarkup(state) {
+  const stateName = state.name;
+  // States with a user-editable local surtax (e.g. Maryland county tax) get an
+  // extra prefilled, editable rate input wired into the client calc.
+  const localInput = state.localFlatRate ? `
+  <div class="divider"></div>
+  <div class="input-grid">
+    <div class="input-group">
+      <label>Your county rate <span class="input-hint">(local %, editable)</span></label>
+      <div class="input-wrap"><input type="text" id="localRate" inputmode="decimal" value="${(Number(state.localFlatRate.default) * 100).toFixed(2)}"><span class="input-prefix" style="left:auto;right:14px">%</span></div>
+    </div>
+    <div class="input-group"><label>&nbsp;</label>
+      <div class="input-hint" style="padding-top:14px;line-height:1.5">Prefilled with the 3.20% rate most counties use — see the FAQ for your county.</div>
+    </div>
+  </div>` : '';
   return `<div class="calc-panel">
   <div class="panel-section-title">Your Income</div>
   <div class="input-grid">
@@ -295,7 +311,7 @@ function calcMarkup(stateName) {
       <div class="input-wrap"><span class="input-prefix">$</span>
         <input type="text" id="priorTax" class="has-prefix" inputmode="numeric" oninput="window.__fmtComma(this)" placeholder="0"></div>
     </div>
-  </div>
+  </div>${localInput}
   <button class="calc-btn" onclick="window.__calc()">Estimate My Quarterly Taxes →</button>
 </div>
 
@@ -392,7 +408,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
   ${pendingBanner(state)}
   <p class="intro">${esc(copy.intro)}</p>
 
-  ${calcMarkup(state.name)}
+  ${calcMarkup(state)}
 
   <div class="section">
     <h2>${esc(copy.howTitle)}</h2>

@@ -74,6 +74,7 @@ const HAND_CHECKED = {
   delaware: 3565.98,
   'north-dakota': 190.58,
   maine: 3367.7,
+  maryland: 5591.86,
 };
 test('hand-checked $80k single state tax anchors', () => {
   const byslug = Object.fromEntries(loadAllStates().map((s) => [s.slug, s]));

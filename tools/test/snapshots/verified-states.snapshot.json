@@ -593,31 +593,31 @@
     ],
     "maryland": [
       {
-        "stateIncomeTax": 3350.79,
+        "stateIncomeTax": 5591.86,
         "federalIncomeTax": 7526.6,
         "seTax": 11303.64,
-        "totalAnnual": 22181.03,
+        "totalAnnual": 24422.09,
         "safeHarborTarget": 16947.22
       },
       {
-        "stateIncomeTax": 6310.26,
+        "stateIncomeTax": 10497.38,
         "federalIncomeTax": 13008.62,
         "seTax": 21194.32,
-        "totalAnnual": 40513.21,
+        "totalAnnual": 44700.32,
         "safeHarborTarget": 30782.65
       },
       {
-        "stateIncomeTax": 2535.02,
+        "stateIncomeTax": 4226.52,
         "federalIncomeTax": 4680.89,
         "seTax": 5651.82,
-        "totalAnnual": 12867.73,
+        "totalAnnual": 14559.23,
         "safeHarborTarget": 9299.44
       },
       {
-        "stateIncomeTax": 11798.23,
+        "stateIncomeTax": 19182.11,
         "federalIncomeTax": 46572.26,
         "seTax": 29573.38,
-        "totalAnnual": 87943.87,
+        "totalAnnual": 95327.74,
         "safeHarborTarget": 44000
       }
     ],

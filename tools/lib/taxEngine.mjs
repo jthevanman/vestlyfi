@@ -180,6 +180,19 @@ export function estimateQuarterly(input, stateData) {
     stateIncomeTax = Math.max(0, stateIncomeTax - num(status === 'married' ? pc.married : pc.single));
   }
 
+  // Optional local/county flat surtax on the SAME taxable base as the state tax
+  // (e.g. Maryland's county income tax, which every county levies). The rate is
+  // editable per user via input.localRate (a fraction); it falls back to the
+  // state's default when unset. Folded into stateIncomeTax so it flows through
+  // the totals and quarterly splits — MD estimates must cover state + local.
+  // Config: localFlatRate = { default }.
+  if (stateComputable && stateData.localFlatRate) {
+    const localRate = input.localRate != null
+      ? Math.max(0, num(input.localRate))
+      : num(stateData.localFlatRate.default);
+    stateIncomeTax += localRate * stateTaxable;
+  }
+
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
   const totalAnnual = federalTotal + stateIncomeTax;

@@ -38,9 +38,13 @@ function incomeTaxHow(s) {
   const weighted = Array.isArray(s.quarterlyWeights)
     ? `Unlike the federal system's equal quarters, ${s.name} weights its installments (${s.quarterlyWeights.map((w) => Math.round(w * 100) + '%').join(' / ')}), so the amount due changes from quarter to quarter.`
     : `${s.name} follows the standard four-installment schedule.`;
+  const localPara = s.localFlatRate
+    ? `${s.name} is the only state where every county and Baltimore City levies its own local income tax, charged on the same income as the state tax and collected together with it — so your quarterly estimates have to cover both. The calculator folds the county tax into your ${s.name} figure and pre-fills 3.20% (the rate paid in Montgomery, Prince George's, Howard, Baltimore City, and Baltimore County, among others); change the "Your county rate" box to match where you live — see the FAQ for every county's rate.`
+    : null;
   return [
     `Self-employment income has no tax withheld for you, so both the IRS and ${agency} ask you to prepay in quarterly installments. On the federal side you owe self-employment tax (15.3% Social Security and Medicare on 92.35% of your net profit, up to the Social Security wage base) plus federal income tax on your profit after the standard deduction. On top of that, ${s.name} applies its own income tax.`,
     `${threshold} ${s.dueDateNotes || `Payments generally follow the April, June, September, and January schedule.`} ${weighted}`,
+    ...(localPara ? [localPara] : []),
     `You avoid an IRS underpayment penalty by hitting a "safe harbor": paying at least 90% of this year's total tax, or 100% of last year's (110% if your income is higher). ${s.selfEmploymentNotes || ''} You can pay online through the ${agency} portal, and the calculator above breaks your total into the federal and ${s.name} pieces so you can send each to the right place.`.trim(),
   ];
 }
@@ -83,6 +87,12 @@ function buildFaqs(s) {
     q: `Are there other ${s.name}-specific rules I should know?`,
     a: [s.uniqueFacts[1], s.uniqueFacts[2]].filter(Boolean).join(' '),
   });
+  // Optional state-authored FAQ items (verified, in the state JSON) for genuinely
+  // state-specific mechanics that don't fit the generic template (e.g. Maryland's
+  // county rate table and disclosures).
+  for (const f of (Array.isArray(s.extraFaqs) ? s.extraFaqs : [])) {
+    if (f && f.q && f.a) faqs.push({ q: String(f.q), a: String(f.a) });
+  }
   faqs.push({
     q: `Does this calculator include the QBI deduction?`,
     a: `Not in this version. The Qualified Business Income (QBI) deduction can reduce your federal taxable income by up to 20% of qualifying business profit, so your real federal tax may be a little lower than shown. We keep the estimate conservative and leave QBI out; factor it in with a tax professional if it applies to you.`,

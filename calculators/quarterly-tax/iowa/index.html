@@ -517,6 +517,19 @@ function estimateQuarterly(input, stateData) {
     stateIncomeTax = Math.max(0, stateIncomeTax - num(status === 'married' ? pc.married : pc.single));
   }
 
+  // Optional local/county flat surtax on the SAME taxable base as the state tax
+  // (e.g. Maryland's county income tax, which every county levies). The rate is
+  // editable per user via input.localRate (a fraction); it falls back to the
+  // state's default when unset. Folded into stateIncomeTax so it flows through
+  // the totals and quarterly splits — MD estimates must cover state + local.
+  // Config: localFlatRate = { default }.
+  if (stateComputable && stateData.localFlatRate) {
+    const localRate = input.localRate != null
+      ? Math.max(0, num(input.localRate))
+      : num(stateData.localFlatRate.default);
+    stateIncomeTax += localRate * stateTaxable;
+  }
+
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
   const totalAnnual = federalTotal + stateIncomeTax;
@@ -680,6 +693,8 @@ var STATE_ABBR="IA";
       filingStatus:$('filingStatus').value,
       priorYearTax:parseNum($('priorTax').value)
     };
+    var lrEl=$('localRate');
+    if(lrEl){input.localRate=parseNum(lrEl.value)/100;}
     var r=estimateQuarterly(input,STATE_DATA);
     var hasState=STATE_DATA.hasStateIncomeTax;
     var stateReady=r.stateComputable;
@@ -687,7 +702,7 @@ var STATE_ABBR="IA";
     $('rTotal').textContent=money(r.totalAnnual);
     // stats
     var stateStat = !hasState ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val green">$0</div><div class="stat-note">No state income tax</div></div>'
-      : (stateReady ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val gold">'+money(r.stateIncomeTax)+'</div></div>'
+      : (stateReady ? '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val gold">'+money(r.stateIncomeTax)+'</div>'+(STATE_DATA.localFlatRate?'<div class="stat-note">includes county local tax</div>':'')+'</div>'
         : '<div class="stat-card"><div class="stat-label">'+STATE_NAME+' State Tax</div><div class="stat-val">—</div><div class="stat-note">Rates pending verification</div></div>');
     $('statGrid').innerHTML=
       '<div class="stat-card"><div class="stat-label">Federal SE Tax</div><div class="stat-val blue">'+money(r.se.seTax)+'</div><div class="stat-note">Social Security + Medicare</div></div>'+
