@@ -685,7 +685,32 @@ var STATE_DATA={
   "standardDeduction_single": 0,
   "standardDeduction_married": 0,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "slidingStandardDeduction": {
+    "single": {
+      "base": 4500,
+      "phaseoutStart": 25500,
+      "rate": 0.05,
+      "floor": 4000
+    },
+    "married": {
+      "base": 11500,
+      "phaseoutStart": 26000,
+      "rate": 0.35,
+      "floor": 8000
+    }
+  },
+  "federalTaxDeduction": {
+    "mode": "cap-phaseout",
+    "capSingle": 100000000,
+    "capMarried": 100000000,
+    "tiers": [
+      {
+        "agiUpTo": null,
+        "factor": 1
+      }
+    ]
+  }
 };
 var STATE_NAME="Alabama";
 var STATE_ABBR="AL";

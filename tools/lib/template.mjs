@@ -328,6 +328,33 @@ ${CALC_UI}
 /**
  * Render one state spoke page.
  */
+/**
+ * Project a full state record down to exactly the fields the client-side tax
+ * engine reads as STATE_DATA. This MUST mirror every `stateData.*` field
+ * referenced in taxEngine.mjs, or the browser calculator will silently diverge
+ * from the tested engine (undefined modifiers no-op). A regression test locks
+ * this projection against the engine. JSON.stringify drops undefined keys, so
+ * states without a given modifier serialize identically to before.
+ */
+export function slimStateData(state) {
+  return {
+    hasStateIncomeTax: state.hasStateIncomeTax,
+    brackets_single: state.brackets_single,
+    brackets_married: state.brackets_married,
+    standardDeduction_single: state.standardDeduction_single,
+    standardDeduction_married: state.standardDeduction_married,
+    stateTaxBasis: state.stateTaxBasis || 'state_gross',
+    quarterlyWeights: state.quarterlyWeights,
+    // Engine modifiers (all optional / gated) — mirror taxEngine.mjs stateData.* reads:
+    slidingStandardDeduction: state.slidingStandardDeduction,
+    federalTaxDeduction: state.federalTaxDeduction,
+    personalTaxCredit: state.personalTaxCredit,
+    utahTaxpayerCredit: state.utahTaxpayerCredit,
+    ohioBid: state.ohioBid,
+    localFlatRate: state.localFlatRate,
+  };
+}
+
 export function renderStatePage({ state, copy, meta, engineSource }) {
   const crumbs = [
     { label: 'Home', href: '/' },
@@ -341,15 +368,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
     breadcrumbSchema(crumbs),
   ].map((o) => `<script type="application/ld+json">\n${jsonld(o)}\n</script>`).join('\n');
 
-  const stateDataSlim = {
-    hasStateIncomeTax: state.hasStateIncomeTax,
-    brackets_single: state.brackets_single,
-    brackets_married: state.brackets_married,
-    standardDeduction_single: state.standardDeduction_single,
-    standardDeduction_married: state.standardDeduction_married,
-    stateTaxBasis: state.stateTaxBasis || 'state_gross',
-    quarterlyWeights: state.quarterlyWeights,
-  };
+  const stateDataSlim = slimStateData(state);
 
   const relatedHtml = `
   <div class="related-group-label">Go up a level</div>

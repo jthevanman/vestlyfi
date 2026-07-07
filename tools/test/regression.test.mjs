@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadAllStates } from '../lib/getStateData.mjs';
 import { snapshotState, SCENARIOS } from '../lib/snapshotScenarios.mjs';
+import { slimStateData } from '../lib/template.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const snapshot = JSON.parse(
@@ -21,6 +22,19 @@ const snapshot = JSON.parse(
 
 test('snapshot scenario set is unchanged', () => {
   assert.deepEqual(snapshot.scenarios, SCENARIOS);
+});
+
+// The browser only gets the projected STATE_DATA (slimStateData). If that
+// projection ever drops a field the engine reads, the live calculator silently
+// diverges from the tested engine (e.g. a modifier no-ops). Lock them together.
+test('client STATE_DATA projection matches the full engine for every state', () => {
+  for (const s of loadAllStates()) {
+    assert.deepEqual(
+      snapshotState(slimStateData(s)),
+      snapshotState(s),
+      `${s.slug}: slimStateData projection diverges from full state — a field the engine reads is missing from slimStateData`,
+    );
+  }
 });
 
 test('every verified state matches its locked snapshot outputs', () => {

@@ -682,7 +682,21 @@ var STATE_DATA={
   "standardDeduction_single": 0,
   "standardDeduction_married": 0,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "slidingStandardDeduction": {
+    "single": {
+      "base": 20600,
+      "phaseoutStart": 100000,
+      "rate": 0.204,
+      "floor": 5300
+    },
+    "married": {
+      "base": 41200,
+      "phaseoutStart": 200050,
+      "rate": 0.204,
+      "floor": 10600
+    }
+  }
 };
 var STATE_NAME="Maine";
 var STATE_ABBR="ME";

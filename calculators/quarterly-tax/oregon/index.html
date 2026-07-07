@@ -695,7 +695,38 @@ var STATE_DATA={
   "standardDeduction_single": 2835,
   "standardDeduction_married": 5670,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "federalTaxDeduction": {
+    "mode": "cap-phaseout",
+    "capSingle": 8500,
+    "capMarried": 8500,
+    "tiers": [
+      {
+        "agiUpTo": 125000,
+        "factor": 1
+      },
+      {
+        "agiUpTo": 130000,
+        "factor": 0.8
+      },
+      {
+        "agiUpTo": 135000,
+        "factor": 0.6
+      },
+      {
+        "agiUpTo": 140000,
+        "factor": 0.4
+      },
+      {
+        "agiUpTo": 145000,
+        "factor": 0.2
+      },
+      {
+        "agiUpTo": null,
+        "factor": 0
+      }
+    ]
+  }
 };
 var STATE_NAME="Oregon";
 var STATE_ABBR="OR";

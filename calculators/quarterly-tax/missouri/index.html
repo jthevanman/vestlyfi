@@ -735,7 +735,34 @@ var STATE_DATA={
   "standardDeduction_single": 15000,
   "standardDeduction_married": 30000,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "federalTaxDeduction": {
+    "mode": "percent-of-federal",
+    "capSingle": 5000,
+    "capMarried": 10000,
+    "tiers": [
+      {
+        "agiUpTo": 25000,
+        "factor": 0.35
+      },
+      {
+        "agiUpTo": 50000,
+        "factor": 0.25
+      },
+      {
+        "agiUpTo": 100000,
+        "factor": 0.15
+      },
+      {
+        "agiUpTo": 125000,
+        "factor": 0.05
+      },
+      {
+        "agiUpTo": null,
+        "factor": 0
+      }
+    ]
+  }
 };
 var STATE_NAME="Missouri";
 var STATE_ABBR="MO";

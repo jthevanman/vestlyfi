@@ -725,7 +725,21 @@ var STATE_DATA={
   "standardDeduction_single": 0,
   "standardDeduction_married": 0,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "slidingStandardDeduction": {
+    "single": {
+      "base": 15000,
+      "phaseoutStart": 30000,
+      "rate": 1,
+      "floor": 0
+    },
+    "married": {
+      "base": 24000,
+      "phaseoutStart": 48000,
+      "rate": 1,
+      "floor": 0
+    }
+  }
 };
 var STATE_NAME="Connecticut";
 var STATE_ABBR="CT";

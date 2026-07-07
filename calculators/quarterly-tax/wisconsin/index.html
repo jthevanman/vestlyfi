@@ -695,7 +695,19 @@ var STATE_DATA={
   "standardDeduction_single": 0,
   "standardDeduction_married": 0,
   "stateTaxBasis": "federal_agi",
-  "quarterlyWeights": null
+  "quarterlyWeights": null,
+  "slidingStandardDeduction": {
+    "single": {
+      "base": 13560,
+      "phaseoutStart": 19050,
+      "rate": 0.12
+    },
+    "married": {
+      "base": 25110,
+      "phaseoutStart": 28210,
+      "rate": 0.19778
+    }
+  }
 };
 var STATE_NAME="Wisconsin";
 var STATE_ABBR="WI";
