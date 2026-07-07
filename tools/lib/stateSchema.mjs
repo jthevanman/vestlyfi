@@ -118,6 +118,13 @@ export function validateState(s) {
     }
   }
 
+  if (s.minTaxFloor != null) {
+    const r = s.minTaxFloor.rate;
+    const t = s.minTaxFloor.agiThreshold;
+    if (typeof r !== 'number' || r < 0 || r > 1) e.push(at(`minTaxFloor.rate must be a fraction between 0 and 1`));
+    if (typeof t !== 'number' || t < 0) e.push(at(`minTaxFloor.agiThreshold must be a number >= 0`));
+  }
+
   if (s.quarterlyWeights != null) {
     if (!Array.isArray(s.quarterlyWeights) || s.quarterlyWeights.length !== 4) {
       e.push(at(`quarterlyWeights must be null or an array of 4 numbers`));

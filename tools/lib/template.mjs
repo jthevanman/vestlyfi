@@ -368,6 +368,7 @@ export function slimStateData(state) {
     utahTaxpayerCredit: state.utahTaxpayerCredit,
     ohioBid: state.ohioBid,
     localFlatRate: state.localFlatRate,
+    minTaxFloor: state.minTaxFloor,
   };
 }
 

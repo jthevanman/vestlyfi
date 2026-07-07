@@ -517,6 +517,16 @@ function estimateQuarterly(input, stateData) {
     stateIncomeTax = Math.max(0, stateIncomeTax - num(status === 'married' ? pc.married : pc.single));
   }
 
+  // Optional alternative-minimum floor: some states set the tax to at least a
+  // flat percentage of AGI once AGI exceeds a threshold (e.g. Vermont: for AGI
+  // over $150,000, tax is the greater of the schedule tax or 3% of AGI). We use
+  // full federal AGI as the base; Vermont subtracts U.S.-obligation interest
+  // first, which we don't model, so the floor errs slightly high (conservative).
+  // Config: minTaxFloor = { agiThreshold, rate }.
+  if (stateComputable && stateData.minTaxFloor && federalAGI > num(stateData.minTaxFloor.agiThreshold)) {
+    stateIncomeTax = Math.max(stateIncomeTax, num(stateData.minTaxFloor.rate) * federalAGI);
+  }
+
   // Optional local/county flat surtax on the SAME taxable base as the state tax
   // (e.g. Maryland's county income tax, which every county levies). The rate is
   // editable per user via input.localRate (a fraction); it falls back to the

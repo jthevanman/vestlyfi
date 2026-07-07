@@ -250,3 +250,23 @@ test('estimateQuarterly: 110% prior-year safe harbor when AGI > $150k', () => {
   // target is the lesser of 90% current and 110% prior
   close(r.safeHarbor.target, Math.min(r.federalTotal * 0.9, 44000));
 });
+
+// --- minTaxFloor (Vermont's 3%-of-AGI floor above $150k) --------------------
+test('estimateQuarterly: minTaxFloor floors state tax at a % of AGI above the threshold', () => {
+  // Synthetic state: a flat 1% schedule but a 3%-of-AGI floor once AGI > $150k.
+  const st = {
+    hasStateIncomeTax: true, stateTaxBasis: 'federal_agi',
+    brackets_single: [{ min: 0, max: null, rate: 0.01 }],
+    brackets_married: [{ min: 0, max: null, rate: 0.01 }],
+    standardDeduction_single: 0, standardDeduction_married: 0,
+    minTaxFloor: { agiThreshold: 150000, rate: 0.03 },
+  };
+  // High earner: 1% schedule tax is below 3% of AGI, so the floor binds.
+  const hi = estimateQuarterly({ selfEmploymentIncome: 250000, filingStatus: 'single' }, st);
+  const agiHi = 250000 - hi.se.halfDeduction;
+  close(hi.stateIncomeTax, 0.03 * agiHi);
+  // Below the AGI threshold the floor never applies; the 1% schedule governs.
+  const lo = estimateQuarterly({ selfEmploymentIncome: 100000, filingStatus: 'single' }, st);
+  const agiLo = 100000 - lo.se.halfDeduction;
+  close(lo.stateIncomeTax, 0.01 * agiLo);
+});
