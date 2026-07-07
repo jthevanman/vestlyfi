@@ -49,7 +49,7 @@
   "extraFaqs": [
     {
       "q": "What local income tax rate does my Maryland county charge?",
-      "a": "Every Maryland county and Baltimore City sets its own 2025 local income tax rate on the same income the state taxes: 3.30% in Dorchester; 3.20% in Baltimore City, Baltimore County, Calvert, Caroline, Howard, Kent, Montgomery, Prince George's, Queen Anne's, St. Mary's, Somerset, and Wicomico; 3.06% in Harford; 3.03% in Allegany, Carroll, and Charles; 2.95% in Washington; 2.74% in Cecil; 2.65% in Garrett; 2.40% in Talbot; and 2.25% in Worcester. Anne Arundel and Frederick use graduated local brackets (roughly 2.7% to 3.2%), so the single editable rate here is an approximation for those two. The calculator pre-fills 3.20% — the rate most Marylanders pay — but change the 'Your county rate' box to match your county."
+      "a": "Every Maryland county and Baltimore City sets its own 2025 local income tax rate on the same income the state taxes, per the Comptroller's estimated-tax (Form PV) worksheet: 3.30% in Dorchester; 3.20% in Baltimore City, Baltimore County, Calvert, Caroline, Howard, Kent, Montgomery, Prince George's, Queen Anne's, St. Mary's, Somerset, and Wicomico; 3.06% in Harford; 3.03% in Allegany, Carroll, and Charles; 2.95% in Washington; 2.74% in Cecil; 2.65% in Garrett; 2.40% in Talbot; and 2.25% in Worcester. Anne Arundel and Frederick use graduated local brackets (roughly 2.7% to 3.2%), so the single editable rate here is an approximation for those two. The calculator pre-fills 3.20% — the rate most Marylanders pay — but change the 'Your county rate' box to match your county."
     },
     {
       "q": "How does Maryland's standard deduction and personal exemption work?",
@@ -58,6 +58,14 @@
     {
       "q": "Does this include Maryland's capital gains surcharge?",
       "a": "No. Maryland's 2025 law added a 2% surcharge on certain high-income capital gains, but this calculator models only ordinary self-employment income and does not apply a capital-gains surtax. If a large share of your income is investment gains, your actual Maryland tax could be higher than shown."
+    },
+    {
+      "q": "Do I have to make Maryland estimated payments, and what's the safe harbor?",
+      "a": "Maryland requires estimated payments once you expect to owe more than $500 in state and local tax after withholding (Comptroller Form PV worksheet; COMAR 03.04.01.02). To avoid a penalty, pay either 90% of this year's Maryland tax or 110% of last year's — and Maryland applies the 110% prior-year figure at every income level, with no lower 100% tier for modest incomes like the federal rules have."
+    },
+    {
+      "q": "What if I win a prize or lottery money in Maryland?",
+      "a": "Maryland treats large winnings specially: if you receive $500 or more of prize or gambling income, you must file a declaration of estimated tax and pay it in full within 60 days, rather than waiting for the next regular quarterly due date."
     }
   ],
   "sources": [

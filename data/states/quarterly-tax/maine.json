@@ -35,6 +35,20 @@
     "Maine indexes its brackets and deductions each year using chained CPI, rounded down to the nearest $50.",
     "Roughly a third of Maine filers owe no state income tax because their income falls within the combined standard deduction and personal exemption."
   ],
+  "extraFaqs": [
+    {
+      "q": "Do I actually have to make quarterly estimated payments in Maine?",
+      "a": "Only if two conditions are both met: you expect to owe at least $1,000 in Maine income tax this year AND you owed $1,000 or more in Maine tax last year. If either amount is under $1,000, the Form 1040ES-ME instructions say estimated payments are not required."
+    },
+    {
+      "q": "What is Maine's safe harbor for avoiding an underpayment penalty?",
+      "a": "You avoid a Maine penalty by paying either 90% of this year's Maine tax or 100% of last year's. Unlike the federal rules, Maine's prior-year safe harbor stays at 100% no matter how high your income is — there is no 110% bump for higher earners."
+    },
+    {
+      "q": "What if I have a large one-time spike in income?",
+      "a": "Maine has a special rule for unusually large one-time income (a period with more than $500,000 of such income): the prior-year safe harbor may not cover that installment, so you may need to base that quarter's payment on the current year's tax. If you have a big one-off event, check the 1040ES-ME instructions or a tax professional."
+    }
+  ],
   "sources": [
     "https://www.maine.gov/revenue/sites/maine.gov.revenue/files/inline-files/ind_tax_rate_sched_2025.pdf",
     "https://www.maine.gov/revenue/"
