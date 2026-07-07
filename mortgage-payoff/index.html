@@ -293,6 +293,8 @@
   .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} .wizard{padding:32px 16px 60px;} }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body>
 
@@ -315,7 +317,7 @@
       <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;color:#e8c97a;">Privacy Policy</div>
       <button class="modal-close" onclick="closeModal('privacy')">×</button>
     </div>
-    <p><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+    <p><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
     <p><strong style="color:#f5f0e8;">Affiliate Links</strong><br>Some links are affiliate links. If you open an account through them, VestlyFi may receive a commission at no cost to you.</p>
     <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:var(--gold);">VestlyFi@gmail.com</span></p>
   </div>
@@ -795,6 +797,12 @@ function calculate() {
   renderTable('monthly');
   goToStep('results');
 
+  VestlySave.capture({
+    inputs: { balance, rate, years, extraMonths, payoffTargetYears },
+    outputs: { monthlyPayment: Math.round(result.basePayment), totalInterest: Math.round(result.totalInterest), payoffDate },
+    label: `${fmt(balance)} @ ${rate}% · ${fmt(result.basePayment)}/mo · payoff ${payoffDate}`
+  });
+
   // Show the early-payoff savings immediately
   if (startExtra > 0) {
     applyExtra();
@@ -841,6 +849,12 @@ function applyExtra() {
   document.getElementById('legendExtra').style.display = 'flex';
 
   renderChart(base.rows, withExtra.rows);
+
+  VestlySave.capture({
+    inputs: { balance, rate, years, extraMonths, extra, lump },
+    outputs: { monthlyPayment: Math.round(base.basePayment + extra), interestSaved: Math.round(interestSaved), payoffDate: getPayoffDate(withExtra.months) },
+    label: `${fmt(balance)} @ ${rate}% · +${fmt(extra)}/mo extra · payoff ${getPayoffDate(withExtra.months)}`
+  });
 }
 
 // ── Chart ──
@@ -975,6 +989,27 @@ document.addEventListener('keydown', function(e) {
 });
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open')); });
+
+VestlySave.init({
+  calculator: 'mortgage-payoff',
+  saveAnchor: '#statGrid',
+  cardAnchor: '#step-1',
+  applyInputs(inp) {
+    document.getElementById('balance').value = (inp.balance || 0).toLocaleString();
+    document.getElementById('rate').value = inp.rate;
+    document.getElementById('yearsRemaining').value = inp.years || '';
+    document.getElementById('monthsRemaining').value = inp.extraMonths || '';
+    payoffTargetYears = inp.payoffTargetYears || null;
+    clearChips();
+    checkBtn();
+    calculate();
+    if (inp.extra || inp.lump) {
+      document.getElementById('extraPayment').value = inp.extra ? inp.extra.toLocaleString() : '';
+      document.getElementById('lumpSum').value = inp.lump ? inp.lump.toLocaleString() : '';
+      applyExtra();
+    }
+  }
+});
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">

@@ -226,6 +226,8 @@
   @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body>
 
@@ -385,7 +387,7 @@
       <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
       <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
@@ -591,6 +593,16 @@ function calculate(birthYear, pia) {
   document.getElementById('resultsContent').innerHTML = html;
   showStep('results');
 
+  VestlySave.capture({
+    inputs: { birthYear, pia },
+    outputs: {
+      monthly62: Math.round(s62.monthly), monthlyFra: Math.round(sFra.monthly), monthly70: Math.round(s70.monthly),
+      breakEven62Fra: be62Fra ? Math.round(be62Fra * 10) / 10 : null,
+      breakEvenFra70: beFra70 ? Math.round(beFra70 * 10) / 10 : null
+    },
+    label: `Born ${birthYear} · ${dollars(pia)}/mo at FRA · break-even ${beFra70 ? Math.round(beFra70) : '—'}`
+  });
+
   requestAnimationFrame(() => {
     const canvas = document.getElementById('ssChart');
     if (!canvas) return;
@@ -628,6 +640,18 @@ function restartWizard() {
   currentStep = 0;
   showStep(0);
 }
+
+VestlySave.init({
+  calculator: 'social-security-break-even',
+  saveAnchor: '#resultsContent',
+  cardAnchor: '#step-results',
+  applyInputs(inp) {
+    document.getElementById('birthYear').value = inp.birthYear;
+    document.getElementById('pia').value = (inp.pia || 0).toLocaleString();
+    checkStep1();
+    calculate(inp.birthYear, inp.pia);
+  }
+});
 
 /* ---- Shareable image of the "total collected by age" table ---- */
 function drawSpacedText(ctx, text, x, y, sp) { let cx = x; for (const ch of text) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; } return cx; }

@@ -493,11 +493,26 @@ async function loadSnapshot() {
 }
 
 // ── SAVED RESULTS ──
-const CALC_NAMES = { 'compound-interest': 'Compound Interest' };
+const CALC_NAMES = {
+  'compound-interest': 'Compound Interest',
+  'house-affordability': 'House Affordability',
+  'mortgage-payoff': 'Mortgage Payoff',
+  'debt-payoff': 'Debt Payoff',
+  'coast-fire': 'Coast FIRE',
+  'retirement': 'Retirement',
+  'social-security-break-even': 'Social Security Break-Even',
+  'calculators/quarterly-tax': 'Quarterly Tax (Federal)'
+};
 let savedResults = [];
 
+function titleCase(s) {
+  return s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
 function calcName(slug) {
-  return CALC_NAMES[slug] || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  if (CALC_NAMES[slug]) return CALC_NAMES[slug];
+  const qt = slug.match(/^calculators\/quarterly-tax\/(.+)$/);
+  if (qt) return titleCase(qt[1]) + ' Quarterly Tax';
+  return titleCase(slug.split('/').pop());
 }
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -523,7 +538,7 @@ function renderSavedResults() {
         <div class="saved-item-meta">${calcName(s.calculator)} · ${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
       </div>
       <div class="saved-item-actions">
-        <a class="saved-open" href="/${encodeURIComponent(s.calculator)}/?saved=${s.id}">Open →</a>
+        <a class="saved-open" href="/${s.calculator.split('/').map(encodeURIComponent).join('/')}/?saved=${s.id}">Open →</a>
         <button class="saved-del" onclick="deleteSavedResult('${s.id}')" aria-label="Delete saved result">✕</button>
       </div>
     </div>`).join('');

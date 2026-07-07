@@ -225,6 +225,8 @@
   .input-grid-3 { align-items: end; }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body>
 
@@ -353,7 +355,7 @@
       <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
       <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
@@ -612,11 +614,36 @@ function renderMethod(method) {
   `;
 
   document.getElementById('resultContent').innerHTML = html;
+
+  VestlySave.capture({
+    inputs: { debts, extra, method },
+    outputs: { payoffDate: payoffStr, totalInterest: Math.round(result.totalInterest), months: result.months },
+    label: `${fmt(totalBalance)} across ${debts.length} debt${debts.length !== 1 ? 's' : ''} · debt-free ${payoffStr}`
+  });
 }
 
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+VestlySave.init({
+  calculator: 'debt-payoff',
+  saveAnchor: '#resultContent',
+  cardAnchor: '#calcBtn',
+  applyInputs(inp) {
+    document.getElementById('debtRows').innerHTML = '';
+    (inp.debts || []).forEach(d => addDebtRow({
+      name: String(d.name || 'Debt').replace(/["<>]/g, ''),
+      balance: d.balance, rate: d.rate, min: d.min
+    }));
+    document.getElementById('extraPayment').value = inp.extra || '';
+    if (inp.method) { currentMethod = inp.method; }
+    document.getElementById('btnAvalanche').classList.toggle('active', currentMethod === 'avalanche');
+    document.getElementById('btnSnowball').classList.toggle('active', currentMethod === 'snowball');
+    checkCalcBtn();
+    calculate();
+  }
+});
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">

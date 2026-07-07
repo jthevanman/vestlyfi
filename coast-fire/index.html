@@ -241,6 +241,8 @@
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body>
 
@@ -488,7 +490,7 @@
       <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
       <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
@@ -803,6 +805,12 @@ function calculate() {
   showStep('results');
   document.getElementById('step-results').classList.add('active');
 
+  VestlySave.capture({
+    inputs: { currentAge, retireAge, annualSpend, currentSavings, monthlyContrib, returnRate, inflationRate, glidePath },
+    outputs: { coastNumber: Math.round(coastNumber), fireNumber: Math.round(fireNumber), alreadyCoasted, coastAge },
+    label: `Coast number ${fmt(coastNumber)} · age ${currentAge} → retire ${retireAge}`
+  });
+
   requestAnimationFrame(() => {
     const canvas = document.getElementById('coastChart');
     if (!canvas) return;
@@ -904,6 +912,30 @@ function restartWizard() {
   currentStep = 0;
   showStep(0);
 }
+
+VestlySave.init({
+  calculator: 'coast-fire',
+  saveAnchor: '#resultsContent',
+  cardAnchor: '#step-results',
+  applyInputs(inp) {
+    document.getElementById('currentAge').value = inp.currentAge;
+    document.getElementById('retireAge').value = inp.retireAge;
+    document.getElementById('annualSpend').value = (inp.annualSpend || 0).toLocaleString();
+    document.getElementById('currentSavings').value = (inp.currentSavings || 0).toLocaleString();
+    document.getElementById('monthlyContrib').value = inp.monthlyContrib ? inp.monthlyContrib.toLocaleString() : '';
+    Object.assign(S, {
+      currentAge: inp.currentAge, retireAge: inp.retireAge, annualSpend: inp.annualSpend,
+      currentSavings: inp.currentSavings, monthlyContrib: inp.monthlyContrib || 0,
+      returnRate: inp.returnRate, inflationRate: inp.inflationRate, glidePath: inp.glidePath !== false
+    });
+    [['returnPills', inp.returnRate], ['inflationPills', inp.inflationRate], ['glidePills', inp.glidePath !== false ? 1 : 0]]
+      .forEach(([group, want]) => {
+        document.querySelectorAll('#' + group + ' .pill').forEach(p =>
+          p.classList.toggle('selected', parseFloat(p.dataset.val) === want));
+      });
+    calculate();
+  }
+});
 
 
 function checkStep1() {

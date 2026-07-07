@@ -147,6 +147,8 @@ ${robots}
 <meta name="twitter:image" content="${esc(meta.ogImage)}">
 ${jsonLdBlocks}
 <style>${CSS}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body>`;
 }
@@ -263,9 +265,35 @@ const CALC_UI = `
     $('safeHarbor').innerHTML=shText;
     $('results').classList.add('visible');
     $('results').scrollIntoView({behavior:'smooth',block:'start'});
+    if(window.VestlySave){VestlySave.capture({
+      inputs:{selfEmploymentIncome:input.selfEmploymentIncome,w2Income:input.w2Income,filingStatus:input.filingStatus,priorYearTax:input.priorYearTax,localRate:input.localRate},
+      outputs:{totalAnnual:Math.round(r.totalAnnual),federalIncomeTax:Math.round(r.federalIncomeTax),seTax:Math.round(r.se.seTax),stateIncomeTax:(hasState&&stateReady)?Math.round(r.stateIncomeTax):0},
+      label:STATE_ABBR+' · '+money(input.selfEmploymentIncome+(input.w2Income||0))+' income · '+money(r.totalAnnual)+'/yr estimated'
+    });}
   }
   window.__calc=calc;
 })();
+`;
+
+/** Save-results wiring (shared /assets/save-results.js module; guarded so a
+ *  blocked CDN or missing module never breaks the calculator). */
+const SAVE_UI = `
+if(window.VestlySave){
+  VestlySave.init({
+    calculator: SAVE_SLUG,
+    saveAnchor: '.result-banner',
+    cardAnchor: '.calc-panel',
+    applyInputs: function(inp){
+      var setMoney=function(id,v){var el=document.getElementById(id);if(el)el.value=v?Number(v).toLocaleString('en-US'):'';};
+      setMoney('seIncome', inp.selfEmploymentIncome);
+      setMoney('w2Income', inp.w2Income);
+      setMoney('priorTax', inp.priorYearTax);
+      var fs=document.getElementById('filingStatus'); if(fs&&inp.filingStatus) fs.value=inp.filingStatus;
+      if(inp.localRate!=null){var lr=document.getElementById('localRate');if(lr)lr.value=(inp.localRate*100).toFixed(2);}
+      window.__calc();
+    }
+  });
+}
 `;
 
 function calcMarkup(state) {
@@ -328,7 +356,7 @@ function calcMarkup(state) {
 </div>`;
 }
 
-function scriptBlock({ engineSource, stateData, stateName, stateAbbr }) {
+function scriptBlock({ engineSource, stateData, stateName, stateAbbr, saveSlug }) {
   const clean = engineSource.replace(/^export\s+/gm, '');
   return `<script>
 (function(){
@@ -336,7 +364,9 @@ ${clean}
 var STATE_DATA=${jsonld(stateData)};
 var STATE_NAME=${JSON.stringify(stateName)};
 var STATE_ABBR=${JSON.stringify(stateAbbr)};
+var SAVE_SLUG=${JSON.stringify(saveSlug)};
 ${CALC_UI}
+${SAVE_UI}
 })();
 </script>`;
 }
@@ -430,7 +460,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
   <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the ${esc(state.stateTaxAgencyName || 'IRS')} before filing. State tax data last verified ${esc(state.lastVerified || 'pending')}.${sourcesHtml(state.sources)}</p>
 </div>
 ${FOOTER}
-${scriptBlock({ engineSource, stateData: stateDataSlim, stateName: state.name, stateAbbr: state.abbreviation })}
+${scriptBlock({ engineSource, stateData: stateDataSlim, stateName: state.name, stateAbbr: state.abbreviation, saveSlug: `calculators/quarterly-tax/${state.slug}` })}
 </body>
 </html>`;
 
@@ -488,7 +518,7 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
   <p class="disclaimer">For educational purposes only — not tax advice. Confirm figures with a tax professional and the IRS before filing.</p>
 </div>
 ${FOOTER}
-${scriptBlock({ engineSource, stateData: federalOnly, stateName: 'Federal', stateAbbr: 'US' })}
+${scriptBlock({ engineSource, stateData: federalOnly, stateName: 'Federal', stateAbbr: 'US', saveSlug: 'calculators/quarterly-tax' })}
 </body>
 </html>`;
 

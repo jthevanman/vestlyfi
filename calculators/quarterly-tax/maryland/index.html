@@ -272,6 +272,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 .footer-links a:hover{color:var(--gold);}
 @media(max-width:600px){footer{padding:20px;}.page{padding:28px 20px 60px;}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/save-results.js"></script>
 </head>
 <body><nav class="site-nav">
   <a class="site-nav-logo" href="/">VestlyFi</a>
@@ -849,6 +851,7 @@ var STATE_DATA={
 };
 var STATE_NAME="Maryland";
 var STATE_ABBR="MD";
+var SAVE_SLUG="calculators/quarterly-tax/maryland";
 
 (function(){
   var $=function(id){return document.getElementById(id);};
@@ -893,9 +896,32 @@ var STATE_ABBR="MD";
     $('safeHarbor').innerHTML=shText;
     $('results').classList.add('visible');
     $('results').scrollIntoView({behavior:'smooth',block:'start'});
+    if(window.VestlySave){VestlySave.capture({
+      inputs:{selfEmploymentIncome:input.selfEmploymentIncome,w2Income:input.w2Income,filingStatus:input.filingStatus,priorYearTax:input.priorYearTax,localRate:input.localRate},
+      outputs:{totalAnnual:Math.round(r.totalAnnual),federalIncomeTax:Math.round(r.federalIncomeTax),seTax:Math.round(r.se.seTax),stateIncomeTax:(hasState&&stateReady)?Math.round(r.stateIncomeTax):0},
+      label:STATE_ABBR+' · '+money(input.selfEmploymentIncome+(input.w2Income||0))+' income · '+money(r.totalAnnual)+'/yr estimated'
+    });}
   }
   window.__calc=calc;
 })();
+
+
+if(window.VestlySave){
+  VestlySave.init({
+    calculator: SAVE_SLUG,
+    saveAnchor: '.result-banner',
+    cardAnchor: '.calc-panel',
+    applyInputs: function(inp){
+      var setMoney=function(id,v){var el=document.getElementById(id);if(el)el.value=v?Number(v).toLocaleString('en-US'):'';};
+      setMoney('seIncome', inp.selfEmploymentIncome);
+      setMoney('w2Income', inp.w2Income);
+      setMoney('priorTax', inp.priorYearTax);
+      var fs=document.getElementById('filingStatus'); if(fs&&inp.filingStatus) fs.value=inp.filingStatus;
+      if(inp.localRate!=null){var lr=document.getElementById('localRate');if(lr)lr.value=(inp.localRate*100).toFixed(2);}
+      window.__calc();
+    }
+  });
+}
 
 })();
 </script>
