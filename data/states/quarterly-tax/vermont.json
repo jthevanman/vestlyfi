@@ -4,22 +4,51 @@
   "abbreviation": "VT",
   "hasStateIncomeTax": true,
   "taxYear": 2026,
-  "brackets_single": null,
-  "brackets_married": null,
-  "standardDeduction_single": null,
-  "standardDeduction_married": null,
-  "hasQuarterlyRequirement": true,
-  "stateQuarterlyThreshold": null,
-  "stateTaxAgencyName": null,
-  "stateTaxAgencyUrl": null,
-  "statePaymentPortalUrl": null,
-  "quarterlyWeights": null,
-  "dueDateNotes": "",
-  "selfEmploymentNotes": "",
-  "uniqueFacts": [
-    "Vermont levies a state income tax that applies to self-employment income in addition to your federal quarterly payments.",
-    "Vermont bracket and agency data is pending verification from official sources before this page is indexed."
+  "taxYearBasis": 2025,
+  "stateTaxBasis": "federal_agi",
+  "brackets_single": [
+    { "min": 0, "max": 49400, "rate": 0.0335 },
+    { "min": 49400, "max": 119700, "rate": 0.066 },
+    { "min": 119700, "max": 249700, "rate": 0.076 },
+    { "min": 249700, "max": null, "rate": 0.0875 }
   ],
-  "needsVerification": true,
-  "lastVerified": null
+  "brackets_married": [
+    { "min": 0, "max": 82500, "rate": 0.0335 },
+    { "min": 82500, "max": 199450, "rate": 0.066 },
+    { "min": 199450, "max": 304000, "rate": 0.076 },
+    { "min": 304000, "max": null, "rate": 0.0875 }
+  ],
+  "standardDeduction_single": 12950,
+  "standardDeduction_married": 25900,
+  "minTaxFloor": { "agiThreshold": 150000, "rate": 0.03 },
+  "seContribution": { "rate": 0.0011 },
+  "hasQuarterlyRequirement": true,
+  "stateQuarterlyThreshold": 500,
+  "stateTaxAgencyName": "Vermont Department of Taxes",
+  "stateTaxAgencyUrl": "https://tax.vermont.gov/",
+  "statePaymentPortalUrl": "https://myvtax.vermont.gov/",
+  "quarterlyWeights": null,
+  "dueDateNotes": "Vermont follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
+  "selfEmploymentNotes": "Vermont applies graduated rates (3.35% to 8.75%) to your federal AGI after Vermont's own standard deduction ($7,650 single / $15,300 married for 2025) plus a $5,300 personal exemption per person (both folded together here). Its brackets are not doubled for married couples, so two-earner couples face a marriage penalty. Self-employed Vermonters also owe a 0.11% Child Care Contribution on their net self-employment income under Act 76, which this calculator includes. And if your AGI tops $150,000, Vermont floors your tax at 3% of AGI.",
+  "uniqueFacts": [
+    "Vermont does not double its bracket thresholds for married couples, so two-earner couples pay more than they would as two single filers — a built-in marriage penalty.",
+    "Vermont has a minimum tax for higher earners: if your adjusted gross income tops $150,000, your Vermont income tax is at least 3% of that AGI (less interest from U.S. obligations), even when the bracket math would come out lower.",
+    "Vermont taxes capital gains as ordinary income but allows a limited 40% exclusion on gains from assets held more than three years, excluding publicly traded securities."
+  ],
+  "extraFaqs": [
+    {
+      "q": "What is Vermont's 0.11% Child Care Contribution, and is it included here?",
+      "a": "Yes, it's included. Under Act 76, self-employed Vermonters owe a Child Care Contribution of 0.11% of their net self-employment income, remitted with the Vermont income tax return. It's a small amount — about $88 on $80,000 of net profit — but it's mandatory and applies specifically to self-employment earnings, so this calculator folds it into your Vermont figure."
+    },
+    {
+      "q": "Does Vermont tax Social Security benefits?",
+      "a": "Vermont exempts Social Security benefits only below certain income thresholds; above them, benefits are taxed to the same extent they're taxed federally. This calculator estimates tax on self-employment income, not on retirement benefits."
+    }
+  ],
+  "sources": [
+    "https://tax.vermont.gov/individuals/personal-income-tax/rates",
+    "https://tax.vermont.gov/"
+  ],
+  "needsVerification": false,
+  "lastVerified": "2026-07-06"
 }

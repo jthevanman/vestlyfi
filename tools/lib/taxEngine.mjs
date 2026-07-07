@@ -203,6 +203,14 @@ export function estimateQuarterly(input, stateData) {
     stateIncomeTax += localRate * stateTaxable;
   }
 
+  // Optional flat contribution levied on NET self-employment income (not taxable
+  // income) and remitted with the state return — e.g. Vermont's 0.11% Child Care
+  // Contribution (Act 76), which self-employed filers owe on top of income tax.
+  // Config: seContribution = { rate }.
+  if (stateComputable && stateData.seContribution) {
+    stateIncomeTax += num(stateData.seContribution.rate) * seIncome;
+  }
+
   // 4. Totals
   const federalTotal = se.seTax + federalIncomeTax;
   const totalAnnual = federalTotal + stateIncomeTax;

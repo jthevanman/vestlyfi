@@ -369,6 +369,7 @@ export function slimStateData(state) {
     ohioBid: state.ohioBid,
     localFlatRate: state.localFlatRate,
     minTaxFloor: state.minTaxFloor,
+    seContribution: state.seContribution,
   };
 }
 

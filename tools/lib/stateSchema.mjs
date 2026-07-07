@@ -125,6 +125,11 @@ export function validateState(s) {
     if (typeof t !== 'number' || t < 0) e.push(at(`minTaxFloor.agiThreshold must be a number >= 0`));
   }
 
+  if (s.seContribution != null) {
+    const r = s.seContribution.rate;
+    if (typeof r !== 'number' || r < 0 || r > 0.1) e.push(at(`seContribution.rate must be a fraction between 0 and 0.1 (e.g. 0.0011)`));
+  }
+
   if (s.quarterlyWeights != null) {
     if (!Array.isArray(s.quarterlyWeights) || s.quarterlyWeights.length !== 4) {
       e.push(at(`quarterlyWeights must be null or an array of 4 numbers`));
