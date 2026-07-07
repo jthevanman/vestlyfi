@@ -65,6 +65,7 @@
 </script>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
@@ -182,6 +183,42 @@
   .input-grid { align-items: end; }
   .input-grid-3 { align-items: end; }
 
+  /* Save result */
+  .save-row { display:flex; flex-direction:column; align-items:center; gap:6px; margin:-8px 0 24px; }
+  .btn-save-result { display:inline-flex; align-items:center; gap:8px; padding:11px 22px; background:none; border:1px solid var(--border); border-radius:10px; color:var(--gold-light); font-family:'Outfit',sans-serif; font-size:0.88rem; font-weight:500; cursor:pointer; transition:all .18s; }
+  .btn-save-result:hover:not(:disabled) { background:var(--gold-dim); border-color:var(--gold); }
+  .btn-save-result:disabled { cursor:default; opacity:0.8; }
+  .save-status { font-size:0.78rem; min-height:16px; color:var(--muted); }
+  .save-status.ok { color:var(--green); }
+  .save-status.err { color:#e05c5c; }
+
+  /* Saved results card */
+  .saved-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:20px 24px; margin-bottom:28px; }
+  .saved-card-title { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; font-weight:500; }
+  .saved-item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-soft); }
+  .saved-item:last-child { border-bottom:none; }
+  .saved-item-label { font-size:0.88rem; color:var(--cream-dim); }
+  .saved-item-date { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+  .saved-item-actions { display:flex; gap:8px; flex-shrink:0; }
+  .saved-btn { background:none; border:1px solid var(--border-soft); border-radius:8px; color:var(--cream-dim); padding:6px 14px; font-family:'Outfit',sans-serif; font-size:0.78rem; cursor:pointer; transition:all .15s; }
+  .saved-btn:hover { border-color:var(--border); color:var(--cream); }
+  .saved-btn.del:hover { border-color:rgba(224,92,92,0.5); color:#e05c5c; }
+
+  /* Auth modal */
+  .auth-tabs { display:flex; border-bottom:1px solid var(--border-soft); margin-bottom:22px; }
+  .auth-tab { flex:1; padding:10px; text-align:center; font-size:0.82rem; color:var(--muted); background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; cursor:pointer; transition:all .15s; font-family:'Outfit',sans-serif; }
+  .auth-tab.active { color:var(--cream); border-bottom-color:var(--gold); }
+  .auth-field { margin-bottom:14px; }
+  .auth-field label { display:block; font-size:0.72rem; color:var(--muted); margin-bottom:6px; letter-spacing:0.06em; text-transform:uppercase; }
+  .auth-field input { width:100%; padding:12px 14px; background:rgba(255,255,255,0.04); border:1px solid var(--border-soft); border-radius:10px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:300; outline:none; transition:border-color .15s; }
+  .auth-field input:focus { border-color:var(--gold); }
+  .btn-auth { width:100%; padding:13px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer; margin-top:4px; }
+  .auth-msg { font-size:0.8rem; margin-top:10px; text-align:center; min-height:18px; color:var(--muted); }
+  .auth-msg.err { color:#e05c5c; }
+  .auth-msg.ok { color:var(--green); }
+  .auth-alt { text-align:center; margin-top:12px; }
+  .auth-link { color:var(--muted); font-size:0.78rem; text-decoration:none; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
+  .auth-link:hover { color:var(--gold-light); }
 </style>
 </head>
 <body>
@@ -242,11 +279,21 @@
 
   </div>
 
+  <div class="saved-card" id="savedCard" style="display:none">
+    <div class="saved-card-title">Your Saved Results</div>
+    <div id="savedItems"></div>
+  </div>
+
   <div class="results-section" id="resultsSection">
 
     <div class="result-banner">
       <div class="final-val" id="finalVal">—</div>
       <div class="final-label">total value after <span id="yearsLabel">—</span> years</div>
+    </div>
+
+    <div class="save-row">
+      <button class="btn-save-result" id="saveResultBtn" onclick="saveResult()">Save this result</button>
+      <div class="save-status" id="saveStatus"></div>
     </div>
 
     <div class="stat-row">
@@ -358,8 +405,37 @@
       <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Data Collected</strong><br>All calculations run in your browser. We never see the numbers you enter.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
       <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Save / Auth Modal -->
+<div id="modal-auth" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('auth')">
+  <div style="max-width:420px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:32px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;color:#e8c97a;">Save this result</div>
+      <button onclick="closeModal('auth')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:22px;">Create a free account to save your results and access them from any device.</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabSignup" onclick="switchAuthTab('signup')">Create Account</button>
+      <button class="auth-tab" id="tabSignin" onclick="switchAuthTab('signin')">Sign In</button>
+    </div>
+    <div id="authSignupForm">
+      <div class="auth-field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 6 characters"></div>
+      <div class="auth-field"><label>Confirm Password</label><input type="password" id="suPasswordConfirm" placeholder="Re-enter your password"></div>
+      <button class="btn-auth" onclick="authSignUp()">Create Account &amp; Save</button>
+      <div class="auth-msg" id="suMsg"></div>
+    </div>
+    <div id="authSigninForm" style="display:none">
+      <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
+      <button class="btn-auth" onclick="authSignIn()">Sign In &amp; Save</button>
+      <div class="auth-alt"><a class="auth-link" href="/net-worth/">Forgot your password?</a></div>
+      <div class="auth-msg" id="siMsg"></div>
     </div>
   </div>
 </div>
@@ -367,6 +443,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 let chart = null;
+
+const { createClient } = supabase;
+const sb = createClient(
+  'https://bgbxninvpfhizjalicee.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg'
+);
+const CALC_SLUG = 'compound-interest';
+const PENDING_SAVE_KEY = 'vf_pending_save';
+let currentUser = null;
+let lastResult = null;
+let savedList = [];
 
 function fmt(n) {
   if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
@@ -524,8 +611,214 @@ function runCalc() {
     }
   });
 
+  lastResult = {
+    inputs: { principal, monthly, rate, years },
+    outputs: { finalValue, totalContributed, totalInterest },
+    label: `${fmt(principal)} + ${fmt(monthly)}/mo · ${rate}% · ${years} yrs`
+  };
+  resetSaveBtn();
+
   document.getElementById('resultsSection').classList.add('visible');
 }
+
+/* ── SAVE RESULTS ── */
+
+function resetSaveBtn() {
+  const btn = document.getElementById('saveResultBtn');
+  if (!btn) return;
+  btn.disabled = false;
+  btn.textContent = 'Save this result';
+  const status = document.getElementById('saveStatus');
+  status.textContent = '';
+  status.className = 'save-status';
+}
+
+async function saveResult() {
+  if (!lastResult) return;
+  gtag('event', 'save_result_click', { calculator: CALC_SLUG, signed_in: !!currentUser });
+  if (!currentUser) {
+    localStorage.setItem(PENDING_SAVE_KEY, JSON.stringify({ calculator: CALC_SLUG, ...lastResult }));
+    openAuthModal();
+    return;
+  }
+  await doSave(lastResult);
+}
+
+async function doSave(result) {
+  const btn = document.getElementById('saveResultBtn');
+  const status = document.getElementById('saveStatus');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  const { error } = await sb.from('saved_results').insert([{
+    user_id: currentUser.id,
+    calculator: CALC_SLUG,
+    label: result.label,
+    inputs: result.inputs,
+    outputs: result.outputs
+  }]);
+  if (error) {
+    console.error(error);
+    btn.disabled = false;
+    btn.textContent = 'Save this result';
+    status.textContent = 'Could not save. Please try again.';
+    status.className = 'save-status err';
+    return;
+  }
+  btn.textContent = 'Saved ✓';
+  status.textContent = 'Saved to your account.';
+  status.className = 'save-status ok';
+  gtag('event', 'save_result_complete', { calculator: CALC_SLUG });
+  loadSavedResults();
+}
+
+/* ── AUTH ── */
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) { currentUser = session.user; afterAuth(); }
+})();
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session?.user && !currentUser) {
+    currentUser = session.user;
+    closeModal('auth');
+    afterAuth();
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null;
+    savedList = [];
+    document.getElementById('savedCard').style.display = 'none';
+  }
+});
+
+async function afterAuth() {
+  const pendingRaw = localStorage.getItem(PENDING_SAVE_KEY);
+  if (pendingRaw) {
+    try {
+      const pending = JSON.parse(pendingRaw);
+      if (pending.calculator === CALC_SLUG && pending.inputs) {
+        localStorage.removeItem(PENDING_SAVE_KEY);
+        applyInputs(pending.inputs);
+        runCalc();
+        lastResult = { inputs: pending.inputs, outputs: pending.outputs, label: pending.label };
+        await doSave(lastResult);
+      }
+    } catch (e) { localStorage.removeItem(PENDING_SAVE_KEY); }
+  }
+  await loadSavedResults();
+  const savedId = new URLSearchParams(window.location.search).get('saved');
+  if (savedId) loadSaved(savedId);
+}
+
+function openAuthModal() {
+  showModal('auth');
+  setTimeout(() => document.getElementById('suEmail').focus(), 50);
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tabSignup').classList.toggle('active', tab === 'signup');
+  document.getElementById('tabSignin').classList.toggle('active', tab === 'signin');
+  document.getElementById('authSignupForm').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('authSigninForm').style.display = tab === 'signin' ? 'block' : 'none';
+  setTimeout(() => document.getElementById(tab === 'signup' ? 'suEmail' : 'siEmail').focus(), 50);
+}
+
+async function authSignUp() {
+  const email = document.getElementById('suEmail').value.trim();
+  const password = document.getElementById('suPassword').value;
+  const confirm = document.getElementById('suPasswordConfirm').value;
+  const msg = document.getElementById('suMsg');
+  if (!email) { msg.className = 'auth-msg err'; msg.textContent = 'Please enter your email.'; return; }
+  if (password.length < 6) { msg.className = 'auth-msg err'; msg.textContent = 'Password must be at least 6 characters.'; return; }
+  if (password !== confirm) { msg.className = 'auth-msg err'; msg.textContent = 'Passwords do not match.'; return; }
+  msg.className = 'auth-msg';
+  msg.textContent = 'Creating account…';
+  const { error } = await sb.auth.signUp({
+    email, password,
+    options: { emailRedirectTo: window.location.origin + '/' + CALC_SLUG + '/' }
+  });
+  if (error) { msg.className = 'auth-msg err'; msg.textContent = error.message; return; }
+  gtag('event', 'save_result_signup', { calculator: CALC_SLUG });
+  msg.className = 'auth-msg ok';
+  msg.textContent = 'Account created! Check your email to confirm — your result will be saved automatically when you return.';
+}
+
+async function authSignIn() {
+  const email = document.getElementById('siEmail').value.trim();
+  const password = document.getElementById('siPassword').value;
+  const msg = document.getElementById('siMsg');
+  if (!email || !password) { msg.className = 'auth-msg err'; msg.textContent = 'Please enter your email and password.'; return; }
+  msg.className = 'auth-msg';
+  msg.textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { msg.className = 'auth-msg err'; msg.textContent = error.message; return; }
+  msg.textContent = '';
+  // onAuthStateChange completes the pending save and closes the modal
+}
+
+/* ── SAVED RESULTS LIST ── */
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function loadSavedResults() {
+  if (!currentUser) return;
+  const { data, error } = await sb.from('saved_results')
+    .select('*')
+    .eq('calculator', CALC_SLUG)
+    .order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  savedList = data || [];
+  renderSavedList();
+}
+
+function renderSavedList() {
+  const card = document.getElementById('savedCard');
+  if (!savedList.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  document.getElementById('savedItems').innerHTML = savedList.map(s => `
+    <div class="saved-item">
+      <div>
+        <div class="saved-item-label">${escapeHtml(s.label || 'Saved result')}</div>
+        <div class="saved-item-date">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+      </div>
+      <div class="saved-item-actions">
+        <button class="saved-btn" onclick="loadSaved('${s.id}')">Load</button>
+        <button class="saved-btn del" onclick="deleteSaved('${s.id}')" aria-label="Delete saved result">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function applyInputs(inp) {
+  document.getElementById('principal').value = (inp.principal || 0).toLocaleString();
+  document.getElementById('monthly').value = inp.monthly ? inp.monthly.toLocaleString() : '';
+  document.getElementById('rate').value = inp.rate;
+  document.getElementById('years').value = inp.years;
+  checkCalcBtn();
+}
+
+function loadSaved(id) {
+  const s = savedList.find(x => x.id === id);
+  if (!s) return;
+  applyInputs(s.inputs);
+  runCalc();
+  gtag('event', 'saved_result_loaded', { calculator: CALC_SLUG });
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function deleteSaved(id) {
+  if (!confirm('Delete this saved result?')) return;
+  const { error } = await sb.from('saved_results').delete().eq('id', id);
+  if (error) { console.error(error); return; }
+  savedList = savedList.filter(s => s.id !== id);
+  renderSavedList();
+}
+
+// Enter key submits the open auth form
+['suEmail', 'suPassword', 'suPasswordConfirm'].forEach(id =>
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') authSignUp(); }));
+['siEmail', 'siPassword'].forEach(id =>
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') authSignIn(); }));
 
 function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
 function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }

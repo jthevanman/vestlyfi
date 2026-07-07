@@ -107,6 +107,18 @@
     font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase;
     color:var(--muted); font-weight:500; margin-bottom:14px;
   }
+
+  /* ── SAVED RESULTS ── */
+  .saved-section { margin-bottom:32px; }
+  .saved-item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border-soft); }
+  .saved-item:last-child { border-bottom:none; }
+  .saved-item-label { font-size:0.9rem; color:var(--cream); }
+  .saved-item-meta { font-size:0.74rem; color:var(--muted); margin-top:3px; }
+  .saved-item-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+  .saved-open { display:inline-flex; align-items:center; padding:7px 14px; border:1px solid var(--border-soft); border-radius:8px; color:var(--gold); text-decoration:none; font-size:0.78rem; transition:all .15s; }
+  .saved-open:hover { border-color:var(--border); color:var(--gold-light); }
+  .saved-del { background:none; border:1px solid var(--border-soft); border-radius:8px; color:var(--muted); padding:7px 11px; font-family:'Outfit',sans-serif; font-size:0.78rem; cursor:pointer; transition:all .15s; }
+  .saved-del:hover { border-color:rgba(224,92,92,0.5); color:var(--red); }
   @media(max-width:480px) { .snapshot-grid { grid-template-columns:1fr; } }
 
   /* ── LOADING / REDIRECT ── */
@@ -309,6 +321,14 @@
       <a class="snap-link" href="/net-worth/">View net worth tracker →</a>
     </div>
 
+    <!-- ── SAVED RESULTS (hidden until data loads) ── -->
+    <div class="saved-section" id="savedSection" style="display:none">
+      <div class="section-label">Saved Results</div>
+      <div class="card" style="padding:12px 28px;">
+        <div id="savedResultsList"></div>
+      </div>
+    </div>
+
     <div class="section-label">Account &amp; Security</div>
 
     <!-- ── CHANGE PASSWORD (collapsed by default) ── -->
@@ -418,6 +438,7 @@ function showPage() {
   }
 
   loadSnapshot();
+  loadSavedResults();
 }
 
 // ── SNAPSHOT ──
@@ -469,6 +490,51 @@ async function loadSnapshot() {
   }
 
   document.getElementById('snapshot').style.display = 'block';
+}
+
+// ── SAVED RESULTS ──
+const CALC_NAMES = { 'compound-interest': 'Compound Interest' };
+let savedResults = [];
+
+function calcName(slug) {
+  return CALC_NAMES[slug] || slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function loadSavedResults() {
+  try {
+    const { data, error } = await sb.from('saved_results').select('id,calculator,label,created_at').order('created_at', { ascending: false });
+    if (error) throw error;
+    savedResults = data || [];
+  } catch (e) { console.error(e); return; }
+  renderSavedResults();
+}
+
+function renderSavedResults() {
+  const section = document.getElementById('savedSection');
+  if (!savedResults.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('savedResultsList').innerHTML = savedResults.map(s => `
+    <div class="saved-item">
+      <div>
+        <div class="saved-item-label">${escapeHtml(s.label || 'Saved result')}</div>
+        <div class="saved-item-meta">${calcName(s.calculator)} · ${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+      </div>
+      <div class="saved-item-actions">
+        <a class="saved-open" href="/${encodeURIComponent(s.calculator)}/?saved=${s.id}">Open →</a>
+        <button class="saved-del" onclick="deleteSavedResult('${s.id}')" aria-label="Delete saved result">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+async function deleteSavedResult(id) {
+  if (!confirm('Delete this saved result?')) return;
+  const { error } = await sb.from('saved_results').delete().eq('id', id);
+  if (error) { console.error(error); return; }
+  savedResults = savedResults.filter(s => s.id !== id);
+  renderSavedResults();
 }
 
 // ── SIGN OUT ──
