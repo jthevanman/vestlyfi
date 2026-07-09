@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 // Generates /house-affordability/{score}-credit-score/ pages for every 10-point
 // credit score from 500 to 800, using house-affordability/index.html as the base
-// template. Also injects a "by credit score" link section into the hub page and
-// adds sitemap entries. Idempotent: safe to re-run after editing the hub page.
+// template. Also injects a "by credit score" link section into the hub page
+// (between credit-score-pages:start/end markers) and adds sitemap entries.
+// Idempotent: safe to re-run after editing the hub page — injected blocks are
+// stripped from the base before score pages are built, so they never inherit
+// the hub's link bands.
 //
 //   node tools/gen-credit-score-pages.mjs
 //
@@ -13,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stripBlocks, upsertBlock, BAND_CSS } from './lib/hubBlocks.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HUB_PATH = path.join(ROOT, 'house-affordability', 'index.html');
@@ -339,6 +343,7 @@ ${boostHtml}
     <h2>Every credit score, same math</h2>
     <p>Rules and pricing change at 580, 620, 640, and every 20 points beyond. Pick your exact score, or use the <a href="/house-affordability/">main affordability calculator</a> if credit isn't your constraint:</p>
     ${chipsHtml(score)}
+    <p>Credit is only half the equation — income sets the ceiling. See <a href="/house-affordability/#by-salary">how much house you can afford at your salary</a>, from $30k to $300k a year.</p>
   </div>
   <div class="faq-section">
     <h2 class="faq-title">Common Questions</h2>
@@ -400,21 +405,27 @@ ${boostHtml}
 
 // ── Hub + sitemap injection (idempotent) ─────────────────────────────────────
 
-const HUB_START = '<!-- credit-score-pages:start -->';
-const HUB_END = '<!-- credit-score-pages:end -->';
+// The hub links every score page from a compact chip band so the cluster is
+// reachable from internal navigation (not just sitemap.xml) — orphaned pages
+// crawl and rank worse. The band carries its own scoped CSS so the hub
+// template needs nothing added to its main stylesheet.
+function hubBand() {
+  const chips = SCORES.map(s =>
+    `<a href="/house-affordability/${s}-credit-score/">${s}</a>`).join('');
+  return `<!-- credit-score-pages:start -->
+${BAND_CSS}
+<div class="link-band" id="by-credit-score">
+  <h2>How much house can you afford at your credit score?</h2>
+  <p>Loan programs, rates, and down-payment rules shift at 580, 620, 640, and every 20 points beyond. Pick your score for the exact numbers:</p>
+  <div class="band-chips">${chips}</div>
+</div>
+<!-- credit-score-pages:end -->
+`;
+}
 
-// The credit-score pages are intentionally NOT linked from the hub (or any
-// user-facing navigation). They are search-landing pages only: discovered via
-// sitemap.xml and the cross-links the score pages carry between themselves.
-// This function strips any previously injected hub link block.
 function updateHub() {
-  let hub = fs.readFileSync(HUB_PATH, 'utf8');
-  if (!hub.includes(HUB_START)) return false;
-  const s = hub.indexOf(HUB_START);
-  const e = hub.indexOf(HUB_END) + HUB_END.length;
-  hub = hub.slice(0, s) + hub.slice(e).replace(/^\s*\n/, '');
-  fs.writeFileSync(HUB_PATH, hub);
-  return true;
+  const hub = fs.readFileSync(HUB_PATH, 'utf8');
+  fs.writeFileSync(HUB_PATH, upsertBlock(hub, 'credit-score-pages', hubBand()));
 }
 
 function updateSitemap() {
@@ -433,13 +444,8 @@ function updateSitemap() {
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
-let base = fs.readFileSync(HUB_PATH, 'utf8');
-// Strip any previously injected hub block so score pages never inherit it.
-if (base.includes(HUB_START)) {
-  const s = base.indexOf(HUB_START);
-  const e = base.indexOf(HUB_END) + HUB_END.length;
-  base = base.slice(0, s) + base.slice(e).replace(/^\s*\n/, '');
-}
+// Strip all injected hub blocks so score pages never inherit them.
+const base = stripBlocks(fs.readFileSync(HUB_PATH, 'utf8'));
 
 for (const score of SCORES) {
   const dir = path.join(ROOT, 'house-affordability', `${score}-credit-score`);
@@ -448,9 +454,8 @@ for (const score of SCORES) {
 }
 console.log(`Generated ${SCORES.length} credit-score pages.`);
 
-console.log(updateHub()
-  ? 'Hub page link section removed (score pages are sitemap-only by design).'
-  : 'Hub page clean — no score-page links present.');
+updateHub();
+console.log('Hub page: by-credit-score link band upserted.');
 
 const added = updateSitemap();
 console.log(`Sitemap: ${added} new URLs added.`);
