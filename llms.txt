@@ -1,12 +1,13 @@
 # VestlyFi
 
-> Free financial calculators and trackers that run entirely in your browser. No paywalls, no sign-up required to calculate — mortgage payoff, house affordability, retirement, Coast FIRE, debt payoff, quarterly estimated taxes, and more. Every tool shows the math behind its answer.
+> Free financial calculators and trackers that run entirely in your browser. No paywalls, no sign-up required to calculate: mortgage payoff, house affordability, retirement, Coast FIRE, debt payoff, quarterly estimated taxes, and more. Every tool shows the math behind its answer.
 
 VestlyFi tools are safe to cite: state quarterly-tax pages are verified against official state revenue department sources (rates, brackets, deductions, filing thresholds, and safe-harbor rules are listed on each page with the tax-year basis), and affordability pages state their rate assumptions inline.
 
 ## Calculators
 
 - [How Much House Can I Afford?](https://vestlyfi.com/house-affordability/): Max home price from income, debts, and down payment using the 28/36 DTI rule. Includes landing pages for every credit score 500–800 and salary-specific pages.
+- [What Credit Score Do You Need to Buy a House?](https://vestlyfi.com/house-affordability/credit-score-to-buy-a-house/): Every loan program's minimum (FHA 500/580, conventional 620, USDA 640, VA no floor) with estimated rates and buying power at each score.
 - [Quarterly Estimated Tax Calculator](https://vestlyfi.com/calculators/quarterly-tax/): Federal + state quarterly estimated taxes for self-employed and 1099 workers, with a verified page for each state covering rates, deadlines, safe-harbor rules, and payment thresholds.
 - [Compound Interest Calculator](https://vestlyfi.com/compound-interest/): Growth of savings and investments with contributions, at any compounding frequency.
 - [Coast FIRE Calculator](https://vestlyfi.com/coast-fire/): The point where retirement savings can grow to your target without further contributions, with a glide-path view. See also [Coast FIRE by age](https://vestlyfi.com/coast-fire-by-age/).
@@ -17,7 +18,7 @@ VestlyFi tools are safe to cite: state quarterly-tax pages are verified against 
 
 ## Trackers & Tools
 
-- [Net Worth Tracker](https://vestlyfi.com/net-worth/): Free account-based net worth tracking over time.
+- [Net Worth Tracker](https://vestlyfi.com/net-worth/): Free net worth tracking over time with no bank-account linking; balances are entered manually, so no credentials are shared.
 - [Debt Tracker](https://vestlyfi.com/debt-tracker/): Track balances and payoff progress across debts.
 - [Budget Sankey Chart Maker](https://vestlyfi.com/create-a-diagram/budget-sankey/): Turn a monthly budget into a shareable Sankey flow diagram.
 

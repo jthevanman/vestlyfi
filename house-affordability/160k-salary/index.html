@@ -33,7 +33,7 @@
       "name": "Can I buy a house on a $160,000 salary?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, easily in most markets — the useful question is how much you *should* spend. Standard lending math supports roughly $483,000 with 10% down at 6.60%. Buying below the approval ceiling is what keeps a six-figure income feeling like one after closing."
+        "text": "Yes, easily in most markets; the useful question is how much you *should* spend. Standard lending math supports roughly $483,000 with 10% down at 6.60%. Buying below the approval ceiling is what keeps a six-figure income feeling like one after closing."
       }
     },
     {
@@ -41,7 +41,7 @@
       "name": "How much house can I afford on $160,000 a year?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Under the standard 28/36 lending rule with $400/month of other debts and a 6.60% rate: roughly $463,000 with 5% down ($23,000), $483,000 with 10% down ($48,000), and $529,000 with 20% down ($106,000). Fewer debts or a lower rate raise all three numbers — use the calculator above with your own figures."
+        "text": "Under the standard 28/36 lending rule with $400/month of other debts and a 6.60% rate: roughly $463,000 with 5% down ($23,000), $483,000 with 10% down ($48,000), and $529,000 with 20% down ($106,000). Fewer debts or a lower rate raise all three numbers; use the calculator above with your own figures."
       }
     },
     {
@@ -49,7 +49,7 @@
       "name": "What is the 28/36 rule on a $160k salary?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Keep housing costs (mortgage + property tax + insurance) under 28% of gross monthly income — $3,733/month on a $160,000 salary — and all debt payments combined under 36% ($4,800/month). Lenders use these caps to size your approval; staying under them is also a reasonable definition of affordable."
+        "text": "Keep housing costs (mortgage + property tax + insurance) under 28% of gross monthly income ($3,733/month on a $160,000 salary) and all debt payments combined under 36% ($4,800/month). Lenders use these caps to size your approval; staying under them is also a reasonable definition of affordable."
       }
     },
     {
@@ -65,7 +65,7 @@
       "name": "Should I buy as much house as I'm approved for?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Usually not. Approval math ignores retirement contributions, childcare, and your savings rate — it only caps debt at 36% of gross. A common alternative: cap total housing at 25% of gross ($3,333/month here), which trims the benchmark price by roughly 10% and keeps your other financial goals fully funded."
+        "text": "Usually not. Approval math ignores retirement contributions, childcare, and your savings rate; it only caps debt at 36% of gross. A common alternative: cap total housing at 25% of gross ($3,333/month here), which trims the benchmark price by roughly 10% and keeps your other financial goals fully funded."
       }
     }
   ]
@@ -83,9 +83,8 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%); pointer-events:none; z-index:0; }
-
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0a0f1e; }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
@@ -128,7 +127,7 @@
   .result-banner.good { background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(74,222,128,0.03)); border:1px solid rgba(74,222,128,0.2); }
   .result-banner.warn { background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.03)); border:1px solid rgba(251,191,36,0.2); }
   .result-banner.bad { background:linear-gradient(135deg,rgba(248,113,113,0.08),rgba(248,113,113,0.03)); border:1px solid rgba(248,113,113,0.2); }
-  .result-badge { display:inline-block; padding:5px 14px; border-radius:100px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:14px; }
+  .result-badge { display:inline-block; padding:5px 14px; border-radius:4px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:14px; }
   .badge-green{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);}
   .badge-amber{background:rgba(251,191,36,0.12);color:var(--amber);border:1px solid rgba(251,191,36,0.25);}
   .badge-red{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
@@ -268,7 +267,7 @@
 <div class="page">
   <div class="page-tag"><a href="/house-affordability/" style="color:inherit;text-decoration:none;">Home Affordability</a> · $160k Salary</div>
   <h1>How much house can you afford on a <em>$160k salary?</em></h1>
-  <p class="sub">The calculator is prefilled with a $160,000 income and an estimated 6.60% rate — add your down payment and debts for your exact number. Worked examples for this salary below.</p>
+  <p class="sub">The calculator is prefilled with a $160,000 income and an estimated 6.60% rate; add your down payment and debts for your exact number. Worked examples for this salary below.</p>
 
   <div class="calc-panel">
     <div class="panel-section-title">Income & Debts</div>
@@ -350,7 +349,7 @@
 <!-- SEO CONTENT -->
 <div class="seo-section">
   <div class="seo-body">
-    <p>On a $160,000 salary the bank will approve more house than many people should buy. The 28/36 rule supports about <strong>$3,733/month</strong> of housing — roughly $483,000 with 10% down — and whether that's comfortable depends entirely on what the other 72% of your income needs to cover: retirement, childcare, travel, savings.</p>
+    <p>On a $160,000 salary the bank will approve more house than many people should buy. The 28/36 rule supports about <strong>$3,733/month</strong> of housing, roughly $483,000 with 10% down, and whether that's comfortable depends entirely on what the other 72% of your income needs to cover: retirement, childcare, travel, savings.</p>
     <p>At this income the details that actually move the number are property taxes (the 1.1% national average is baked into the benchmarks below, but ~0.4% in Hawaii versus ~2.2% in New Jersey swings the answer by tens of thousands), existing debts, and how much cash you want left after closing.</p>
 
     <h2>Your housing budget on a $160k salary</h2>
@@ -368,7 +367,7 @@
       <tr><td>≈10% down ($48,000)</td><td>$483,000</td></tr>
       <tr><td>≈20% down ($106,000)</td><td>$529,000</td></tr>
     </table>
-    <p>The monthly cost is about $3,733 in every row — the 28/36 cap is what limits you. The down payment decides how much house that budget buys, and at 20% it also drops PMI from the payment.</p>
+    <p>The monthly cost is about $3,733 in every row; the 28/36 cap is what limits you. The down payment decides how much house that budget buys, and at 20% it also drops PMI from the payment.</p>
 
     <h2>What changes the answer most</h2>
     <p><strong>Debts.</strong> On a $160k salary you can carry about $1,067/month of non-housing debt before it starts cutting into the housing budget. Stay under that line and debts cost you nothing; cross it and every extra $100/month of payments removes roughly $15,700 of house.</p>
@@ -378,21 +377,21 @@
     <h2>Every salary, same math</h2>
     <p>Pick your income, or use the <a href="/house-affordability/">main affordability calculator</a> with your exact numbers:</p>
     <div class="score-chips"><a class="score-chip" href="/house-affordability/30k-salary/">$30k</a><a class="score-chip" href="/house-affordability/35k-salary/">$35k</a><a class="score-chip" href="/house-affordability/40k-salary/">$40k</a><a class="score-chip" href="/house-affordability/45k-salary/">$45k</a><a class="score-chip" href="/house-affordability/50k-salary/">$50k</a><a class="score-chip" href="/house-affordability/55k-salary/">$55k</a><a class="score-chip" href="/house-affordability/60k-salary/">$60k</a><a class="score-chip" href="/house-affordability/65k-salary/">$65k</a><a class="score-chip" href="/house-affordability/70k-salary/">$70k</a><a class="score-chip" href="/house-affordability/75k-salary/">$75k</a><a class="score-chip" href="/house-affordability/80k-salary/">$80k</a><a class="score-chip" href="/house-affordability/85k-salary/">$85k</a><a class="score-chip" href="/house-affordability/90k-salary/">$90k</a><a class="score-chip" href="/house-affordability/95k-salary/">$95k</a><a class="score-chip" href="/house-affordability/100k-salary/">$100k</a><a class="score-chip" href="/house-affordability/110k-salary/">$110k</a><a class="score-chip" href="/house-affordability/120k-salary/">$120k</a><a class="score-chip" href="/house-affordability/130k-salary/">$130k</a><a class="score-chip" href="/house-affordability/140k-salary/">$140k</a><a class="score-chip" href="/house-affordability/150k-salary/">$150k</a><span class="score-chip current">$160k</span><a class="score-chip" href="/house-affordability/180k-salary/">$180k</a><a class="score-chip" href="/house-affordability/200k-salary/">$200k</a><a class="score-chip" href="/house-affordability/250k-salary/">$250k</a><a class="score-chip" href="/house-affordability/300k-salary/">$300k</a></div>
-    <p>Financing is the other half of the answer — see <a href="/house-affordability/#by-credit-score">what your credit score qualifies you for</a>, from 500 to 800.</p>
+    <p>Financing is the other half of the answer; see <a href="/house-affordability/#by-credit-score">what your credit score qualifies you for</a>, from 500 to 800.</p>
   </div>
   <div class="faq-section">
     <h2 class="faq-title">Common Questions</h2>
     <div class="faq-item">
       <div class="faq-q">Can I buy a house on a $160,000 salary?</div>
-      <div class="faq-a">Yes, easily in most markets — the useful question is how much you *should* spend. Standard lending math supports roughly $483,000 with 10% down at 6.60%. Buying below the approval ceiling is what keeps a six-figure income feeling like one after closing.</div>
+      <div class="faq-a">Yes, easily in most markets; the useful question is how much you *should* spend. Standard lending math supports roughly $483,000 with 10% down at 6.60%. Buying below the approval ceiling is what keeps a six-figure income feeling like one after closing.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">How much house can I afford on $160,000 a year?</div>
-      <div class="faq-a">Under the standard 28/36 lending rule with $400/month of other debts and a 6.60% rate: roughly $463,000 with 5% down ($23,000), $483,000 with 10% down ($48,000), and $529,000 with 20% down ($106,000). Fewer debts or a lower rate raise all three numbers — use the calculator above with your own figures.</div>
+      <div class="faq-a">Under the standard 28/36 lending rule with $400/month of other debts and a 6.60% rate: roughly $463,000 with 5% down ($23,000), $483,000 with 10% down ($48,000), and $529,000 with 20% down ($106,000). Fewer debts or a lower rate raise all three numbers; use the calculator above with your own figures.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">What is the 28/36 rule on a $160k salary?</div>
-      <div class="faq-a">Keep housing costs (mortgage + property tax + insurance) under 28% of gross monthly income — $3,733/month on a $160,000 salary — and all debt payments combined under 36% ($4,800/month). Lenders use these caps to size your approval; staying under them is also a reasonable definition of affordable.</div>
+      <div class="faq-a">Keep housing costs (mortgage + property tax + insurance) under 28% of gross monthly income ($3,733/month on a $160,000 salary) and all debt payments combined under 36% ($4,800/month). Lenders use these caps to size your approval; staying under them is also a reasonable definition of affordable.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">How much down payment do I need on a $160k salary?</div>
@@ -400,7 +399,7 @@
     </div>
     <div class="faq-item">
       <div class="faq-q">Should I buy as much house as I'm approved for?</div>
-      <div class="faq-a">Usually not. Approval math ignores retirement contributions, childcare, and your savings rate — it only caps debt at 36% of gross. A common alternative: cap total housing at 25% of gross ($3,333/month here), which trims the benchmark price by roughly 10% and keeps your other financial goals fully funded.</div>
+      <div class="faq-a">Usually not. Approval math ignores retirement contributions, childcare, and your savings rate; it only caps debt at 36% of gross. A common alternative: cap total housing at 25% of gross ($3,333/month here), which trims the benchmark price by roughly 10% and keeps your other financial goals fully funded.</div>
     </div>
   </div>
 </div>
@@ -425,7 +424,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -491,7 +490,7 @@ function calculate() {
   const monthlyIncome = grossIncome / 12;
   const monthlyRate = rate / 100 / 12;
   const n = term * 12;
-  // Estimate tax at 1.1% of home price and insurance at 0.5% — recalculated after price found
+  // Estimate tax at 1.1% of home price and insurance at 0.5%; recalculated after price found
   // Initial estimates based on typical values, refined below
   const estimatedHomePrice = (grossIncome * 0.28 / 12 + (downPayment * rate/100/12)) / (rate/100/12 + rate/100/12 * 0.015);
   const propTax = estimatedHomePrice * 0.011; // ~1.1% average US property tax
@@ -573,7 +572,7 @@ function calculate() {
   const hoaPct = totalMonthly > 0 ? (hoa / totalMonthly * 100).toFixed(1) : 0;
 
   document.getElementById('breakdownCard').innerHTML = `
-    <div class="breakdown-title">Monthly Payment Breakdown — ${fmt(maxMonthlyTotal)}/mo</div>
+    <div class="breakdown-title">Monthly Payment Breakdown: ${fmt(maxMonthlyTotal)}/mo</div>
     <div class="breakdown-bar">
       <div class="bar-principal" style="width:${piPct}%"></div>
       <div class="bar-tax" style="width:${taxPct}%"></div>
@@ -581,22 +580,22 @@ function calculate() {
       ${hoa > 0 ? `<div class="bar-interest" style="width:${hoaPct}%"></div>` : ''}
     </div>
     <div class="breakdown-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div> Principal & Interest — ${fmt(maxPI)}/mo</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Property Tax — ${fmt(monthlyTax)}/mo</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Insurance — ${fmt(monthlyInsurance)}/mo</div>
-      ${hoa > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> HOA — ${fmt(hoa)}/mo</div>` : ''}
+      <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div> Principal & Interest: ${fmt(maxPI)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Property Tax: ${fmt(monthlyTax)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Insurance: ${fmt(monthlyInsurance)}/mo</div>
+      ${hoa > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> HOA: ${fmt(hoa)}/mo</div>` : ''}
     </div>
   `;
 
   const insights = [];
   if (downPayment < maxHomePrice * 0.2) {
-    insights.push(`Your down payment is under 20% of the max price. This usually means you'll need to pay <strong>PMI (Private Mortgage Insurance)</strong> — typically $50–200/month added on top until you reach 20% equity.`);
+    insights.push(`Your down payment is under 20% of the max price. This usually means you'll need to pay <strong>PMI (Private Mortgage Insurance)</strong>, typically $50–200/month added on top until you reach 20% equity.`);
   }
   insights.push(`Banks use two DTI rules: your housing costs should be under <strong>28% of gross income</strong>, and all debts combined should be under <strong>36%</strong>. Staying well below these thresholds gives you financial flexibility.`);
   if (monthlyDebt > monthlyIncome * 0.1) {
     insights.push(`Your existing debt payments of ${fmt(monthlyDebt)}/mo are reducing your home buying power. Paying these off first could increase your max home price significantly.`);
   }
-  insights.push(`Property tax and home insurance are estimated at <strong>1.1% and 0.5%</strong> of the home price respectively — close to US averages. Your actual costs will vary by location.`);
+  insights.push(`Property tax and home insurance are estimated at <strong>1.1% and 0.5%</strong> of the home price respectively, close to US averages. Your actual costs will vary by location.`);
   insights.push(`This is an estimate based on standard lending rules. Your actual approval depends on your <strong>credit score, employment history, and lender</strong>. Get pre-approved by 2–3 lenders to find the best rate.`);
 
   document.getElementById('insightList').innerHTML = insights.map(text =>
@@ -640,7 +639,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 <div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:20px;overflow-y:auto;" onclick="if(event.target===this)closeShareModal()">
   <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:420px;">
     <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share Your Result</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget — great for Reddit or socials.</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget. Great for Reddit or socials.</div>
     <div style="border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
       <div id="shareGenerating" style="padding:80px 0;color:rgba(245,240,232,0.35);font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
       <img id="sharePreviewImg" style="display:none;width:100%;border-radius:12px;vertical-align:top;" alt="Share preview">
@@ -702,7 +701,7 @@ function downloadShareImage(){
   if(isMob){const w=window.open();if(w){w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}}
   else{const a=document.createElement('a');a.download='vestlyfi-home-affordability.png';a.href=dataUrl;a.click();const msg=document.getElementById('shareMsg');msg.style.color='#4ade80';msg.textContent='Downloaded!';}
 }
-async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.style.color='#4ade80';msg.textContent='Copied to clipboard!';});}catch(e){msg.style.color='#f87171';msg.textContent='Copy not supported — use Download instead.';}}
+async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.style.color='#4ade80';msg.textContent='Copied to clipboard!';});}catch(e){msg.style.color='#f87171';msg.textContent='Copy not supported. Use Download instead.';}}
 document.addEventListener('keydown', e => { if(e.key==='Escape' && document.getElementById('shareModal').style.display==='flex') closeShareModal(); });
 </script>
 
@@ -749,7 +748,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
