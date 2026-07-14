@@ -7,12 +7,12 @@ import { SITE } from './copy.mjs';
 
 const GA_ID = 'G-NPZ7QVQQNS';
 
-const esc = (s) => String(s == null ? '' : s)
+export const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   .replace(/"/g, '&quot;');
 
 // JSON-LD safe: prevent </script> breakout.
-const jsonld = (obj) => JSON.stringify(obj, null, 2).replace(/</g, '\\u003c');
+export const jsonld = (obj) => JSON.stringify(obj, null, 2).replace(/</g, '\\u003c');
 
 const CSS = `
 :root{
@@ -113,7 +113,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 @media(max-width:600px){footer{padding:20px;}.page{padding:28px 20px 60px;}}
 `;
 
-function head({ meta, jsonLdBlocks }) {
+export function head({ meta, jsonLdBlocks }) {
   const robots = meta.noindex
     ? `<meta name="robots" content="noindex,follow">`
     : `<meta name="robots" content="index,follow">`;
@@ -152,7 +152,7 @@ ${jsonLdBlocks}
 <body>`;
 }
 
-const NAV = `<nav class="site-nav">
+export const NAV = `<nav class="site-nav">
   <a class="site-nav-logo" href="/">VestlyFi</a>
   <div class="site-nav-links">
     <a href="/">Home</a>
@@ -163,7 +163,7 @@ const NAV = `<nav class="site-nav">
   </div>
 </nav>`;
 
-const FOOTER = `<footer>
+export const FOOTER = `<footer>
   <span>© 2026 VestlyFi</span>
   <div class="footer-links">
     <a href="/calculators/">Calculators</a>
@@ -171,7 +171,7 @@ const FOOTER = `<footer>
   </div>
 </footer>`;
 
-function crumbsHtml(items) {
+export function crumbsHtml(items) {
   return `<div class="crumbs">` + items.map((c, i) => {
     const sep = i > 0 ? `<span class="sep">/</span>` : '';
     return sep + (c.href
@@ -180,7 +180,7 @@ function crumbsHtml(items) {
   }).join('') + `</div>`;
 }
 
-function breadcrumbSchema(items) {
+export function breadcrumbSchema(items) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -193,7 +193,7 @@ function breadcrumbSchema(items) {
   };
 }
 
-function faqSchema(faqs) {
+export function faqSchema(faqs) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -500,6 +500,11 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
   <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year — not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
 
   ${calcMarkup('federal')}
+
+  <div class="section">
+    <h2>2026 payment deadlines</h2>
+    <p>Federal estimated payments for tax year 2026 are due April 15, June 15, and September 15, 2026, and January 15, 2027. See the <a href="/calculators/quarterly-tax/deadlines/">2026 quarterly tax deadline guide</a> for weekend rules, what happens if you miss one, and the four states that use different dates.</p>
+  </div>
 
   <div class="section">
     <h2>Find your state</h2>
