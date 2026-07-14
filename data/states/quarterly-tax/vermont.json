@@ -31,14 +31,14 @@
   "dueDateNotes": "Vermont follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
   "selfEmploymentNotes": "Vermont applies graduated rates (3.35% to 8.75%) to your federal AGI after Vermont's own standard deduction ($7,650 single / $15,300 married for 2025) plus a $5,300 personal exemption per person (both folded together here). Its brackets are not doubled for married couples, so two-earner couples face a marriage penalty. Self-employed Vermonters also owe a 0.11% Child Care Contribution on their net self-employment income under Act 76, which this calculator includes. And if your AGI tops $150,000, Vermont floors your tax at 3% of AGI.",
   "uniqueFacts": [
-    "Vermont does not double its bracket thresholds for married couples, so two-earner couples pay more than they would as two single filers — a built-in marriage penalty.",
+    "Vermont does not double its bracket thresholds for married couples, so two-earner couples pay more than they would as two single filers, a built-in marriage penalty.",
     "Vermont has a minimum tax for higher earners: if your adjusted gross income tops $150,000, your Vermont income tax is at least 3% of that AGI (less interest from U.S. obligations), even when the bracket math would come out lower.",
     "Vermont taxes capital gains as ordinary income but allows a limited 40% exclusion on gains from assets held more than three years, excluding publicly traded securities."
   ],
   "extraFaqs": [
     {
       "q": "What is Vermont's 0.11% Child Care Contribution, and is it included here?",
-      "a": "Yes, it's included. Under Act 76, self-employed Vermonters owe a Child Care Contribution of 0.11% of their net self-employment income, remitted with the Vermont income tax return. It's a small amount — about $88 on $80,000 of net profit — but it's mandatory and applies specifically to self-employment earnings, so this calculator folds it into your Vermont figure."
+      "a": "Yes, it's included. Under Act 76, self-employed Vermonters owe a Child Care Contribution of 0.11% of their net self-employment income, remitted with the Vermont income tax return. It's a small amount (about $88 on $80,000 of net profit), but it's mandatory and applies specifically to self-employment earnings, so this calculator folds it into your Vermont figure."
     },
     {
       "q": "Does Vermont tax Social Security benefits?",

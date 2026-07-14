@@ -10,7 +10,7 @@ export function generateStateMetadata(s) {
   // Unique description referencing one state-specific fact.
   const fact = firstSentence(s.uniqueFacts[0]);
   const description = s.hasStateIncomeTax
-    ? `Estimate your ${s.taxYear} quarterly estimated taxes in ${s.name} — federal self-employment tax, federal income tax, and ${s.name} state tax. ${fact} Free calculator with due dates and safe-harbor math.`
+    ? `Estimate your ${s.taxYear} quarterly estimated taxes in ${s.name}: federal self-employment tax, federal income tax, and ${s.name} state tax. ${fact} Free calculator with due dates and safe-harbor math.`
     : `Do you pay quarterly taxes in ${s.name}? ${fact} Estimate your ${s.taxYear} federal quarterly payments and due dates with this free calculator.`;
   return {
     url,
@@ -36,7 +36,8 @@ export function nationalMetadata(taxYear = 2026) {
 
 function firstSentence(str) {
   if (!str) return '';
-  const m = str.match(/^[^.!?]*[.!?]/);
+  // Terminator must end the text or precede whitespace, so decimals like 4.7% don't split.
+  const m = str.match(/^[\s\S]*?[.!?](?=\s|$)/);
   return (m ? m[0] : str).trim();
 }
 function clamp(str, n) {

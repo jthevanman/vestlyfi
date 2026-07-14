@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Debt Tracker — Log & Share Your Payoff Progress | VestlyFi</title>
+<title>Free Debt Tracker: Log & Share Your Payoff Progress | VestlyFi</title>
 <meta name="description" content="Track your debt payoff progress over time. Save your debts, log balance updates as you pay them down, set extra payments per debt, and see exactly how much interest you'll save.">
 <link rel="canonical" href="https://vestlyfi.com/debt-tracker/">
 <meta property="og:title" content="Free Debt Tracker | VestlyFi">
@@ -490,7 +490,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <div class="modal-field">
       <label>Minimum Monthly Payment</label>
       <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmMin" oninput="fmtComma(this)"></div>
-      <div class="field-hint">For mortgages, enter <strong>principal &amp; interest only</strong> — not your full payment with escrow (property tax/insurance), or the payoff date will read too soon.</div>
+      <div class="field-hint">For mortgages, enter <strong>principal &amp; interest only</strong>, not your full payment with escrow (property tax/insurance), or the payoff date will read too soon.</div>
     </div>
     <div class="modal-err" id="debtModalErr"></div>
     <div class="modal-actions">
@@ -537,7 +537,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 <div class="modal-overlay" id="importModal">
   <div class="modal" style="max-width:520px;">
     <div class="modal-title">Import from Net Worth</div>
-    <div class="modal-sub">Pulled from the liabilities you track on your net-worth dashboard. Balances are filled in — just add the interest rate (APR) and minimum payment so we can chart your payoff. For mortgages, use <strong style="color:var(--cream-dim);font-weight:500;">principal &amp; interest only</strong> (not the full payment incl. escrow).</div>
+    <div class="modal-sub">Pulled from the liabilities you track on your net-worth dashboard. Balances are filled in; just add the interest rate (APR) and minimum payment so we can chart your payoff. For mortgages, use <strong style="color:var(--cream-dim);font-weight:500;">principal &amp; interest only</strong> (not the full payment incl. escrow).</div>
     <div id="importBody"></div>
     <div class="modal-err" id="importErr"></div>
     <div class="modal-actions">
@@ -639,7 +639,7 @@ async function requestReset(){
   msg.className='auth-msg';msg.textContent='Sending…';
   const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/debt-tracker/'});
   if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link — check spam too.';}
+  else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link; check spam too.';}
 }
 async function updatePassword(){
   const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');
@@ -992,7 +992,7 @@ async function deleteDebt(id){
 function openUpdateBalModal(id){
   updatingBalDebtId=id;
   const d=myDebts.find(x=>x.id===id);
-  document.getElementById('updateBalSub').textContent=`${d.name} — current balance ${fmt(Number(d.balance))}`;
+  document.getElementById('updateBalSub').textContent=`${d.name}: current balance ${fmt(Number(d.balance))}`;
   document.getElementById('ubNewBalance').value=Number(d.balance).toLocaleString();
   document.getElementById('updateBalErr').textContent='';
   document.getElementById('updateBalModal').classList.add('open');
@@ -1134,7 +1134,7 @@ function downloadShareImage(){
 async function copyShareImage(){
   const msg=document.getElementById('shareMsg');
   try{document.getElementById('shareCanvas').toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied to clipboard!';});}
-  catch(e){msg.style.color='var(--red)';msg.textContent='Copy not supported — use Download instead.';}
+  catch(e){msg.style.color='var(--red)';msg.textContent='Copy not supported; use Download instead.';}
 }
 
 /* ── MODAL BACKDROP ── */
@@ -1219,7 +1219,7 @@ async function submitBugReport(){
   btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';
   try{
     const res=await fetch('https://formspree.io/f/xjgaydej',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page:window.location.pathname,userAgent:navigator.userAgent})});
-    if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks — we'll look into it.";setTimeout(()=>closeBugModal(),2000);}
+    if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}
     else throw new Error();
   }catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Email vestlyfi@gmail.com.';}
 }

@@ -28,7 +28,7 @@
   "dueDateNotes": "Nebraska follows the federal schedule: April 15, June 15, September 15, and January 15. If a due date falls on a weekend or holiday, it moves to the next business day.",
   "selfEmploymentNotes": "Nebraska applies graduated rates to your federal AGI after subtracting the Nebraska standard deduction ($8,600 single / $17,200 married), then reduces the result by a $171-per-person personal exemption credit. Rates shown are Nebraska's 2026 statutory rates (2.46%, 3.51%, and a 4.55% top rate that merges the former 5.01% and 5.20% brackets) applied to the 2025 bracket thresholds and standard deduction; thresholds will be swept once the DOR posts the 2026 Tax Calculation Schedule.",
   "uniqueFacts": [
-    "Nebraska is phasing down its income tax under LB 754 — for 2026 the former 5.01% and 5.20% brackets both drop to a single top rate of 4.55%, on the way to 3.99% in 2027.",
+    "Nebraska is phasing down its income tax under LB 754: for 2026 the former 5.01% and 5.20% brackets both drop to a single top rate of 4.55%, on the way to 3.99% in 2027.",
     "Nebraska gives a $171-per-person nonrefundable personal exemption credit that is subtracted from your calculated tax, not from your income.",
     "Nebraska starts from your federal AGI and subtracts its own standard deduction ($8,600 single / $17,200 married filing jointly for 2025) before applying its brackets."
   ],

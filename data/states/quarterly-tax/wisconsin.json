@@ -34,7 +34,7 @@
   "selfEmploymentNotes": "Wisconsin applies graduated 3.5%-7.65% rates to your federal AGI after an income-based standard deduction that shrinks as you earn more (computed here). Its 2026 figures were not yet published, so this uses the 2025 amounts after Act 15.",
   "uniqueFacts": [
     "Wisconsin's 2025 budget (Act 15) retroactively widened the 4.40% bracket, so more of your income is taxed at 4.40% instead of 5.30% for 2025.",
-    "Wisconsin's standard deduction shrinks as your income rises and phases out entirely at higher incomes — this calculator computes it from your income.",
+    "Wisconsin's standard deduction shrinks as your income rises and phases out entirely at higher incomes; this calculator computes it from your income.",
     "Wisconsin's top rate is 7.65%, but it does not apply until taxable income tops about $323,290 (single) or $431,060 (married)."
   ],
   "sources": [

@@ -24,10 +24,10 @@
   "statePaymentPortalUrl": "https://tap.utah.gov/",
   "quarterlyWeights": null,
   "dueDateNotes": "Utah follows the federal schedule: April 15, June 15, September 15, and January 15. You avoid a penalty by prepaying 90% of this year's tax or 100% of last year's.",
-  "selfEmploymentNotes": "Utah applies a flat 4.45% (2026, down from 4.5% in 2025) to your federal AGI, then subtracts the Taxpayer Tax Credit — 6% of your federal standard deduction, reduced by 1.3% of income over $18,213 (single) / $36,426 (joint). The credit thresholds shown are the latest published (2025) values.",
+  "selfEmploymentNotes": "Utah applies a flat 4.45% (2026, down from 4.5% in 2025) to your federal AGI, then subtracts the Taxpayer Tax Credit: 6% of your federal standard deduction, reduced by 1.3% of income over $18,213 (single) / $36,426 (joint). The credit thresholds shown are the latest published (2025) values.",
   "uniqueFacts": [
-    "Utah has a flat income tax — 4.45% for 2026, down from 4.5% in 2025 — but a Taxpayer Tax Credit effectively shields part of your income and phases out as you earn more.",
-    "Utah's Taxpayer Tax Credit equals 6% of your federal deductions and exemptions, reduced by 1.3% of income over $18,213 (single) / $36,426 (joint) — this calculator includes it.",
+    "Utah has a flat income tax (4.45% for 2026, down from 4.5% in 2025), but a Taxpayer Tax Credit effectively shields part of your income and phases out as you earn more.",
+    "Utah's Taxpayer Tax Credit equals 6% of your federal deductions and exemptions, reduced by 1.3% of income over $18,213 (single) / $36,426 (joint); this calculator includes it.",
     "Utah gives a $2,111 exemption per dependent (folded into the credit), which this estimate does not add since it assumes no dependents."
   ],
   "sources": [

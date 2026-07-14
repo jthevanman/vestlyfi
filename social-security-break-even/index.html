@@ -480,7 +480,7 @@ function calculate(birthYear, pia) {
     return { ...s, monthly: pia * mult, pct: Math.round(mult * 100) };
   });
 
-  // Current age (approx, from birth year) — flag any claiming age already passed
+  // Current age (approx, from birth year); flag any claiming age already passed
   const currentAge = new Date().getFullYear() - birthYear;
   strat.forEach(s => { s.passed = currentAge > s.age; });
 
@@ -511,13 +511,13 @@ function calculate(birthYear, pia) {
 
   const fmtBe = v => v == null ? '—' : Math.round(v);
 
-  // Break-even callout — only show comparisons still available to the user
+  // Break-even callout: only show comparisons still available to the user
   const calloutLines = [];
   if (currentAge > 62) calloutLines.push(`<div class="be-line">Based on your birth year, you're about <strong>${currentAge}</strong> this year, so claiming ages you've already passed are grayed out below.</div>`);
   if (!s62.passed && !sFra.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>${sFra.label.replace('FRA ','age ')}</strong> beats claiming at <strong>62</strong> once you live past age <strong>${fmtBe(be62Fra)}</strong>.</div>`);
   if (!sFra.passed && !s70.passed) calloutLines.push(`<div class="be-line hi">Waiting until <strong>70</strong> beats <strong>${sFra.label.replace('FRA ','')}</strong> once you live past age <strong>${fmtBe(beFra70)}</strong>.</div>`);
   if (s62.passed && sFra.passed) calloutLines.push(currentAge >= 70
-    ? `<div class="be-line hi">At about ${currentAge}, you're at or past 70. Claiming now gives your maximum benefit — waiting longer adds nothing.</div>`
+    ? `<div class="be-line hi">At about ${currentAge}, you're at or past 70. Claiming now gives your maximum benefit; waiting longer adds nothing.</div>`
     : `<div class="be-line hi">Your remaining choice is to claim now or wait toward 70. Each month you delay adds about two-thirds of 1% to your benefit, up to age 70.</div>`);
 
   const html = `
@@ -745,7 +745,7 @@ function downloadShareImage() {
 async function copyShareImage() {
   const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
   try { canvas.toBlob(async blob => { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); msg.style.color = '#4ade80'; msg.textContent = 'Copied to clipboard!'; }); }
-  catch (e) { msg.style.color = '#f87171'; msg.textContent = 'Copy not supported — use Download instead.'; }
+  catch (e) { msg.style.color = '#f87171'; msg.textContent = 'Copy not supported; use Download instead.'; }
 }
 
 document.addEventListener('keydown', function(e) {

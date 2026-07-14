@@ -26,11 +26,11 @@ const TODAY = '2026-07-05';
 const engineSource = readFileSync(join(__dirname, 'lib', 'taxEngine.mjs'), 'utf8');
 
 const NATIONAL_FAQS = [
-  { q: 'Who has to pay quarterly estimated taxes?', a: 'Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding — freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to.' },
+  { q: 'Who has to pay quarterly estimated taxes?', a: 'Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding: freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to.' },
   { q: 'When are 2026 quarterly taxes due?', a: 'Federal estimated payments are due April 15, 2026, June 15, 2026, September 15, 2026, and January 15, 2027. If a date falls on a weekend or holiday it shifts to the next business day.' },
   { q: 'How do I calculate what I owe each quarter?', a: 'Estimate your annual net self-employment income, add self-employment tax (15.3% on 92.35% of your profit up to the Social Security wage base) and federal income tax on your profit after the standard deduction, then divide by four. The calculator above does this for you.' },
   { q: 'What is the safe harbor rule?', a: 'You avoid an IRS underpayment penalty if you pay at least 90% of the current year\'s tax, or 100% of last year\'s tax (110% if your prior-year income was over $150,000). Paying to the safe harbor protects you even if you end up owing more.' },
-  { q: 'Do I owe state estimated taxes too?', a: 'It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds — choose your state above for a version that includes them.' },
+  { q: 'Do I owe state estimated taxes too?', a: 'It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds; choose your state above for a version that includes them.' },
 ];
 
 function ensureDir(p) { mkdirSync(p, { recursive: true }); }
@@ -98,7 +98,7 @@ function updateSitemap(summary) {
 function writeNeedsVerification(states) {
   const pending = states.filter((s) => s.needsVerification);
   const lines = [];
-  lines.push('# NEEDS_VERIFICATION — Quarterly Estimated Tax by State');
+  lines.push('# NEEDS_VERIFICATION: Quarterly Estimated Tax by State');
   lines.push('');
   lines.push('Pages listed here ship with `<meta name="robots" content="noindex,follow">` and are');
   lines.push('**excluded from the sitemap** until their data is verified from official state');
@@ -121,60 +121,60 @@ function writeNeedsVerification(states) {
   lines.push('Items flagged during verification that could not be confirmed from an official');
   lines.push('source, or that are modeled as a documented approximation:');
   lines.push('');
-  lines.push('- **Traffic-first batch — now INDEXED (Ohio, Oregon, Missouri, Wisconsin, Georgia):**');
-  lines.push('  - **Ohio** — ohioBid model: first $250k of 1099 income deducted, remainder 3%; other');
+  lines.push('- **Traffic-first batch, now INDEXED (Ohio, Oregon, Missouri, Wisconsin, Georgia):**');
+  lines.push('  - **Ohio**: ohioBid model, first $250k of 1099 income deducted, remainder 3%; other');
   lines.push('    income flat 2.75% over $26,050 (2026 HB96). Municipal/school-district taxes not modeled.');
-  lines.push('  - **Oregon (taxYearBasis 2025)** — federalTaxDeduction cap-phaseout: $8,500 cap phased out');
+  lines.push('  - **Oregon (taxYearBasis 2025)**: federalTaxDeduction cap-phaseout, $8,500 cap phased out');
   lines.push('    $125k–$145k AGI (official OR-40 Table 4). Portland-area local taxes not modeled.');
-  lines.push('  - **Missouri (taxYearBasis 2025)** — verified 2025 rate schedule (0% to $1,313; graduated');
+  lines.push('  - **Missouri (taxYearBasis 2025)**: verified 2025 rate schedule (0% to $1,313; graduated');
   lines.push('    to a 4.7% top over $9,191); federalTaxDeduction percent-of-federal (35/25/15/5/0%, cap');
   lines.push('    $5k/$10k). 2026 withholding confirms the 4.7% top rate. KC/St. Louis 1% earnings tax not modeled.');
-  lines.push('  - **Wisconsin (taxYearBasis 2025)** — brackets derived + cross-checked against the official');
+  lines.push('  - **Wisconsin (taxYearBasis 2025)**: brackets derived + cross-checked against the official');
   lines.push('    Tax Computation Worksheet subtraction amounts (Act 15 expanded the 4.4% bracket); the');
   lines.push('    slidingStandardDeduction is fit to the official 2025 std-deduction table (MFJ $60k -> $18,823).');
-  lines.push('  - **Georgia** — conflict RESOLVED: HB 463 (signed 5/11/2026) cut the flat rate to 4.99%');
+  lines.push('  - **Georgia**: conflict RESOLVED. HB 463 (signed 5/11/2026) cut the flat rate to 4.99%');
   lines.push('    retroactive to 1/1/2026 (the 5.19% Employer\'s Guide predates it). Std deduction $15k/$30k');
   lines.push('    applies to TY2026; $1,750 tip/overtime exclusion 2026-2028 noted.');
-  lines.push('  - **Maryland — INDEXED (taxYearBasis 2025), with a source caveat.** Fixed statutory');
+  lines.push('  - **Maryland: INDEXED (taxYearBasis 2025), with a source caveat.** Fixed statutory');
   lines.push('    2%-5.75% brackets + BRFA-2025 top brackets (6.25% >$500k / 6.5% >$1M single; >$600k/>$1.2M');
   lines.push('    joint), capped standard deduction (~$2,700/$5,450). Every county\'s local income tax');
   lines.push('    (2.25%-3.20%) is disclosed but NOT computed. NOTE: marylandtaxes.gov blocks automated');
   lines.push('    fetch (JS page + dead PDF link + redirects), so these rest on stable statute + the');
   lines.push('    provided BRFA change; human should spot-check the std-deduction max and BRFA thresholds.');
-  lines.push('  - **South Carolina (taxYearBasis 2025)** — 0%/3%/6% on federal taxable income. TY2025');
-  lines.push('    top rate 6% is a temporary cut scheduled to REVERT to 6.2% in July 2026 — re-check for');
+  lines.push('  - **South Carolina (taxYearBasis 2025)**: 0%/3%/6% on federal taxable income. TY2025');
+  lines.push('    top rate 6% is a temporary cut scheduled to REVERT to 6.2% in July 2026; re-check for');
   lines.push('    TY2026. The 44% capital-gains deduction and 3% active-business election are not modeled.');
-  lines.push('  - **Oklahoma (taxYearBasis 2025)** — 2025 six-bracket schedule (top 4.75% over $7,200/$14,400)');
+  lines.push('  - **Oklahoma (taxYearBasis 2025)**: 2025 six-bracket schedule (top 4.75% over $7,200/$14,400)');
   lines.push('    on federal AGI after std deduction + $1,000 exemption. TY2026 changes to three brackets');
-  lines.push('    (top 4.5%, HB 2764) — extract the 2026 thresholds from the OTC Legislative Update and re-index.');
-  lines.push('  - **New Jersey** — statutory unindexed schedule (unchanged since 2020), top 10.75%. NOTE:');
+  lines.push('    (top 4.5%, HB 2764); extract the 2026 thresholds from the OTC Legislative Update and re-index.');
+  lines.push('  - **New Jersey**: statutory unindexed schedule (unchanged since 2020), top 10.75%. NOTE:');
   lines.push('    NJ gross income is NOT federal AGI (no half-SE-tax deduction, no standard deduction); modeled');
   lines.push('    as gross SE income minus the $1,000 exemption. Estimated-payment trigger $400 (NJ-1040-ES).');
-  lines.push('- **California — deferred (still noindex).** The FTB blocks automated access (HTTP 403');
+  lines.push('- **California: deferred (still noindex).** The FTB blocks automated access (HTTP 403');
   lines.push('  on the tax-rate-schedule page and the 2026 Form 540-ES instructions), and CA typically');
   lines.push('  does not publish inflation-adjusted 2026 brackets until ~August. Needs manual');
   lines.push('  transcription of the full FTB schedule plus the 30/40/0/30 weighting and 1% MHS surtax.');
-  lines.push('- **New York — indexed, with a documented limitation.** 2026 brackets transcribed from the');
+  lines.push('- **New York: indexed, with a documented limitation.** 2026 brackets transcribed from the');
   lines.push('  official IT-2105-I (2026) instructions. The tax-benefit-recapture supplemental tax above');
   lines.push('  NYAGI $107,650, the MCTMT, and NYC/Yonkers local taxes are NOT modeled (noted on-page);');
   lines.push('  the estimate can run slightly low for high earners in the NYC metro.');
-  lines.push('- **Idaho — deferred (still noindex).** The official 2026 individual rate was not');
+  lines.push('- **Idaho: deferred (still noindex).** The official 2026 individual rate was not');
   lines.push('  yet published on tax.idaho.gov (rate schedule only ran through 2025). Do not');
   lines.push('  verify until the 2026 rate is posted.');
-  lines.push('- **Massachusetts — deferred (still noindex).** 2026 flat rate (5.0%) and $1,107,750');
+  lines.push('- **Massachusetts: deferred (still noindex).** 2026 flat rate (5.0%) and $1,107,750');
   lines.push('  surtax threshold are confirmed, but the official personal-exemption page returned');
   lines.push('  HTTP 403 and MA uses its own gross-income base (not federal AGI). Needs the');
   lines.push('  exemption amount + base rules confirmed before indexing.');
-  lines.push('- **Iowa — indexed, with a documented approximation.** 2026 flat rate 3.8% confirmed by');
+  lines.push('- **Iowa: indexed, with a documented approximation.** 2026 flat rate 3.8% confirmed by');
   lines.push('  the Oct 2025 IDR press release (authoritative over the stale 3.9% provisions page); the');
   lines.push('  $1,000 estimated-payment threshold is confirmed. Iowa\'s standard deduction was not');
   lines.push('  published in the sources checked and is omitted (estimate runs slightly high); confirm and add it.');
-  lines.push('- **Mississippi — rate resolved, still noindex.** DOR\'s own FAQ confirms the structure:');
+  lines.push('- **Mississippi: rate resolved, still noindex.** DOR\'s own FAQ confirms the structure:');
   lines.push('  first $10,000 of taxable income exempt, remainder taxed at 4.4% (the tax-year-2026 rate).');
   lines.push('  Model as brackets [0–10,000 @ 0%, 10,000+ @ 4.4%]. Still pending: MS standard deduction');
   lines.push('  ($2,300/$4,600 believed) + personal exemption ($6,000/$12,000 believed) + estimated');
-  lines.push('  threshold — dor.ms.gov returned a TLS certificate error, so these were not confirmed.');
-  lines.push('- **Georgia — genuine official-source conflict, still noindex.** Standard deduction is');
+  lines.push('  threshold; dor.ms.gov returned a TLS certificate error, so these were not confirmed.');
+  lines.push('- **Georgia: genuine official-source conflict, still noindex.** Standard deduction is');
   lines.push('  consistently $15,000/$30,000, but the 2026 RATE conflicts within DOR sources: the 2026');
   lines.push('  Employer\'s Tax Guide summary says withhold at 5.19%, while the DOR standard-deductions');
   lines.push('  page references a 4.99% flat rate. The authoritative 2026 Employer\'s Guide PDF 403s.');

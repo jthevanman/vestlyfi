@@ -41,9 +41,9 @@
   "dueDateNotes": "California front-loads its estimated payments and uses a non-standard schedule: 30% is due by April 15, 40% by June 15, 0% in September, and the final 30% by January 15. There is no third-quarter payment.",
   "selfEmploymentNotes": "California applies a nine-bracket graduated tax (1% to 12.3%) to your federal AGI after the California standard deduction ($5,706 single / $11,412 married), plus an extra 1% Mental Health Services Tax on taxable income over $1 million (a 13.3% top marginal rate). California grants personal exemptions as tax credits rather than deductions; those credits are not yet modeled here, so this estimate can run slightly high. Estimated payments follow California's own 30/40/0/30 quarterly weighting, not equal quarters.",
   "uniqueFacts": [
-    "California front-loads estimated taxes: 30% is due in Q1, 40% in Q2, nothing in Q3, and 30% in Q4 — not four equal payments.",
+    "California front-loads estimated taxes: 30% is due in Q1, 40% in Q2, nothing in Q3, and 30% in Q4, not four equal payments.",
     "California adds a 1% Mental Health Services Tax on taxable income above $1 million, pushing the top marginal rate to 13.3%, the highest state rate in the nation.",
-    "The $1 million Mental Health Services Tax threshold is not doubled for married couples — it applies at $1 million of taxable income regardless of filing status.",
+    "The $1 million Mental Health Services Tax threshold is not doubled for married couples; it applies at $1 million of taxable income regardless of filing status.",
     "High earners (AGI over $150,000) must base California safe-harbor payments on 110% of last year's tax, and those with AGI of $1 million or more must pay based on the current year."
   ],
   "sources": [

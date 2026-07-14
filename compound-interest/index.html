@@ -344,7 +344,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -453,8 +453,8 @@ function runCalc() {
   // Insights
   const doubleYears = Math.round(72 / rate);
   const insights = [
-    { icon: '📐', text: `At ${rate}%, your money doubles roughly every <strong>${doubleYears} years</strong> — that's the Rule of 72 in action.` },
-    { icon: '💰', text: `The market contributes <strong>${fmt(totalInterest)}</strong> — that's money you never had to earn yourself.` },
+    { icon: '📐', text: `At ${rate}%, your money doubles roughly every <strong>${doubleYears} years</strong>; that's the Rule of 72 in action.` },
+    { icon: '💰', text: `The market contributes <strong>${fmt(totalInterest)}</strong>; that's money you never had to earn yourself.` },
   ];
   if (monthly > 0) {
     const noContribBalance = principal * Math.pow(1 + rate/100, years);
@@ -462,7 +462,7 @@ function runCalc() {
   }
   if (years >= 20) {
     const halfTimeBalance = totalValues[Math.floor(years/2) - 1] || 0;
-    insights.push({ icon: '⚡', text: `You earn more in the last ${Math.floor(years/2)} years (<strong>${fmt(finalValue - halfTimeBalance)}</strong>) than the first ${Math.floor(years/2)} years combined — that's compounding accelerating.` });
+    insights.push({ icon: '⚡', text: `You earn more in the last ${Math.floor(years/2)} years (<strong>${fmt(finalValue - halfTimeBalance)}</strong>) than the first ${Math.floor(years/2)} years combined; that's compounding accelerating.` });
   }
   document.getElementById('insightList').innerHTML = insights.map(i =>
     `<li><span>${i.icon}</span><span>${i.text}</span></li>`
@@ -605,7 +605,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

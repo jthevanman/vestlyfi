@@ -32,7 +32,7 @@ test('client STATE_DATA projection matches the full engine for every state', () 
     assert.deepEqual(
       snapshotState(slimStateData(s)),
       snapshotState(s),
-      `${s.slug}: slimStateData projection diverges from full state — a field the engine reads is missing from slimStateData`,
+      `${s.slug}: slimStateData projection diverges from full state: a field the engine reads is missing from slimStateData`,
     );
   }
 });

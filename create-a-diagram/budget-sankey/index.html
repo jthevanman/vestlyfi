@@ -572,7 +572,7 @@ function drawSankey(totalIncome, incRows, rows) {
 
   const income = totalIncome;
 
-  // ── Income nodes — centered vertically, compact ──
+  // ── Income nodes: centered vertically, compact ──
   const incX = LEFT_NODE_X;
   const incTotalH = incomeBarH;
   let incCurY = (H - incTotalH) / 2;
@@ -592,7 +592,7 @@ function drawSankey(totalIncome, incRows, rows) {
     ctx.fillStyle = si === 0 ? '#c9a84c' : '#e8c97a';
     ctx.beginPath(); ctx.roundRect(incX, nodeTop, NODE_W, srcH, 6); ctx.fill();
 
-    // Label centered in slot — word wrap up to 2 lines (right-aligned)
+    // Label centered in slot; word wrap up to 2 lines (right-aligned)
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(201,168,76,1)';
     ctx.font = '600 22px Outfit, sans-serif';
@@ -627,7 +627,7 @@ function drawSankey(totalIncome, incRows, rows) {
     incCurY += slot + INC_GAP;
   });
 
-  // ── Expense nodes + flows — centered vertically ──
+  // ── Expense nodes + flows: centered vertically ──
   const expStartY = (H - expensesH) / 2;
 
   const incBarStartY = (H - incTotalH) / 2;
@@ -636,7 +636,7 @@ function drawSankey(totalIncome, incRows, rows) {
   let rightY = expStartY;
 
   const LABEL_LINE_H = 28;
-  // Each node is centered in its slot. Label is centered in the slot too — always aligned.
+  // Each node is centered in its slot. Label is centered in the slot too, always aligned.
   const nodePositions = [];
   let tempY = expStartY;
   rows.forEach((row, i) => {
@@ -647,7 +647,7 @@ function drawSankey(totalIncome, incRows, rows) {
     nodePositions.push({ slotTop: tempY, slot, nodeTop, h: nodeH, mid: slotMid });
     tempY += slot + NODE_GAP;
   });
-  // Labels centered in slot — guaranteed no overlap since slots never overlap
+  // Labels centered in slot; guaranteed no overlap since slots never overlap
   const labelPositions = nodePositions.map(n => n.slotTop + (n.slot / 2) - LABEL_LINE_H + 6);
 
   rows.forEach((row, i) => {
@@ -683,11 +683,11 @@ function drawSankey(totalIncome, incRows, rows) {
     ctx.fillStyle = color + 'dd';
     ctx.beginPath(); ctx.roundRect(RIGHT_NODE_X, rightTop, NODE_W, nodeH, 6); ctx.fill();
 
-    // Label placement — use collision-free position
+    // Label placement: use collision-free position
     const labelX = RIGHT_NODE_X + NODE_W + 20;
     const labelY = labelPositions[i];
 
-    // Name — find best split point that keeps both lines within maxLabelW
+    // Name: find best split point that keeps both lines within maxLabelW
     ctx.fillStyle = color;
     ctx.font = '500 22px Outfit, sans-serif';
     const maxLabelW = 190;
@@ -713,14 +713,14 @@ function drawSankey(totalIncome, incRows, rows) {
     ctx.fillText(line1, labelX, labelY);
     if (line2) ctx.fillText(line2, labelX, labelY + 26);
 
-    // Amount — push down extra line if name wrapped
+    // Amount: push down extra line if name wrapped
     const nameLineCount = line2 ? 2 : 1;
     const amountY = labelY + LABEL_LINE_H + (nameLineCount > 1 ? 26 : 0);
     ctx.fillStyle = 'rgba(245,240,232,0.55)';
     ctx.font = '300 18px Outfit, sans-serif';
     ctx.fillText('$' + row.val.toLocaleString(), labelX, amountY);
 
-    // Percentage pill — aligned with amount
+    // Percentage pill: aligned with amount
     const pct = Math.round((row.val / income) * 100);
     const pillX = labelX + 170;
     if (pillX + 70 < W - 10) {
@@ -747,11 +747,11 @@ async function downloadChart() {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // Mobile: open image in new tab — user can long-press to "Save to Photos" (iOS & Android)
+    // Mobile: open image in new tab; user can long-press to "Save to Photos" (iOS & Android)
     const dataUrl = canvas.toDataURL('image/png');
     const win = window.open();
     win.document.write('<img src="' + dataUrl + '" style="max-width:100%;display:block;" />');
-    win.document.title = 'Save to Photos — long press the image';
+    win.document.title = 'Save to Photos: long press the image';
   } else {
     // Desktop: anchor click with dataURL triggers file explorer save dialog
     canvas.toBlob(blob => {
@@ -830,7 +830,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

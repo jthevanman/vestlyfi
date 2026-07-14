@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VestlyFi — Financial Tools That Actually Answer Your Question</title>
+<title>VestlyFi | Financial Tools That Actually Answer Your Question</title>
 <meta name="description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
 <link rel="canonical" href="https://vestlyfi.com/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vestlyfi.com/">
-<meta property="og:title" content="VestlyFi — Financial Tools That Actually Answer Your Question">
+<meta property="og:title" content="VestlyFi | Financial Tools That Actually Answer Your Question">
 <meta property="og:description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
 <meta property="og:site_name" content="VestlyFi">
 <meta property="og:image" content="https://vestlyfi.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VestlyFi — Financial Tools That Actually Answer Your Question">
+<meta name="twitter:title" content="VestlyFi | Financial Tools That Actually Answer Your Question">
 <meta name="twitter:description" content="Calculators and diagrams for your finances. Mortgage payoff, retirement planning, debt payoff, Coast FIRE, and more.">
 <meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
 <script type="application/ld+json">
@@ -28,7 +28,7 @@
       "url": "https://vestlyfi.com/",
       "logo": "https://vestlyfi.com/android-chrome-512x512.png",
       "email": "VestlyFi@gmail.com",
-      "description": "Free financial calculators and trackers that run entirely in your browser — mortgage payoff, house affordability, retirement, Coast FIRE, debt payoff, quarterly estimated taxes, and more."
+      "description": "Free financial calculators and trackers that run entirely in your browser: mortgage payoff, house affordability, retirement, Coast FIRE, debt payoff, quarterly estimated taxes, and more."
     },
     {
       "@type": "WebSite",
@@ -417,7 +417,7 @@ footer {
 
 <!-- ── PROMPT ── -->
 <div class="prompt-wrap">
-  <h1 class="visually-hidden">VestlyFi — Free Financial Calculators &amp; Diagrams: Retirement, Mortgage Payoff, Debt Payoff, Coast FIRE &amp; More</h1>
+  <h1 class="visually-hidden">VestlyFi: Free Financial Calculators &amp; Diagrams: Retirement, Mortgage Payoff, Debt Payoff, Coast FIRE &amp; More</h1>
   <div class="prompt-sentence">I am <input type="text" id="age" inputmode="numeric"> years old, I have $<input type="text" id="inv" class="wide" inputmode="numeric"> invested and $<input type="text" id="debt" class="wide" inputmode="numeric"> in debt and my goal is to <select id="goal"><option value=""> </option><option value="grow">see what my money could grow to</option><option value="retire">plan my retirement</option><option value="fire">reach Coast FIRE</option><option value="debt">pay off my debt</option><option value="house">see what house I can afford</option></select><span class="sel-caret">▾</span></div>
 
   <div class="followup" id="followup"></div>
@@ -711,7 +711,7 @@ function resetForm() {
 const FORMSPREE='https://formspree.io/f/xjgaydej';
 function openBugModal(){document.getElementById('bugDescription').value='';document.getElementById('bugEmail').value='';document.getElementById('bugPage').value=window.location.pathname;document.getElementById('bugErr').textContent='';document.getElementById('bugSubmitBtn').textContent='Send Report';document.getElementById('bugSubmitBtn').disabled=false;const m=document.getElementById('bugModal');m.style.display='flex';setTimeout(()=>document.getElementById('bugDescription').focus(),50);}
 function closeBugModal(){document.getElementById('bugModal').style.display='none';}
-async function submitBugReport(){const description=document.getElementById('bugDescription').value.trim();const email=document.getElementById('bugEmail').value.trim();const page=document.getElementById('bugPage').value;const errEl=document.getElementById('bugErr');const btn=document.getElementById('bugSubmitBtn');if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';try{const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page,userAgent:navigator.userAgent})});if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks — we'll look into it.";setTimeout(()=>closeBugModal(),2000);}else throw new Error();}catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';}}
+async function submitBugReport(){const description=document.getElementById('bugDescription').value.trim();const email=document.getElementById('bugEmail').value.trim();const page=document.getElementById('bugPage').value;const errEl=document.getElementById('bugErr');const btn=document.getElementById('bugSubmitBtn');if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';try{const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page,userAgent:navigator.userAgent})});if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}else throw new Error();}catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';}}
 document.addEventListener('DOMContentLoaded',()=>{const m=document.getElementById('bugModal');let down=false;m.addEventListener('mousedown',e=>{down=e.target===m;});m.addEventListener('click',e=>{if(e.target===m&&down)closeBugModal();down=false;});});
 </script>
 </body>

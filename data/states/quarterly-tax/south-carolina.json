@@ -27,7 +27,7 @@
   "dueDateNotes": "South Carolina follows the federal schedule: April 15, June 15, September 15, and January 15.",
   "selfEmploymentNotes": "South Carolina starts from your federal taxable income (so your federal standard deduction is already built in) and applies a 0%/3%/6% schedule. Its 44% net capital-gains deduction and 3% active-business election are not modeled, so your actual tax may be lower.",
   "uniqueFacts": [
-    "South Carolina's top rate is a temporarily-reduced 6% for 2025 (down from 6.2%) and is scheduled to revert in July 2026 — this page uses the 2025 rate.",
+    "South Carolina's top rate is a temporarily-reduced 6% for 2025 (down from 6.2%) and is scheduled to revert in July 2026; this page uses the 2025 rate.",
     "South Carolina starts from your federal taxable income, so your federal standard deduction is already built into the calculation.",
     "South Carolina lets you deduct 44% of net long-term capital gains and offers a flat 3% rate on active pass-through business income, so your real tax can be lower than this estimate."
   ],

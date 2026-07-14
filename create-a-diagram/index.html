@@ -5,17 +5,17 @@
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Create a Financial Diagram | VestlyFi</title>
-<meta name="description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more — built to post and share.">
+<meta name="description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more, built to post and share.">
 <link rel="canonical" href="https://vestlyfi.com/create-a-diagram/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vestlyfi.com/create-a-diagram/">
 <meta property="og:title" content="Create a Financial Diagram | VestlyFi">
-<meta property="og:description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more — built to post and share.">
+<meta property="og:description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more, built to post and share.">
 <meta property="og:site_name" content="VestlyFi">
 <meta property="og:image" content="https://vestlyfi.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Create a Financial Diagram | VestlyFi">
-<meta name="twitter:description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more — built to post and share.">
+<meta name="twitter:description" content="Turn your financial numbers into shareable diagrams. Budget breakdowns, debt flows, and more, built to post and share.">
 <meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
@@ -279,7 +279,7 @@
 
 <script>
 function showAbout() {
-  alert('VestlyFi — free financial tools built for people who want straight answers.\n\nQuestions? VestlyFi@gmail.com');
+  alert('VestlyFi: free financial tools built for people who want straight answers.\n\nQuestions? VestlyFi@gmail.com');
 }
 </script>
 
@@ -327,7 +327,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

@@ -27,7 +27,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -312,7 +312,7 @@
       <div class="card-top">
       </div>
       <div class="card-title">Retirement Age Calculator</div>
-      <div class="card-desc">Tell us your income and savings — we calculate the exact age you can stop working for good.</div>
+      <div class="card-desc">Tell us your income and savings; we calculate the exact age you can stop working for good.</div>
       <div class="card-footer">
         <span class="card-tag tag-fire">FIRE · Retirement</span>
         <div class="card-arrow">→</div>
@@ -324,7 +324,7 @@
         
       </div>
       <div class="card-title">Coast FIRE Calculator</div>
-      <div class="card-desc">Find out how much to save now so your money grows on its own — no more contributions needed.</div>
+      <div class="card-desc">Find out how much to save now so your money grows on its own, no more contributions needed.</div>
       <div class="card-footer">
         <span class="card-tag tag-fire">FIRE · Investing</span>
         <div class="card-arrow">→</div>
@@ -369,7 +369,7 @@
       <div class="card-top">
       </div>
       <div class="card-title">How Much House Can I Afford?</div>
-      <div class="card-desc">Enter your income and debts — we show what monthly payment you can handle and how big a home loan you can get.</div>
+      <div class="card-desc">Enter your income and debts; we show what monthly payment you can handle and how big a home loan you can get.</div>
       <div class="card-footer">
         <span class="card-tag tag-mortgage">Mortgage · Real Estate</span>
         <div class="card-arrow">→</div>
@@ -381,7 +381,7 @@
         
       </div>
       <div class="card-title">Debt Payoff Optimizer</div>
-      <div class="card-desc">List your debts and we build a payoff plan that saves the most in interest — and shows when you'll be completely debt-free.</div>
+      <div class="card-desc">List your debts and we build a payoff plan that saves the most in interest and shows when you'll be completely debt-free.</div>
       <div class="card-footer">
         <span class="card-tag tag-debt">Debt · Budgeting</span>
         <div class="card-arrow">→</div>
@@ -411,7 +411,7 @@
       <button onclick="closeModal('methodology')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Core Approach</strong><br>All calculators use standard financial formulas — compound interest, future value of annuities, and the 4% safe withdrawal rule. No proprietary black boxes.</p>
+      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Core Approach</strong><br>All calculators use standard financial formulas: compound interest, future value of annuities, and the 4% safe withdrawal rule. No proprietary black boxes.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">The 4% Rule</strong><br>Retirement projections use the 1998 Trinity Study's finding that a 4% annual withdrawal rate has a ~96% historical success rate over 30-year periods.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Inflation Adjustment</strong><br>All projections use real (inflation-adjusted) returns. Dollar figures shown are in today's purchasing power.</p>
       <p style="margin-bottom:0;color:rgba(245,240,232,0.3);font-size:0.78rem;">For educational purposes only. Not financial advice. Consult a certified financial planner before making major financial decisions.</p>
@@ -443,7 +443,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p style="margin-bottom:0;">Questions or feedback? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -506,7 +506,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

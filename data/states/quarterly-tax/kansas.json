@@ -25,7 +25,7 @@
   "dueDateNotes": "Kansas follows the federal schedule: April 15, June 15, September 15, and January 15.",
   "selfEmploymentNotes": "Kansas applies its two rates (5.2% / 5.58%) to your federal AGI after the standard deduction ($3,605 single / $8,240 joint) plus a large exemption allowance ($9,160 single / $18,320 joint). The extra $2,320-per-dependent exemption is not modeled here.",
   "uniqueFacts": [
-    "Kansas taxes income at just two rates — 5.2% and 5.58% — after a generous exemption allowance of $9,160 (single) / $18,320 (joint) on top of the standard deduction.",
+    "Kansas taxes income at just two rates (5.2% and 5.58%) after a generous exemption allowance of $9,160 (single) / $18,320 (joint) on top of the standard deduction.",
     "Kansas gives an additional $2,320 exemption for each dependent, which this estimate does not include, so families may owe less.",
     "Kansas's two-bracket system took effect in 2024, replacing its older three-bracket structure."
   ],

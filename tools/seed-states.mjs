@@ -75,11 +75,11 @@ const STATES = [
 const NO_TAX_FACTS = {
   AK: [
     'Alaska has no state income tax, so on your self-employment income you only owe federal quarterly estimated taxes.',
-    'Alaska also has no statewide sales tax — but your Permanent Fund Dividend is still federally taxable.',
+    'Alaska also has no statewide sales tax, but your Permanent Fund Dividend is still federally taxable.',
   ],
   FL: [
     'Florida has no state income tax, so freelancers and 1099 workers only make federal quarterly payments.',
-    'There is no Florida estimated-tax form to file — everything flows through the IRS Form 1040-ES.',
+    'There is no Florida estimated-tax form to file; everything flows through the IRS Form 1040-ES.',
   ],
   NV: [
     'Nevada has no state income tax, so your only quarterly estimated payments are federal.',
@@ -99,7 +99,7 @@ const NO_TAX_FACTS = {
   ],
   TX: [
     'Texas has no state income tax, so freelancers and gig workers only make federal quarterly payments.',
-    'There is no Texas state estimated-tax form — you file IRS Form 1040-ES only.',
+    'There is no Texas state estimated-tax form; you file IRS Form 1040-ES only.',
   ],
   WA: [
     'Washington has no tax on wages or self-employment income, so 1099 earners owe only federal quarterly taxes.',

@@ -42,11 +42,11 @@
   "stateTaxAgencyUrl": "https://tax.hawaii.gov/",
   "statePaymentPortalUrl": "https://hitax.hawaii.gov/",
   "quarterlyWeights": null,
-  "dueDateNotes": "Hawaii estimated payments are due on the 20th — April 20, June 20, September 20, and January 20 — not the 15th like federal.",
+  "dueDateNotes": "Hawaii estimated payments are due on the 20th (April 20, June 20, September 20, and January 20), not the 15th like federal.",
   "selfEmploymentNotes": "Hawaii applies graduated 1.4%-11% rates to your federal AGI after the 2026 standard deduction ($8,000 single / $16,000 joint) plus a $1,144 personal exemption. It does NOT include Hawaii's General Excise Tax, which self-employed residents owe separately on gross receipts.",
   "uniqueFacts": [
-    "Hawaii has 12 income tax brackets — among the most of any state — topping out at 11%, one of the highest state rates in the country.",
-    "Hawaii self-employed people also owe the General Excise Tax (GET) of about 4%-4.5% on their gross business receipts, on top of income tax — a major cost this income-tax estimate does not include.",
+    "Hawaii has 12 income tax brackets (among the most of any state), topping out at 11%, one of the highest state rates in the country.",
+    "Hawaii self-employed people also owe the General Excise Tax (GET) of about 4%-4.5% on their gross business receipts, on top of income tax, a major cost this income-tax estimate does not include.",
     "Hawaii's tax deadlines fall on the 20th (April 20, June 20, September 20, January 20), not the 15th."
   ],
   "sources": [

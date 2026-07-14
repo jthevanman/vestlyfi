@@ -56,7 +56,7 @@
       "name": "Who has to pay quarterly estimated taxes?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding — freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to."
+        "text": "Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding: freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to."
       }
     },
     {
@@ -88,7 +88,7 @@
       "name": "Do I owe state estimated taxes too?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds — choose your state above for a version that includes them."
+        "text": "It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds; choose your state above for a version that includes them."
       }
     }
   ]
@@ -234,7 +234,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   <div class="crumbs"><a href="/">Home</a><span class="sep">/</span><a href="/calculators/">Calculators</a><span class="sep">/</span><span class="current">Quarterly Estimated Tax</span></div>
   <div class="page-tag">Side-Income Tools</div>
   <h1>Quarterly Estimated Tax Calculator (2026)</h1>
-  <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year — not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
+  <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year, not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
 
   <div class="calc-panel">
   <div class="panel-section-title">Your Income</div>
@@ -345,14 +345,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 
   <div class="section">
     <h2>Quarterly Estimated Tax FAQ</h2>
-    <div class="faq-item"><div class="faq-q">Who has to pay quarterly estimated taxes?</div><div class="faq-a">Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding — freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to.</div></div>
+    <div class="faq-item"><div class="faq-q">Who has to pay quarterly estimated taxes?</div><div class="faq-a">Generally anyone who expects to owe $1,000 or more in federal tax on income that has no withholding: freelancers, 1099 contractors, gig workers, landlords, and small-business owners. If all your income is W-2 with enough withholding, you usually do not need to.</div></div>
     <div class="faq-item"><div class="faq-q">When are 2026 quarterly taxes due?</div><div class="faq-a">Federal estimated payments are due April 15, 2026, June 15, 2026, September 15, 2026, and January 15, 2027. If a date falls on a weekend or holiday it shifts to the next business day.</div></div>
     <div class="faq-item"><div class="faq-q">How do I calculate what I owe each quarter?</div><div class="faq-a">Estimate your annual net self-employment income, add self-employment tax (15.3% on 92.35% of your profit up to the Social Security wage base) and federal income tax on your profit after the standard deduction, then divide by four. The calculator above does this for you.</div></div>
     <div class="faq-item"><div class="faq-q">What is the safe harbor rule?</div><div class="faq-a">You avoid an IRS underpayment penalty if you pay at least 90% of the current year's tax, or 100% of last year's tax (110% if your prior-year income was over $150,000). Paying to the safe harbor protects you even if you end up owing more.</div></div>
-    <div class="faq-item"><div class="faq-q">Do I owe state estimated taxes too?</div><div class="faq-a">It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds — choose your state above for a version that includes them.</div></div>
+    <div class="faq-item"><div class="faq-q">Do I owe state estimated taxes too?</div><div class="faq-a">It depends on your state. Nine states have no income tax, so you only pay federal. The rest have their own estimated-tax rules and thresholds; choose your state above for a version that includes them.</div></div>
   </div>
 
-  <p class="disclaimer">For educational purposes only — not tax advice. Confirm figures with a tax professional and the IRS before filing.</p>
+  <p class="disclaimer">For educational purposes only, not tax advice. Confirm figures with a tax professional and the IRS before filing.</p>
 </div>
 <footer>
   <span>© 2026 VestlyFi</span>
@@ -559,7 +559,7 @@ function estimateQuarterly(input, stateData) {
   // (e.g. Maryland's county income tax, which every county levies). The rate is
   // editable per user via input.localRate (a fraction); it falls back to the
   // state's default when unset. Folded into stateIncomeTax so it flows through
-  // the totals and quarterly splits — MD estimates must cover state + local.
+  // the totals and quarterly splits; MD estimates must cover state + local.
   // Config: localFlatRate = { default }.
   if (stateComputable && stateData.localFlatRate) {
     const localRate = input.localRate != null
@@ -569,7 +569,7 @@ function estimateQuarterly(input, stateData) {
   }
 
   // Optional flat contribution levied on NET self-employment income (not taxable
-  // income) and remitted with the state return — e.g. Vermont's 0.11% Child Care
+  // income) and remitted with the state return, e.g. Vermont's 0.11% Child Care
   // Contribution (Act 76), which self-employed filers owe on top of income tax.
   // Config: seContribution = { rate }.
   if (stateComputable && stateData.seContribution) {

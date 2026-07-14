@@ -307,7 +307,7 @@ function calcMarkup(state) {
       <div class="input-wrap"><input type="text" id="localRate" inputmode="decimal" value="${(Number(state.localFlatRate.default) * 100).toFixed(2)}"><span class="input-prefix" style="left:auto;right:14px">%</span></div>
     </div>
     <div class="input-group"><label>&nbsp;</label>
-      <div class="input-hint" style="padding-top:14px;line-height:1.5">Prefilled with the 3.20% rate most counties use — see the FAQ for your county.</div>
+      <div class="input-hint" style="padding-top:14px;line-height:1.5">Prefilled with the 3.20% rate most counties use. See the FAQ for your county.</div>
     </div>
   </div>` : '';
   return `<div class="calc-panel">
@@ -390,7 +390,7 @@ export function slimStateData(state) {
     standardDeduction_married: state.standardDeduction_married,
     stateTaxBasis: state.stateTaxBasis || 'state_gross',
     quarterlyWeights: state.quarterlyWeights,
-    // Engine modifiers (all optional / gated) — mirror taxEngine.mjs stateData.* reads:
+    // Engine modifiers (all optional / gated); mirror taxEngine.mjs stateData.* reads:
     slidingStandardDeduction: state.slidingStandardDeduction,
     federalTaxDeduction: state.federalTaxDeduction,
     personalTaxCredit: state.personalTaxCredit,
@@ -456,7 +456,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
     ${relatedHtml}
   </div>
 
-  <p class="disclaimer">For educational purposes only — not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the ${esc(state.stateTaxAgencyName || 'IRS')} before filing. State tax data last verified ${esc(state.lastVerified || 'pending')}.${sourcesHtml(state.sources)}</p>
+  <p class="disclaimer">For educational purposes only, not tax advice. Tax rules change and individual situations vary; confirm figures with a tax professional and the ${esc(state.stateTaxAgencyName || 'IRS')} before filing. State tax data last verified ${esc(state.lastVerified || 'pending')}.${sourcesHtml(state.sources)}</p>
 </div>
 ${FOOTER}
 ${scriptBlock({ engineSource, stateData: stateDataSlim, stateName: state.name, stateAbbr: state.abbreviation, saveSlug: `calculators/quarterly-tax/${state.slug}` })}
@@ -497,7 +497,7 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
   ${crumbsHtml(crumbs)}
   <div class="page-tag">Side-Income Tools</div>
   <h1>Quarterly Estimated Tax Calculator (2026)</h1>
-  <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year — not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
+  <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year, not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
 
   ${calcMarkup('federal')}
 
@@ -519,7 +519,7 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
     ${faqs.map((f) => `<div class="faq-item"><div class="faq-q">${esc(f.q)}</div><div class="faq-a">${esc(f.a)}</div></div>`).join('\n    ')}
   </div>
 
-  <p class="disclaimer">For educational purposes only — not tax advice. Confirm figures with a tax professional and the IRS before filing.</p>
+  <p class="disclaimer">For educational purposes only, not tax advice. Confirm figures with a tax professional and the IRS before filing.</p>
 </div>
 ${FOOTER}
 ${scriptBlock({ engineSource, stateData: federalOnly, stateName: 'Federal', stateAbbr: 'US', saveSlug: 'calculators/quarterly-tax' })}

@@ -26,10 +26,10 @@
   "stateTaxAgencyUrl": "https://www.tax.virginia.gov/",
   "statePaymentPortalUrl": "https://www.tax.virginia.gov/individual-estimated-tax-payments",
   "quarterlyWeights": null,
-  "dueDateNotes": "Virginia's first two installments are due May 1 and June 15, then September 15 and January 15 — note the May 1 first-quarter deadline, not April 15.",
+  "dueDateNotes": "Virginia's first two installments are due May 1 and June 15, then September 15 and January 15. Note the May 1 first-quarter deadline, not April 15.",
   "selfEmploymentNotes": "Virginia starts from your federal adjusted gross income and applies the same four-rate schedule to all filers after the standard deduction. This estimate does not include Virginia's personal exemptions (about $930 each), so your actual tax may be slightly lower.",
   "uniqueFacts": [
-    "Virginia's tax brackets have not changed since 1990 — the top 5.75% rate kicks in at just $17,000 of taxable income, so almost every self-employed Virginian pays the top rate on most of their income.",
+    "Virginia's tax brackets have not changed since 1990; the top 5.75% rate kicks in at just $17,000 of taxable income, so almost every self-employed Virginian pays the top rate on most of their income.",
     "Virginia's higher standard deduction ($8,750 single / $17,500 joint) is scheduled to sunset after tax year 2026 and revert to $3,000 / $6,000.",
     "Virginia's first estimated installment is due May 1, not April 15 like the federal deadline."
   ],

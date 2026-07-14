@@ -1,4 +1,4 @@
-/* VestlySave — shared "save results to your account" module.
+/* VestlySave: shared "save results to your account" module.
  *
  * Usage (page must load @supabase/supabase-js@2 first):
  *   VestlySave.init({
@@ -247,7 +247,7 @@
     });
     if (error) { setMsg('signup', 'err', error.message); return; }
     track('save_result_signup');
-    setMsg('signup', 'ok', 'Account created! Check your email to confirm — your result will be saved automatically when you return.');
+    setMsg('signup', 'ok', 'Account created! Check your email to confirm; your result will be saved automatically when you return.');
   }
 
   async function signIn() {

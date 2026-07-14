@@ -22,24 +22,24 @@ export function buildCopy(s) {
 
 function incomeTaxIntro(s) {
   const hook = s.uniqueFacts[0];
-  return `If you earn 1099 or self-employment income in ${s.name}, the IRS and the state both expect you to pay taxes as you go — in four quarterly installments rather than one April bill. This calculator estimates your ${s.taxYear} quarterly payments across all three pieces: federal self-employment tax, federal income tax, and ${s.name} state income tax. ${hook} Enter your expected net self-employment income, any W-2 wages, and your filing status to see what to send each quarter, your due dates, and how the safe-harbor rules protect you from an underpayment penalty. Everything is an estimate for planning — always confirm with the ${s.stateTaxAgencyName || 'state tax agency'} before you file.`;
+  return `If you earn 1099 or self-employment income in ${s.name}, the IRS and the state both expect you to pay taxes as you go, in four quarterly installments rather than one April bill. This calculator estimates your ${s.taxYear} quarterly payments across all three pieces: federal self-employment tax, federal income tax, and ${s.name} state income tax. ${hook} Enter your expected net self-employment income, any W-2 wages, and your filing status to see what to send each quarter, your due dates, and how the safe-harbor rules protect you from an underpayment penalty. Everything is an estimate for planning. Always confirm with the ${s.stateTaxAgencyName || 'state tax agency'} before you file.`;
 }
 
 function noTaxIntro(s) {
   const hook = s.uniqueFacts[0];
-  return `Good news for freelancers and gig workers in ${s.name}: ${hook.charAt(0).toLowerCase() + hook.slice(1)} That means your quarterly estimated taxes are federal only — self-employment tax plus federal income tax — with no separate state estimate to file. This calculator estimates your ${s.taxYear} federal quarterly payments so you know exactly what to send the IRS on each due date. Enter your expected net self-employment income, any W-2 wages, and your filing status to see your quarterly amounts, due dates, and how the safe-harbor rules keep you penalty-free. It is an estimate for planning purposes, not tax advice.`;
+  return `Good news for freelancers and gig workers in ${s.name}: ${hook.charAt(0).toLowerCase() + hook.slice(1)} That means your quarterly estimated taxes are federal only (self-employment tax plus federal income tax), with no separate state estimate to file. This calculator estimates your ${s.taxYear} federal quarterly payments so you know exactly what to send the IRS on each due date. Enter your expected net self-employment income, any W-2 wages, and your filing status to see your quarterly amounts, due dates, and how the safe-harbor rules keep you penalty-free. It is an estimate for planning purposes, not tax advice.`;
 }
 
 function incomeTaxHow(s) {
   const agency = s.stateTaxAgencyName || `the ${s.name} state tax agency`;
   const threshold = s.stateQuarterlyThreshold != null
     ? `${s.name} generally requires estimated payments once you expect to owe more than $${s.stateQuarterlyThreshold.toLocaleString()} in state tax for the year.`
-    : `${s.name} sets its own threshold for when estimated payments become mandatory — check with ${agency} for the current figure.`;
+    : `${s.name} sets its own threshold for when estimated payments become mandatory; check with ${agency} for the current figure.`;
   const weighted = Array.isArray(s.quarterlyWeights)
     ? `Unlike the federal system's equal quarters, ${s.name} weights its installments (${s.quarterlyWeights.map((w) => Math.round(w * 100) + '%').join(' / ')}), so the amount due changes from quarter to quarter.`
     : `${s.name} follows the standard four-installment schedule.`;
   const localPara = s.localFlatRate
-    ? `${s.name} is the only state where every county and Baltimore City levies its own local income tax, charged on the same income as the state tax and collected together with it — so your quarterly estimates have to cover both. The calculator folds the county tax into your ${s.name} figure and pre-fills 3.20% (the rate paid in Montgomery, Prince George's, Howard, Baltimore City, and Baltimore County, among others); change the "Your county rate" box to match where you live — see the FAQ for every county's rate.`
+    ? `${s.name} is the only state where every county and Baltimore City levies its own local income tax, charged on the same income as the state tax and collected together with it, so your quarterly estimates have to cover both. The calculator folds the county tax into your ${s.name} figure and pre-fills 3.20% (the rate paid in Montgomery, Prince George's, Howard, Baltimore City, and Baltimore County, among others); change the "Your county rate" box to match where you live; see the FAQ for every county's rate.`
     : null;
   return [
     `Self-employment income has no tax withheld for you, so both the IRS and ${agency} ask you to prepay in quarterly installments. On the federal side you owe self-employment tax (15.3% Social Security and Medicare on 92.35% of your net profit, up to the Social Security wage base) plus federal income tax on your profit after the standard deduction. On top of that, ${s.name} applies its own income tax.`,
@@ -51,7 +51,7 @@ function incomeTaxHow(s) {
 
 function noTaxHow(s) {
   return [
-    `Because ${s.name} does not tax personal income, the only quarterly estimated taxes you owe as a self-employed resident are federal. That is still two pieces: self-employment tax — 15.3% for Social Security and Medicare on 92.35% of your net profit, up to the Social Security wage base — and federal income tax on your profit after the standard deduction.`,
+    `Because ${s.name} does not tax personal income, the only quarterly estimated taxes you owe as a self-employed resident are federal. That is still two pieces: self-employment tax (15.3% for Social Security and Medicare on 92.35% of your net profit, up to the Social Security wage base) and federal income tax on your profit after the standard deduction.`,
     `The IRS asks you to pay these in four installments, generally due April 15, June 15, September 15, and the following January 15. ${s.uniqueFacts[1] || ''}`.trim(),
     `You avoid an IRS underpayment penalty by meeting a "safe harbor": paying at least 90% of this year's tax, or 100% of last year's tax (110% if your income is higher). You can pay online at IRS Direct Pay or through EFTPS. Since there is no ${s.name} return to file, the calculator above shows your federal quarterly amounts only.`,
   ];
@@ -76,7 +76,7 @@ function buildFaqs(s) {
   });
   faqs.push({
     q: `How much should I set aside for taxes as a 1099 worker in ${s.name}?`,
-    a: `A common rule of thumb is 25–30% of your net self-employment income${s.hasStateIncomeTax ? `, and a bit more in ${s.name} because of state income tax` : ` — and in ${s.name} you can stay near the lower end since there is no state income tax`}. The calculator above gives you a far more precise number based on your actual income and filing status.`,
+    a: `A common rule of thumb is 25–30% of your net self-employment income${s.hasStateIncomeTax ? `, and a bit more in ${s.name} because of state income tax` : `, and in ${s.name} you can stay near the lower end since there is no state income tax`}. The calculator above gives you a far more precise number based on your actual income and filing status.`,
   });
   // At least two state-unique FAQ items, sourced from verified uniqueFacts.
   faqs.push({

@@ -3,5 +3,5 @@
   "framework": null,
   "buildCommand": "",
   "outputDirectory": ".",
-  "installCommand": "echo \"static site — no install\""
+  "installCommand": "echo \"static site, no install\""
 }

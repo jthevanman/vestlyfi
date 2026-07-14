@@ -248,7 +248,7 @@
 <div class="page">
   <div class="page-tag">Debt Payoff</div>
   <h1>Pay off your debt <em>smarter</em></h1>
-  <p class="sub">Enter your debts below and we'll build a personalized payoff plan — showing you the order to pay them off and exactly how much interest you'll save.</p>
+  <p class="sub">Enter your debts below and we'll build a personalized payoff plan, showing you the order to pay them off and exactly how much interest you'll save.</p>
 
   <div class="debt-table">
     <div class="debt-table-header">
@@ -339,7 +339,7 @@
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -554,7 +554,7 @@ function renderMethod(method) {
     </div>
 
     <div class="payoff-order">
-      <div class="payoff-title">Payoff Order — ${methodLabel}</div>
+      <div class="payoff-title">Payoff Order: ${methodLabel}</div>
       ${result.order.map((name, i) => {
         const debt = debts.find(d => d.name === name) || {};
         const mo = result.payoffMonths[name] || result.months;
@@ -575,11 +575,11 @@ function renderMethod(method) {
     <div class="comparison-card">
       <div class="comparison-title">Method Comparison</div>
       <div class="comparison-row">
-        <span class="comparison-method">${methodLabel} — Interest Paid</span>
+        <span class="comparison-method">${methodLabel}: Interest Paid</span>
         <span style="font-family:'Outfit',sans-serif;color:var(--green)">${fmt(result.totalInterest)}</span>
       </div>
       <div class="comparison-row">
-        <span class="comparison-method">${altLabel} — Interest Paid</span>
+        <span class="comparison-method">${altLabel}: Interest Paid</span>
         <span style="font-family:'Outfit',sans-serif;color:var(--muted)">${fmt(resultAlt.totalInterest)}</span>
       </div>
       ${interestSaved > 0 ? `<div class="comparison-row" style="padding-top:12px;">
@@ -593,13 +593,13 @@ function renderMethod(method) {
 
     <ul class="insight-list">
       ${extra === 0 ? `<li><span>⚡</span><span>You're only paying minimums. Adding even <strong>$100–200/month</strong> extra can cut years off your payoff timeline and save thousands in interest.</span></li>` : `<li><span>⚡</span><span>Your extra ${fmt(extra)}/month payment saves you significant interest. Every dollar of extra payment on your highest-rate debt earns you that interest rate guaranteed.</span></li>`}
-      <li><span>💡</span><span><strong>Avalanche</strong> saves the most money mathematically. <strong>Snowball</strong> gives quick wins by clearing small debts first — which some people find more motivating. Both work — pick what keeps you consistent.</span></li>
+      <li><span>💡</span><span><strong>Avalanche</strong> saves the most money mathematically. <strong>Snowball</strong> gives quick wins by clearing small debts first, which some people find more motivating. Both work; pick what keeps you consistent.</span></li>
       <li><span>🏦</span><span>Consider consolidating high-interest credit card debt with a <strong>balance transfer card</strong> (0% intro APR) or a personal loan to dramatically reduce your interest cost.</span></li>
     </ul>
 
     <div class="aff-section">
       <h3>Accelerate your debt payoff</h3>
-      <p>A balance transfer or personal loan can cut your interest rate significantly — turning a 20%+ credit card into a 6–10% loan.</p>
+      <p>A balance transfer or personal loan can cut your interest rate significantly, turning a 20%+ credit card into a 6–10% loan.</p>
       <div class="aff-links">
         <a class="aff-link" href="https://www.sofi.com/personal-loans/" target="_blank">SoFi Personal Loans ↗</a>
         <a class="aff-link" href="https://www.lendingtree.com" target="_blank">LendingTree ↗</a>
@@ -689,7 +689,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

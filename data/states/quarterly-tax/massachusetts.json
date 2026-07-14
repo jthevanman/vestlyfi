@@ -23,7 +23,7 @@
   "statePaymentPortalUrl": "https://www.mass.gov/how-to/pay-your-personal-income-tax",
   "quarterlyWeights": null,
   "dueDateNotes": "Massachusetts follows the federal schedule: April 15, June 15, September 15, and January 15.",
-  "selfEmploymentNotes": "Massachusetts applies its flat 5.0% rate to your income after a personal exemption ($4,400 single / $8,800 joint) — it grants that exemption instead of a standard deduction. Income over $1,083,150 is taxed at 9% (the 4% surtax). The surtax threshold shown is the 2025-basis amount and adjusts yearly.",
+  "selfEmploymentNotes": "Massachusetts applies its flat 5.0% rate to your income after a personal exemption ($4,400 single / $8,800 joint); it grants that exemption instead of a standard deduction. Income over $1,083,150 is taxed at 9% (the 4% surtax). The surtax threshold shown is the 2025-basis amount and adjusts yearly.",
   "uniqueFacts": [
     "Massachusetts taxes most income at a flat 5.0% rate, effective January 1, 2026.",
     "Massachusetts adds a 4% 'millionaire' surtax on taxable income over $1,083,150, bringing the top rate to 9% on income above that line.",

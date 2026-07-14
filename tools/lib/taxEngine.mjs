@@ -194,7 +194,7 @@ export function estimateQuarterly(input, stateData) {
   // (e.g. Maryland's county income tax, which every county levies). The rate is
   // editable per user via input.localRate (a fraction); it falls back to the
   // state's default when unset. Folded into stateIncomeTax so it flows through
-  // the totals and quarterly splits — MD estimates must cover state + local.
+  // the totals and quarterly splits; MD estimates must cover state + local.
   // Config: localFlatRate = { default }.
   if (stateComputable && stateData.localFlatRate) {
     const localRate = input.localRate != null
@@ -204,7 +204,7 @@ export function estimateQuarterly(input, stateData) {
   }
 
   // Optional flat contribution levied on NET self-employment income (not taxable
-  // income) and remitted with the state return — e.g. Vermont's 0.11% Child Care
+  // income) and remitted with the state return, e.g. Vermont's 0.11% Child Care
   // Contribution (Act 76), which self-employed filers owe on top of income tax.
   // Config: seContribution = { rate }.
   if (stateComputable && stateData.seContribution) {

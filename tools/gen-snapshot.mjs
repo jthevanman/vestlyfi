@@ -1,7 +1,7 @@
 /**
  * Regenerates the regression snapshot of engine outputs for every currently
  * VERIFIED (indexed) state. Run this ONLY when you have intentionally added a
- * verified state or deliberately changed the math — never to paper over an
+ * verified state or deliberately changed the math, never to paper over an
  * unexpected diff. The regression test (tools/test/regression.test.mjs) compares
  * the live engine against this file and never writes it.
  *

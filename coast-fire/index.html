@@ -602,7 +602,7 @@ function calculate() {
     return { ages, bals };
   }
 
-  // Coast threshold at each age (declining line — less needed the older you are)
+  // Coast threshold at each age (declining line; less needed the older you are)
   function coastAtAge(age) {
     return fireNumber / growthFactor(age, retireAge);
   }
@@ -627,7 +627,7 @@ function calculate() {
   const currentSim = simulate(monthlyContrib);
   const coastAge = alreadyCoasted ? currentAge : findCoastAge(currentSim);
 
-  // Dynamic scenarios — suggest 3 ages earlier than coastAge (or earlier than retireAge if no coastAge)
+  // Dynamic scenarios: suggest 3 ages earlier than coastAge (or earlier than retireAge if no coastAge)
   function buildScenarios() {
     if (alreadyCoasted) return [];
     const horizon = coastAge || retireAge;
@@ -839,7 +839,7 @@ function calculate() {
       id: 'markers',
       afterDraw(chart) {
         const { ctx: c, chartArea: { top, bottom } } = chart;
-        const meta = chart.getDatasetMeta(0); // portfolio dataset — its points hold the true pixel positions
+        const meta = chart.getDatasetMeta(0); // portfolio dataset; its points hold the true pixel positions
         const midY = (top + bottom) / 2; // dots sit at the vertical center of the chart
 
         function drawMarker({ idx, color, dotColor }) {

@@ -529,7 +529,7 @@ function parseDollar(id) {
         <div class="mode-card" id="mode-simple" onclick="selectMode('simple')">
           <span class="mc-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
           <div class="mc-title">Quick Estimate</div>
-          <div class="mc-desc">Enter your current savings, monthly contributions, and expected spending. You'll get a retirement age in under a minute — no detail needed.</div>
+          <div class="mc-desc">Enter your current savings, monthly contributions, and expected spending. You'll get a retirement age in under a minute, no detail needed.</div>
           <ul class="mc-features">
             <li class="mc-feat-yes">Current savings + monthly contributions</li>
             <li class="mc-feat-yes">Expected annual spending in retirement</li>
@@ -615,15 +615,15 @@ function parseDollar(id) {
     <div class="step" id="step-2s">
       <div class="step-tag">Retirement Spending</div>
       <h2>How much will you spend <em>each year</em> in retirement?</h2>
-      <p class="sub">Think about what your life actually costs — not what you earn today. Most retirees need 70–80% of their pre-retirement income.</p>
+      <p class="sub">Think about what your life actually costs, not what you earn today. Most retirees need 70–80% of their pre-retirement income.</p>
 
       <div class="input-group" style="margin-bottom:16px;">
         <label>Pick a starting estimate</label>
         <div class="pill-group" id="simpleSpendPills">
-          <button class="pill" data-val="30000" onclick="selectSimpleSpend(this)">$30k — Lean</button>
-          <button class="pill selected" data-val="50000" onclick="selectSimpleSpend(this)">$50k — Modest</button>
-          <button class="pill" data-val="75000" onclick="selectSimpleSpend(this)">$75k — Comfortable</button>
-          <button class="pill" data-val="100000" onclick="selectSimpleSpend(this)">$100k — Luxe</button>
+          <button class="pill" data-val="30000" onclick="selectSimpleSpend(this)">$30k (Lean)</button>
+          <button class="pill selected" data-val="50000" onclick="selectSimpleSpend(this)">$50k (Modest)</button>
+          <button class="pill" data-val="75000" onclick="selectSimpleSpend(this)">$75k (Comfortable)</button>
+          <button class="pill" data-val="100000" onclick="selectSimpleSpend(this)">$100k (Luxe)</button>
         </div>
       </div>
 
@@ -647,7 +647,7 @@ function parseDollar(id) {
     <div class="step" id="step-2a">
       <div class="step-tag">Retirement Spending</div>
       <h2>Build your <em>retirement budget</em></h2>
-      <p class="sub">Breaking spending into categories gives a far more accurate picture than a single number. Fill in what applies — leave at $0 if not relevant. All figures are monthly.</p>
+      <p class="sub">Breaking spending into categories gives a far more accurate picture than a single number. Fill in what applies; leave at $0 if not relevant. All figures are monthly.</p>
 
       <div class="spending-builder">
         <div class="spending-row">
@@ -686,7 +686,7 @@ function parseDollar(id) {
           <div class="spending-total-label">Estimated Monthly Total</div>
           <div class="spending-total-val" id="spendTotalDisplay">$0</div>
         </div>
-        <div class="spending-note" id="spendAnnualNote">Annual equivalent: <strong id="spendAnnualDisplay">$0</strong> — this is the number used in your retirement calculation.</div>
+        <div class="spending-note" id="spendAnnualNote">Annual equivalent: <strong id="spendAnnualDisplay">$0</strong>; this is the number used in your retirement calculation.</div>
       </div>
 
       <div id="err-2a" class="err">Please enter at least one spending category.</div>
@@ -717,7 +717,7 @@ function parseDollar(id) {
         </div>
         <div class="invest-card selected" onclick="selectInvest(this, 10)">
           <div class="ic-left">
-            <div class="ic-name">Average — <span style="color:var(--gold);font-size:.8rem">Suggested</span></div>
+            <div class="ic-name">Average <span style="color:var(--gold);font-size:.8rem">(Suggested)</span></div>
             <div class="ic-desc">Broad market index funds. Historical US average return.</div>
           </div>
           <div class="ic-rate">10%</div>
@@ -744,9 +744,9 @@ function parseDollar(id) {
       <div class="input-group">
         <label>Inflation Assumption</label>
         <div class="pill-group" id="inflationPills">
-          <button class="pill" data-val="2" onclick="selectPill(this,'inflationPills')">2% — Low</button>
-          <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills')">3% — Typical</button>
-          <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills')">4% — High</button>
+          <button class="pill" data-val="2" onclick="selectPill(this,'inflationPills')">2% (Low)</button>
+          <button class="pill selected" data-val="3" onclick="selectPill(this,'inflationPills')">3% (Typical)</button>
+          <button class="pill" data-val="4" onclick="selectPill(this,'inflationPills')">4% (High)</button>
         </div>
       </div>
 
@@ -769,7 +769,7 @@ function parseDollar(id) {
         <div class="loc-card" onclick="selectLocation(this, 0.45, 'Southeast Asia / Latin America (budget)')">
           <div class="loc-flag">Asia</div>
           <div class="loc-body">
-            <div class="loc-name">Southeast Asia or Latin America — Budget</div>
+            <div class="loc-name">Southeast Asia or Latin America (Budget)</div>
             <div class="loc-detail">Thailand, Vietnam, Colombia, Mexico (non-tourist areas). Low cost of living, warm climate, growing expat communities. Healthcare is affordable and often high quality.</div>
           </div>
           <div class="loc-cost">~$20–30k/yr<small>adjusted multiplier</small></div>
@@ -784,28 +784,28 @@ function parseDollar(id) {
           <div class="loc-cost">~$30–45k/yr<small>adjusted multiplier</small></div>
         </div>
 
-        <div class="loc-card" onclick="selectLocation(this, 0.8, 'US — Rural or Small Town')">
+        <div class="loc-card" onclick="selectLocation(this, 0.8, 'US Rural or Small Town')">
           <div class="loc-flag">US</div>
           <div class="loc-body">
-            <div class="loc-name">US — Rural or Small Town</div>
+            <div class="loc-name">US Rural or Small Town</div>
             <div class="loc-detail">Midwest, South, Appalachian region. Lower housing costs, no state income tax in some states (TX, FL, TN). Familiar systems, proximity to family. Less amenities than cities.</div>
           </div>
           <div class="loc-cost">~$40–55k/yr<small>adjusted multiplier</small></div>
         </div>
 
-        <div class="loc-card selected" onclick="selectLocation(this, 1.0, 'US — Mid-Size City')">
+        <div class="loc-card selected" onclick="selectLocation(this, 1.0, 'US Mid-Size City')">
           <div class="loc-flag">US</div>
           <div class="loc-body">
-            <div class="loc-name">US — Mid-Size City <span style="font-size:.72rem;color:var(--gold)">· Default</span></div>
+            <div class="loc-name">US Mid-Size City <span style="font-size:.72rem;color:var(--gold)">· Default</span></div>
             <div class="loc-detail">Denver, Austin, Nashville, Phoenix, Raleigh. Urban amenities without coastal price tags. Strong job markets if semi-retired. Good baseline for calculation.</div>
           </div>
           <div class="loc-cost">~$55–75k/yr<small>adjusted multiplier</small></div>
         </div>
 
-        <div class="loc-card" onclick="selectLocation(this, 1.2, 'US — Major Metro')">
+        <div class="loc-card" onclick="selectLocation(this, 1.2, 'US Major Metro')">
           <div class="loc-flag">US</div>
           <div class="loc-body">
-            <div class="loc-name">US — Major Metro</div>
+            <div class="loc-name">US Major Metro</div>
             <div class="loc-detail">New York, Los Angeles, Chicago, Boston, Seattle, Miami. High housing costs, but world-class culture, healthcare, and transport. Requires a larger portfolio.</div>
           </div>
           <div class="loc-cost">~$75–110k/yr<small>adjusted multiplier</small></div>
@@ -832,7 +832,7 @@ function parseDollar(id) {
     <div class="step" id="step-5a">
       <div class="step-tag">Other Income Sources</div>
       <h2>Will you have income <em>beyond your portfolio?</em></h2>
-      <p class="sub">Any income that reduces how much your investments need to cover. This is separate from your investment returns — it's money coming in from other sources.</p>
+      <p class="sub">Any income that reduces how much your investments need to cover. This is separate from your investment returns; it's money coming in from other sources.</p>
 
       <div class="other-income-wrap">
         <div class="income-chips">
@@ -855,7 +855,7 @@ function parseDollar(id) {
         </div>
 
         <div class="income-note">
-          <strong>⚠ Important:</strong> Do not include returns from your investment portfolio here. This field is for income from completely separate sources — rental income, a pension, Social Security, part-time work, etc. Your investment portfolio withdrawals are calculated separately using the 4% rule.
+          <strong>⚠ Important:</strong> Do not include returns from your investment portfolio here. This field is for income from completely separate sources: rental income, a pension, Social Security, part-time work, etc. Your investment portfolio withdrawals are calculated separately using the 4% rule.
         </div>
       </div>
 
@@ -868,11 +868,11 @@ function parseDollar(id) {
     <!-- ══ STEP 3S: Simple calculate ══ -->
     <div class="step" id="step-3s">
       <div class="step-tag">Final Step</div>
-      <h2>Almost there — <em>one last thing</em></h2>
+      <h2>Almost there: <em>one last thing</em></h2>
       <p class="sub">A simple investment assumption to complete your estimate. You can adjust this later.</p>
 
       <div class="glide-note">
-        <strong>Glide path is built in:</strong> Your selected rate applies while you're investing. The calculator automatically tapers it down to 5% as you approach retirement — no manual adjustment needed.
+        <strong>Glide path is built in:</strong> Your selected rate applies while you're investing. The calculator automatically tapers it down to 5% as you approach retirement, no manual adjustment needed.
       </div>
 
       <div class="input-group">
@@ -883,7 +883,7 @@ function parseDollar(id) {
             <div class="ic-rate">6%</div>
           </div>
           <div class="invest-card selected" onclick="selectSimpleInvest(this, 10)">
-            <div class="ic-left"><div class="ic-name">Average <span style="color:var(--gold);font-size:.78rem">— Suggested</span></div><div class="ic-desc">Broad market index funds. Historical US average.</div></div>
+            <div class="ic-left"><div class="ic-name">Average <span style="color:var(--gold);font-size:.78rem">(Suggested)</span></div><div class="ic-desc">Broad market index funds. Historical US average.</div></div>
             <div class="ic-rate">10%</div>
           </div>
         </div>
@@ -892,9 +892,9 @@ function parseDollar(id) {
       <div class="input-group" style="margin-top:22px;">
         <label>Expected Inflation Rate</label>
         <div class="pill-group" id="simpleInflationPills">
-          <button class="pill" data-val="2" onclick="selectSimpleInflation(this)">2% — Low</button>
-          <button class="pill selected" data-val="3" onclick="selectSimpleInflation(this)">3% — Typical</button>
-          <button class="pill" data-val="4" onclick="selectSimpleInflation(this)">4% — High</button>
+          <button class="pill" data-val="2" onclick="selectSimpleInflation(this)">2% (Low)</button>
+          <button class="pill selected" data-val="3" onclick="selectSimpleInflation(this)">3% (Typical)</button>
+          <button class="pill" data-val="4" onclick="selectSimpleInflation(this)">4% (High)</button>
         </div>
       </div>
 
@@ -917,7 +917,7 @@ function parseDollar(id) {
 <!-- SEO CONTENT -->
 <div class="seo-section">
   <div class="seo-body">
-    <p>Most people think about retirement in terms of age, not numbers. The reality is that retirement has nothing to do with how old you are. It happens when your savings can generate enough income to cover your expenses indefinitely. Get there at 40 or at 70 — the math is the same either way.</p>
+    <p>Most people think about retirement in terms of age, not numbers. The reality is that retirement has nothing to do with how old you are. It happens when your savings can generate enough income to cover your expenses indefinitely. Get there at 40 or at 70; the math is the same either way.</p>
     <p>Your savings rate is the single biggest lever you have. It determines both how fast your portfolio grows and how much income you need to replace when you stop working. Small increases in your savings rate can shave years off your retirement timeline in ways that feel counterintuitive until you run the numbers.</p>
     <p>Social Security is the other half of the picture. Once you have a retirement age in mind, use our <a href="/social-security-break-even/" style="color:#e8c97a;text-decoration:none;">Social Security Break-Even Calculator</a> to see whether claiming at 62, 67, or 70 collects more over your lifetime.</p>
   </div>
@@ -969,11 +969,11 @@ function parseDollar(id) {
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">The 4% Safe Withdrawal Rule</strong><br>
       Your FIRE number = Annual Retirement Spending ÷ 0.04 (i.e., 25× your annual expenses). This originates from the 1998 Trinity Study, which found a 4% annual withdrawal rate had a ~96% historical success rate over 30-year periods. For retirements longer than 30 years, a 3.5% rate is more conservative.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Real vs. Nominal Returns</strong><br>
-      All projections use inflation-adjusted (real) returns — your expected return minus the inflation rate you select. This means all dollar figures shown are in today's purchasing power.</p>
+      All projections use inflation-adjusted (real) returns: your expected return minus the inflation rate you select. This means all dollar figures shown are in today's purchasing power.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Monthly Compounding</strong><br>
       Contributions are compounded monthly to reflect how most people actually invest (payroll deductions, regular transfers), rather than a single annual lump sum.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Location Multipliers</strong><br>
-      Cost-of-living adjustments are based on regional spending research and widely referenced expat retirement data. These are directional estimates — actual costs vary by city, lifestyle, exchange rates, and year.</p>
+      Cost-of-living adjustments are based on regional spending research and widely referenced expat retirement data. These are directional estimates; actual costs vary by city, lifestyle, exchange rates, and year.</p>
       <p style="margin-bottom:0;color:rgba(245,240,232,0.3);font-size:0.78rem;">This calculator is for educational and illustrative purposes only. It does not account for taxes, Social Security benefit timing, sequence-of-returns risk, healthcare cost inflation, or unexpected life events. Always consult a certified financial planner before making major retirement decisions.</p>
     </div>
   </div>
@@ -989,7 +989,7 @@ function parseDollar(id) {
       <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers — not a sales pitch.</p>
+      <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
       <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
@@ -1005,7 +1005,7 @@ function parseDollar(id) {
     </div>
     <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Financial Data Is Collected</strong><br>
-      VestlyFi does not collect, store, or transmit any of the numbers you enter into this calculator. All calculations run entirely in your browser. When you close or refresh the page, your inputs are gone — we never see them.</p>
+      VestlyFi does not collect, store, or transmit any of the numbers you enter into this calculator. All calculations run entirely in your browser. When you close or refresh the page, your inputs are gone; we never see them.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">No Account Required</strong><br>
       You do not need to create an account, provide an email address, or share any personal information to use VestlyFi.</p>
       <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Affiliate Links</strong><br>
@@ -1032,7 +1032,7 @@ const S = {
   investRate: 10,
   inflationRate: 3,
   locationMultiplier: 1.0,
-  locationName: 'US — Mid-Size City',
+  locationName: 'US Mid-Size City',
   otherIncome: 0,
   isCustomInvest: false
 };
@@ -1054,7 +1054,7 @@ const SIMPLE_STEPS = ['0','1','2s','3s','results'];
 const ADVANCED_STEPS = ['0','1','2a','3a','4a','5a','results'];
 
 function updateProgress() {
-  // Progress bar removed from nav — no-op
+  // Progress bar removed from nav; no-op
 }
 
 // ═══════════════════════════════════════════════════
@@ -1252,7 +1252,7 @@ function calculateResults() {
   }
 
   // Single simulation: iterate year by year, glide path converges on actual retire age.
-  // We run it up to 3 times — each pass uses the previous pass's found retire age
+  // We run it up to 3 times; each pass uses the previous pass's found retire age
   // to set the glide target, until it stabilises (usually 2 passes).
   function runSim(extraMonthly = 0, glideTarget = 65) {
     let bal = currentSavings;
@@ -1311,7 +1311,7 @@ function calculateResults() {
   const surplusOrGap = projAtTarget - fireNumber;
   const trackPct = Math.min(100, (projAtTarget / fireNumber) * 100);
 
-  // Build drawdown phase — 2% real return in retirement (conservative bond-heavy mix)
+  // Build drawdown phase: 2% real return in retirement (conservative bond-heavy mix)
   const RETIREMENT_REAL_RETURN = 0.02;
   const drawdownLabels = [], drawdownData = [];
   let runOutAge = null;
@@ -1325,7 +1325,7 @@ function calculateResults() {
     }
   }
 
-  // needed65 — binary search for monthly contrib that hits fireNumber by 65
+  // needed65: binary search for monthly contrib that hits fireNumber by 65
   let needed65 = 0;
   if (currentAge < 65) {
     let lo = 0, hi = 50000;
@@ -1339,7 +1339,7 @@ function calculateResults() {
     needed65 = Math.round((lo + hi) / 2);
   }
 
-  // ageWith500More — converged sim with extra $500/mo
+  // ageWith500More: converged sim with extra $500/mo
   let ageWith500More = null;
   {
     let gt = glideTarget;
@@ -1384,7 +1384,7 @@ function renderResults(r) {
   const insights = [];
 
   if (canRetire) {
-    insights.push({ icon: '→', text: `You'll hit your FIRE number of <strong>${fmt(fireNumber)}</strong> ${yearsToRetire > 0 ? `in <strong>${yearsToRetire} years</strong>` : 'now'} — enough to cover your adjusted annual spending of <strong>${fmt(adjAnnualSpend)}</strong>${otherIncome > 0 ? ` (after $${Math.round(otherIncome/12).toLocaleString()}/mo in other income)` : ''}.` });
+    insights.push({ icon: '→', text: `You'll hit your FIRE number of <strong>${fmt(fireNumber)}</strong> ${yearsToRetire > 0 ? `in <strong>${yearsToRetire} years</strong>` : 'now'}, enough to cover your adjusted annual spending of <strong>${fmt(adjAnnualSpend)}</strong>${otherIncome > 0 ? ` (after $${Math.round(otherIncome/12).toLocaleString()}/mo in other income)` : ''}.` });
   } else {
     insights.push({ icon: '→', text: `At your current contribution rate, your portfolio won't reach your FIRE number of <strong>${fmt(fireNumber)}</strong> by age 100. You'll need to increase contributions, reduce planned spending, or both.` });
   }
@@ -1395,11 +1395,11 @@ function renderResults(r) {
   }
 
   if (needed65 > 0 && needed65 > S.monthlyContrib * 1.5) {
-    insights.push({ icon: '→', text: `To retire at the traditional age of 65 without changing anything else, you'd need to contribute <strong>${fmt(needed65)}/month</strong> — compared to your current ${fmt(S.monthlyContrib)}/month.` });
+    insights.push({ icon: '→', text: `To retire at the traditional age of 65 without changing anything else, you'd need to contribute <strong>${fmt(needed65)}/month</strong>, compared to your current ${fmt(S.monthlyContrib)}/month.` });
   }
 
   if (wr > 0 && wr <= 3.5) {
-    insights.push({ icon: '→', text: `Your projected withdrawal rate is <strong>${wr.toFixed(1)}%</strong> — well under the 4% safe withdrawal threshold. Your portfolio is very likely to last 30+ years.` });
+    insights.push({ icon: '→', text: `Your projected withdrawal rate is <strong>${wr.toFixed(1)}%</strong>, well under the 4% safe withdrawal threshold. Your portfolio is very likely to last 30+ years.` });
   } else if (wr > 4 && wr <= 5) {
     insights.push({ icon: '→', text: `Your withdrawal rate of <strong>${wr.toFixed(1)}%</strong> is slightly above the classic 4% rule. Consider building a small buffer or reducing planned spending by 10–15%.` });
   } else if (wr > 5) {
@@ -1415,7 +1415,7 @@ function renderResults(r) {
   const upgradeBlock = S.mode === 'simple' ? `
     <div class="upgrade-prompt">
       <h3>Want a more accurate number?</h3>
-      <p>Your quick estimate is based on a few inputs. Adding more detail — like your spending breakdown, where you'll live, and other income — can shift your retirement age by 5–10 years.</p>
+      <p>Your quick estimate is based on a few inputs. Adding more detail (like your spending breakdown, where you'll live, and other income) can shift your retirement age by 5–10 years.</p>
       <div class="upgrade-items">
         <span class="upgrade-item">Spending breakdown</span>
         <span class="upgrade-item">Location adjustment</span>
@@ -1431,13 +1431,13 @@ function renderResults(r) {
   let runwayHtml = '';
   if (canRetire) {
     const runOutText = runOutAge
-      ? `At your planned spending of <strong>${fmt(netAnnualNeeded)}/year</strong>, your portfolio runs out around age <strong>${runOutAge}</strong> — roughly <strong>${runOutAge - retireAge} years</strong> into retirement.`
+      ? `At your planned spending of <strong>${fmt(netAnnualNeeded)}/year</strong>, your portfolio runs out around age <strong>${runOutAge}</strong>, roughly <strong>${runOutAge - retireAge} years</strong> into retirement.`
       : `At your planned spending of <strong>${fmt(netAnnualNeeded)}/year</strong>, your portfolio is projected to last through age <strong>110+</strong> without running out.`;
 
     const fourPctColor = fourPctAnnual >= netAnnualNeeded ? 'green' : 'red';
     const fourPctNote = fourPctAnnual >= netAnnualNeeded
       ? `This comfortably covers your planned spending of ${fmt(netAnnualNeeded)}/year.`
-      : `Your planned spending of ${fmt(netAnnualNeeded)}/year is <strong>${fmt(netAnnualNeeded - fourPctAnnual)}/year more</strong> than this — consider reducing expenses or building a larger portfolio.`;
+      : `Your planned spending of ${fmt(netAnnualNeeded)}/year is <strong>${fmt(netAnnualNeeded - fourPctAnnual)}/year more</strong> than this; consider reducing expenses or building a larger portfolio.`;
 
     runwayHtml = `
       <div class="runway-section">
@@ -1540,7 +1540,7 @@ function renderResults(r) {
 
     <div class="aff-section">
       <h3>Ready to start building your portfolio?</h3>
-      <p>These platforms offer low-cost index fund access — the backbone of most early retirement strategies.</p>
+      <p>These platforms offer low-cost index fund access, the backbone of most early retirement strategies.</p>
       <div class="aff-links">
         <a class="aff-link" href="https://www.fidelity.com" target="_blank">Fidelity ↗</a>
         <a class="aff-link" href="https://www.vanguard.com" target="_blank">Vanguard ↗</a>
@@ -1557,10 +1557,10 @@ function renderResults(r) {
     <button class="btn-restart" onclick="restartWizard()">← Start Over with New Inputs</button>
 
     <div class="glide-note" style="margin-bottom:20px;">
-      <strong>About this projection:</strong> Unlike most retirement calculators, this estimate uses a glide path — your assumed return of <strong>${investRate}%</strong> gradually decreases to <strong>5%</strong> as you approach retirement, reflecting a natural shift from stocks to bonds and stable assets. The dots on the chart mark where the effective return rate changes. In retirement, a 5% rate is used assuming a capital-preservation portfolio.
+      <strong>About this projection:</strong> Unlike most retirement calculators, this estimate uses a glide path: your assumed return of <strong>${investRate}%</strong> gradually decreases to <strong>5%</strong> as you approach retirement, reflecting a natural shift from stocks to bonds and stable assets. The dots on the chart mark where the effective return rate changes. In retirement, a 5% rate is used assuming a capital-preservation portfolio.
     </div>
 
-    <p class="disclaimer">For educational purposes only. Not financial advice. Projections use simplified assumptions — actual results vary. Consult a qualified financial advisor before making investment decisions.</p>
+    <p class="disclaimer">For educational purposes only. Not financial advice. Projections use simplified assumptions; actual results vary. Consult a qualified financial advisor before making investment decisions.</p>
   `;
 
   document.getElementById('resultsContent').innerHTML = html;
@@ -1780,7 +1780,7 @@ function restartWizard() {
   Object.assign(S, {
     mode: 'advanced', currentAge: null, currentSavings: null, annualIncome: null,
     monthlyContrib: null, annualSpend: 50000, investRate: 10, inflationRate: 3,
-    locationMultiplier: 1.0, locationName: 'US — Mid-Size City', otherIncome: 0, isCustomInvest: false
+    locationMultiplier: 1.0, locationName: 'US Mid-Size City', otherIncome: 0, isCustomInvest: false
   });
   document.getElementById('resultsContent').innerHTML = '';
   showStep(0);
@@ -1910,7 +1910,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

@@ -400,7 +400,7 @@ let currentUser = null;
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session?.user) {
-    // Not logged in — redirect to net worth page which has the auth UI
+    // Not logged in; redirect to net worth page which has the auth UI
     window.location.href = '/net-worth/';
     return;
   }
@@ -451,7 +451,7 @@ async function loadSnapshot() {
     entries = data || [];
   } catch (e) { console.error(e); return; }
 
-  if (!entries.length) return; // no data — leave snapshot hidden
+  if (!entries.length) return; // no data; leave snapshot hidden
 
   // Build monthly snapshots (mirrors the net worth tracker's logic)
   const allMonths = [...new Set(entries.map(e => dateToMonthStr(e.date)))].sort();
@@ -682,7 +682,7 @@ async function submitBugReport() {
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks — we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
   } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }

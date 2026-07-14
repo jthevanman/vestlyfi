@@ -40,8 +40,8 @@
   "selfEmploymentNotes": "Connecticut applies 2%-6.99% to your federal AGI after a personal exemption that phases out as income rises. For higher incomes, Connecticut's benefit-recapture (its 2% phase-out add-back and tax recapture) adds tax that this estimate does not model, so above roughly $105,000 your actual Connecticut tax may be somewhat higher.",
   "uniqueFacts": [
     "Connecticut's income tax starts at 2% and tops out at 6.99%, with a personal exemption that fully phases out by $45,000 of income (single) / $71,000 (joint).",
-    "Connecticut recaptures the benefit of its lowest rates for higher earners (a 2% phase-out add-back and a tax recapture), which this estimate does not model — so above roughly $105,000 your real tax can be higher.",
-    "Connecticut cut its two lowest rates in 2024, to 2% and 4.5% — the first income-tax rate cut since the state's tax began."
+    "Connecticut recaptures the benefit of its lowest rates for higher earners (a 2% phase-out add-back and a tax recapture), which this estimate does not model, so above roughly $105,000 your real tax can be higher.",
+    "Connecticut cut its two lowest rates in 2024, to 2% and 4.5%, the first income-tax rate cut since the state's tax began."
   ],
   "sources": [
     "https://portal.ct.gov/-/media/drs/forms/2025/income/ct-1040-tcs_1225.pdf"

@@ -5,7 +5,7 @@
  */
 import { estimateQuarterly } from './taxEngine.mjs';
 
-/** Fixed representative scenarios. Do not reorder/remove — snapshot keys depend on order. */
+/** Fixed representative scenarios. Do not reorder/remove; snapshot keys depend on order. */
 export const SCENARIOS = [
   { selfEmploymentIncome: 80000, filingStatus: 'single' },
   { selfEmploymentIncome: 150000, filingStatus: 'married' },
