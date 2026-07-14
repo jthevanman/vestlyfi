@@ -107,9 +107,8 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
-
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0a0f1e; }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
@@ -147,7 +146,7 @@
   @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
 
   .pill-group { display:flex; gap:9px; flex-wrap:wrap; }
-  .pill { padding:9px 18px; border-radius:100px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
+  .pill { padding:9px 18px; border-radius:4px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
   .pill:hover { border-color:var(--gold); color:var(--cream); }
   .pill.selected { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
 
@@ -161,7 +160,7 @@
 
   /* RESULTS */
   .result-hero { text-align:center; padding:36px 0 32px; border-bottom:1px solid var(--border); margin-bottom:32px; }
-  .result-badge { display:inline-block; padding:5px 14px; border-radius:100px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:16px; }
+  .result-badge { display:inline-block; padding:5px 14px; border-radius:4px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:16px; }
   .badge-green { background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.25); }
   .badge-gold { background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.25); }
   .badge-red { background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.25); }

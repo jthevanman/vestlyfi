@@ -89,15 +89,7 @@
     min-height: 100vh;
   }
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 50% at 10% 0%, rgba(201,168,76,0.07) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 60% at 90% 100%, rgba(201,168,76,0.04) 0%, transparent 55%);
-    pointer-events: none; z-index: 0;
-  }
-
+  
   /* NAV */
   nav {
     position: relative; z-index: 10;
@@ -105,8 +97,7 @@
     height: 64px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border-soft);
-    background: rgba(10,15,30,0.8);
-    backdrop-filter: blur(12px);
+    background:#0a0f1e;
     position: sticky; top: 0;
   }
 
@@ -143,7 +134,7 @@
     font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--gold); font-weight: 500;
     margin-bottom: 20px;
-    padding: 6px 14px; border-radius: 100px;
+    padding: 6px 14px; border-radius:4px;
     border: 1px solid var(--border);
     background: var(--gold-dim);
   }
@@ -189,7 +180,6 @@
     display: flex; flex-direction: column;
     transition: all 0.22s cubic-bezier(.4,0,.2,1);
     position: relative; overflow: hidden;
-    animation: fadeUp 0.5s cubic-bezier(.4,0,.2,1) both;
   }
 
   .tool-card::before {
@@ -206,18 +196,6 @@
   }
 
   .tool-card:hover::before { opacity: 1; }
-
-  .tool-card:nth-child(1) { animation-delay: 0.05s; }
-  .tool-card:nth-child(2) { animation-delay: 0.1s; }
-  .tool-card:nth-child(3) { animation-delay: 0.15s; }
-  .tool-card:nth-child(4) { animation-delay: 0.2s; }
-  .tool-card:nth-child(5) { animation-delay: 0.25s; }
-  .tool-card:nth-child(6) { animation-delay: 0.3s; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
 
   .tool-card.featured {
     border-color: var(--border);
@@ -238,7 +216,7 @@
 
   .card-badge {
     font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 4px 10px; border-radius: 100px; font-weight: 500;
+    padding: 4px 10px; border-radius:4px; font-weight: 500;
   }
   .badge-popular { background: var(--gold-dim); color: var(--gold-light); border: 1px solid var(--border); }
   .badge-soon { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border-soft); }
@@ -260,7 +238,7 @@
 
   .card-tag {
     font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 3px 9px; border-radius: 100px; font-weight: 500;
+    padding: 3px 9px; border-radius:4px; font-weight: 500;
   }
   .tag-fire    { color: var(--cat-fire-text);    background: var(--cat-fire);    border: 1px solid var(--cat-fire-border); }
   .tag-invest  { color: var(--cat-invest-text);  background: var(--cat-invest);  border: 1px solid var(--cat-invest-border); }

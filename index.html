@@ -81,14 +81,6 @@ body {
   overflow-x: hidden;
 }
 
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 45% at 85% 105%, rgba(201,168,76,0.04) 0%, transparent 55%);
-  pointer-events:none; z-index:0;
-}
 
 /* ── NAV ── */
 nav {
@@ -96,7 +88,7 @@ nav {
   padding:0 40px; height:64px;
   display:flex; align-items:center; justify-content:space-between;
   border-bottom:1px solid var(--border-soft);
-  background:rgba(10,15,30,0.88); backdrop-filter:blur(16px);
+  background:#0a0f1e;
 }
 
 .nav-logo {
@@ -121,7 +113,6 @@ nav {
   position:relative; z-index:1;
   max-width:680px; margin:0 auto;
   padding:80px 40px 0;
-  opacity:0; animation:fadeUp 0.55s ease 0.1s forwards;
 }
 
 .prompt-sentence {
@@ -275,7 +266,6 @@ nav {
   position:relative; z-index:1;
   max-width:840px; margin:0 auto;
   padding:64px 40px 0;
-  opacity:0; animation:fadeUp 0.5s ease 0.3s forwards;
 }
 .section-intro-rule {
   display:flex; align-items:center; gap:16px;
@@ -328,7 +318,7 @@ nav {
 .card-tag {
   font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase;
   font-weight:500; display:inline-block;
-  padding:3px 8px; border-radius:100px; width:fit-content;
+  padding:3px 8px; border-radius:4px; width:fit-content;
 }
 .tag-nw   { color:#4caf7d; background:rgba(76,175,125,0.1);  border:1px solid rgba(76,175,125,0.18); }
 .tag-calc { color:#60a5fa; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
@@ -388,11 +378,6 @@ footer {
 .modal-actions { display:flex; gap:10px; margin-top:16px; }
 .modal-cancel { padding:12px 18px; background:none; border:1px solid var(--border-soft); color:rgba(245,240,232,0.35); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; }
 .modal-submit { flex:1; padding:12px; background:var(--gold); color:var(--navy); border:none; border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; }
-
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
-}
 
 @media(max-width:640px) {
   nav { padding:0 20px; }

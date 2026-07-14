@@ -41,17 +41,13 @@
     overflow-x: hidden;
   }
 
-  body::before {
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.07) 0%, transparent 70%);
-  }
-
+  
   /* ── NAV ── */
   nav {
     position:sticky; top:0; z-index:100;
     display:flex; justify-content:space-between; align-items:center;
     padding:0 40px; height:56px;
-    background:rgba(10,15,30,0.92); backdrop-filter:blur(12px);
+    background:#0a0f1e;
     border-bottom:1px solid var(--border-soft);
   }
   .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; letter-spacing:0.01em; }

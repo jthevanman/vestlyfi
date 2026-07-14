@@ -92,20 +92,13 @@
     background: var(--navy); color: var(--cream);
     font-family: 'Outfit', sans-serif; font-weight: 300; min-height: 100vh;
   }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 50% at 10% 0%, rgba(201,168,76,0.07) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 60% at 90% 100%, rgba(201,168,76,0.04) 0%, transparent 55%);
-    pointer-events: none; z-index: 0;
-  }
-
+  
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 50; padding: 0 40px; height: 64px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border-soft);
-    background: rgba(10,15,30,0.85); backdrop-filter: blur(12px);
+    background:#0a0f1e;
   }
   .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; }
   .nav-logo:hover { opacity:.8; }
