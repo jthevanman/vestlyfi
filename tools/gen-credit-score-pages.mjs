@@ -459,7 +459,7 @@ ${boostHtml}
     <h2>Every credit score, same math</h2>
     <p>Rules and pricing change at 580, 620, 640, and every 20 points beyond; see <a href="/house-affordability/${PILLAR_SLUG}/">what credit score you need to buy a house</a> for the full map. Pick your exact score, or use the <a href="/house-affordability/">main affordability calculator</a> if credit isn't your constraint:</p>
     ${chipsHtml(score)}
-    <p>Credit is only half the equation; income sets the ceiling. See <a href="/house-affordability/#by-salary">how much house you can afford at your salary</a>, from $30k to $300k a year.</p>
+    <p>Credit is only half the equation; income sets the ceiling. See <a href="/house-affordability/#by-salary">how much house you can afford at your salary</a>, from $30k to $300k a year. Buying wheels first? See <a href="/car-affordability/${score}-credit-score/">how much car you can afford with a ${score} credit score</a>.</p>
   </div>
   ${faqSectionHtml(faqs)}
 </div>

@@ -205,7 +205,7 @@ export function faqSchema(faqs) {
   };
 }
 
-function webAppSchema(meta, name) {
+export function webAppSchema(meta, name) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
