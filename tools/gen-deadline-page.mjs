@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadIndex } from './lib/getStateData.mjs';
-import { head, NAV, FOOTER, crumbsHtml, breadcrumbSchema, faqSchema, esc, jsonld } from './lib/template.mjs';
+import { head, NAV, FOOTER, crumbsHtml, breadcrumbSchema, faqSchema, esc, jsonld, reminderWidget } from './lib/template.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -140,6 +140,8 @@ function build() {
     </table>
     <p>Note the uneven quarters: they are an IRS quirk, not a typo. The second "quarter" covers only two months (April and May) and the fourth covers four. If your income is seasonal, that mismatch is exactly what the annualized income method on Form 2210 exists to fix.</p>
   </div>
+
+  ${reminderWidget({ source: 'deadlines-page' })}
 
   <div class="section">
     <h2>What missing a date actually costs</h2>

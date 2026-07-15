@@ -225,6 +225,18 @@ select option{background:#111827;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
 .disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
+.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
+.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
+.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
+.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
+.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
+.reminder-form input[type=email]:focus{border-color:var(--gold);}
+.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
+.reminder-btn:hover{transform:translateY(-1px);}
+.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
+.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
+.reminder-msg.ok{color:var(--green);}
+.reminder-msg.err{color:var(--red);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -301,6 +313,49 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <p>The IRS asks you to pay these in four installments, generally due April 15, June 15, September 15, and the following January 15. Nevada funds itself largely through sales and gaming taxes rather than an income tax.</p>
     <p>You avoid an IRS underpayment penalty by meeting a &quot;safe harbor&quot;: paying at least 90% of this year's tax, or 100% of last year's tax (110% if your income is higher). You can pay online at IRS Direct Pay or through EFTPS. Since there is no Nevada return to file, the calculator above shows your federal quarterly amounts only. You can pay online at the <a href="https://www.irs.gov/" target="_blank" rel="noopener">Internal Revenue Service (federal only)</a> (<a href="https://www.irs.gov/payments" target="_blank" rel="noopener">payment portal</a>).</p>
   </div>
+
+  <div class="reminder-box">
+  <div class="reminder-title">Get a nudge before each IRS deadline</div>
+  <p class="reminder-sub">One short email 7 days and 1 day before every federal estimated-tax due date. No account needed; unsubscribe anytime.</p>
+  <form class="reminder-form" id="reminderForm">
+    <input type="email" id="reminderEmail" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
+    <input type="text" id="reminderWebsite" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <button type="submit" class="reminder-btn">Remind me</button>
+  </form>
+  <div class="reminder-msg" id="reminderMsg" role="status"></div>
+</div>
+<script>
+(function(){
+  var f=document.getElementById('reminderForm');
+  if(!f)return;
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=document.getElementById('reminderEmail').value.trim();
+    var msg=document.getElementById('reminderMsg');
+    var btn=f.querySelector('button');
+    btn.disabled=true;msg.textContent='';
+    fetch('https://bgbxninvpfhizjalicee.supabase.co/functions/v1/subscribe-deadline-reminders',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,state_slug:"nevada",source:"state-page",website:document.getElementById('reminderWebsite').value})
+    }).then(function(r){return r.json();}).then(function(d){
+      if(d&&d.ok){
+        f.style.display='none';
+        msg.className='reminder-msg ok';
+        msg.textContent="You're on the list. The first reminder lands a week before the next deadline.";
+        if(window.gtag)gtag('event','deadline_reminder_subscribe',{source:"state-page"});
+      }else{
+        msg.className='reminder-msg err';
+        msg.textContent=(d&&d.error==='invalid email')?'That email does not look right.':'Something went wrong. Try again in a minute.';
+        btn.disabled=false;
+      }
+    }).catch(function(){
+      msg.className='reminder-msg err';
+      msg.textContent='Something went wrong. Try again in a minute.';
+      btn.disabled=false;
+    });
+  });
+})();
+</script>
 
   <div class="section">
     <h2>Nevada Estimated Tax FAQ</h2>
