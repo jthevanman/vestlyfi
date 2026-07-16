@@ -86,6 +86,14 @@
     },
     {
       "@type": "Question",
+      "name": "How much do I need to Coast FIRE at 30?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Using the calculator's defaults (retirement at 65, a 7% real return, the 4% rule, glide path on): about $113,000 invested at age 30 if you'll spend $40,000 a year in retirement, $142,000 for $50,000 a year, and $170,000 for $60,000 a year. Every 5 years you wait adds roughly 40% to the number, because you lose your highest-compounding years."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "What is a glide path and why does it matter?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -196,6 +204,11 @@
   .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
   .seo-body h2 { font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:500; color:var(--cream); margin:28px 0 12px; }
   .seo-body h2:first-child { margin-top:0; }
+  .coast-table { width:100%; border-collapse:collapse; margin:16px 0 10px; font-size:0.85rem; }
+  .coast-table th { padding:10px 8px; border-bottom:1px solid var(--border-soft); color:var(--gold); text-align:right; font-weight:600; font-size:0.78rem; letter-spacing:0.02em; }
+  .coast-table th:first-child { text-align:left; }
+  .coast-table td { padding:10px 8px; border-bottom:1px solid var(--border-soft); color:var(--cream); text-align:right; white-space:nowrap; }
+  .coast-table td:first-child { text-align:left; color:var(--cream-dim); }
   .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
   .seo-body strong { color:var(--cream-dim); font-weight:500; }
   .related-tools { margin-top:36px; padding-top:28px; border-top:1px solid var(--border-soft); }
@@ -414,7 +427,20 @@
     <p>A fixed rate calculator quietly overstates your ending balance because it assumes you'll keep earning stock like returns even at 64. A <strong>glide path</strong> tapers your expected return as retirement approaches, so the projection reflects how money is actually managed near the finish line. The result is a more honest, usually slightly higher, Coast FIRE number, which is the safer number to plan around.</p>
 
     <h2>A worked example</h2>
-    <p>Say you're 30, want to fully retire at 60, and expect to spend $50,000 a year in retirement. With a fixed 7% real return, you might need roughly $130,000 invested today to coast. Taper the return as you move through your fifties and the required amount today rises, because your money grows a little more slowly in the final decade. That difference is exactly the cushion a fixed rate tool hides from you. Try your own numbers above to see how sensitive your Coast FIRE number is to each input.</p>
+    <p>Say you're 30, want to fully retire at 60, and expect to spend $50,000 a year in retirement. With a fixed 7% real return, you'd need about <strong>$164,000</strong> invested today to coast. Switch on the glide path, which tapers returns over your final decade the way target-date funds do, and the honest number rises to about <strong>$199,000</strong>. That $35,000 difference is exactly the cushion a fixed rate tool hides from you. Try your own numbers above to see how sensitive your Coast FIRE number is to each input.</p>
+
+    <h2>Coast FIRE numbers by age</h2>
+    <p>Benchmarks using the calculator's defaults: retirement at 65, a 7% real return (10% nominal, 3% inflation), the 4% rule, and the glide path on. Each cell is what you'd need invested today to stop contributing entirely:</p>
+    <table class="coast-table">
+      <tr><th>Your age</th><th>$40k/yr spending</th><th>$50k/yr spending</th><th>$60k/yr spending</th></tr>
+      <tr><td>25</td><td>$81,000</td><td>$101,000</td><td>$121,000</td></tr>
+      <tr><td>30</td><td>$113,000</td><td>$142,000</td><td>$170,000</td></tr>
+      <tr><td>35</td><td>$159,000</td><td>$199,000</td><td>$239,000</td></tr>
+      <tr><td>40</td><td>$223,000</td><td>$279,000</td><td>$335,000</td></tr>
+      <tr><td>45</td><td>$313,000</td><td>$391,000</td><td>$470,000</td></tr>
+      <tr><td>50</td><td>$439,000</td><td>$549,000</td><td>$659,000</td></tr>
+    </table>
+    <p>The pattern to notice: every 5 years you wait roughly adds 40% to the number, because you lose the highest-compounding years. Hitting Coast FIRE at 25 takes about a quarter of what it takes at 45. For a deeper cut by your exact age, see <a href="/coast-fire-by-age/">Coast FIRE by age</a>.</p>
   </div>
 
   <div class="related-tools">
@@ -445,6 +471,10 @@
     <div class="faq-item">
       <div class="faq-q">What return rate should I use for Coast FIRE calculations?</div>
       <div class="faq-a">Most people use around 7% annually as a real return after inflation for a diversified index fund portfolio. Using a lower number builds in a cushion. If markets perform better than expected, you hit your number sooner than projected.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much do I need to Coast FIRE at 30?</div>
+      <div class="faq-a">Using the calculator's defaults (retirement at 65, a 7% real return, the 4% rule, glide path on): about $113,000 invested at age 30 if you'll spend $40,000 a year in retirement, $142,000 for $50,000 a year, and $170,000 for $60,000 a year. Every 5 years you wait adds roughly 40% to the number, because you lose your highest-compounding years.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">What is a glide path and why does it matter?</div>

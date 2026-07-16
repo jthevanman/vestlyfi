@@ -70,6 +70,22 @@
     },
     {
       "@type": "Question",
+      "name": "How much house can I afford with a 600 credit score and a $60,000 salary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "About $166,000 with no other monthly debts, assuming the FHA minimum 3.5% down and an estimated 7.15% rate on a 30-year loan. At $50,000 a year it's about $139,000, and at $100,000 about $277,000. Every $100/month of existing debt payments (car, student loans, card minimums) cuts roughly $15,000 off your max price."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What DTI do I need for a mortgage with a 600 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "FHA's standard limits are 31% front-end (housing cost vs. income) and 43% back-end (all debts vs. income), and automated underwriting can approve up to 56.9% back-end with strong compensating factors like cash reserves or a bigger down payment. At a 600 score, expect less DTI flexibility than higher-score borrowers get, so aim for the conservative 28/36 range if you want a comfortable approval."
+      }
+    },
+    {
+      "@type": "Question",
       "name": "How can I improve my credit score before buying?",
       "acceptedAnswer": {
         "@type": "Answer",
@@ -252,6 +268,10 @@
   .score-table { width:100%; border-collapse:collapse; margin:16px 0 10px; font-size:0.88rem; }
   .score-table td { padding:10px 8px; border-bottom:1px solid var(--border-soft); color:var(--cream-dim); }
   .score-table td:last-child { text-align:right; color:var(--cream); font-weight:500; white-space:nowrap; }
+  .score-table th { padding:10px 8px; border-bottom:1px solid var(--border-soft); color:var(--gold); text-align:right; font-weight:600; font-size:0.8rem; letter-spacing:0.02em; }
+  .score-table th:first-child { text-align:left; }
+  .score-table.multi td { text-align:right; color:var(--cream); white-space:nowrap; }
+  .score-table.multi td:first-child { text-align:left; color:var(--cream-dim); }
   .score-chips { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
   .score-chip { padding:7px 12px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border-soft); color:var(--cream-dim); text-decoration:none; font-size:0.8rem; transition:all .15s; }
   a.score-chip:hover { border-color:var(--gold); color:var(--gold-light); }
@@ -366,6 +386,21 @@
     <p>A 600 credit score clears the most important line in mortgage lending: FHA's 580 minimum for <strong>3.5% down</strong>. That means you can buy with a much smaller down payment than the 10% required below 580. Conventional loans are still out of reach (they start at 620), but FHA at this score is a well-worn, realistic path to homeownership.</p>
     <p>Some lenders overlay stricter minimums (600 or 620) on top of FHA's rules, so if one lender declines you, that's not the final word. Mortgage brokers who specialize in FHA can usually place a 600-score file with a lender who'll approve it.</p>
 
+    <h2>The quick answer, by income</h2>
+    <p>Here's roughly how much house a 600 credit score buys at different incomes, assuming the FHA minimum 3.5% down, no other monthly debts, and an estimated 7.15% rate on a 30-year loan (the same math the calculator above uses):</p>
+    <table class="score-table multi">
+      <tr><th>Annual income</th><th>Max home price</th><th>3.5% down</th><th>Est. monthly payment</th></tr>
+      <tr><td>$40,000</td><td>$111,000</td><td>$3,900</td><td>$933/mo</td></tr>
+      <tr><td>$50,000</td><td>$139,000</td><td>$4,900</td><td>$1,167/mo</td></tr>
+      <tr><td>$60,000</td><td>$166,000</td><td>$5,800</td><td>$1,400/mo</td></tr>
+      <tr><td>$75,000</td><td>$208,000</td><td>$7,300</td><td>$1,750/mo</td></tr>
+      <tr><td>$85,000</td><td>$236,000</td><td>$8,200</td><td>$1,983/mo</td></tr>
+      <tr><td>$100,000</td><td>$277,000</td><td>$9,700</td><td>$2,333/mo</td></tr>
+      <tr><td>$125,000</td><td>$346,000</td><td>$12,100</td><td>$2,917/mo</td></tr>
+      <tr><td>$150,000</td><td>$416,000</td><td>$14,500</td><td>$3,500/mo</td></tr>
+    </table>
+    <p>Payments include principal, interest, and estimated property tax (1.1%) and insurance (0.5%), before FHA mortgage insurance. Existing debts shrink these numbers fast: every $100/month of car payments, student loans, or card minimums cuts roughly <strong>$15,000</strong> off your max price. Run your exact numbers in the calculator above.</p>
+
     <h2>Is a 600 credit score good?</h2>
     <p>A 600 credit score is considered fair. It sits in FICO's "fair" band (580–669), below the U.S. average of about 715. Roughly 19% of U.S. consumers score below 600, so you have plenty of company.</p>
     <p>In practice, fair credit gets you approved for most essentials at a premium: auto loans run above-average rates, unsecured credit cards come with modest limits, and most apartment applications pass, though landlords in competitive markets often screen at 620–650. For a mortgage specifically, the program thresholds below matter far more than the label.</p>
@@ -406,6 +441,15 @@
     </table>
     <p>FHA loans carry mortgage insurance: 1.75% of the loan upfront (usually rolled in) plus about 0.55% per year, roughly $103/month extra on this loan, not included in the payment above. It's the price of the low down payment and the credit flexibility.</p>
 
+    <h2>The approval math: how lenders decide at 600</h2>
+    <p>Affordability isn't a vibe, it's two ratios. Lenders compare your monthly housing cost and your total monthly debt against your gross monthly income:</p>
+    <table class="score-table">
+      <tr><td>Front-end DTI (housing cost ÷ income)</td><td>28% guideline, 31% FHA standard</td></tr>
+      <tr><td>Back-end DTI (all debts ÷ income)</td><td>36% guideline, 43% FHA standard</td></tr>
+      <tr><td>FHA maximum with strong compensating factors</td><td>up to 56.9% back-end</td></tr>
+    </table>
+    <p>The calculator above uses the conservative 28/36 rule, which is what a payment you can actually live with looks like. FHA's automated underwriting will often approve well past that, but here's the catch at a 600 score: the weaker the credit, the less DTI flexibility underwriting gives you. Compensating factors that help a 600-score file stretch higher include cash reserves after closing (two to three months of payments), a larger down payment than the 3.5% minimum, and steady two-year job history. If your ratios are tight, paying off a small car loan or card balance before applying often adds more buying power than months of credit-score repair.</p>
+
     <h2>What improving your score would buy you</h2>
     <p>At a <a href="/house-affordability/640-credit-score/">640 score</a> (estimated 6.95%), the same buyer could afford about <strong>$252,000</strong>, $3,000 more house for the same income and monthly budget. Getting to 620 unlocks conventional loans, and every 20 points beyond that improves pricing. Pay revolving card balances below 30% of limits (below 10% is even better), don't open new accounts before applying, and let clean payment history accumulate.</p>
     <h2>Every credit score, same math</h2>
@@ -434,6 +478,14 @@
     <div class="faq-item">
       <div class="faq-q">How much house can I afford with a 600 credit score?</div>
       <div class="faq-a">Income and debts matter more than the score itself. As a benchmark: a buyer earning $85,000 a year with $400/month in other debts and $25,000 down could afford roughly $249,000 at a 600 score (estimated 7.15% rate), versus about $257,000 with a 760+ score. Use the calculator above with your own numbers.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much house can I afford with a 600 credit score and a $60,000 salary?</div>
+      <div class="faq-a">About $166,000 with no other monthly debts, assuming the FHA minimum 3.5% down and an estimated 7.15% rate on a 30-year loan. At $50,000 a year it's about $139,000, and at $100,000 about $277,000. Every $100/month of existing debt payments (car, student loans, card minimums) cuts roughly $15,000 off your max price.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What DTI do I need for a mortgage with a 600 credit score?</div>
+      <div class="faq-a">FHA's standard limits are 31% front-end (housing cost vs. income) and 43% back-end (all debts vs. income), and automated underwriting can approve up to 56.9% back-end with strong compensating factors like cash reserves or a bigger down payment. At a 600 score, expect less DTI flexibility than higher-score borrowers get, so aim for the conservative 28/36 range if you want a comfortable approval.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">How can I improve my credit score before buying?</div>
