@@ -141,6 +141,32 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 
 /* ── RECOMMENDATION CARD ── */
 .rec-card{background:rgba(201,168,76,0.04);border:1px solid var(--border);border-radius:13px;padding:14px 17px;}
+.nw-sync-banner{display:flex;align-items:center;gap:14px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.28);border-radius:12px;padding:11px 14px;}
+.nw-sync-banner svg{flex-shrink:0;color:var(--gold-light);}
+.nw-sync-text{flex:1;min-width:0;font-size:0.82rem;line-height:1.45;color:var(--cream-dim);}
+.nw-sync-text strong{color:var(--gold-light);font-weight:600;}
+.nw-sync-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.nw-sync-actions .btn-secondary{white-space:nowrap;}
+.nw-sync-dismiss{background:none;border:none;color:var(--muted);font-size:1.15rem;line-height:1;cursor:pointer;padding:2px 6px;border-radius:6px;transition:all .15s;}
+.nw-sync-dismiss:hover{color:var(--cream);background:rgba(255,255,255,0.05);}
+@media(max-width:560px){.nw-sync-banner{flex-wrap:wrap;}.nw-sync-text{flex-basis:100%;}}
+.nw-conflict{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.28);border-radius:12px;padding:13px 15px;}
+.nw-conflict-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.nw-conflict-head svg{flex-shrink:0;color:var(--gold-light);}
+.nw-conflict-title{font-size:0.84rem;color:var(--cream);}
+.nw-conflict-sub{font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:11px;}
+.nw-conflict-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border-soft);}
+.nw-conflict-info{flex:1;min-width:0;}
+.nw-conflict-name{font-size:0.85rem;color:var(--cream);margin-bottom:2px;}
+.nw-conflict-vals{font-size:0.78rem;color:var(--muted);}
+.nw-conflict-vals b{color:var(--cream-dim);font-weight:600;}
+.nw-conflict-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.nw-conflict-actions button{white-space:nowrap;font-size:0.78rem;padding:6px 11px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.btn-use-nw{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.35);color:var(--gold-light);}
+.btn-use-nw:hover{background:rgba(201,168,76,0.2);}
+.btn-keep-local{background:none;border:1px solid var(--border);color:var(--muted);}
+.btn-keep-local:hover{color:var(--cream);border-color:var(--border-soft);}
+@media(max-width:560px){.nw-conflict-row{flex-wrap:wrap;}.nw-conflict-actions{flex-basis:100%;}.nw-conflict-actions button{flex:1;}}
 .rec-head{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
 .rec-head .ico{color:var(--gold);display:flex;flex-shrink:0;}
 .rec-title{font-size:0.84rem;color:var(--cream);}
@@ -376,6 +402,26 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 
         <div id="dashContent" style="display:none;flex-direction:column;gap:16px;">
 
+          <!-- NET-WORTH SYNC PROMPT -->
+          <div id="nwSyncBanner" class="nw-sync-banner" style="display:none">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <div class="nw-sync-text"><strong id="nwSyncCount">0</strong> <span id="nwSyncBody"></span></div>
+            <div class="nw-sync-actions">
+              <button class="btn-secondary" onclick="openImportModal()">Add &amp; track</button>
+              <button class="nw-sync-dismiss" onclick="dismissSyncBanner()" aria-label="Dismiss" title="Dismiss">×</button>
+            </div>
+          </div>
+
+          <!-- LINKED-BALANCE DISAGREEMENT PROMPT -->
+          <div id="nwConflict" class="nw-conflict" style="display:none">
+            <div class="nw-conflict-head">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <div class="nw-conflict-title">Balances don't match your net-worth tracker</div>
+            </div>
+            <div class="nw-conflict-sub">Pick which number is right. Nothing changes until you choose.</div>
+            <div id="nwConflictRows"></div>
+          </div>
+
           <!-- EMPTY -->
           <div id="dashEmpty" style="display:none">
             <div class="empty-state">
@@ -573,8 +619,11 @@ const{createClient}=supabase;
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
 const REC_DISMISS_KEY='vf_debt_rec_dismissed';
+const NW_SYNC_DISMISS_KEY='vf_debt_nwsync_dismissed';
+const NW_KEEP_LOCAL_KEY='vf_debt_nwkeep_local';
 const DEBT_COLORS=['#f87171','#c9a84c','#60a5fa','#4ade80','#a78bfa','#fb923c','#f472b6','#38bdf8'];
 let currentUser=null,myDebts=[],myHistory=[],payoffChartInstance=null,breakdownChartInstance=null,editingDebtId=null,updatingBalDebtId=null;
+let nwLiabLatest={},pendingNwImports=[],nwConflicts=[];
 
 /* ── HELPERS ── */
 function fmt(n){if(!isFinite(n))return'—';if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+Math.round(n).toLocaleString();}
@@ -702,15 +751,111 @@ async function loadDashboard(){
   document.getElementById('dashLoading').style.display='flex';
   document.getElementById('dashContent').style.display='none';
   document.getElementById('headerActions').style.display='none';
-  const[{data:debts},{data:hist}]=await Promise.all([
+  const[{data:debts},{data:hist},{data:nwLiab}]=await Promise.all([
     sb.from('debts').select('*').order('sort_order',{ascending:true}),
-    sb.from('debt_balance_history').select('*').order('date',{ascending:true})
+    sb.from('debt_balance_history').select('*').order('date',{ascending:true}),
+    sb.from('net_worth_entries').select('category,value,date').eq('type','liability').order('date',{ascending:true})
   ]);
   myDebts=(debts||[]).map(d=>({...d,extra_payment:Number(d.extra_payment)||0,excluded:!!d.excluded}));
   myHistory=hist||[];
+  // Latest net-worth value per liability category (the trackers link on category ↔ debt.net_worth_category).
+  // Keyed lowercase so renaming "Mortgage" to "mortgage" on the net-worth side doesn't silently break the link.
+  nwLiabLatest={};
+  (nwLiab||[]).forEach(e=>{const c=(e.category||'').trim();if(!c)return;const k=c.toLowerCase();const cur=nwLiabLatest[k];if(!cur||e.date>=cur.date)nwLiabLatest[k]={label:c,value:Number(e.value)||0,date:e.date};});
+  findLinkedConflicts();
+  renderConflicts();
+  updateSyncBanner();
   document.getElementById('dashLoading').style.display='none';
   document.getElementById('dashContent').style.display='flex';
   renderDashboard();
+}
+
+/* ── SYNC FROM NET WORTH ──
+   Linked debts are never rewritten behind the user's back. We only detect where a linked debt's
+   balance disagrees with the latest net-worth figure and surface the choice; the write happens in
+   useNwBalance() when the user picks. A "keep mine" is remembered against the specific net-worth
+   value that was rejected, so the prompt stays quiet until that figure actually changes again. */
+function nwLink(d){return d.net_worth_category?nwLiabLatest[d.net_worth_category.trim().toLowerCase()]:null;}
+function conflictKey(debtId,nw){return debtId+'|'+nw.date+'|'+Math.round(nw.value);}
+function getKeptLocal(){try{return JSON.parse(localStorage.getItem(NW_KEEP_LOCAL_KEY)||'[]');}catch(e){return[];}}
+
+function findLinkedConflicts(){
+  const kept=new Set(getKeptLocal());
+  nwConflicts=[];
+  for(const d of myDebts){
+    if(d.paid_off)continue;
+    const nw=nwLink(d);
+    if(!nw)continue;
+    if(Math.round(nw.value)===Math.round(Number(d.balance)))continue; // already agree
+    if(kept.has(conflictKey(d.id,nw)))continue; // user already chose to keep theirs for this figure
+    nwConflicts.push({debtId:d.id,name:d.name,here:Number(d.balance),there:nw.value,date:nw.date});
+  }
+}
+
+function renderConflicts(){
+  const box=document.getElementById('nwConflict');
+  if(!nwConflicts.length){box.style.display='none';return;}
+  document.getElementById('nwConflictRows').innerHTML=nwConflicts.map(c=>`
+    <div class="nw-conflict-row">
+      <div class="nw-conflict-info">
+        <div class="nw-conflict-name">${escHtml(c.name||'Untitled debt')}</div>
+        <div class="nw-conflict-vals">net worth <b>${fmt(c.there)}</b> · here <b>${fmt(c.here)}</b></div>
+      </div>
+      <div class="nw-conflict-actions">
+        <button class="btn-use-nw" onclick="useNwBalance('${c.debtId}')">Use ${fmt(c.there)}</button>
+        <button class="btn-keep-local" onclick="keepLocalBalance('${c.debtId}')">Keep ${fmt(c.here)}</button>
+      </div>
+    </div>`).join('');
+  box.style.display='block';
+}
+
+async function useNwBalance(debtId){
+  const c=nwConflicts.find(x=>x.debtId===debtId);if(!c)return;
+  const d=myDebts.find(x=>x.id===debtId);if(!d)return;
+  const today=new Date().toISOString().slice(0,10);
+  const paidOff=c.there<=0;
+  const patch={balance:c.there,paid_off:paidOff,updated_at:new Date().toISOString()};
+  patch.paid_off_date=paidOff?(d.paid_off_date||today):null;
+  const{error}=await sb.from('debts').update(patch).eq('id',debtId);
+  if(error){console.error(error);return;}
+  await sb.from('debt_balance_history').insert([{user_id:currentUser.id,debt_id:debtId,date:today,balance:c.there}]);
+  d.balance=c.there;d.paid_off=paidOff;d.paid_off_date=patch.paid_off_date;
+  nwConflicts=nwConflicts.filter(x=>x.debtId!==debtId);
+  renderConflicts();renderDashboard();
+}
+
+function keepLocalBalance(debtId){
+  const d=myDebts.find(x=>x.id===debtId);if(!d)return;
+  const nw=nwLink(d);if(!nw)return;
+  const kept=new Set(getKeptLocal());
+  kept.add(conflictKey(debtId,nw));
+  localStorage.setItem(NW_KEEP_LOCAL_KEY,JSON.stringify([...kept]));
+  nwConflicts=nwConflicts.filter(x=>x.debtId!==debtId);
+  renderConflicts();
+}
+
+function getDismissedNw(){try{return JSON.parse(localStorage.getItem(NW_SYNC_DISMISS_KEY)||'[]');}catch(e){return[];}}
+function updateSyncBanner(){
+  const banner=document.getElementById('nwSyncBanner');
+  const linked=new Set(myDebts.filter(d=>d.net_worth_category).map(d=>d.net_worth_category.trim().toLowerCase()));
+  const named=new Set(myDebts.map(d=>(d.name||'').trim().toLowerCase()));
+  const dismissed=new Set(getDismissedNw().map(s=>(s||'').toLowerCase()));
+  // nwLiabLatest is keyed lowercase; carry the original label through so the banner reads naturally.
+  pendingNwImports=Object.keys(nwLiabLatest)
+    .filter(k=>nwLiabLatest[k].value>0&&!linked.has(k)&&!named.has(k)&&!dismissed.has(k))
+    .map(k=>nwLiabLatest[k].label);
+  if(!pendingNwImports.length){banner.style.display='none';return;}
+  const n=pendingNwImports.length;
+  document.getElementById('nwSyncCount').textContent=n;
+  const preview=pendingNwImports.slice(0,3).map(escHtml).join(', ')+(n>3?'…':'');
+  document.getElementById('nwSyncBody').innerHTML=`new ${n===1?'liability':'liabilities'} on your net-worth tracker (${preview}). Add ${n===1?'an APR &amp; minimum payment to track it':'APRs &amp; minimum payments to track them'} here.`;
+  banner.style.display='flex';
+}
+function dismissSyncBanner(){
+  const dismissed=new Set(getDismissedNw());
+  (pendingNwImports||[]).forEach(c=>dismissed.add(c));
+  localStorage.setItem(NW_SYNC_DISMISS_KEY,JSON.stringify([...dismissed]));
+  document.getElementById('nwSyncBanner').style.display='none';
 }
 
 /* ── RENDER ── */
@@ -1160,9 +1305,11 @@ async function openImportModal(){
   const{data,error}=await sb.from('net_worth_entries').select('*').eq('type','liability').order('date',{ascending:true});
   if(error){body.innerHTML='<div class="import-empty">Couldn\'t load your liabilities. Please try again.</div>';return;}
   // latest entry per category = current balance
+  // Keyed lowercase to match how linked categories are resolved, so "Mortgage" and "mortgage" are one item.
   const latest={};
-  (data||[]).forEach(e=>{latest[e.category]={category:e.category,value:Number(e.value)||0};});
+  (data||[]).forEach(e=>{const c=(e.category||'').trim();if(!c)return;latest[c.toLowerCase()]={category:c,value:Number(e.value)||0};});
   const existing=new Set(myDebts.map(d=>(d.name||'').trim().toLowerCase()));
+  myDebts.forEach(d=>{if(d.net_worth_category)existing.add(d.net_worth_category.trim().toLowerCase());});
   importItems=Object.values(latest).filter(i=>i.value>0&&!existing.has((i.category||'').trim().toLowerCase()));
   if(importItems.length===0){
     const any=Object.keys(latest).length>0;
@@ -1199,7 +1346,7 @@ async function confirmImport(){
     if(!(balance>=0)){err.textContent=`Enter a valid balance for ${it.category}.`;return;}
     if(!(rate>=0)){err.textContent=`Enter an interest rate (APR) for ${it.category}.`;return;}
     if(!(min>=0)){err.textContent=`Enter a minimum payment for ${it.category}.`;return;}
-    rows.push({user_id:currentUser.id,name:it.category,balance,original_balance:balance,rate,min_payment:min,sort_order:myDebts.length+rows.length,paid_off:balance<=0,extra_payment:0,excluded:false});
+    rows.push({user_id:currentUser.id,name:it.category,net_worth_category:it.category,balance,original_balance:balance,rate,min_payment:min,sort_order:myDebts.length+rows.length,paid_off:balance<=0,extra_payment:0,excluded:false});
   }
   if(rows.length===0){err.textContent='Select at least one liability to import.';return;}
   const btn=document.getElementById('importSaveBtn');btn.disabled=true;btn.textContent='Importing…';
