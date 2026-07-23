@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Recast Calculator: Recast vs Refinance vs Paying Extra | VestlyFi</title>
+<meta name="description" content="See your new payment after a mortgage recast and compare it side by side against refinancing or simply paying extra principal. Includes refinance break-even and total cost over the years you'll actually keep the home.">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="canonical" href="https://vestlyfi.com/mortgage-recast/">
+
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vestlyfi.com/mortgage-recast/">
+<meta property="og:title" content="Mortgage Recast Calculator: Recast vs Refinance vs Paying Extra | VestlyFi">
+<meta property="og:description" content="See your new payment after a recast and compare it against refinancing or simply paying extra principal. Free, no signup.">
+<meta property="og:site_name" content="VestlyFi">
+<meta property="og:image" content="https://vestlyfi.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mortgage Recast Calculator: Recast vs Refinance vs Paying Extra | VestlyFi">
+<meta name="twitter:description" content="See your new payment after a recast and compare it against refinancing or simply paying extra principal.">
+<meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
+
+<!-- Structured data: tool + FAQs -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Mortgage Recast Calculator",
+  "url": "https://vestlyfi.com/mortgage-recast/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "A mortgage recast calculator that shows your new monthly payment after a lump-sum recast and compares recasting against refinancing or simply paying extra principal, including the refinance break-even point.",
+  "featureList": [
+    "New monthly payment after recast",
+    "Recast vs refinance vs extra principal comparison",
+    "Refinance break-even month",
+    "Total cost over the years you plan to keep the home",
+    "Balance chart for every option"
+  ],
+  "publisher": { "@type": "Organization", "name": "VestlyFi", "url": "https://vestlyfi.com/" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a mortgage recast?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A mortgage recast is when you make a large lump-sum payment toward your principal and your lender re-amortizes the remaining balance over the time left on your loan. Your interest rate and payoff date stay exactly the same, but your required monthly payment drops. Lenders typically charge a small fee, usually between $150 and $500."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between recasting and refinancing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A recast keeps your existing loan, rate, and payoff date; you just pay down the balance and the lender recalculates the payment for a small fee, with no credit check or appraisal. A refinance replaces your loan entirely with a new rate and term, and typically costs thousands in closing costs. Refinancing mainly makes sense when the new rate is meaningfully lower than your current one; if you already have a low rate, a recast usually wins."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I recast or just pay extra principal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The same lump sum reduces your balance either way. If you simply prepay without recasting, your required payment stays the same, so you pay the loan off years earlier and save the most total interest. If you recast, your required payment drops but the payoff date stays the same, so you pay somewhat more total interest in exchange for monthly breathing room. Choose recast when you want a lower payment, choose plain prepayment when you want the loan gone sooner."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can every mortgage be recast?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Conventional loans backed by Fannie Mae or Freddie Mac can usually be recast. FHA, VA, and USDA loans generally cannot. Jumbo loans depend on the lender. Most lenders also require a minimum lump sum, commonly $5,000 to $10,000, and that the loan be current."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much does a mortgage recast cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most lenders charge a flat fee between $150 and $500, and some do it for free. There is no appraisal, no credit check, and no closing process, which is why recasting is dramatically cheaper than refinancing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does recasting change my interest rate or payoff date?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Your rate and your final payoff date stay exactly as they were. The only thing that changes is your required monthly payment, which is recalculated on the smaller balance over the same remaining term."
+      }
+    }
+  ]
+}
+</script>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<style>
+  :root {
+    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
+    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
+    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
+    --green:#4ade80; --red:#f87171; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
+  .site-nav-logo:hover { opacity:.8; }
+  .site-nav-links { display:flex; gap:24px; align-items:center; }
+  .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
+  .site-nav-links a:hover { color:var(--cream); }
+  .site-nav-links a.active { color:var(--cream); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-sep { color:rgba(255,255,255,0.18); }
+  @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+  .container { position:relative; z-index:1; max-width:720px; margin:0 auto; padding:0 24px; min-height:calc(100vh - 64px); display:flex; flex-direction:column; }
+  .wizard { flex:1; display:flex; flex-direction:column; justify-content:center; padding:48px 0 80px; }
+
+  .step { display:none; }
+  .step.active { display:block; animation:stepIn 0.42s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes stepIn { from{opacity:0;transform:translateY(26px);} to{opacity:1;transform:translateY(0);} }
+
+  .step-tag { font-size:0.68rem; letter-spacing:0.17em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .step h1, .step h2 { font-family:'Outfit',sans-serif; font-size:clamp(1.7rem,5vw,2.5rem); font-weight:400; line-height:1.2; margin-bottom:8px; }
+  .step h1 .accent, .step h2 .accent { color:var(--gold-light); font-style:normal; }
+  .step .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; max-width:540px; }
+
+  .input-group { margin-bottom:22px; display:flex; flex-direction:column; }
+  .input-group label { display:block; font-size:0.75rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:9px; font-weight:500; }
+  .input-wrap { position:relative; display:flex; align-items:center; }
+  .input-prefix { position:absolute; left:16px; color:var(--gold); font-size:1rem; pointer-events:none; font-family:'Outfit',sans-serif; }
+  .input-suffix { position:absolute; right:16px; color:var(--muted); font-size:0.82rem; pointer-events:none; }
+  input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
+  input.has-prefix { padding-left:30px; }
+  input.has-suffix { padding-right:48px; }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:end; }
+  .input-row > .input-group { display:flex; flex-direction:column; justify-content:flex-end; }
+  @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
+
+  .pill-group { display:flex; gap:9px; flex-wrap:wrap; }
+  .pill { padding:9px 18px; border-radius:100px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
+  .pill:hover { border-color:var(--gold); color:var(--cream); }
+  .pill.selected { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
+
+  .step-nav { display:flex; gap:10px; margin-top:36px; }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
+  .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
+  .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
+  .err { color:var(--red); font-size:0.8rem; margin-top:8px; display:none; }
+
+  /* Scenario comparison cards */
+  .cmp-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:28px; }
+  @media(max-width:640px) { .cmp-grid{grid-template-columns:1fr;} }
+  .cmp-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:18px; }
+  .cmp-card.winner { border-color:var(--gold); box-shadow:0 0 0 1px rgba(201,168,76,0.25); }
+  .cmp-name { font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:12px; }
+  .cmp-pay { font-size:1.55rem; font-weight:400; color:var(--cream); letter-spacing:-0.02em; }
+  .cmp-pay-lbl { font-size:0.7rem; color:var(--muted); margin-bottom:12px; }
+  .cmp-row { display:flex; justify-content:space-between; gap:8px; padding:7px 0; border-top:1px solid var(--border-soft); font-size:0.78rem; }
+  .cmp-row span:first-child { color:var(--muted); }
+  .cmp-row span:last-child { color:var(--cream-dim); text-align:right; }
+
+  .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
+  .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
+  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+
+  /* SEO CONTENT */
+  .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
+  .seo-body h2 { font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:500; color:var(--cream); margin:28px 0 12px; }
+  .seo-body h2:first-child { margin-top:0; }
+  .seo-body p { font-size:0.92rem; color:var(--muted); line-height:1.8; margin-bottom:16px; }
+  .seo-body strong { color:var(--cream-dim); font-weight:500; }
+  .seo-body a { color:var(--gold-light); text-decoration:none; }
+  .seo-body a:hover { color:var(--gold); }
+  .related-tools { margin-top:36px; padding-top:28px; border-top:1px solid var(--border-soft); }
+  .related-tools h2 { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; font-weight:500; }
+  .related-tools ul { list-style:none; }
+  .related-tools li { padding:9px 0; font-size:0.88rem; color:var(--muted); line-height:1.6; border-bottom:1px solid var(--border-soft); }
+  .related-tools li:last-child { border-bottom:none; }
+  .related-tools a { color:var(--gold-light); text-decoration:none; }
+  .related-tools a:hover { color:var(--gold); }
+  .faq-section { margin-top:36px; }
+  .faq-title { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); margin-bottom:20px; font-weight:500; }
+  .faq-item { border-top:1px solid var(--border-soft); padding:18px 0; }
+  .faq-item:last-child { border-bottom:1px solid var(--border-soft); }
+  .faq-q { font-size:0.92rem; font-weight:500; color:var(--cream); margin-bottom:8px; line-height:1.5; }
+  .faq-a { font-size:0.87rem; color:var(--muted); line-height:1.75; }
+
+  footer { position:relative; z-index:1; border-top:1px solid var(--border-soft); padding:20px 40px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  .footer-links { display:flex; gap:18px; align-items:center; }
+  .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
+  .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
+  .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
+  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="site-nav-logo" href="/">VestlyFi</a>
+  <div class="site-nav-links">
+    <a href="/">Home</a>
+    <a href="/calculators/" class="active">Calculators</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+    <div class="nav-trackers">
+      <span class="nav-trackers-lbl">Trackers</span>
+      <a href="/net-worth/">Net Worth</a>
+      <span class="nav-sep">/</span>
+      <a href="/debt-tracker/">Debt</a>
+    </div>
+    <a href="/account/">Account</a>
+  </div>
+</nav>
+
+<div class="container">
+<div class="wizard">
+
+  <!-- Step 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-tag">Step 1 of 2</div>
+    <h1>Mortgage Recast <span class="accent">Calculator</span></h1>
+    <p class="sub">Got a lump sum to put toward the house? A recast lowers your payment for a small fee while keeping your rate. Enter your loan and we'll compare recasting against refinancing and against simply paying the money in.</p>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Remaining Loan Balance</label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="balance" class="has-prefix" oninput="handleCommaInput(this, 'checkStep1')">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Interest Rate</label>
+        <div class="input-wrap">
+          <input type="number" id="rate" min="0.5" max="15" step="0.01" class="has-suffix" oninput="checkStep1()">
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Years Remaining</label>
+        <div class="input-wrap">
+          <input type="number" id="yearsLeft" min="1" max="40" step="0.5" class="has-suffix" oninput="checkStep1()">
+          <span class="input-suffix">yrs</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Lump Sum to Apply</label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="lumpSum" class="has-prefix" oninput="handleCommaInput(this, 'checkStep1')">
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Recast Fee <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">most lenders charge $150 to $500</span></label>
+      <div class="input-wrap">
+        <span class="input-prefix">$</span>
+        <input type="text" id="recastFee" class="has-prefix" placeholder="300" oninput="handleCommaInput(this)">
+      </div>
+    </div>
+
+    <div id="err-1" class="err">Please fill in all fields. The lump sum must be smaller than the loan balance.</div>
+    <div class="step-nav">
+      <button class="btn-next" id="btn-step1" onclick="validateStep1()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step-2">
+    <div class="step-tag">Step 2 of 2</div>
+    <h2>The refinance you'd <span class="accent">compare against</span></h2>
+    <p class="sub">Even if you're leaning recast, it's worth knowing what a refinance would do. Enter the best rate you could get today.</p>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>Refinance Rate Available</label>
+        <div class="input-wrap">
+          <input type="number" id="refiRate" min="0.5" max="15" step="0.01" class="has-suffix" oninput="checkStep2()">
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Closing Costs <span style="font-size:0.7rem;font-weight:300;color:var(--muted);text-transform:none;letter-spacing:0;margin-left:6px;">typically 2-3% of the loan</span></label>
+        <div class="input-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="closingCosts" class="has-prefix" oninput="handleCommaInput(this, 'checkStep2')">
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>New Loan Term</label>
+      <div class="pill-group" id="termPills">
+        <button class="pill" data-val="15" onclick="selectPill(this,'termPills',15)">15 years</button>
+        <button class="pill" data-val="20" onclick="selectPill(this,'termPills',20)">20 years</button>
+        <button class="pill selected" data-val="30" onclick="selectPill(this,'termPills',30)">30 years</button>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>How Long Will You Keep This Home?</label>
+      <div class="pill-group" id="stayPills">
+        <button class="pill" data-val="5" onclick="selectPill(this,'stayPills',5)">About 5 years</button>
+        <button class="pill selected" data-val="10" onclick="selectPill(this,'stayPills',10)">About 10 years</button>
+        <button class="pill" data-val="99" onclick="selectPill(this,'stayPills',99)">Until it's paid off</button>
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:9px;line-height:1.6;">
+        This matters more than most people think. Refinance closing costs need time to pay for themselves.
+      </div>
+    </div>
+
+    <div id="err-2" class="err">Please enter the refinance rate and closing costs (0 is fine).</div>
+    <div class="step-nav">
+      <button class="btn-back" onclick="showStep(1)">← Back</button>
+      <button class="btn-next" id="btn-step2" onclick="validateStep2()" disabled>Compare my options →</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="step" id="step-results">
+    <div id="resultsContent"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <div class="seo-body">
+    <p>A mortgage recast is the least known tool in the homeowner's toolbox, and for people who locked in a low rate it is often the best one. You put a lump sum toward your principal, pay a small fee, and your lender recalculates your monthly payment on the smaller balance. Same rate, same payoff date, lower payment.</p>
+
+    <h2>Recast vs refinance: the short version</h2>
+    <p>Refinancing replaces your loan. That's worth doing when today's rates are meaningfully below yours, but it costs thousands in closing costs and resets your term. Recasting keeps your loan exactly as it is and costs a few hundred dollars at most. The rule of thumb: <strong>if your current rate is at or below what you could refinance into, recast and don't look back</strong>. If rates have dropped well below your rate, run the comparison above; the deciding factor is usually how long you'll keep the home, because closing costs need years of payment savings to pay for themselves.</p>
+
+    <h2>The third option people forget</h2>
+    <p>You can also just make the lump-sum payment without recasting. Your required payment stays the same, so the loan pays off years early and you save the most total interest of any option. The trade-off is that your monthly obligation doesn't drop. Recast when you want breathing room in the budget; plain prepayment when you want the mortgage gone.</p>
+
+    <h2>Who can recast</h2>
+    <p>Conventional loans backed by Fannie Mae or Freddie Mac can usually be recast. <strong>FHA, VA, and USDA loans generally cannot</strong>, so if you have one of those, your choices are plain prepayment or a refinance. Most lenders require a minimum lump sum, commonly $5,000 to $10,000, and a loan in good standing. Call your servicer and ask for their recast requirements; it's usually one form and one fee.</p>
+
+    <h2>A worked example</h2>
+    <p>Take a $400,000 balance at 6.5% with 25 years left, and a $50,000 lump sum. Recasting drops the payment by roughly $340 a month for a $300 fee. Refinancing the same balance at 6% for 30 years drops the payment further, but after $8,000 in closing costs it takes years to come out ahead, and only if you stay in the house. Run your own numbers above; the answer changes a lot with the rate gap and your time horizon.</p>
+  </div>
+
+  <div class="related-tools">
+    <h2>Related calculators</h2>
+    <ul>
+      <li>Decide when your loan hits 20% equity with the <a href="/pmi-removal/">PMI Removal Calculator</a>.</li>
+      <li>See what extra payments do to your payoff date with the <a href="/mortgage-payoff/">Mortgage Payoff Calculator</a>.</li>
+      <li>Shopping for the next place? Check <a href="/house-affordability/">How Much House Can I Afford?</a></li>
+      <li><a href="/calculators/">Browse all calculators →</a></li>
+    </ul>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-title">Common Questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">What is a mortgage recast?</div>
+      <div class="faq-a">A mortgage recast is when you make a large lump-sum payment toward your principal and your lender re-amortizes the remaining balance over the time left on your loan. Your interest rate and payoff date stay exactly the same, but your required monthly payment drops. Lenders typically charge a small fee, usually between $150 and $500.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the difference between recasting and refinancing?</div>
+      <div class="faq-a">A recast keeps your existing loan, rate, and payoff date; you just pay down the balance and the lender recalculates the payment for a small fee, with no credit check or appraisal. A refinance replaces your loan entirely with a new rate and term, and typically costs thousands in closing costs. Refinancing mainly makes sense when the new rate is meaningfully lower than your current one; if you already have a low rate, a recast usually wins.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Should I recast or just pay extra principal?</div>
+      <div class="faq-a">The same lump sum reduces your balance either way. If you simply prepay without recasting, your required payment stays the same, so you pay the loan off years earlier and save the most total interest. If you recast, your required payment drops but the payoff date stays the same, so you pay somewhat more total interest in exchange for monthly breathing room. Choose recast when you want a lower payment, choose plain prepayment when you want the loan gone sooner.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can every mortgage be recast?</div>
+      <div class="faq-a">No. Conventional loans backed by Fannie Mae or Freddie Mac can usually be recast. FHA, VA, and USDA loans generally cannot. Jumbo loans depend on the lender. Most lenders also require a minimum lump sum, commonly $5,000 to $10,000, and that the loan be current.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much does a mortgage recast cost?</div>
+      <div class="faq-a">Most lenders charge a flat fee between $150 and $500, and some do it for free. There is no appraisal, no credit check, and no closing process, which is why recasting is dramatically cheaper than refinancing.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does recasting change my interest rate or payoff date?</div>
+      <div class="faq-a">No. Your rate and your final payoff date stay exactly as they were. The only thing that changes is your required monthly payment, which is recalculated on the smaller balance over the same remaining term.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 VestlyFi</span>
+  <div class="footer-links">
+    <button class="link-btn" onclick="showModal('about')">About</button>
+    <a href="/privacy/">Privacy</a>
+    <button class="btn-bug" onclick="openBugModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>
+      Report a bug
+    </button>
+  </div>
+</footer>
+
+
+<!-- About Modal -->
+<div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
+  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+    </div>
+    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
+      <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
+      <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
+      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const S = { refiTerm: 30, stayYears: 10 };
+let currentStep = 1;
+
+function showStep(n) {
+  document.getElementById('step-' + currentStep)?.classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + (n === 'results' ? 'results' : n)).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectPill(btn, groupId, val) {
+  document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (groupId === 'termPills') S.refiTerm = val;
+  if (groupId === 'stayPills') S.stayYears = val;
+}
+
+function parseVal(id) {
+  return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+}
+
+function handleCommaInput(el, checkFn) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  if (raw === '') { el.value = ''; } else {
+    const num = parseInt(raw, 10);
+    el.value = num.toLocaleString('en-US');
+  }
+  if (checkFn) window[checkFn]();
+}
+
+function validateStep1() {
+  const bal = parseVal('balance');
+  const rate = parseFloat(document.getElementById('rate').value);
+  const yrs = parseFloat(document.getElementById('yearsLeft').value);
+  const lump = parseVal('lumpSum');
+  const err = document.getElementById('err-1');
+  if (!bal || !rate || !yrs || !lump || lump >= bal || rate <= 0 || yrs <= 0) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  S.balance = bal; S.rate = rate; S.yearsLeft = yrs; S.lumpSum = lump;
+  S.recastFee = document.getElementById('recastFee').value === '' ? 300 : parseVal('recastFee');
+  showStep(2);
+}
+
+function validateStep2() {
+  const rr = parseFloat(document.getElementById('refiRate').value);
+  const cc = document.getElementById('closingCosts').value;
+  const err = document.getElementById('err-2');
+  if (!rr || rr <= 0 || cc === '') { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+  S.refiRate = rr;
+  S.closingCosts = parseVal('closingCosts');
+  calculate();
+}
+
+function fmt(n) {
+  if (n >= 1_000_000) return '$' + (n/1_000_000).toFixed(2) + 'M';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function monthYear(monthsFromNow) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + monthsFromNow);
+  return d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+}
+
+function pmt(P, r, n) { return r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n)); }
+
+// Amortize P at monthly rate r with fixed payment; returns monthly balance and
+// cumulative interest arrays plus payoff month count
+function amortize(P, r, pay, maxMonths) {
+  const balArr = [P], intArr = [0];
+  let bal = P, interest = 0, m = 0;
+  while (bal > 0.005 && m < maxMonths) {
+    const i = bal * r;
+    let princ = pay - i;
+    if (princ <= 0) return null;
+    if (princ > bal) princ = bal;
+    interest += i;
+    bal -= princ;
+    m++;
+    balArr.push(bal);
+    intArr.push(interest);
+  }
+  return { months: m, totalInterest: interest, balArr, intArr };
+}
+
+function interestWithin(sim, H) {
+  return sim.intArr[Math.min(H, sim.months)];
+}
+
+function calculate() {
+  const { balance, rate, yearsLeft, lumpSum, recastFee, refiRate, refiTerm, stayYears, closingCosts } = S;
+
+  const r0 = rate / 1200, n0 = Math.round(yearsLeft * 12);
+  const rf = refiRate / 1200, nf = refiTerm * 12;
+  const newBal = balance - lumpSum;
+
+  const pay0 = pmt(balance, r0, n0);
+  const payR = pmt(newBal, r0, n0);
+  const payF = pmt(newBal, rf, nf);
+
+  const simNothing = amortize(balance, r0, pay0, n0 + 1);
+  const simRecast  = amortize(newBal, r0, payR, n0 + 1);
+  const simPrepay  = amortize(newBal, r0, pay0, n0 + 1);
+  const simRefi    = amortize(newBal, rf, payF, nf + 1);
+
+  const maxPayoff = Math.max(simNothing.months, simRefi.months);
+  const H = stayYears === 99 ? maxPayoff : Math.min(stayYears * 12, maxPayoff);
+
+  // Net cost over the horizon = interest paid + fees (the lump itself becomes
+  // equity in every scenario, so it cancels out of the comparison)
+  const costRecast = interestWithin(simRecast, H) + recastFee;
+  const costPrepay = interestWithin(simPrepay, H);
+  const costRefi   = interestWithin(simRefi, H) + closingCosts;
+  const costNothing = interestWithin(simNothing, H);
+
+  const recastWins = costRecast <= costRefi;
+  const margin = Math.abs(costRefi - costRecast);
+  const horizonLabel = stayYears === 99 ? 'until the loan is paid off' : `over the next ~${stayYears} years`;
+
+  // Refinance break-even vs recast
+  const monthlySave = payR - payF;
+  const upfrontDelta = closingCosts - recastFee;
+  let breakEvenHtml;
+  if (refiRate >= rate) {
+    breakEvenHtml = `The refinance rate (${refiRate}%) isn't below your current rate (${rate}%), so refinancing has no rate advantage here. Its lower payment comes only from stretching the term back out to ${refiTerm} years, which means more total interest.`;
+  } else if (monthlySave > 0 && upfrontDelta > 0) {
+    const be = Math.ceil(upfrontDelta / monthlySave);
+    breakEvenHtml = `Refinancing costs <strong style="color:var(--cream)">${fmt(upfrontDelta)}</strong> more upfront than recasting but lowers the payment by <strong style="color:var(--cream)">${fmt(monthlySave)}/month</strong> more. It breaks even in <strong style="color:${be <= H ? '#4caf7d' : '#e05c5c'}">${be} months</strong> (${(be/12).toFixed(1)} years)${be > H ? ', which is longer than you plan to keep the home' : ''}.`;
+  } else if (monthlySave <= 0) {
+    breakEvenHtml = `Even at ${refiRate}%, the refinance payment isn't lower than the recast payment, so there's no monthly savings to recover the ${fmt(closingCosts)} in closing costs.`;
+  } else {
+    breakEvenHtml = `The refinance is cheaper upfront and monthly, an unusual combination worth double checking with your lender.`;
+  }
+
+  const winner = recastWins ? 'Recast' : 'Refinance';
+  const winnerColor = recastWins ? '#5bb8f5' : '#c9a84c';
+
+  function cmpCard(name, pay, upfront, cost, payoffM, isWinner, note) {
+    return `
+    <div class="cmp-card${isWinner ? ' winner' : ''}">
+      <div class="cmp-name">${name}${isWinner ? ' ✓' : ''}</div>
+      <div class="cmp-pay">${fmt(pay)}<span style="font-size:0.8rem;color:var(--muted);">/mo</span></div>
+      <div class="cmp-pay-lbl">${note}</div>
+      <div class="cmp-row"><span>Payment change</span><span>${pay < pay0 ? '−' + fmt(pay0 - pay) : 'none'}</span></div>
+      <div class="cmp-row"><span>Upfront cost</span><span>${fmt(upfront)}</span></div>
+      <div class="cmp-row"><span>Interest + fees ${stayYears === 99 ? 'to payoff' : `over ${stayYears} yrs`}</span><span>${fmt(cost)}</span></div>
+      <div class="cmp-row"><span>Paid off</span><span>${monthYear(payoffM)}</span></div>
+    </div>`;
+  }
+
+  const html = `
+    <div style="margin-bottom:32px;">
+
+      <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500;">Your Result</div>
+
+      <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:${winnerColor};margin-bottom:6px;">${winner}</div>
+      <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">is the cheaper way to use your ${fmt(lumpSum)}, ${horizonLabel}</div>
+
+      <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+        ${recastWins
+          ? `Recasting costs <strong style="color:var(--cream)">${fmt(margin)}</strong> less than refinancing ${horizonLabel}, counting interest and fees. Your payment drops from <strong style="color:var(--cream)">${fmt(pay0)}</strong> to <strong style="color:#5bb8f5">${fmt(payR)}</strong> for a one-time ${fmt(recastFee)} fee, and you keep your ${rate}% rate.`
+          : `Refinancing at ${refiRate}% costs <strong style="color:var(--cream)">${fmt(margin)}</strong> less than recasting ${horizonLabel}, counting interest and fees. Your payment drops from <strong style="color:var(--cream)">${fmt(pay0)}</strong> to <strong style="color:var(--gold-light)">${fmt(payF)}</strong> after ${fmt(closingCosts)} in closing costs.`}
+      </div>
+
+      <div class="cmp-grid">
+        ${cmpCard('Recast', payR, lumpSum + recastFee, costRecast, simRecast.months, recastWins, `same ${rate}% rate, same payoff date`)}
+        ${cmpCard('Refinance', payF, lumpSum + closingCosts, costRefi, simRefi.months, !recastWins, `new ${refiRate}% rate, new ${refiTerm}-yr term`)}
+        ${cmpCard('Just prepay', pay0, lumpSum, costPrepay, simPrepay.months, false, `payment unchanged, payoff moves up`)}
+      </div>
+
+      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        Don't need a lower payment? Just applying the ${fmt(lumpSum)} without recasting keeps your payment at ${fmt(pay0)} but pays the loan off in <strong style="color:#4caf7d">${monthYear(simPrepay.months)}</strong> instead of ${monthYear(simNothing.months)}, and it has the lowest lifetime interest of any option here.
+      </div>
+
+      <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        ${breakEvenHtml}
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Loan balance under each option</div>
+        <div style="position:relative;height:220px;background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:16px;">
+          <canvas id="recastChart"></canvas>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:0.75rem;color:var(--muted);">
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:rgba(245,240,232,0.35);border-radius:2px;"></span>Do nothing</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5bb8f5;border-radius:2px;"></span>Recast</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#c9a84c;border-radius:2px;"></span>Refinance</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#4caf7d;border-radius:2px;"></span>Just prepay</span>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border-soft);padding-top:18px;margin-bottom:24px;font-size:0.75rem;color:var(--muted);line-height:1.8;">
+        Comparison applies your ${fmt(lumpSum)} lump sum in all three options so the only differences are rates, terms, and fees. "Interest + fees" counts interest paid ${stayYears === 99 ? 'until each loan is gone' : `during the next ${stayYears} years`} plus the recast fee or closing costs. Payments shown are principal and interest only.
+      </div>
+
+      <button class="btn-restart" onclick="restartWizard()">← Change my inputs</button>
+      <p class="disclaimer">For educational purposes only. Not financial advice. Confirm recast availability, fees, and refinance terms with your lender.</p>
+    </div>
+  `;
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showStep('results');
+  document.getElementById('step-results').classList.add('active');
+
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('recastChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const totalYears = Math.ceil(maxPayoff / 12);
+    const startYear = new Date().getFullYear();
+    const labels = [], dN = [], dR = [], dP = [], dF = [];
+    for (let y = 0; y <= totalYears; y++) {
+      labels.push(startYear + y);
+      const m = y * 12;
+      dN.push(m <= simNothing.months ? Math.round(simNothing.balArr[Math.min(m, simNothing.balArr.length - 1)]) : 0);
+      dR.push(m <= simRecast.months ? Math.round(simRecast.balArr[Math.min(m, simRecast.balArr.length - 1)]) : 0);
+      dP.push(m <= simPrepay.months ? Math.round(simPrepay.balArr[Math.min(m, simPrepay.balArr.length - 1)]) : 0);
+      dF.push(m <= simRefi.months ? Math.round(simRefi.balArr[Math.min(m, simRefi.balArr.length - 1)]) : 0);
+    }
+    const xStep = Math.max(1, Math.round(totalYears / 6));
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Do nothing', data: dN, borderColor: 'rgba(245,240,232,0.35)', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.15 },
+          { label: 'Recast', data: dR, borderColor: '#5bb8f5', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 },
+          { label: 'Refinance', data: dF, borderColor: '#c9a84c', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 },
+          { label: 'Just prepay', data: dP, borderColor: '#4caf7d', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            afterBuildTicks: axis => { axis.ticks = axis.ticks.filter((t, i) => i % xStep === 0); },
+            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
+          },
+          y: {
+            min: 0,
+            grid: { color: 'rgba(255,255,255,0.03)' },
+            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, padding: 8, callback: v => fmt(v) }
+          }
+        }
+      }
+    });
+  });
+}
+
+function restartWizard() {
+  document.getElementById('resultsContent').innerHTML = '';
+  document.getElementById('step-results').classList.remove('active');
+  currentStep = 1;
+  showStep(1);
+}
+
+function checkStep1() {
+  const bal = parseVal('balance');
+  const rate = parseFloat(document.getElementById('rate').value);
+  const yrs = parseFloat(document.getElementById('yearsLeft').value);
+  const lump = parseVal('lumpSum');
+  const btn = document.getElementById('btn-step1');
+  if (btn) btn.disabled = !(bal > 0 && rate > 0 && yrs > 0 && lump > 0 && lump < bal);
+}
+
+function checkStep2() {
+  const rr = parseFloat(document.getElementById('refiRate').value);
+  const cc = document.getElementById('closingCosts').value;
+  const btn = document.getElementById('btn-step2');
+  if (btn) btn.disabled = !(rr > 0 && cc !== '');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Enter') return;
+  if (document.querySelector('[id^="modal-"][style*="block"]')) return;
+  const actions = {
+    1: () => { const b = document.getElementById('btn-step1'); if (b && !b.disabled) validateStep1(); },
+    2: () => { const b = document.getElementById('btn-step2'); if (b && !b.disabled) validateStep2(); },
+  };
+  if (actions[currentStep] !== undefined) actions[currentStep]();
+});
+
+function showModal(id) { document.getElementById('modal-'+id).style.display='block'; document.body.style.overflow='hidden'; }
+function closeModal(id) { if(id) document.getElementById('modal-'+id).style.display='none'; else document.querySelectorAll('[id^="modal-"]').forEach(m=>m.style.display='none'); document.body.style.overflow=''; }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+</script>
+
+<div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+    </div>
+    <input type="hidden" id="bugPage">
+    <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;margin-top:8px;">
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openBugModal() {
+  document.getElementById('bugDescription').value = '';
+  document.getElementById('bugEmail').value = '';
+  document.getElementById('bugPage').value = window.location.pathname;
+  document.getElementById('bugErr').textContent = '';
+  document.getElementById('bugSubmitBtn').textContent = 'Send Report';
+  document.getElementById('bugSubmitBtn').disabled = false;
+  document.getElementById('bugModal').style.display = 'flex';
+  setTimeout(() => document.getElementById('bugDescription').focus(), 50);
+}
+function closeBugModal() { document.getElementById('bugModal').style.display = 'none'; }
+async function submitBugReport() {
+  const description = document.getElementById('bugDescription').value.trim();
+  const email = document.getElementById('bugEmail').value.trim();
+  const page = document.getElementById('bugPage').value;
+  const errEl = document.getElementById('bugErr');
+  const btn = document.getElementById('bugSubmitBtn');
+  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
+  try {
+    const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    else throw new Error();
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('bugModal');
+  let downOnBackdrop = false;
+  el.addEventListener('mousedown', e => { downOnBackdrop = e.target === el; });
+  el.addEventListener('mouseup',   e => { if (e.target !== el) downOnBackdrop = false; });
+  el.addEventListener('click',     e => { if (e.target === el && downOnBackdrop) closeBugModal(); downOnBackdrop = false; });
+  document.getElementById('bugDescription').addEventListener('keydown', e => { if (e.key==='Enter'&&(e.metaKey||e.ctrlKey)) submitBugReport(); });
+});
+</script>
+</body>
+</html>
