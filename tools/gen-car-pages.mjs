@@ -65,6 +65,29 @@ function lerp(anchors, score) {
 const estNew = (s) => lerp(NEW_ANCHORS, s);
 const estUsed = (s) => lerp(USED_ANCHORS, s);
 
+// Share of U.S. consumers scoring below a given FICO score. Same table the
+// house credit-score generator uses; keep the two in sync if either changes.
+const PCT_BELOW = [[500, 4], [550, 11], [600, 19], [650, 28], [700, 40], [750, 57], [800, 77], [850, 100]];
+
+function pctBelow(score) {
+  for (let i = 0; i < PCT_BELOW.length - 1; i++) {
+    const [s0, p0] = PCT_BELOW[i];
+    const [s1, p1] = PCT_BELOW[i + 1];
+    if (score >= s0 && score <= s1) {
+      return Math.round(p0 + (p1 - p0) * (score - s0) / (s1 - s0));
+    }
+  }
+  return 50;
+}
+
+function ficoBand(score) {
+  if (score < 580) return { name: 'Poor', range: '300-579' };
+  if (score < 670) return { name: 'Fair', range: '580-669' };
+  if (score < 740) return { name: 'Good', range: '670-739' };
+  if (score < 800) return { name: 'Very Good', range: '740-799' };
+  return { name: 'Exceptional', range: '800-850' };
+}
+
 // ── Affordability math ───────────────────────────────────────────────────────
 // Mirrors the client-side calculator exactly (payment share of take-home pay,
 // amortized loan, taxes and fees at TAX_FEES of sticker), so worked-example
@@ -148,6 +171,56 @@ function bandFor(score) {
   if (score <= 660) return BANDS.nearPrime;
   if (score <= 780) return BANDS.prime;
   return BANDS.superPrime;
+}
+
+// ── "Is {score} a good credit score to buy a car?" ───────────────────────────
+// Answers the query directly, in car-loan terms rather than general-credit
+// terms. Verdict is keyed to the Experian pricing tier, not the FICO label,
+// because pricing is what actually changes at 601 / 661 / 781.
+
+function isGoodForCar(score) {
+  const band = ficoBand(score);
+  const tier = tierFor(score);
+  const below = pctBelow(score);
+  const label = `FICO calls ${score} "${band.name.toLowerCase()}" (${band.range}), and roughly ${below}% of U.S. consumers score below it. The U.S. average is about 715.`;
+  let verdict, context;
+  if (score <= 500) {
+    verdict = `For buying a car, ${score} is a weak score but not a blocking one.`;
+    context = `Auto lenders price risk rather than refuse it, so approvals happen at this level every day. What ${score} costs you is rate: deep-subprime pricing averages ${tier.newApr.toFixed(1)}% on new cars and ${tier.usedApr.toFixed(1)}% on used, versus ${TIER_TABLE[0].newApr.toFixed(1)}% for super-prime buyers. The honest answer is that the loan will be expensive enough that a cheaper car on a shorter term beats the car you want on a long one.`;
+  } else if (score <= 600) {
+    verdict = `${score} is a below-average score for a car loan, though an easily financed one.`;
+    context = `Subprime approvals are routine; the cost is in the pricing. Scores in ${tier.range} average ${tier.newApr.toFixed(1)}% on new cars and ${tier.usedApr.toFixed(1)}% on used. The one number worth knowing is 601: crossing it moves you to near-prime and drops the average new-car rate to ${TIER_TABLE[2].newApr.toFixed(1)}%, one of the biggest single-boundary savings on the scale.`;
+  } else if (score <= 660) {
+    verdict = `${score} is a decent, workable score for buying a car.`;
+    context = `Near-prime borrowers get approved by mainstream banks and credit unions without difficulty, at an average ${tier.newApr.toFixed(1)}% on new cars and ${tier.usedApr.toFixed(1)}% on used. You are past the punitive part of the curve but not yet at the rates dealers advertise, which generally require 661 and up.`;
+  } else if (score <= 780) {
+    verdict = `Yes. ${score} is a good credit score for buying a car.`;
+    context = `You are in the prime tier, where the average new-car loan prices at ${tier.newApr.toFixed(1)}% and used at ${tier.usedApr.toFixed(1)}%. Approval is not a question anywhere. Manufacturer promotional financing, including the 0% offers, typically starts around 700 to 740, so at ${score} it is worth asking whether you clear that cutoff before accepting a cash rebate instead.`;
+  } else {
+    verdict = `Yes. ${score} is as good as credit gets for a car loan.`;
+    context = `Super-prime pricing averages ${tier.newApr.toFixed(1)}% on new cars and ${tier.usedApr.toFixed(1)}% on used, and you qualify for essentially every promotional APR on offer. No further score improvement will change your rate meaningfully; lender competition and the negotiated price of the car are the only levers left.`;
+  }
+  return { verdict, context, label };
+}
+
+// ── Quick-answer table: car budget by take-home pay ──────────────────────────
+// Uses the page's own APR and the same math as the live calculator, so the
+// table and the calculator agree for identical inputs.
+
+const QUICK_TAKEHOME = [2500, 3500, 4500, 5500, 6500, 8000];
+
+function quickAnswerHtml(score, apr) {
+  const rows = QUICK_TAKEHOME.map((t) => {
+    const ex = { ...EXAMPLE, takeHome: t };
+    const base = affordCar(apr, 0.10, ex);
+    const stretch = affordCar(apr, 0.15, ex);
+    return `<tr><td>${usd(t)}/mo</td><td>${usd(base.payment)}</td><td>${usdK(base.sticker)}</td><td>${usdK(stretch.sticker)}</td></tr>`;
+  }).join('\n      ');
+  return `<table class="sched">
+      <tr><th>Take-home pay</th><th>Payment at 10%</th><th>Car budget</th><th>Stretch (15%)</th></tr>
+      ${rows}
+    </table>
+    <p>Assumes an estimated ${apr.toFixed(2)}% APR at a ${score} score, $3,000 down, no trade-in, a 60-month loan, and about 9% added for sales tax, title, and fees. The "car budget" column is sticker price, not the amount financed. Change any of it in the calculator above.</p>`;
 }
 
 // ── Shared markup ────────────────────────────────────────────────────────────
@@ -390,12 +463,16 @@ function renderScorePage(score) {
   const ex = affordCar(apr);
   const best = affordCar(estNew(800));
   const monthlyCost = Math.round((affordCar(apr).interest - best.interest) / EXAMPLE.term / 5) * 5;
+  const good = isGoodForCar(score);
+  const q35 = affordCar(apr, 0.10, { ...EXAMPLE, takeHome: 3500 });
+  const q65 = affordCar(apr, 0.10, { ...EXAMPLE, takeHome: 6500 });
 
   const faqs = [
     { q: `Can I get a car loan with a ${score} credit score?`, a: band.faqCan(score) },
-    { q: `What interest rate can I expect on a car loan with a ${score} credit score?`, a: `Roughly ${apr.toFixed(2)}% on a new car and ${estUsed(score).toFixed(2)}% on a used one, estimated from Experian's ${tier.name.toLowerCase()} tier averages (${tier.newApr.toFixed(1)}% new, ${tier.usedApr.toFixed(1)}% used for scores ${tier.range}). Individual quotes vary widely in this tier, so compare at least three lenders.` },
+    { q: `Is ${score} a good credit score to buy a car?`, a: `${good.verdict} ${good.context}` },
+    { q: `What APR can I get on a car loan with a ${score} credit score?`, a: `Roughly ${apr.toFixed(2)}% on a new car and ${estUsed(score).toFixed(2)}% on a used one, estimated from Experian's ${tier.name.toLowerCase()} tier averages (${tier.newApr.toFixed(1)}% new, ${tier.usedApr.toFixed(1)}% used for scores ${tier.range}). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders.` },
+    { q: `What size car loan can I get with a ${score} credit score?`, a: `The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated ${apr.toFixed(2)}% over 60 months, a payment of ${usd(q35.payment)}/month supports about ${usd(q35.loan)} of loan, and ${usd(q65.payment)}/month supports about ${usd(q65.loan)}. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop.` },
     { q: `How much car can I afford with a ${score} credit score?`, a: `Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated ${apr.toFixed(2)}%, keeping the payment at 10% of take-home supports about a ${usdK(ex.sticker)} car. The same buyer with super-prime credit could afford about ${usdK(best.sticker)}. Use the calculator above with your own numbers.` },
-    { q: `Is a ${score} credit score good enough to buy a car?`, a: `Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At ${score} the real question is the rate. ${tier.name} pricing applies (scores ${tier.range}), and the calculator shows what that does to your budget.` },
   ];
   if (band.improveTip) faqs.push({ q: 'Should I improve my credit before buying a car?', a: band.improveTip });
 
@@ -420,6 +497,18 @@ ${EXTRA_CSS}
   <p class="intro">The calculator is prefilled with an estimated ${apr.toFixed(2)}% APR for a new-car loan at a ${score} score (${tier.name.toLowerCase()} tier). Enter your take-home pay and down payment; adjust anything, including the rate if you already have a quote.</p>
 
   ${calcMarkup(apr)}
+
+  <div class="section">
+    <h2>The quick answer: what car you can afford at ${score}</h2>
+    <p>If you would rather not enter anything, find your monthly take-home pay in the table. Payments are capped at 10% of take-home, the level that keeps a car from crowding out the rest of a budget, with a 15% stretch column for comparison.</p>
+    ${quickAnswerHtml(score, apr)}
+  </div>
+
+  <div class="section">
+    <h2>Is ${score} a good credit score to buy a car?</h2>
+    <p><strong>${good.verdict}</strong> ${good.label}</p>
+    <p>${good.context}</p>
+  </div>
 
   <div class="section">
     <h2>What a ${score} credit score means for a car loan</h2>

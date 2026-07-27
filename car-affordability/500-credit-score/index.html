@@ -61,10 +61,26 @@
     },
     {
       "@type": "Question",
-      "name": "What interest rate can I expect on a car loan with a 500 credit score?",
+      "name": "Is 500 a good credit score to buy a car?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Roughly 16.00% on a new car and 21.80% on a used one, estimated from Experian's deep subprime tier averages (16.0% new, 21.8% used for scores 300-500). Individual quotes vary widely in this tier, so compare at least three lenders."
+        "text": "For buying a car, 500 is a weak score but not a blocking one. Auto lenders price risk rather than refuse it, so approvals happen at this level every day. What 500 costs you is rate: deep-subprime pricing averages 16.0% on new cars and 21.8% on used, versus 4.6% for super-prime buyers. The honest answer is that the loan will be expensive enough that a cheaper car on a shorter term beats the car you want on a long one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What APR can I get on a car loan with a 500 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roughly 16.00% on a new car and 21.80% on a used one, estimated from Experian's deep subprime tier averages (16.0% new, 21.8% used for scores 300-500). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size car loan can I get with a 500 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 16.00% over 60 months, a payment of $350/month supports about $14,393 of loan, and $650/month supports about $26,729. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop."
       }
     },
     {
@@ -73,14 +89,6 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 16.00%, keeping the payment at 10% of take-home supports about a $19,700 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is a 500 credit score good enough to buy a car?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 500 the real question is the rate. Deep subprime pricing applies (scores 300-500), and the calculator shows what that does to your budget."
       }
     },
     {
@@ -217,6 +225,18 @@ select option{background:#111827;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
 .disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
+.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
+.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
+.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
+.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
+.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
+.reminder-form input[type=email]:focus{border-color:var(--gold);}
+.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
+.reminder-btn:hover{transform:translateY(-1px);}
+.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
+.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
+.reminder-msg.ok{color:var(--green);}
+.reminder-msg.err{color:var(--red);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -306,6 +326,27 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 </div>
 
   <div class="section">
+    <h2>The quick answer: what car you can afford at 500</h2>
+    <p>If you would rather not enter anything, find your monthly take-home pay in the table. Payments are capped at 10% of take-home, the level that keeps a car from crowding out the rest of a budget, with a 15% stretch column for comparison.</p>
+    <table class="sched">
+      <tr><th>Take-home pay</th><th>Payment at 10%</th><th>Car budget</th><th>Stretch (15%)</th></tr>
+      <tr><td>$2,500/mo</td><td>$250</td><td>$12,200</td><td>$16,900</td></tr>
+      <tr><td>$3,500/mo</td><td>$350</td><td>$16,000</td><td>$22,600</td></tr>
+      <tr><td>$4,500/mo</td><td>$450</td><td>$19,700</td><td>$28,200</td></tr>
+      <tr><td>$5,500/mo</td><td>$550</td><td>$23,500</td><td>$33,900</td></tr>
+      <tr><td>$6,500/mo</td><td>$650</td><td>$27,300</td><td>$39,500</td></tr>
+      <tr><td>$8,000/mo</td><td>$800</td><td>$32,900</td><td>$48,000</td></tr>
+    </table>
+    <p>Assumes an estimated 16.00% APR at a 500 score, $3,000 down, no trade-in, a 60-month loan, and about 9% added for sales tax, title, and fees. The "car budget" column is sticker price, not the amount financed. Change any of it in the calculator above.</p>
+  </div>
+
+  <div class="section">
+    <h2>Is 500 a good credit score to buy a car?</h2>
+    <p><strong>For buying a car, 500 is a weak score but not a blocking one.</strong> FICO calls 500 "poor" (300-579), and roughly 4% of U.S. consumers score below it. The U.S. average is about 715.</p>
+    <p>Auto lenders price risk rather than refuse it, so approvals happen at this level every day. What 500 costs you is rate: deep-subprime pricing averages 16.0% on new cars and 21.8% on used, versus 4.6% for super-prime buyers. The honest answer is that the loan will be expensive enough that a cheaper car on a shorter term beats the car you want on a long one.</p>
+  </div>
+
+  <div class="section">
     <h2>What a 500 credit score means for a car loan</h2>
     <p>A 500 credit score sits at the top edge of Experian's deep-subprime tier, the most expensive money in consumer lending. Approval is still possible, but the average new-car rate near this score runs around 16%, and used-car loans average over 21%. On a long loan, interest at these rates can rival the price of the car itself.</p>
     <p>The playbook at 500: bring the biggest down payment you can, keep the loan short, and get quotes from a credit union before any dealership. Be especially wary of buy-here-pay-here lots; their convenience prices in rates and repossession terms that make a bad situation worse. A co-signer with good credit changes everything if you have one available.</p>
@@ -351,9 +392,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   <div class="section">
     <h2>Common Questions</h2>
     <div class="faq-item"><div class="faq-q">Can I get a car loan with a 500 credit score?</div><div class="faq-a">Yes, but expect deep-subprime terms: roughly 16% on new cars and 21% or more on used. Credit unions and co-signers are the two best levers. A larger down payment improves both your approval odds and your rate.</div></div>
-    <div class="faq-item"><div class="faq-q">What interest rate can I expect on a car loan with a 500 credit score?</div><div class="faq-a">Roughly 16.00% on a new car and 21.80% on a used one, estimated from Experian's deep subprime tier averages (16.0% new, 21.8% used for scores 300-500). Individual quotes vary widely in this tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">Is 500 a good credit score to buy a car?</div><div class="faq-a">For buying a car, 500 is a weak score but not a blocking one. Auto lenders price risk rather than refuse it, so approvals happen at this level every day. What 500 costs you is rate: deep-subprime pricing averages 16.0% on new cars and 21.8% on used, versus 4.6% for super-prime buyers. The honest answer is that the loan will be expensive enough that a cheaper car on a shorter term beats the car you want on a long one.</div></div>
+    <div class="faq-item"><div class="faq-q">What APR can I get on a car loan with a 500 credit score?</div><div class="faq-a">Roughly 16.00% on a new car and 21.80% on a used one, estimated from Experian's deep subprime tier averages (16.0% new, 21.8% used for scores 300-500). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">What size car loan can I get with a 500 credit score?</div><div class="faq-a">The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 16.00% over 60 months, a payment of $350/month supports about $14,393 of loan, and $650/month supports about $26,729. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop.</div></div>
     <div class="faq-item"><div class="faq-q">How much car can I afford with a 500 credit score?</div><div class="faq-a">Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 16.00%, keeping the payment at 10% of take-home supports about a $19,700 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers.</div></div>
-    <div class="faq-item"><div class="faq-q">Is a 500 credit score good enough to buy a car?</div><div class="faq-a">Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 500 the real question is the rate. Deep subprime pricing applies (scores 300-500), and the calculator shows what that does to your budget.</div></div>
     <div class="faq-item"><div class="faq-q">Should I improve my credit before buying a car?</div><div class="faq-a">Every tier boundary you cross is a big rate cut: 601 drops the average new-car rate to about 9.6% and 661 drops it to about 6.3%. Six months of on-time payments and lower card balances can move a score in this range faster than at any other level.</div></div>
   </div>
 

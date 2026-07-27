@@ -3,5 +3,13 @@
   "framework": null,
   "buildCommand": "",
   "outputDirectory": ".",
-  "installCommand": "echo \"static site, no install\""
+  "installCommand": "echo \"static site, no install\"",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.vestlyfi.com" }],
+      "destination": "https://vestlyfi.com/:path*",
+      "permanent": true
+    }
+  ]
 }

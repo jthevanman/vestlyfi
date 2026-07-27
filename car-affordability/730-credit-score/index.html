@@ -61,10 +61,26 @@
     },
     {
       "@type": "Question",
-      "name": "What interest rate can I expect on a car loan with a 730 credit score?",
+      "name": "Is 730 a good credit score to buy a car?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Roughly 6.07% on a new car and 9.06% on a used one, estimated from Experian's prime tier averages (6.3% new, 9.4% used for scores 661-780). Individual quotes vary widely in this tier, so compare at least three lenders."
+        "text": "Yes. 730 is a good credit score for buying a car. You are in the prime tier, where the average new-car loan prices at 6.3% and used at 9.4%. Approval is not a question anywhere. Manufacturer promotional financing, including the 0% offers, typically starts around 700 to 740, so at 730 it is worth asking whether you clear that cutoff before accepting a cash rebate instead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What APR can I get on a car loan with a 730 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roughly 6.07% on a new car and 9.06% on a used one, estimated from Experian's prime tier averages (6.3% new, 9.4% used for scores 661-780). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size car loan can I get with a 730 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 6.07% over 60 months, a payment of $350/month supports about $18,074 of loan, and $650/month supports about $33,565. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop."
       }
     },
     {
@@ -73,14 +89,6 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 6.07%, keeping the payment at 10% of take-home supports about a $24,100 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is a 730 credit score good enough to buy a car?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 730 the real question is the rate. Prime pricing applies (scores 661-780), and the calculator shows what that does to your budget."
       }
     },
     {
@@ -217,6 +225,18 @@ select option{background:#111827;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
 .disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
+.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
+.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
+.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
+.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
+.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
+.reminder-form input[type=email]:focus{border-color:var(--gold);}
+.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
+.reminder-btn:hover{transform:translateY(-1px);}
+.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
+.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
+.reminder-msg.ok{color:var(--green);}
+.reminder-msg.err{color:var(--red);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -306,6 +326,27 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 </div>
 
   <div class="section">
+    <h2>The quick answer: what car you can afford at 730</h2>
+    <p>If you would rather not enter anything, find your monthly take-home pay in the table. Payments are capped at 10% of take-home, the level that keeps a car from crowding out the rest of a budget, with a 15% stretch column for comparison.</p>
+    <table class="sched">
+      <tr><th>Take-home pay</th><th>Payment at 10%</th><th>Car budget</th><th>Stretch (15%)</th></tr>
+      <tr><td>$2,500/mo</td><td>$250</td><td>$14,600</td><td>$20,500</td></tr>
+      <tr><td>$3,500/mo</td><td>$350</td><td>$19,300</td><td>$27,600</td></tr>
+      <tr><td>$4,500/mo</td><td>$450</td><td>$24,100</td><td>$34,700</td></tr>
+      <tr><td>$5,500/mo</td><td>$550</td><td>$28,800</td><td>$41,800</td></tr>
+      <tr><td>$6,500/mo</td><td>$650</td><td>$33,500</td><td>$48,900</td></tr>
+      <tr><td>$8,000/mo</td><td>$800</td><td>$40,700</td><td>$59,600</td></tr>
+    </table>
+    <p>Assumes an estimated 6.07% APR at a 730 score, $3,000 down, no trade-in, a 60-month loan, and about 9% added for sales tax, title, and fees. The "car budget" column is sticker price, not the amount financed. Change any of it in the calculator above.</p>
+  </div>
+
+  <div class="section">
+    <h2>Is 730 a good credit score to buy a car?</h2>
+    <p><strong>Yes. 730 is a good credit score for buying a car.</strong> FICO calls 730 "good" (670-739), and roughly 50% of U.S. consumers score below it. The U.S. average is about 715.</p>
+    <p>You are in the prime tier, where the average new-car loan prices at 6.3% and used at 9.4%. Approval is not a question anywhere. Manufacturer promotional financing, including the 0% offers, typically starts around 700 to 740, so at 730 it is worth asking whether you clear that cutoff before accepting a cash rebate instead.</p>
+  </div>
+
+  <div class="section">
     <h2>What a 730 credit score means for a car loan</h2>
     <p>A 730 credit score is prime territory (Experian's 661-780 tier), where the average new-car loan prices around 6.07% and used cars around 9.06%. Approval is not in question anywhere; your job is extracting the best offer, because pricing inside this wide tier still varies with where you sit in it.</p>
     <p>Manufacturer promotional financing (the 0% to 2.9% offers in ads) typically wants the upper end of this band, often 700 to 740 and up. If you qualify, a promo APR usually beats any cash rebate on the math; run both through the calculator to check.</p>
@@ -351,9 +392,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   <div class="section">
     <h2>Common Questions</h2>
     <div class="faq-item"><div class="faq-q">Can I get a car loan with a 730 credit score?</div><div class="faq-a">Yes, everywhere. Prime borrowers average around 6-8% on new cars and 9-10% on used. Compare a credit union, your bank, and dealer financing, and check whether you clear the cutoff for any manufacturer promotional APR before taking a rebate instead.</div></div>
-    <div class="faq-item"><div class="faq-q">What interest rate can I expect on a car loan with a 730 credit score?</div><div class="faq-a">Roughly 6.07% on a new car and 9.06% on a used one, estimated from Experian's prime tier averages (6.3% new, 9.4% used for scores 661-780). Individual quotes vary widely in this tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">Is 730 a good credit score to buy a car?</div><div class="faq-a">Yes. 730 is a good credit score for buying a car. You are in the prime tier, where the average new-car loan prices at 6.3% and used at 9.4%. Approval is not a question anywhere. Manufacturer promotional financing, including the 0% offers, typically starts around 700 to 740, so at 730 it is worth asking whether you clear that cutoff before accepting a cash rebate instead.</div></div>
+    <div class="faq-item"><div class="faq-q">What APR can I get on a car loan with a 730 credit score?</div><div class="faq-a">Roughly 6.07% on a new car and 9.06% on a used one, estimated from Experian's prime tier averages (6.3% new, 9.4% used for scores 661-780). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">What size car loan can I get with a 730 credit score?</div><div class="faq-a">The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 6.07% over 60 months, a payment of $350/month supports about $18,074 of loan, and $650/month supports about $33,565. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop.</div></div>
     <div class="faq-item"><div class="faq-q">How much car can I afford with a 730 credit score?</div><div class="faq-a">Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 6.07%, keeping the payment at 10% of take-home supports about a $24,100 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers.</div></div>
-    <div class="faq-item"><div class="faq-q">Is a 730 credit score good enough to buy a car?</div><div class="faq-a">Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 730 the real question is the rate. Prime pricing applies (scores 661-780), and the calculator shows what that does to your budget.</div></div>
     <div class="faq-item"><div class="faq-q">Should I improve my credit before buying a car?</div><div class="faq-a">Super-prime pricing starts at 781. The gain from here is real but modest (roughly 1.7 points on average); lender competition will usually move your rate more than score gains will.</div></div>
   </div>
 

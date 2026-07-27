@@ -61,10 +61,26 @@
     },
     {
       "@type": "Question",
-      "name": "What interest rate can I expect on a car loan with an 800 credit score?",
+      "name": "Is 800 a good credit score to buy a car?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Roughly 4.60% on a new car and 6.80% on a used one, estimated from Experian's super prime tier averages (4.6% new, 6.8% used for scores 781-850). Individual quotes vary widely in this tier, so compare at least three lenders."
+        "text": "Yes. 800 is as good as credit gets for a car loan. Super-prime pricing averages 4.6% on new cars and 6.8% on used, and you qualify for essentially every promotional APR on offer. No further score improvement will change your rate meaningfully; lender competition and the negotiated price of the car are the only levers left."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What APR can I get on a car loan with an 800 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Roughly 4.60% on a new car and 6.80% on a used one, estimated from Experian's super prime tier averages (4.6% new, 6.8% used for scores 781-850). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What size car loan can I get with an 800 credit score?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 4.60% over 60 months, a payment of $350/month supports about $18,728 of loan, and $650/month supports about $34,781. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop."
       }
     },
     {
@@ -73,14 +89,6 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 4.60%, keeping the payment at 10% of take-home supports about a $24,800 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is an 800 credit score good enough to buy a car?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 800 the real question is the rate. Super prime pricing applies (scores 781-850), and the calculator shows what that does to your budget."
       }
     }
   ]
@@ -209,6 +217,18 @@ select option{background:#111827;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
 .disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
+.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
+.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
+.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
+.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
+.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
+.reminder-form input[type=email]:focus{border-color:var(--gold);}
+.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
+.reminder-btn:hover{transform:translateY(-1px);}
+.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
+.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
+.reminder-msg.ok{color:var(--green);}
+.reminder-msg.err{color:var(--red);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -298,6 +318,27 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 </div>
 
   <div class="section">
+    <h2>The quick answer: what car you can afford at 800</h2>
+    <p>If you would rather not enter anything, find your monthly take-home pay in the table. Payments are capped at 10% of take-home, the level that keeps a car from crowding out the rest of a budget, with a 15% stretch column for comparison.</p>
+    <table class="sched">
+      <tr><th>Take-home pay</th><th>Payment at 10%</th><th>Car budget</th><th>Stretch (15%)</th></tr>
+      <tr><td>$2,500/mo</td><td>$250</td><td>$15,000</td><td>$21,200</td></tr>
+      <tr><td>$3,500/mo</td><td>$350</td><td>$19,900</td><td>$28,500</td></tr>
+      <tr><td>$4,500/mo</td><td>$450</td><td>$24,800</td><td>$35,900</td></tr>
+      <tr><td>$5,500/mo</td><td>$550</td><td>$29,800</td><td>$43,300</td></tr>
+      <tr><td>$6,500/mo</td><td>$650</td><td>$34,700</td><td>$50,600</td></tr>
+      <tr><td>$8,000/mo</td><td>$800</td><td>$42,000</td><td>$61,700</td></tr>
+    </table>
+    <p>Assumes an estimated 4.60% APR at an 800 score, $3,000 down, no trade-in, a 60-month loan, and about 9% added for sales tax, title, and fees. The "car budget" column is sticker price, not the amount financed. Change any of it in the calculator above.</p>
+  </div>
+
+  <div class="section">
+    <h2>Is 800 a good credit score to buy a car?</h2>
+    <p><strong>Yes. 800 is as good as credit gets for a car loan.</strong> FICO calls 800 "exceptional" (800-850), and roughly 77% of U.S. consumers score below it. The U.S. average is about 715.</p>
+    <p>Super-prime pricing averages 4.6% on new cars and 6.8% on used, and you qualify for essentially every promotional APR on offer. No further score improvement will change your rate meaningfully; lender competition and the negotiated price of the car are the only levers left.</p>
+  </div>
+
+  <div class="section">
     <h2>What an 800 credit score means for a car loan</h2>
     <p>An 800 credit score is super prime (781+), the top of Experian's scale. Average pricing here runs about 4.6% on new cars and 6.8% on used, and you clear the bar for essentially every manufacturer promotional offer, including the 0% ones.</p>
     <p>Your credit work is done; the remaining wins are in the deal itself. Negotiate the car's price, not the monthly payment, arrange financing before you walk in so the dealer has to beat it, and decide promo-APR-versus-rebate with arithmetic rather than instinct.</p>
@@ -339,9 +380,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
   <div class="section">
     <h2>Common Questions</h2>
     <div class="faq-item"><div class="faq-q">Can I get a car loan with an 800 credit score?</div><div class="faq-a">Yes, at the best rates offered: about 4.6% average on new cars, lower with promotional financing. Lenders compete for super-prime borrowers, so make them; a pre-arranged credit-union offer is the strongest negotiating tool on the lot.</div></div>
-    <div class="faq-item"><div class="faq-q">What interest rate can I expect on a car loan with an 800 credit score?</div><div class="faq-a">Roughly 4.60% on a new car and 6.80% on a used one, estimated from Experian's super prime tier averages (4.6% new, 6.8% used for scores 781-850). Individual quotes vary widely in this tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">Is 800 a good credit score to buy a car?</div><div class="faq-a">Yes. 800 is as good as credit gets for a car loan. Super-prime pricing averages 4.6% on new cars and 6.8% on used, and you qualify for essentially every promotional APR on offer. No further score improvement will change your rate meaningfully; lender competition and the negotiated price of the car are the only levers left.</div></div>
+    <div class="faq-item"><div class="faq-q">What APR can I get on a car loan with an 800 credit score?</div><div class="faq-a">Roughly 4.60% on a new car and 6.80% on a used one, estimated from Experian's super prime tier averages (4.6% new, 6.8% used for scores 781-850). Used-car loans price several points above new ones at every score. Individual quotes vary widely inside a tier, so compare at least three lenders.</div></div>
+    <div class="faq-item"><div class="faq-q">What size car loan can I get with an 800 credit score?</div><div class="faq-a">The loan size comes from your payment, not your score; the score sets the rate that converts one into the other. At an estimated 4.60% over 60 months, a payment of $350/month supports about $18,728 of loan, and $650/month supports about $34,781. Add your down payment and subtract roughly 9% for tax, title, and fees to get the sticker price you can shop.</div></div>
     <div class="faq-item"><div class="faq-q">How much car can I afford with an 800 credit score?</div><div class="faq-a">Your income decides more than the score does. As a benchmark: with $4,500 a month take-home, $3,000 down, and a 60-month loan at an estimated 4.60%, keeping the payment at 10% of take-home supports about a $24,800 car. The same buyer with super-prime credit could afford about $24,800. Use the calculator above with your own numbers.</div></div>
-    <div class="faq-item"><div class="faq-q">Is an 800 credit score good enough to buy a car?</div><div class="faq-a">Approval is rarely the obstacle at any score; auto lenders price risk rather than decline it. At 800 the real question is the rate. Super prime pricing applies (scores 781-850), and the calculator shows what that does to your budget.</div></div>
   </div>
 
   <p class="disclaimer">Estimates for educational purposes only, not financial advice. Rates are interpolated from Experian tier averages; your quote depends on the lender, the vehicle, and your full credit file.</p>
