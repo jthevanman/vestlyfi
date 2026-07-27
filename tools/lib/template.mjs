@@ -106,18 +106,6 @@ select option{background:#111827;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
 .disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
-.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
-.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
-.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
-.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
-.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
-.reminder-form input[type=email]:focus{border-color:var(--gold);}
-.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
-.reminder-btn:hover{transform:translateY(-1px);}
-.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
-.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
-.reminder-msg.ok{color:var(--green);}
-.reminder-msg.err{color:var(--red);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -178,8 +166,26 @@ export const NAV = `<nav class="site-nav">
 // Deadline-reminder email capture. No account needed; posts to the
 // subscribe-deadline-reminders edge function, which validates and upserts
 // into email_subscriptions (honeypot field "website" silently drops bots).
+// Styles ship with the widget rather than in the base CSS, so pages that do
+// not embed it (the car and credit-score clusters, for one) stay clean.
+const REMINDER_CSS = `<style>
+.reminder-box{background:linear-gradient(135deg,rgba(201,168,76,0.10),rgba(201,168,76,0.03));border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:34px 0;}
+.reminder-title{font-size:1rem;font-weight:500;color:var(--gold-light);margin-bottom:6px;}
+.reminder-sub{font-size:0.82rem;color:var(--cream-dim);line-height:1.6;margin-bottom:14px;}
+.reminder-form{display:flex;gap:10px;flex-wrap:wrap;}
+.reminder-form input[type=email]{flex:1;min-width:200px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s;}
+.reminder-form input[type=email]:focus{border-color:var(--gold);}
+.reminder-btn{padding:12px 22px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:9px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer;transition:transform .15s;}
+.reminder-btn:hover{transform:translateY(-1px);}
+.reminder-btn:disabled{opacity:0.6;cursor:default;transform:none;}
+.reminder-msg{font-size:0.8rem;margin-top:10px;min-height:16px;}
+.reminder-msg.ok{color:var(--green);}
+.reminder-msg.err{color:var(--red);}
+</style>`;
+
 export function reminderWidget({ stateSlug = null, source = 'unknown' } = {}) {
-  return `<div class="reminder-box">
+  return `${REMINDER_CSS}
+<div class="reminder-box">
   <div class="reminder-title">Get a nudge before each IRS deadline</div>
   <p class="reminder-sub">One short email 7 days and 1 day before every federal estimated-tax due date. No account needed; unsubscribe anytime.</p>
   <form class="reminder-form" id="reminderForm">

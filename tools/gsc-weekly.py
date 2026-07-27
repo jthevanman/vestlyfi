@@ -20,6 +20,10 @@ LAG_DAYS = 3          # GSC data is ~3 days behind
 STRIKING_MIN_POS, STRIKING_MAX_POS = 5.0, 20.0
 STRIKING_MIN_IMPR = 3
 NOCLICK_MIN_IMPR = 10
+# Only treat zero clicks as a CTR problem when the page is actually on page 1.
+# Below that, zero clicks is the expected outcome of the ranking, not of the
+# title, and rewriting metadata cannot help.
+NOCLICK_MAX_POS = 10.5
 
 
 def b64u(data: bytes) -> str:
@@ -133,9 +137,10 @@ def main():
 
     # Impressions but no clicks -> title/meta candidates
     noclick = [r for u, r in cur_pages.items()
-               if r["impressions"] >= NOCLICK_MIN_IMPR and r["clicks"] == 0]
+               if r["impressions"] >= NOCLICK_MIN_IMPR and r["clicks"] == 0
+               and r["position"] <= NOCLICK_MAX_POS]
     noclick.sort(key=lambda r: r["impressions"], reverse=True)
-    out.append(f"## High impressions, zero clicks (title/meta rewrite candidates, ≥{NOCLICK_MIN_IMPR} impr)")
+    out.append(f"## High impressions, zero clicks (title/meta rewrite candidates, ≥{NOCLICK_MIN_IMPR} impr, pos ≤{NOCLICK_MAX_POS})")
     if noclick:
         out.append("| Page | Impr | Pos |")
         out.append("|---|--:|--:|")
@@ -226,7 +231,7 @@ def render_html(start, end, prev_start, prev_end, t, p, cur_pages, prev_pages,
     else:
         h.append("<p class='sub'>None this week.</p>")
 
-    h.append(f"<h2>High impressions, zero clicks (title/meta candidates, ≥{NOCLICK_MIN_IMPR} impr)</h2>")
+    h.append(f"<h2>High impressions, zero clicks (title/meta candidates, ≥{NOCLICK_MIN_IMPR} impr, pos ≤{NOCLICK_MAX_POS})</h2>")
     if noclick:
         h.append("<table><tr><th>Page</th><th class='n'>Impr</th><th class='n'>Pos</th></tr>")
         for r in noclick[:15]:

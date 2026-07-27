@@ -1,0 +1,10 @@
+# outputDirectory is ".", so every tracked file in the repo root would
+# otherwise be served publicly. Keep build-time source, data, and working docs
+# off the CDN. (Vercel already excludes vercel.json and package.json itself.)
+#
+# *.md also covers DISTRIBUTION_KIT.md, which is untracked today but holds
+# outreach contacts that must not become publicly readable if it ever lands.
+tools/
+data/
+*.md
+.github/
