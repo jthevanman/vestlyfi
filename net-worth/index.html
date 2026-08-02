@@ -1159,6 +1159,11 @@ function getShareHoldings(){
   for(const e of allEntries){if(e.type!=='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>m[e.category].date)m[e.category]={value:v,date:e.date};}
   return Object.entries(m).map(([cat,d])=>({cat,value:d.value})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
 }
+function getShareDebts(){
+  const m={};
+  for(const e of allEntries){if(e.type==='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>m[e.category].date)m[e.category]={value:v,date:e.date};}
+  return Object.entries(m).map(([cat,d])=>({cat,value:d.value})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
+}
 function drawSpacedText(ctx,text,x,y,sp){let cx=x;for(const ch of text){ctx.fillText(ch,cx,y);cx+=ctx.measureText(ch).width+sp;}return cx;}
 function fitText(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;let s=t;while(s.length>1&&ctx.measureText(s+'…').width>maxW)s=s.slice(0,-1);return s+'…';}
 async function renderShareCanvas(snapshots){
@@ -1186,18 +1191,19 @@ async function renderShareCanvas(snapshots){
   ctx.fillStyle='rgba(255,255,255,0.05)';ctx.beginPath();ctx.roundRect(perX,32,perW+30,32,16);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
   ctx.fillStyle='rgba(245,240,232,0.62)';ctx.fillText(period,perX+15,53);
   const pct=heroBase>0?(heroDiff/heroBase*100):null;
+  const totA=last.assets,totL=last.liabilities;
+  // eyebrow: name the big number so it can never be read as gross assets
+  ctx.font='600 14px Outfit,sans-serif';ctx.fillStyle='rgba(201,168,76,0.85)';
+  drawSpacedText(ctx,priv&&pct!==null?'NET WORTH GROWTH':'NET WORTH',PAD,86,3.2);
   const nwStr=priv?(pct!==null?`${isUp?'+':'-'}${Math.abs(pct).toFixed(1)}%`:'$•••,•••'):fmtMoney(last.netWorth);
-  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle=priv&&pct!==null?accent:'#f5f0e8';ctx.fillText(nwStr,PAD-1,122);
-  // assets vs liabilities context line (latest value per category)
-  const aMap={},lMap={};
-  for(const e of allEntries){const m=e.type==='asset'?aMap:lMap;if(!m[e.category]||e.date>m[e.category].date)m[e.category]=e;}
-  const totA=Object.values(aMap).reduce((s,e)=>s+Number(e.value),0),totL=Object.values(lMap).reduce((s,e)=>s+Number(e.value),0);
+  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle=priv&&pct!==null?accent:'#f5f0e8';ctx.fillText(nwStr,PAD-1,132);
+  // spell out the subtraction: assets on their own are not net worth
   if(totA>0||totL>0){
     let dTxt;
-    if(totL<=0)dTxt=priv?'Debt-free':`Assets ${fmtMoney(totA)}   ·   Debt-free`;
-    else if(priv)dTxt=`Assets ${Math.round(totA/(totA+totL)*100)}%   ·   Liabilities ${Math.round(totL/(totA+totL)*100)}%`;
-    else dTxt=`Assets ${fmtMoney(totA)}   ·   Liabilities ${fmtMoney(totL)}`;
-    ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.45)';ctx.fillText(dTxt,PAD,150);
+    if(totL<=0)dTxt=priv?'Debt-free':`Assets ${fmtMoney(totA)}, debt-free`;
+    else if(priv)dTxt=totA>0?`Liabilities are ${Math.round(totL/totA*100)}% of assets and already subtracted`:'Liabilities already subtracted';
+    else dTxt=`Assets ${fmtMoney(totA)} minus liabilities ${fmtMoney(totL)}`;
+    ctx.font='400 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(dTxt,PAD,158);
   }
   if(!priv&&!(heroDiff===0&&heroSpan===null)){
     const arrow=isUp?'▲':'▼';
@@ -1207,7 +1213,7 @@ async function renderShareCanvas(snapshots){
     ctx.fillStyle=accent;ctx.textBaseline='middle';ctx.fillText(gTxt,pillX+15,pillY+pillH/2+1);ctx.textBaseline='alphabetic';
   }
   // ── ELEMENT 1: trend chart (largest) ──
-  const cY=172,cH=196;
+  const cY=172,cH=178;
   if(!single){
     const yAW=priv?20:90,cX=PAD+yAW,cW=W-PAD-cX,vals=snapshots.map(s=>s.netWorth),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1,p=range*0.1,yMin=minV-p,yMax=maxV+p,yR=yMax-yMin;
     const ptX=i=>cX+(i/(vals.length-1))*cW,ptY=v=>cY+cH-((v-yMin)/yR)*cH;
@@ -1219,12 +1225,12 @@ async function renderShareCanvas(snapshots){
     const step=Math.ceil(snapshots.length/6);ctx.font='300 17px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';
     snapshots.forEach((s,i)=>{if(i%step===0||i===snapshots.length-1){ctx.textAlign=i===snapshots.length-1?'right':(i===0?'left':'center');ctx.fillText(fmtMonthLabel(s.month),ptX(i),cY+cH+26);}});ctx.textAlign='left';
   }
-  // ── ELEMENTS 2 & 3: side-by-side boxes (pie + top assets); single month has no trend, so they get the full height ──
-  const boxY=single?176:420,boxH=single?430:186,gap=24,boxW=(W-PAD*2-gap)/2,box1=PAD,box2=PAD+boxW+gap;
+  // ── ELEMENTS 2 & 3: side-by-side boxes (pie + balance sheet); single month has no trend, so they get the full height ──
+  const boxY=single?180:404,boxH=single?426:202,gap=24,boxW=(W-PAD*2-gap)/2,box1=PAD,box2=PAD+boxW+gap;
   [box1,box2].forEach(bx=>{ctx.fillStyle='rgba(255,255,255,0.025)';ctx.beginPath();ctx.roundRect(bx,boxY,boxW,boxH,16);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();});
   // ELEMENT 2: allocation pie
   const titleFont=single?'600 15px Outfit,sans-serif':'600 13px Outfit,sans-serif',titleY=boxY+(single?38:32);
-  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'ALLOCATION',box1+24,titleY,3);
+  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'ASSET MIX',box1+24,titleY,3);
   const alloc=getShareAllocation();
   if(alloc.total>0){
     let slices;
@@ -1242,16 +1248,31 @@ async function renderShareCanvas(snapshots){
     let ly=single?pcy-((slices.length-1)*lineH)/2+7:boxY+52;
     slices.forEach(s=>{ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(lx+dotR,ly-dotR,dotR,0,Math.PI*2);ctx.fill();const pctStr=Math.round(s.value/alloc.total*100)+'%';ctx.textAlign='right';ctx.fillStyle='rgba(245,240,232,0.5)';ctx.fillText(pctStr,lRight,ly);const pW=ctx.measureText(pctStr).width;ctx.textAlign='left';ctx.fillStyle='rgba(245,240,232,0.8)';ctx.fillText(fitText(ctx,s.label,lRight-(lx+dotR*2+8)-pW-10),lx+dotR*2+8,ly);ly+=lineH;});
   } else {ctx.font='300 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.textAlign='center';ctx.fillText('No assets logged yet',box1+boxW/2,boxY+boxH/2+6);ctx.textAlign='left';}
-  // ELEMENT 3: top assets table
-  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'TOP ASSETS',box2+24,titleY,3);
-  const holdings=getShareHoldings();
-  if(holdings.length){
-    const tx=box2+24,txRight=box2+boxW-24,maxRows=single?8:5,rowH=single?42:24,vFont=single?'600 21px Outfit,sans-serif':'600 18px Outfit,sans-serif',nFont=single?'400 21px Outfit,sans-serif':'400 18px Outfit,sans-serif';
-    const hTot=holdings.reduce((s,x)=>s+x.value,0);
-    let ry=single?titleY+46:boxY+66;const showRows=holdings.length>maxRows?maxRows-1:Math.min(holdings.length,maxRows);
-    for(let i=0;i<showRows;i++){const h=holdings[i];ctx.font=vFont;const vStr=priv?Math.round(h.value/hTot*100)+'%':fmtMoney(h.value);ctx.textAlign='right';ctx.fillStyle='#6fc99a';ctx.fillText(vStr,txRight,ry);const vW=ctx.measureText(vStr).width;ctx.textAlign='left';ctx.font=nFont;ctx.fillStyle='rgba(245,240,232,0.82)';ctx.fillText(fitText(ctx,h.cat,txRight-tx-vW-16),tx,ry);ry+=rowH;}
-    if(holdings.length>maxRows){ctx.font=single?'400 17px Outfit,sans-serif':'400 15px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.38)';ctx.fillText(`+${holdings.length-showRows} more`,tx,ry+2);}
-  } else {ctx.font='300 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.textAlign='center';ctx.fillText('No assets logged yet',box2+boxW/2,boxY+boxH/2+6);ctx.textAlign='left';}
+  // ELEMENT 3: balance sheet — assets and debts in one signed list that totals to the hero number
+  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'BALANCE SHEET',box2+24,titleY,3);
+  const holdings=getShareHoldings(),debts=getShareDebts();
+  if(holdings.length||debts.length){
+    const tx=box2+24,txRight=box2+boxW-24,slots=single?7:5,rowH=single?42:23;
+    const vFont=single?'600 21px Outfit,sans-serif':'600 18px Outfit,sans-serif',nFont=single?'400 21px Outfit,sans-serif':'400 18px Outfit,sans-serif';
+    // debts get reserved slots so a mortgage is never the line that gets cut
+    let dShow=Math.min(debts.length,single?4:2);let aShow=Math.min(holdings.length,slots-dShow);dShow=Math.min(debts.length,slots-aShow);
+    const rows=[];
+    const fold=(list,show,label)=>{if(!show)return;if(list.length>show){for(let i=0;i<show-1;i++)rows.push({cat:list[i].cat,value:list[i].value});rows.push({cat:label,value:list.slice(show-1).reduce((s,x)=>s+x.value,0)});}else for(let i=0;i<show;i++)rows.push({cat:list[i].cat,value:list[i].value});};
+    fold(holdings,aShow,`Other assets (${holdings.length-aShow+1})`);
+    const aCount=rows.length;
+    fold(debts,dShow,`Other debts (${debts.length-dShow+1})`);
+    // percentages in privacy mode are all shares of total assets, so the rows still net out on screen
+    const base=totA>0?totA:0;
+    const val=(v,neg)=>{if(!priv)return fmtMoney(neg?-v:v);if(!base)return '•••';return (neg?'-':'')+Math.round(v/base*100)+'%';};
+    let ry=single?titleY+46:boxY+58;
+    rows.forEach((r,i)=>{const neg=i>=aCount;ctx.font=vFont;const vStr=val(r.value,neg);ctx.textAlign='right';ctx.fillStyle=neg?'#e07a7a':'#6fc99a';ctx.fillText(vStr,txRight,ry);const vW=ctx.measureText(vStr).width;ctx.textAlign='left';ctx.font=nFont;ctx.fillStyle='rgba(245,240,232,0.82)';ctx.fillText(fitText(ctx,r.cat,txRight-tx-vW-16),tx,ry);ry+=rowH;});
+    const netY=boxY+boxH-(single?34:20),divY=netY-(single?30:18);
+    ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(tx,divY);ctx.lineTo(txRight,divY);ctx.stroke();
+    ctx.font=single?'700 22px Outfit,sans-serif':'700 19px Outfit,sans-serif';
+    const netStr=priv?(base?Math.round((totA-totL)/base*100)+'%':'•••'):fmtMoney(totA-totL);
+    ctx.textAlign='right';ctx.fillStyle='#f5f0e8';ctx.fillText(netStr,txRight,netY);ctx.textAlign='left';
+    ctx.fillStyle='rgba(245,240,232,0.72)';ctx.fillText('Net worth',tx,netY);
+  } else {ctx.font='300 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.textAlign='center';ctx.fillText('Nothing logged yet',box2+boxW/2,boxY+boxH/2+6);ctx.textAlign='left';}
   const dataUrl=canvas.toDataURL('image/png');document.getElementById('shareGenerating').style.display='none';const img=document.getElementById('sharePreviewImg');img.src=dataUrl;img.style.display='block';
 }
 function downloadShareImage(){const canvas=document.getElementById('shareCanvas'),snaps=getFilteredSnapshots();if(!snaps.length)return;const f=snaps[0],l=snaps[snaps.length-1],dataUrl=canvas.toDataURL('image/png'),isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMob){const w=window.open();w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}else{const a=document.createElement('a');a.download=`vestlyfi-networth-${f.month}-to-${l.month}.png`;a.href=dataUrl;a.click();document.getElementById('shareMsg').textContent='Downloaded!';}}
