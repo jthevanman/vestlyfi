@@ -1197,13 +1197,22 @@ async function renderShareCanvas(snapshots){
   drawSpacedText(ctx,priv&&pct!==null?'NET WORTH GROWTH':'NET WORTH',PAD,86,3.2);
   const nwStr=priv?(pct!==null?`${isUp?'+':'-'}${Math.abs(pct).toFixed(1)}%`:'$•••,•••'):fmtMoney(last.netWorth);
   ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle=priv&&pct!==null?accent:'#f5f0e8';ctx.fillText(nwStr,PAD-1,132);
-  // spell out the subtraction: assets on their own are not net worth
+  // both sides of the balance, split by a dimmed rule so neither half reads as the total
   if(totA>0||totL>0){
-    let dTxt;
-    if(totL<=0)dTxt=priv?'Debt-free':`Assets ${fmtMoney(totA)}, debt-free`;
-    else if(priv)dTxt=totA>0?`Liabilities are ${Math.round(totL/totA*100)}% of assets and already subtracted`:'Liabilities already subtracted';
-    else dTxt=`Assets ${fmtMoney(totA)} minus liabilities ${fmtMoney(totL)}`;
-    ctx.font='400 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(dTxt,PAD,158);
+    ctx.font='400 18px Outfit,sans-serif';
+    if(totL>0&&!priv){
+      const segA=`Assets ${fmtMoney(totA)}`,segB=`Liabilities ${fmtMoney(totL)}`;
+      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(segA,PAD,158);
+      let sx=PAD+ctx.measureText(segA).width+16;
+      ctx.fillStyle='rgba(245,240,232,0.26)';ctx.fillText('|',sx,158);
+      sx+=ctx.measureText('|').width+16;
+      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(segB,sx,158);
+    } else {
+      let dTxt;
+      if(totL<=0)dTxt=priv?'Debt-free':`Assets ${fmtMoney(totA)}, debt-free`;
+      else dTxt=totA>0?`Liabilities are ${Math.round(totL/totA*100)}% of assets and already subtracted`:'Liabilities already subtracted';
+      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(dTxt,PAD,158);
+    }
   }
   if(!priv&&!(heroDiff===0&&heroSpan===null)){
     const arrow=isUp?'▲':'▼';
@@ -1252,10 +1261,14 @@ async function renderShareCanvas(snapshots){
   ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'BALANCE SHEET',box2+24,titleY,3);
   const holdings=getShareHoldings(),debts=getShareDebts();
   if(holdings.length||debts.length){
-    const tx=box2+24,txRight=box2+boxW-24,slots=single?7:5,rowH=single?42:23;
+    const tx=box2+24,txRight=box2+boxW-24,slots=single?6:4;
     const vFont=single?'600 21px Outfit,sans-serif':'600 18px Outfit,sans-serif',nFont=single?'400 21px Outfit,sans-serif':'400 18px Outfit,sans-serif';
-    // debts get reserved slots so a mortgage is never the line that gets cut
-    let dShow=Math.min(debts.length,single?4:2);let aShow=Math.min(holdings.length,slots-dShow);dShow=Math.min(debts.length,slots-aShow);
+    // Even split, so neither column looks like the whole story. Only a side that
+    // cannot fill its half hands the spare rows over to the other.
+    const half=slots/2;
+    let aShow=Math.min(holdings.length,half),dShow=Math.min(debts.length,half);
+    if(aShow<half)dShow=Math.min(debts.length,slots-aShow);
+    else if(dShow<half)aShow=Math.min(holdings.length,slots-dShow);
     const rows=[];
     const fold=(list,show,label)=>{if(!show)return;if(list.length>show){for(let i=0;i<show-1;i++)rows.push({cat:list[i].cat,value:list[i].value});rows.push({cat:label,value:list.slice(show-1).reduce((s,x)=>s+x.value,0)});}else for(let i=0;i<show;i++)rows.push({cat:list[i].cat,value:list[i].value});};
     fold(holdings,aShow,`Other assets (${holdings.length-aShow+1})`);
@@ -1264,9 +1277,12 @@ async function renderShareCanvas(snapshots){
     // percentages in privacy mode are all shares of total assets, so the rows still net out on screen
     const base=totA>0?totA:0;
     const val=(v,neg)=>{if(!priv)return fmtMoney(neg?-v:v);if(!base)return '•••';return (neg?'-':'')+Math.round(v/base*100)+'%';};
-    let ry=single?titleY+46:boxY+58;
+    const netY=boxY+boxH-(single?34:20),divY=netY-(single?30:18),startY=single?titleY+46:boxY+58;
+    // Spread whatever rows we have across the space above the divider rather than
+    // stacking them at a fixed pitch, so a short list does not leave a dead gap.
+    const rowH=rows.length>1?Math.min(single?48:26,(divY-16-startY)/(rows.length-1)):0;
+    let ry=startY;
     rows.forEach((r,i)=>{const neg=i>=aCount;ctx.font=vFont;const vStr=val(r.value,neg);ctx.textAlign='right';ctx.fillStyle=neg?'#e07a7a':'#6fc99a';ctx.fillText(vStr,txRight,ry);const vW=ctx.measureText(vStr).width;ctx.textAlign='left';ctx.font=nFont;ctx.fillStyle='rgba(245,240,232,0.82)';ctx.fillText(fitText(ctx,r.cat,txRight-tx-vW-16),tx,ry);ry+=rowH;});
-    const netY=boxY+boxH-(single?34:20),divY=netY-(single?30:18);
     ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(tx,divY);ctx.lineTo(txRight,divY);ctx.stroke();
     ctx.font=single?'700 22px Outfit,sans-serif':'700 19px Outfit,sans-serif';
     const netStr=priv?(base?Math.round((totA-totL)/base*100)+'%':'•••'):fmtMoney(totA-totL);
