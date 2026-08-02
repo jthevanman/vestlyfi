@@ -825,7 +825,9 @@ function buildMonthlySnapshots(){
   const now=currentMonthStr();const months=[];let cur=allMonths[0];
   while(cur<=now){months.push(cur);const[y,m]=cur.split('-').map(Number);cur=m===12?`${y+1}-01`:`${y}-${String(m+1).padStart(2,'0')}`;}
   const snapshots=[],lastKnown={};
-  for(const month of months){const me=allEntries.filter(e=>dateToMonthStr(e.date)===month);for(const e of me)lastKnown[e.category]={value:e.value,type:e.type};let a=0,l=0;for(const c of Object.values(lastKnown)){if(c.type==='asset')a+=c.value;else l+=c.value;}snapshots.push({month,assets:a,liabilities:l,netWorth:a-l});}
+  // Keyed on type+category, not category alone: a user can own a "Silverado" asset
+  // and owe a "Silverado" loan, and keying on the name alone drops one of them.
+  for(const month of months){const me=allEntries.filter(e=>dateToMonthStr(e.date)===month);for(const e of me)lastKnown[e.type+' '+e.category]={value:e.value,type:e.type};let a=0,l=0;for(const c of Object.values(lastKnown)){if(c.type==='asset')a+=c.value;else l+=c.value;}snapshots.push({month,assets:a,liabilities:l,netWorth:a-l});}
   return snapshots;
 }
 
