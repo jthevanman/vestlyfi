@@ -316,6 +316,64 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
 .qpick.selected.liability { border-color:var(--red); background:var(--red-dim); color:var(--red); }
 .modal-field-or { font-size:0.68rem; color:var(--muted); margin-bottom:7px; }
 
+/* ── DEBT ↔ ASSET LINKS ── */
+/* .modal-field label is uppercased globally. That reads fine on a one-word
+   label and reads as shouting on a full question, so questions get their own. */
+.modal-ask { display:block; font-size:0.82rem; color:var(--cream); margin-bottom:8px; }
+.modal-note { font-size:0.75rem; color:var(--muted); margin-top:7px; line-height:1.5; min-height:0; }
+.tie-yn { display:flex; gap:8px; }
+.tie-btn { flex:1; padding:9px; border-radius:9px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); font-family:'Outfit',sans-serif; font-size:0.83rem; cursor:pointer; transition:all .15s; }
+.tie-btn:hover { border-color:var(--border); color:var(--cream); }
+.tie-btn.active { border-color:var(--gold); background:var(--gold-dim); color:var(--gold); }
+.tie-pick { margin-top:11px; padding-top:12px; border-top:1px dashed var(--border-soft); }
+.tie-sub { display:block; font-size:0.76rem; color:var(--cream-dim); margin-bottom:8px; }
+.tie-list { display:flex; flex-wrap:wrap; gap:6px; }
+.tie-opt { padding:5px 12px; border-radius:20px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); font-family:'Outfit',sans-serif; font-size:0.76rem; cursor:pointer; transition:all .15s; }
+.tie-opt:hover { border-color:var(--border); color:var(--cream); }
+.tie-opt.active { border-color:var(--gold); background:rgba(201,168,76,0.16); color:var(--gold); }
+.tie-opt.add { border-style:dashed; color:var(--muted); }
+
+/* Add-asset step: everything except category and value is fixed, so the step
+   can only ever produce the one asset the debt in hand attaches to. */
+.locked-field { position:relative; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.045); border-radius:9px; padding:10px 34px 10px 13px; font-size:0.86rem; font-weight:300; color:rgba(245,240,232,0.45); }
+.locked-field svg { position:absolute; right:12px; top:50%; transform:translateY(-50%); opacity:0.4; }
+.type-toggle.locked .type-btn { opacity:0.3; cursor:default; }
+.type-toggle.locked .type-btn.active { opacity:1; }
+.tie-locked { display:flex; align-items:center; gap:9px; padding:11px 13px; border:1px solid var(--border); background:var(--gold-dim); border-radius:9px; }
+.tie-locked-l { flex:1; min-width:0; }
+.tie-locked-t { font-size:0.66rem; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:3px; }
+.tie-locked-v { font-size:0.85rem; color:var(--gold); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Review banner */
+.link-banner { display:flex; align-items:center; gap:13px; padding:13px 15px; background:var(--gold-dim); border:1px solid var(--border); border-radius:11px; margin-bottom:16px; }
+.link-banner-ic { flex:none; opacity:0.75; }
+.link-banner-text { flex:1; min-width:0; font-size:0.82rem; line-height:1.45; }
+.link-banner-text small { display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
+.btn-link-review { flex:none; padding:7px 14px; background:var(--gold); color:var(--navy); border:none; border-radius:8px; font-family:'Outfit',sans-serif; font-size:0.76rem; font-weight:600; cursor:pointer; transition:background .15s; }
+.btn-link-review:hover { background:var(--gold-light); }
+.btn-link-x { flex:none; background:none; border:none; color:var(--muted); font-size:1.2rem; line-height:1; cursor:pointer; padding:0 3px; transition:color .15s; }
+.btn-link-x:hover { color:var(--cream); }
+
+/* Review list */
+.link-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--border-soft); }
+.link-row:last-of-type { border-bottom:1px solid var(--border-soft); }
+.link-row-l { flex:1; min-width:0; }
+.link-row-name { font-size:0.85rem; margin-bottom:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.link-row-val { font-size:0.72rem; color:var(--muted); }
+.link-row select { flex:none; width:172px; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.8rem; font-weight:300; outline:none; }
+.link-row select:focus { border-color:var(--gold); }
+.link-row select option { background:var(--navy-mid); }
+.link-new { display:grid; grid-template-columns:1fr 118px; gap:8px; padding-bottom:12px; }
+.link-new input { width:100%; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:300; outline:none; }
+.link-new input:focus { border-color:var(--gold); }
+@media (max-width:560px) {
+  .link-banner { flex-wrap:wrap; row-gap:10px; }
+  .link-banner-text { flex-basis:calc(100% - 60px); }
+  .btn-link-review { flex-basis:100%; order:3; }
+  .link-row { flex-wrap:wrap; row-gap:9px; }
+  .link-row select { width:100%; }
+}
+
 /* Drawer */
 .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.72); z-index:200; align-items:center; justify-content:center; padding:20px; }
 .drawer-overlay.open { display:flex; }
@@ -542,6 +600,14 @@ footer span { color:var(--muted); font-size:0.72rem; }
           <div class="stat-grid" id="statGrid"></div>
           <div class="stat-row2" id="statRow2"></div>
 
+          <!-- DEBT LINK REVIEW BANNER -->
+          <div class="link-banner" id="linkBanner" style="display:none">
+            <svg class="link-banner-ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div class="link-banner-text"><span id="linkBannerMain"></span><small>Tying them shows how much of each thing you actually own.</small></div>
+            <button class="btn-link-review" onclick="openLinkReview()">Review</button>
+            <button class="btn-link-x" onclick="dismissLinkBanner()" aria-label="Dismiss">×</button>
+          </div>
+
           <!-- LINE CHART -->
           <div class="card">
             <div class="card-header">
@@ -670,12 +736,51 @@ footer span { color:var(--muted); font-size:0.72rem; }
     <div class="modal-field"><label>Type</label><div class="type-toggle"><button class="type-btn asset active" id="typeAsset" onclick="setType('asset')">Asset</button><button class="type-btn liability" id="typeLiability" onclick="setType('liability')">Liability</button></div></div>
     <div class="modal-field"><label>Category</label><div class="quick-picks" id="quickPicks"></div><div class="modal-field-or">or type your own:</div><input type="text" id="entryCategory" placeholder="e.g. 401k, Home, Mortgage"></div>
     <div class="modal-field"><label>Value</label><input type="text" id="entryValue" placeholder="$0" oninput="fmtModalComma(this)"></div>
+    <div class="modal-field" id="tieField" style="display:none">
+      <span class="modal-ask">Is this debt tied to something you own?</span>
+      <div class="tie-yn"><button type="button" class="tie-btn" id="tieYesBtn" onclick="setTieAnswer('yes')">Yes</button><button type="button" class="tie-btn" id="tieNoBtn" onclick="setTieAnswer('no')">No</button></div>
+      <div class="tie-pick" id="tiePick" style="display:none"><span class="tie-sub">Which one?</span><div class="tie-list" id="tieList"></div></div>
+      <div class="modal-note" id="tieNote"></div>
+    </div>
     <div class="modal-err" id="modalErr"></div>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-modal-save" style="background:var(--navy-light);color:var(--cream);border:1px solid var(--border-soft);flex:none;padding:11px 13px;font-size:0.76rem;" onclick="openBulkHistoryModal()">+ Bulk</button>
       <button class="btn-modal-save" onclick="saveEntry()">Save Entry</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="assetStepModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-title">Add Asset</div>
+    <div class="modal-sub">You're adding what this debt is tied to.</div>
+    <div class="modal-field"><label>Tied to</label>
+      <div class="tie-locked">
+        <div class="tie-locked-l"><div class="tie-locked-t">Liability</div><div class="tie-locked-v" id="assetStepTie"></div></div>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" opacity="0.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+    </div>
+    <div class="modal-field"><label>Date</label>
+      <div class="locked-field"><span id="assetStepDate"></span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    </div>
+    <div class="modal-field"><label>Type</label>
+      <div class="type-toggle locked"><button type="button" class="type-btn asset active" disabled>Asset</button><button type="button" class="type-btn" disabled>Liability</button></div>
+    </div>
+    <div class="modal-field"><label>Category</label><div class="quick-picks" id="assetStepPicks"></div><div class="modal-field-or">or type your own:</div><input type="text" id="assetStepCategory" placeholder="e.g. Silverado"></div>
+    <div class="modal-field"><label>Value</label><input type="text" id="assetStepValue" placeholder="$0" oninput="fmtModalComma(this)"></div>
+    <div class="modal-err" id="assetStepErr"></div>
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeAssetStep()">Back</button><button class="btn-modal-save" onclick="continueAssetStep()">Continue</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="linkReviewModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-title">Which debts are tied to something you own?</div>
+    <div class="modal-sub">Answer what you can. Anything you skip stays in your totals, it just won't show against a specific asset.</div>
+    <div id="linkReviewRows"></div>
+    <div class="modal-err" id="linkReviewErr"></div>
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="dismissLinkReview()">Not now</button><button class="btn-modal-save" onclick="saveLinkReview()">Save</button></div>
   </div>
 </div>
 
@@ -735,6 +840,13 @@ const{createClient}=supabase;
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
 let currentUser=null,allEntries=[],editingId=null,selectedType='asset',chartInstance=null,isLoadingEntries=false,holdingsFilter='all',holdingsSortStack=[{key:'value',dir:-1}];
+// Rows from net_worth_debt_links. Empty until the migration is applied, which
+// the page degrades to gracefully: no banner, no tie question, everything else
+// behaves exactly as it did before.
+let allLinks=[],linksTableReady=false;
+// Entry-modal tie state. tieAnswer is null | 'yes' | 'no'. pendingAsset holds an
+// asset the user built in the add-asset step; it is not written until saveEntry.
+let tieAnswer=null,tieAsset=null,pendingAsset=null;
 
 // ── HELPERS ──
 function fmtMoney(n){if(n===0)return'$0';const abs=Math.abs(n);const fmt=abs>=1000000?'$'+(abs/1000000).toFixed(2)+'M':'$'+Math.round(abs).toLocaleString();return n<0?'-'+fmt:fmt;}
@@ -746,8 +858,13 @@ function dateToMonthStr(s){return s?s.slice(0,7):'';}
 function fmtMonthLabel(s){const[y,m]=s.split('-');const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mo[parseInt(m)-1]} ${y}`;}
 function fmtDateLabel(s){if(!s)return'';const p=s.split('-');if(p.length===3){const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mo[parseInt(p[1])-1]} ${parseInt(p[2])}, ${p[0]}`;}return fmtMonthLabel(s);}
 
-const QUICK_ASSETS=['401k / 403b','Roth IRA','Brokerage','Cash & Savings','Home'];
-const QUICK_LIABILITIES=['Mortgage','Auto Loan','Student Loan','Credit Card','Personal Loan'];
+// Ordered most to least commonly held, since the first chips get the most taps.
+// Car was the biggest gap: Auto Loan has always been a debt chip with no asset
+// counterpart, which is why live data has vehicles logged as Silverado, LC500
+// and Prius. 401k and 403b are separate now; the old combined '401k / 403b'
+// string still exists on some rows and is deliberately not merged.
+const QUICK_ASSETS=['Cash & Savings','401k','Roth IRA','Home','Brokerage','Car','HSA','Traditional IRA','Crypto','403b','Rental Property'];
+const QUICK_LIABILITIES=['Credit Card','Auto Loan','Mortgage','Student Loan','Personal Loan','HELOC','Medical Debt','401k Loan','Business Loan','Tax Debt'];
 const DONUT_COLORS=['#c9a84c','#4caf7d','#60a5fa','#a78bfa','#fb923c','#f472b6','#34d399','#e8c97a'];
 
 // ── AUTH ──
@@ -811,11 +928,283 @@ async function loadEntries(silent=false){
   let timeout;
   if(!silent)timeout=setTimeout(()=>{document.getElementById('loadingState').style.display='none';document.getElementById('mainContent').style.display='flex';isLoadingEntries=false;},5000);
   try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=data||[];}catch(e){console.error(e);allEntries=[];}
+  await loadLinks();
   if(timeout)clearTimeout(timeout);
   isLoadingEntries=false;
   document.getElementById('loadingState').style.display='none';
   document.getElementById('mainContent').style.display='flex';
   renderAll();
+}
+
+// ══ DEBT ↔ ASSET LINKS ══
+// A debt and the thing it was borrowed against are two unrelated rows in
+// net_worth_entries, and which goes with which exists only in the user's head.
+// So it is always asked for and never inferred. An unanswered debt is shown as
+// unassigned, which is true, rather than guessed at, which would repeat the
+// overstatement this whole feature exists to fix.
+
+const LINK_SNOOZE_DAYS=30;
+const LINK_MAX_DISMISSALS=3;
+// A debt smaller than this share of total assets will not raise the banner by
+// itself. It is still listed in the review once something else opens it.
+const LINK_MATERIAL_SHARE=0.05;
+
+function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function normCat(s){return(s||'').trim().toLowerCase();}
+function addDays(dateStr,days){const d=new Date(dateStr+'T00:00:00');d.setDate(d.getDate()+days);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+async function loadLinks(){
+  try{
+    const{data,error}=await sb.from('net_worth_debt_links').select('*');
+    if(error)throw error;
+    allLinks=data||[];linksTableReady=true;
+  }catch(e){
+    // Migration not applied yet. Everything that depends on links stays hidden
+    // and the rest of the page behaves exactly as it did before.
+    allLinks=[];linksTableReady=false;
+  }
+}
+
+// Latest logged value per category for one type, biggest first.
+function latestByCategory(type){
+  const m={};
+  for(const e of allEntries){
+    if(e.type!==type)continue;
+    const k=normCat(e.category);
+    if(!k)continue;
+    if(!m[k]||e.date>m[k].date)m[k]={category:e.category,value:Number(e.value)||0,date:e.date};
+  }
+  return Object.values(m).sort((a,b)=>b.value-a.value);
+}
+
+function linkFor(liabilityCategory){const k=normCat(liabilityCategory);return allLinks.find(l=>normCat(l.liability_category)===k)||null;}
+
+// The asset a liability is tied to, or null. A tie pointing at a category the
+// user has since renamed away resolves to null so the debt shows as unassigned
+// rather than silently disappearing from the picture.
+function tiedAssetFor(liabilityCategory){
+  const l=linkFor(liabilityCategory);
+  if(!l||l.state!=='tied')return null;
+  const k=normCat(l.asset_category);
+  const hit=latestByCategory('asset').find(a=>normCat(a.category)===k);
+  return hit?hit.category:null;
+}
+
+// No recorded answer: either no row at all, or asked and skipped.
+function unansweredDebts(){
+  return latestByCategory('liability').filter(d=>{
+    const l=linkFor(d.category);
+    return !l||l.state==='skipped';
+  });
+}
+
+// The subset allowed to raise the banner. Small debts and exhausted dismissals
+// stay quiet, but they are still listed once the review is open, so a $24k
+// student loan gets cleared in the same pass as the mortgage that opened it.
+function bannerWorthyDebts(){
+  if(!linksTableReady)return[];
+  const assets=latestByCategory('asset');
+  if(!assets.length)return[];
+  const totalAssets=assets.reduce((s,a)=>s+a.value,0);
+  const assetNames=new Set(assets.map(a=>normCat(a.category)));
+  const today=currentDateStr();
+  return unansweredDebts().filter(d=>{
+    const l=linkFor(d.category);
+    if(l){
+      if(l.dismissed_count>=LINK_MAX_DISMISSALS)return false;
+      if(l.snoozed_until&&l.snoozed_until>today)return false;
+    }
+    const material=totalAssets>0&&d.value>=totalAssets*LINK_MATERIAL_SHARE;
+    return material||assetNames.has(normCat(d.category));
+  });
+}
+
+function renderLinkBanner(){
+  const el=document.getElementById('linkBanner');if(!el)return;
+  if(!bannerWorthyDebts().length){el.style.display='none';return;}
+  const n=unansweredDebts().length;
+  document.getElementById('linkBannerMain').textContent=n===1?"1 of your debts isn't tied to anything yet.":`${n} of your debts aren't tied to anything yet.`;
+  el.style.display='flex';
+}
+
+// The × hides it now and snoozes every unanswered debt, so it stays gone
+// instead of reappearing on the next load.
+async function dismissLinkBanner(){
+  document.getElementById('linkBanner').style.display='none';
+  await snoozeDebts(unansweredDebts());
+}
+
+async function snoozeDebts(debts){
+  if(!linksTableReady||!debts.length||!currentUser)return;
+  const until=addDays(currentDateStr(),LINK_SNOOZE_DAYS),now=new Date().toISOString();
+  const rows=debts.map(d=>{
+    const ex=linkFor(d.category);
+    return{user_id:currentUser.id,liability_category:d.category,asset_category:null,state:'skipped',dismissed_count:(ex?ex.dismissed_count:0)+1,snoozed_until:until,updated_at:now};
+  });
+  const{error}=await sb.from('net_worth_debt_links').upsert(rows,{onConflict:'user_id,liability_category'});
+  if(error){console.error(error);return;}
+  await loadLinks();
+}
+
+async function saveLink(liabilityCategory,state,assetCategory){
+  if(!linksTableReady)return;
+  const row={user_id:currentUser.id,liability_category:liabilityCategory,state,asset_category:state==='tied'?assetCategory:null,updated_at:new Date().toISOString()};
+  const{error}=await sb.from('net_worth_debt_links').upsert([row],{onConflict:'user_id,liability_category'});
+  if(error)console.error(error);
+}
+
+// ── ENTRY MODAL: THE TIE QUESTION ──
+let tieOptions=[];
+
+function resetTieState(){
+  tieAnswer=null;tieAsset=null;pendingAsset=null;
+  const n=document.getElementById('tieNote');if(n)n.textContent='';
+}
+
+function syncTieField(){
+  const wrap=document.getElementById('tieField');if(!wrap)return;
+  const show=selectedType==='liability'&&linksTableReady;
+  wrap.style.display=show?'':'none';
+  if(!show)return;
+  document.getElementById('tieYesBtn').classList.toggle('active',tieAnswer==='yes');
+  document.getElementById('tieNoBtn').classList.toggle('active',tieAnswer==='no');
+  document.getElementById('tiePick').style.display=tieAnswer==='yes'?'':'none';
+  if(tieAnswer==='yes')renderTieList();
+}
+
+function setTieAnswer(a){
+  tieAnswer=a;
+  if(a==='no'){tieAsset=null;pendingAsset=null;document.getElementById('tieNote').textContent='';}
+  syncTieField();
+}
+
+// Biggest asset first. Deliberately NOT ordered by name similarity to the debt:
+// a hint the user does not read is a guess we would end up storing as fact.
+function renderTieList(){
+  tieOptions=latestByCategory('asset').map(a=>a.category);
+  if(pendingAsset&&!tieOptions.some(c=>normCat(c)===normCat(pendingAsset.category)))tieOptions.unshift(pendingAsset.category);
+  document.getElementById('tieList').innerHTML=
+    tieOptions.map((c,i)=>`<button type="button" class="tie-opt${normCat(c)===normCat(tieAsset||'')?' active':''}" onclick="pickTieAsset(${i})">${escHtml(c)}</button>`).join('')
+    +'<button type="button" class="tie-opt add" onclick="openAssetStep()">+ Add one</button>';
+}
+
+function pickTieAsset(i){tieAsset=tieOptions[i];document.getElementById('tieNote').textContent='';renderTieList();}
+
+// ── ADD-ASSET STEP ──
+// Date, type and what it ties to are all fixed, so this step can only ever
+// produce the one asset the debt in hand attaches to.
+function openAssetStep(){
+  const cat=document.getElementById('entryCategory').value.trim();
+  const val=parseMoney(document.getElementById('entryValue').value);
+  document.getElementById('assetStepTie').textContent=cat?(val>0?`${cat} · ${fmtMoney(val)}`:cat):'This debt';
+  document.getElementById('assetStepDate').textContent=document.getElementById('entryDate').value||currentDateStr();
+  document.getElementById('assetStepCategory').value=pendingAsset?pendingAsset.category:'';
+  document.getElementById('assetStepValue').value=pendingAsset?Number(pendingAsset.value).toLocaleString():'';
+  document.getElementById('assetStepErr').textContent='';
+  renderAssetStepPicks();
+  document.getElementById('entryModal').classList.remove('open');
+  document.getElementById('assetStepModal').classList.add('open');
+}
+
+function renderAssetStepPicks(){
+  const cur=document.getElementById('assetStepCategory').value;
+  document.getElementById('assetStepPicks').innerHTML=QUICK_ASSETS.map((p,i)=>`<button type="button" class="qpick${cur===p?' selected asset':''}" onclick="selectAssetStepPick(${i})">${escHtml(p)}</button>`).join('');
+}
+function selectAssetStepPick(i){document.getElementById('assetStepCategory').value=QUICK_ASSETS[i];renderAssetStepPicks();}
+
+// Back. Leaves whatever was already picked alone and writes nothing.
+function closeAssetStep(){
+  document.getElementById('assetStepModal').classList.remove('open');
+  document.getElementById('entryModal').classList.add('open');
+  syncTieField();
+}
+
+function continueAssetStep(){
+  const cat=document.getElementById('assetStepCategory').value.trim();
+  const val=parseMoney(document.getElementById('assetStepValue').value);
+  const err=document.getElementById('assetStepErr');
+  if(!cat){err.textContent='Please name this asset.';return;}
+  if(!val||val<=0){err.textContent='Please enter a value greater than 0.';return;}
+  err.textContent='';
+  // Naming something they already have selects it instead of creating a twin.
+  const existing=latestByCategory('asset').find(a=>normCat(a.category)===normCat(cat));
+  let note='';
+  if(existing){pendingAsset=null;tieAsset=existing.category;note=`You already have ${existing.category}, so we tied this to that one.`;}
+  else{pendingAsset={category:cat,value:val};tieAsset=cat;}
+  closeAssetStep();
+  document.getElementById('tieNote').textContent=note;
+}
+
+// ── REVIEW BANNER MODAL ──
+let reviewRows=[];
+function reviewAssets(){return latestByCategory('asset').map(a=>a.category);}
+
+function openLinkReview(){
+  if(!linksTableReady)return;
+  reviewRows=unansweredDebts().map(d=>({category:d.category,value:d.value,choice:'',assetCategory:null,newName:'',newValue:''}));
+  if(!reviewRows.length){renderLinkBanner();return;}
+  document.getElementById('linkReviewErr').textContent='';
+  renderLinkReviewRows();
+  document.getElementById('linkReviewModal').classList.add('open');
+}
+function closeLinkReview(){document.getElementById('linkReviewModal').classList.remove('open');}
+
+function renderLinkReviewRows(){
+  const assets=reviewAssets();
+  document.getElementById('linkReviewRows').innerHTML=reviewRows.map((r,i)=>{
+    const opts=['<option value="">Choose</option>']
+      .concat(assets.map((a,ai)=>`<option value="a:${ai}"${r.choice==='a:'+ai?' selected':''}>${escHtml(a)}</option>`))
+      .concat([`<option value="standalone"${r.choice==='standalone'?' selected':''}>It's on its own</option>`,
+               `<option value="new"${r.choice==='new'?' selected':''}>+ Add an asset</option>`]).join('');
+    const extra=r.choice==='new'
+      ?`<div class="link-new"><input type="text" placeholder="Name it" value="${escHtml(r.newName)}" oninput="setReviewNew(${i},'name',this.value)"><input type="text" placeholder="$0" value="${escHtml(r.newValue)}" oninput="fmtModalComma(this);setReviewNew(${i},'value',this.value)"></div>`
+      :'';
+    return`<div class="link-row"><div class="link-row-l"><div class="link-row-name">${escHtml(r.category)}</div><div class="link-row-val">${fmtMoney(r.value)}</div></div><select onchange="setReviewChoice(${i},this.value)">${opts}</select></div>${extra}`;
+  }).join('');
+}
+function setReviewChoice(i,v){
+  const r=reviewRows[i];r.choice=v;
+  r.assetCategory=v.indexOf('a:')===0?reviewAssets()[parseInt(v.slice(2),10)]:null;
+  renderLinkReviewRows();
+}
+function setReviewNew(i,field,v){if(field==='name')reviewRows[i].newName=v;else reviewRows[i].newValue=v;}
+
+async function saveLinkReview(){
+  const err=document.getElementById('linkReviewErr');err.textContent='';
+  const date=currentDateStr(),now=new Date().toISOString();
+  const existingAssets=latestByCategory('asset');
+  const newAssets=[],links=[];
+  for(const r of reviewRows){
+    if(!r.choice)continue;
+    if(r.choice==='standalone'){links.push({user_id:currentUser.id,liability_category:r.category,asset_category:null,state:'standalone',updated_at:now});continue;}
+    if(r.choice==='new'){
+      const name=(r.newName||'').trim(),val=parseMoney(r.newValue||'');
+      if(!name){err.textContent=`Name the asset for ${r.category}.`;return;}
+      if(!val||val<=0){err.textContent=`Enter a value for the asset tied to ${r.category}.`;return;}
+      const hit=existingAssets.find(a=>normCat(a.category)===normCat(name));
+      const target=hit?hit.category:name;
+      if(!hit&&!newAssets.some(a=>normCat(a.category)===normCat(name)))newAssets.push({user_id:currentUser.id,date,type:'asset',category:name,value:val});
+      links.push({user_id:currentUser.id,liability_category:r.category,asset_category:target,state:'tied',updated_at:now});
+      continue;
+    }
+    if(r.assetCategory)links.push({user_id:currentUser.id,liability_category:r.category,asset_category:r.assetCategory,state:'tied',updated_at:now});
+  }
+  if(!links.length){closeLinkReview();return;}
+  if(newAssets.length){
+    const{error}=await sb.from('net_worth_entries').insert(newAssets);
+    if(error){err.textContent='Error saving.';return;}
+  }
+  const{error}=await sb.from('net_worth_debt_links').upsert(links,{onConflict:'user_id,liability_category'});
+  if(error){err.textContent='Error saving.';return;}
+  closeLinkReview();
+  await loadEntries();
+}
+
+// "Not now" behaves the same as the banner ×.
+async function dismissLinkReview(){
+  closeLinkReview();
+  document.getElementById('linkBanner').style.display='none';
+  await snoozeDebts(unansweredDebts());
 }
 
 // ── SNAPSHOTS ──
@@ -832,7 +1221,7 @@ function buildMonthlySnapshots(){
 }
 
 // ── RENDER ALL ──
-function renderAll(){renderStats();renderChart();renderDonut();renderDebt();renderHoldings();updateSubtitle();}
+function renderAll(){renderStats();renderChart();renderDonut();renderDebt();renderHoldings();updateSubtitle();renderLinkBanner();}
 
 function updateSubtitle(){const s=buildMonthlySnapshots();const el=document.getElementById('pageSubtitle');if(!s.length){el.textContent='No data yet. Add your first entry';return;}el.textContent=`Last updated ${fmtMonthLabel(s[s.length-1].month)}`;}
 
@@ -1116,7 +1505,7 @@ function editFromDrawer(id){closeDrawer();setTimeout(()=>openEditModal(id),150);
 async function deleteFromDrawer(id){if(!confirm('Delete this entry?'))return;const{error}=await sb.from('net_worth_entries').delete().eq('id',id);if(error){console.error(error);return;}await loadEntries();if(activeDrawerCategory&&allEntries.some(e=>e.category===activeDrawerCategory))openCategoryDrawer(activeDrawerCategory);else activeDrawerCategory=null;}
 function closeDrawer(){document.getElementById('categoryDrawer').classList.remove('open');}
 
-(function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
+(function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
 
 let valuationCategory=null,valuationEntryType=null;
 function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=Number(latest.value).toLocaleString();document.getElementById('valuationErr').textContent='';document.getElementById('valuationModal').classList.add('open');}
@@ -1127,12 +1516,59 @@ document.getElementById('valuationValue').addEventListener('keydown',e=>{if(e.ke
 
 function renderQuickPicks(type){const picks=type==='asset'?QUICK_ASSETS:QUICK_LIABILITIES;const current=document.getElementById('entryCategory').value;document.getElementById('quickPicks').innerHTML=picks.map(p=>`<button type="button" class="qpick${current===p?' selected '+type:''}" onclick="selectQuickPick('${p}','${type}')">${p}</button>`).join('');}
 function selectQuickPick(val,type){document.getElementById('entryCategory').value=val;renderQuickPicks(type);}
-function openLogModal(){editingId=null;document.getElementById('modalTitle').textContent='Add New Entry';document.getElementById('entryDate').value=currentDateStr();document.getElementById('entryCategory').value='';document.getElementById('entryValue').value='';document.getElementById('modalErr').textContent='';document.querySelector('.type-toggle').closest('.modal-field').style.display='';setType('asset');document.getElementById('entryModal').classList.add('open');}
-function openLogModalTyped(type){editingId=null;document.getElementById('modalTitle').textContent=type==='asset'?'Add Asset':'Add Liability';document.getElementById('entryDate').value=currentDateStr();document.getElementById('entryCategory').value='';document.getElementById('entryValue').value='';document.getElementById('modalErr').textContent='';setType(type);document.querySelector('.type-toggle').closest('.modal-field').style.display='none';document.getElementById('entryModal').classList.add('open');}
-function openEditModal(id){const e=allEntries.find(x=>x.id===id);if(!e)return;editingId=id;document.getElementById('modalTitle').textContent='Edit Entry';document.querySelector('.type-toggle').closest('.modal-field').style.display='';const dv=e.date.length===7?e.date+'-01':e.date;document.getElementById('entryDate').value=dv;document.getElementById('entryCategory').value=e.category;document.getElementById('entryValue').value=Number(e.value).toLocaleString();document.getElementById('modalErr').textContent='';setType(e.type);document.getElementById('entryModal').classList.add('open');}
-function closeModal(){document.getElementById('entryModal').classList.remove('open');editingId=null;}
-function setType(type){selectedType=type;document.getElementById('typeAsset').className='type-btn asset'+(type==='asset'?' active':'');document.getElementById('typeLiability').className='type-btn liability'+(type==='liability'?' active':'');renderQuickPicks(type);}
-async function saveEntry(){const date=document.getElementById('entryDate').value,category=document.getElementById('entryCategory').value.trim(),value=parseMoney(document.getElementById('entryValue').value),err=document.getElementById('modalErr');if(!date){err.textContent='Please select a date.';return;}if(!category){err.textContent='Please enter a category.';return;}if(!value||value<=0){err.textContent='Please enter a value greater than 0.';return;}err.textContent='';if(editingId){const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,updated_at:new Date().toISOString()}).eq('id',editingId);if(error){err.textContent='Error saving.';return;}}else{const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:selectedType,category,value}]);if(error){err.textContent='Error saving.';return;}}closeModal();await loadEntries();}
+function openLogModal(){editingId=null;resetTieState();document.getElementById('modalTitle').textContent='Add New Entry';document.getElementById('entryDate').value=currentDateStr();document.getElementById('entryCategory').value='';document.getElementById('entryValue').value='';document.getElementById('modalErr').textContent='';document.querySelector('.type-toggle').closest('.modal-field').style.display='';setType('asset');document.getElementById('entryModal').classList.add('open');}
+function openLogModalTyped(type){editingId=null;resetTieState();document.getElementById('modalTitle').textContent=type==='asset'?'Add Asset':'Add Liability';document.getElementById('entryDate').value=currentDateStr();document.getElementById('entryCategory').value='';document.getElementById('entryValue').value='';document.getElementById('modalErr').textContent='';setType(type);document.querySelector('.type-toggle').closest('.modal-field').style.display='none';document.getElementById('entryModal').classList.add('open');}
+function openEditModal(id){
+  const e=allEntries.find(x=>x.id===id);if(!e)return;
+  editingId=id;resetTieState();
+  // Editing a liability shows the answer already on file, so the question is a
+  // review rather than a fresh ask.
+  if(e.type==='liability'){
+    const l=linkFor(e.category);
+    if(l&&l.state==='tied'){tieAnswer='yes';tieAsset=l.asset_category;}
+    else if(l&&l.state==='standalone'){tieAnswer='no';}
+  }
+  document.getElementById('modalTitle').textContent='Edit Entry';
+  document.querySelector('.type-toggle').closest('.modal-field').style.display='';
+  const dv=e.date.length===7?e.date+'-01':e.date;
+  document.getElementById('entryDate').value=dv;
+  document.getElementById('entryCategory').value=e.category;
+  document.getElementById('entryValue').value=Number(e.value).toLocaleString();
+  document.getElementById('modalErr').textContent='';
+  setType(e.type);
+  document.getElementById('entryModal').classList.add('open');
+}
+function closeModal(){document.getElementById('entryModal').classList.remove('open');editingId=null;resetTieState();}
+function setType(type){selectedType=type;document.getElementById('typeAsset').className='type-btn asset'+(type==='asset'?' active':'');document.getElementById('typeLiability').className='type-btn liability'+(type==='liability'?' active':'');renderQuickPicks(type);syncTieField();}
+async function saveEntry(){
+  const date=document.getElementById('entryDate').value,category=document.getElementById('entryCategory').value.trim(),value=parseMoney(document.getElementById('entryValue').value),err=document.getElementById('modalErr');
+  if(!date){err.textContent='Please select a date.';return;}
+  if(!category){err.textContent='Please enter a category.';return;}
+  if(!value||value<=0){err.textContent='Please enter a value greater than 0.';return;}
+  err.textContent='';
+  // The tie question is deliberately not required. Saving without answering is
+  // allowed; the debt just lands in the unassigned pile until the user gets to
+  // it. Blocking a save on a money tracker is worse than an incomplete chart.
+  if(editingId){
+    const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,updated_at:new Date().toISOString()}).eq('id',editingId);
+    if(error){err.textContent='Error saving.';return;}
+  }else{
+    const rows=[];
+    // An asset built in the add-asset step is written here, not when that step
+    // closed, so abandoning this entry cannot strand an asset nobody meant to
+    // create.
+    if(selectedType==='liability'&&tieAnswer==='yes'&&pendingAsset)rows.push({user_id:currentUser.id,date,type:'asset',category:pendingAsset.category,value:pendingAsset.value});
+    rows.push({user_id:currentUser.id,date,type:selectedType,category,value});
+    const{error}=await sb.from('net_worth_entries').insert(rows);
+    if(error){err.textContent='Error saving.';return;}
+  }
+  if(selectedType==='liability'&&tieAnswer){
+    if(tieAnswer==='no')await saveLink(category,'standalone',null);
+    else if(tieAsset)await saveLink(category,'tied',tieAsset);
+  }
+  closeModal();
+  await loadEntries();
+}
 
 let bulkHistoryType='asset',bulkHistoryCategory='';
 function openBulkHistoryModal(){const cat=document.getElementById('entryCategory').value.trim();if(!cat){document.getElementById('modalErr').textContent='Please enter a category first.';return;}bulkHistoryCategory=cat;bulkHistoryType=selectedType;const d=document.getElementById('entryDate').value,v=document.getElementById('entryValue').value.trim();closeModal();document.getElementById('bulkHistoryTitle').textContent=`Historical Data: ${cat}`;document.getElementById('bulkErr').textContent='';const c=document.getElementById('bulkRows');c.innerHTML='';addBulkRow(d,v);addBulkRow();addBulkRow();document.getElementById('bulkHistoryModal').classList.add('open');}
@@ -1140,7 +1576,22 @@ function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows'
 function closeBulkHistoryModal(){document.getElementById('bulkHistoryModal').classList.remove('open');}
 async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!value||value<=0){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value greater than 0.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
 
-function openUpdateModal(){if(!allEntries.length){alert('No entries yet to update.');return;}const latest={};for(const e of allEntries){if(!latest[e.category]||e.date>latest[e.category].date)latest[e.category]=e;}document.getElementById('updateDate').value=currentDateStr();document.getElementById('updateModalErr').textContent='';document.getElementById('updateEntriesList').innerHTML=Object.values(latest).map(e=>`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${e.category}</div><div class="update-entry-type ${e.type}">${e.type}</div></div><input class="update-entry-input" type="text" data-category="${e.category}" data-type="${e.type}" value="${Number(e.value).toLocaleString()}" oninput="fmtModalComma(this)"></div>`).join('');document.getElementById('updateModal').classList.add('open');}
+function openUpdateModal(){
+  if(!allEntries.length){alert('No entries yet to update.');return;}
+  // Keyed on type+category, not category alone: a user can own a "Silverado"
+  // and owe a "Silverado" loan, and keying on the name alone showed only one of
+  // them. buildMonthlySnapshots() was fixed for this same reason.
+  const latest={};
+  for(const e of allEntries){const k=e.type+' '+e.category;if(!latest[k]||e.date>latest[k].date)latest[k]=e;}
+  document.getElementById('updateDate').value=currentDateStr();
+  document.getElementById('updateModalErr').textContent='';
+  document.getElementById('updateEntriesList').innerHTML=Object.values(latest).map(e=>{
+    const tied=e.type==='liability'?tiedAssetFor(e.category):null;
+    const sub=tied?`${e.type} · tied to ${escHtml(tied)}`:e.type;
+    return`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${escHtml(e.category)}</div><div class="update-entry-type ${e.type}">${sub}</div></div><input class="update-entry-input" type="text" data-category="${escHtml(e.category)}" data-type="${e.type}" value="${Number(e.value).toLocaleString()}" oninput="fmtModalComma(this)"></div>`;
+  }).join('');
+  document.getElementById('updateModal').classList.add('open');
+}
 function closeUpdateModal(){document.getElementById('updateModal').classList.remove('open');}
 async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){const v=parseMoney(inp.value);if(v<=0)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v});}if(!toInsert.length){err.textContent='No values to save.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
 
