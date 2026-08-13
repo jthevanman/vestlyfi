@@ -363,6 +363,8 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
 .link-row select { flex:none; width:172px; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.8rem; font-weight:300; outline:none; }
 .link-row select:focus { border-color:var(--gold); }
 .link-row select option { background:var(--navy-mid); }
+.link-row select optgroup { background:var(--navy-mid); color:var(--muted); font-size:0.72rem; }
+.link-row select optgroup option { color:var(--cream); font-size:0.8rem; }
 .link-new { display:grid; grid-template-columns:1fr 118px; gap:8px; padding-bottom:12px; }
 .link-new input { width:100%; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.82rem; font-weight:300; outline:none; }
 .link-new input:focus { border-color:var(--gold); }
@@ -1152,10 +1154,17 @@ function closeLinkReview(){document.getElementById('linkReviewModal').classList.
 function renderLinkReviewRows(){
   const assets=reviewAssets();
   document.getElementById('linkReviewRows').innerHTML=reviewRows.map((r,i)=>{
+    // Grouped so "It's on its own" reads as an answer rather than as one more
+    // thing the user owns. Native optgroups indent their options, which is the
+    // only styling a <select> honours across browsers.
     const opts=['<option value="">Choose</option>']
-      .concat(assets.map((a,ai)=>`<option value="a:${ai}"${r.choice==='a:'+ai?' selected':''}>${escHtml(a)}</option>`))
-      .concat([`<option value="standalone"${r.choice==='standalone'?' selected':''}>It's on its own</option>`,
-               `<option value="new"${r.choice==='new'?' selected':''}>+ Add an asset</option>`]).join('');
+      .concat(assets.length?['<optgroup label="Assets you own">']
+        .concat(assets.map((a,ai)=>`<option value="a:${ai}"${r.choice==='a:'+ai?' selected':''}>${escHtml(a)}</option>`))
+        .concat(['</optgroup>']):[])
+      .concat(['<optgroup label="Or">',
+               `<option value="standalone"${r.choice==='standalone'?' selected':''}>It's on its own</option>`,
+               `<option value="new"${r.choice==='new'?' selected':''}>+ Add an asset</option>`,
+               '</optgroup>']).join('');
     const extra=r.choice==='new'
       ?`<div class="link-new"><input type="text" placeholder="Name it" value="${escHtml(r.newName)}" oninput="setReviewNew(${i},'name',this.value)"><input type="text" placeholder="$0" value="${escHtml(r.newValue)}" oninput="fmtModalComma(this);setReviewNew(${i},'value',this.value)"></div>`
       :'';
