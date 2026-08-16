@@ -183,9 +183,6 @@ body {
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 
 /* ── LINE CHART ── */
-.chart-legend { display:flex; gap:14px; }
-.legend-item { display:flex; align-items:center; gap:5px; font-size:0.7rem; color:var(--muted); }
-.legend-dot { width:7px; height:7px; border-radius:50%; }
 .period-btns { display:flex; gap:3px; }
 .period-btn { padding:3px 9px; border-radius:5px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.7rem; cursor:pointer; transition:all .15s; }
 .period-btn:hover { color:var(--cream); border-color:var(--border); }
@@ -201,6 +198,8 @@ body {
 
 /* ── TWO COL ROW ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
+/* Beside the chart the summary stats stack into a column instead of a row. */
+.chart-row .stat-row2 { grid-template-columns:1fr; gap:12px; }
 
 /* ── DONUT ── */
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
@@ -448,6 +447,9 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
   .stat-row2 { grid-template-columns:1fr 1fr; }
   .stat-row2 .stat-card:last-child { grid-column:span 2; }
   .two-col { grid-template-columns:1fr; }
+  /* Stacked on narrow screens there is no chart beside them, so they go back
+     to sitting in a row. */
+  .chart-row .stat-row2 { grid-template-columns:1fr 1fr; gap:10px; }
   .page-header { flex-direction:column; }
   .header-actions { width:100%; }
   .btn-primary,.btn-secondary { flex:1; justify-content:center; }
@@ -611,7 +613,6 @@ footer span { color:var(--muted); font-size:0.72rem; }
 
           <!-- STAT GRID -->
           <div class="stat-grid" id="statGrid"></div>
-          <div class="stat-row2" id="statRow2"></div>
 
           <!-- DEBT LINK REVIEW BANNER -->
           <div class="link-banner" id="linkBanner" style="display:none">
@@ -621,16 +622,12 @@ footer span { color:var(--muted); font-size:0.72rem; }
             <button class="btn-link-x" onclick="dismissLinkBanner()" aria-label="Dismiss">×</button>
           </div>
 
-          <!-- LINE CHART -->
+          <!-- LINE CHART + SUMMARY STATS -->
+          <div class="two-col chart-row">
           <div class="card">
             <div class="card-header">
               <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
                 <div class="card-title">Net Worth History</div>
-                <div class="chart-legend">
-                  <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div>Net Worth</div>
-                  <div class="legend-item"><div class="legend-dot" style="background:#4caf7d"></div>Assets</div>
-                  <div class="legend-item"><div class="legend-dot" style="background:#e05c5c"></div>Liabilities</div>
-                </div>
               </div>
               <div class="period-btns" id="chartPeriodBtns">
                 <button class="period-btn" onclick="setChartPeriod(1)">1M</button>
@@ -650,6 +647,8 @@ footer span { color:var(--muted); font-size:0.72rem; }
               </div>
               <button class="btn-share" onclick="openShareModal()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
             </div>
+          </div>
+          <div class="stat-row2" id="statRow2"></div>
           </div>
 
           <!-- DONUT + DEBT ROW -->
@@ -1394,8 +1393,6 @@ function renderChart(){
   if(chartInstance)chartInstance.destroy();
   chartInstance=new Chart(canvas,{type:'line',data:{labels:snaps.map(s=>fmtMonthLabel(s.month)),datasets:[
     {label:'Net Worth',data:snaps.map(s=>s.netWorth),borderColor:'#c9a84c',backgroundColor:'rgba(201,168,76,0.07)',borderWidth:2,pointBackgroundColor:'#c9a84c',pointRadius:3,pointHoverRadius:5,fill:true,tension:0.35,order:1},
-    {label:'Assets',data:snaps.map(s=>s.assets),borderColor:'#4caf7d',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,pointHoverRadius:4,fill:false,tension:0.35,borderDash:[4,4],order:2},
-    {label:'Liabilities',data:snaps.map(s=>s.liabilities),borderColor:'#e05c5c',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,pointHoverRadius:4,fill:false,tension:0.35,borderDash:[4,4],order:3},
   ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#141d35',borderColor:'rgba(201,168,76,0.25)',borderWidth:1,titleColor:'rgba(245,240,232,0.5)',bodyColor:'#f5f0e8',padding:12,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(245,240,232,0.3)',font:{family:'Outfit',size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(245,240,232,0.3)',font:{family:'Outfit',size:11},callback:v=>fmtMoney(v)}}}}});
 }
 
@@ -1616,14 +1613,12 @@ async function renderShareCanvas(snapshots){
   let heroDiff,heroBase,heroSpan;
   if(single){const all=buildMonthlySnapshots(),idx=all.findIndex(x=>x.month===first.month),prev=idx>0?all[idx-1]:null;heroDiff=prev?last.netWorth-prev.netWorth:0;heroBase=prev?prev.netWorth:0;heroSpan=prev?'this month':null;}
   else{const m=snapshots.length-1;heroDiff=last.netWorth-first.netWorth;heroBase=first.netWorth;heroSpan=`over ${m} month${m>1?'s':''}`;}
-  const isUp=heroDiff>=0,accentRGB=isUp?'76,175,125':'224,92,92';
+  const isUp=heroDiff>=0;
   const totA=last.assets,totL=last.liabilities,pct=heroBase>0?(heroDiff/heroBase*100):null;
   const base=totA>0?totA:0;
   const money=v=>priv?(base?Math.round(v/base*100)+'%':'•••'):fmtMoney(v);
   // ── BACKGROUND ──
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0e1530');bg.addColorStop(1,'#080c1a');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  let g1=ctx.createRadialGradient(W*0.5,-140,0,W*0.5,-140,560);g1.addColorStop(0,'rgba(201,168,76,0.15)');g1.addColorStop(1,'transparent');ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  let g2=ctx.createRadialGradient(W*0.9,H*1.06,0,W*0.9,H*1.06,500);g2.addColorStop(0,`rgba(${accentRGB},0.13)`);g2.addColorStop(1,'transparent');ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(76,175,125,0.42)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
   ctx.textBaseline='alphabetic';ctx.textAlign='left';
   // ── HEADER ──
