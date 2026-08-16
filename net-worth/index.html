@@ -198,13 +198,16 @@ body {
 
 /* ── TWO COL ROW ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
-/* Beside the chart the summary stats stack into a column instead of a row. */
+/* Beside the chart the summary stats stack into a column instead of a row.
+   Stretched to the chart's height they are much taller than their content, so
+   they centre rather than sitting against the left edge of a wide card. */
 .chart-row .stat-row2 { grid-template-columns:1fr; gap:12px; }
+.chart-row .stat-card { align-items:center; text-align:center; }
 
 /* ── DONUT ── */
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
-.pies { display:flex; flex-direction:column; gap:16px; padding:6px 0 2px; }
-.pie-panel { display:flex; flex-direction:column; gap:9px; }
+.pies { display:flex; gap:32px; padding:6px 0 2px; }
+.pie-panel { flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
 .pie-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding-bottom:7px; border-bottom:1px solid var(--border-soft); }
 .pie-head span { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
 .pie-head b { font-weight:400; font-size:1.12rem; color:var(--cream); }
@@ -450,6 +453,8 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
   /* Stacked on narrow screens there is no chart beside them, so they go back
      to sitting in a row. */
   .chart-row .stat-row2 { grid-template-columns:1fr 1fr; gap:10px; }
+  /* Two pies side by side stop being legible well before the card does. */
+  .pies { flex-direction:column; gap:18px; }
   .page-header { flex-direction:column; }
   .header-actions { width:100%; }
   .btn-primary,.btn-secondary { flex:1; justify-content:center; }
@@ -651,18 +656,18 @@ footer span { color:var(--muted); font-size:0.72rem; }
           <div class="stat-row2" id="statRow2"></div>
           </div>
 
-          <!-- DONUT + DEBT ROW -->
-          <div class="two-col">
-            <div class="card">
-              <div id="donutWrap"><div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Add assets to see allocation.</div></div>
+          <!-- ASSETS + DEBTS -->
+          <div class="card">
+            <div id="donutWrap"><div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Add assets to see allocation.</div></div>
+          </div>
+
+          <!-- DEBT PAYDOWN -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom:14px">
+              <div class="card-title">Debt Paydown</div>
+              <div style="font-size:0.68rem;color:var(--muted)" id="debtTotalLabel">—</div>
             </div>
-            <div class="card">
-              <div class="card-header" style="margin-bottom:14px">
-                <div class="card-title">Debt Paydown</div>
-                <div style="font-size:0.68rem;color:var(--muted)" id="debtTotalLabel">—</div>
-              </div>
-              <div id="debtWrap"><div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">No liabilities logged yet.</div></div>
-            </div>
+            <div id="debtWrap"><div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">No liabilities logged yet.</div></div>
           </div>
 
           <!-- HOLDINGS TABLE -->
@@ -1327,7 +1332,7 @@ function piePanel(key,title,items,total,R){
      <div class="pie-vals"><div class="pie-pct">${Math.round(it.value/total*100)}%</div><div class="pie-val">${fmtMoney(it.value)}</div></div></div>`).join('');
   return`<div class="pie-panel">
     <div class="pie-head"><span>${title}</span><b>${fmtMoney(total)}</b></div>
-    <div class="pie-body"><svg viewBox="0 0 120 120" width="112" height="112" style="flex:none">${wedges}</svg>
+    <div class="pie-body"><svg viewBox="0 0 120 120" width="136" height="136" style="flex:none">${wedges}</svg>
     <div class="pie-legend">${rows}</div></div></div>`;
 }
 
