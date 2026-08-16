@@ -213,10 +213,13 @@ body {
 .pie-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding-bottom:7px; border-bottom:1px solid var(--border-soft); }
 .pie-head span { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
 .pie-head b { font-weight:400; font-size:1.12rem; color:var(--cream); }
-.pie-body { display:flex; align-items:center; gap:16px; }
+/* Top-aligned so both circles start at the same y no matter how many legend
+   rows sit beside them. A legend shorter than its pie still centres itself. */
+.pie-body { display:flex; align-items:flex-start; gap:16px; }
 .pie-slice { cursor:pointer; transition:opacity .15s; }
-.pie-legend { display:flex; flex-direction:column; gap:7px; flex:1; min-width:0; }
-.pie-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.pie-legend { display:flex; flex-direction:column; gap:7px; flex:1; min-width:0; align-self:center; }
+.pie-row { display:flex; align-items:center; justify-content:space-between; gap:8px; transition:opacity .15s; }
+.pie-row.dim { opacity:0.3; }
 .pie-row-l { display:flex; align-items:center; gap:7px; min-width:0; }
 .pie-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 .pie-name { font-size:0.76rem; color:var(--cream-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1281,9 +1284,11 @@ function renderStats(){
 // "what I'm worth". Splitting them makes each pie internally honest: asset
 // slices really do add up to total assets, debt slices to total debts.
 //
-// The debt pie is scaled so its AREA is proportional to its total, which is why
-// the radius uses a square root. Drawing both at the same size would restate
-// the exact false equivalence this whole exercise started with.
+// Both pies are drawn at the same radius and top-aligned, so they read as a
+// matched pair. The debt pie used to be scaled by area to signal that it was
+// the smaller total, which cost legibility on a small debt load: a thin ring
+// with unclickable slivers. The totals in each heading carry the magnitude
+// instead, and each pie is still internally honest about its own split.
 //
 // Debts inherit the colour of the asset they are tied to, so a mortgage is the
 // same gold as the home it bought and the link is visible without a connector.
@@ -1305,11 +1310,11 @@ function renderDonut(){
     return{name:d.category,value:d.value,color:tied||'var(--red)',tied:!!tied};
   });
   const totA=aItems.reduce((s,i)=>s+i.value,0),totD=dItems.reduce((s,i)=>s+i.value,0);
-  const RA=52,RD=totA>0&&totD>0?Math.max(16,RA*Math.sqrt(totD/totA)):RA;
+  const R=52;
   wrap.innerHTML=
     `<div class="pies">
-       ${piePanel('assets','Assets',aItems,totA,RA)}
-       ${totD>0?piePanel('debts','Debts',dItems,totD,RD):''}
+       ${piePanel('assets','Assets',aItems,totA,R)}
+       ${totD>0?piePanel('debts','Debts',dItems,totD,R):''}
      </div>
      <div class="pies-foot"><span>Net worth</span><b>${fmtMoney(totA-totD)}</b></div>
      <div id="pie-tooltip" class="pie-tt"><div id="pie-tt-name"></div><div id="pie-tt-val"></div><div id="pie-tt-pct"></div></div>`;
@@ -1331,9 +1336,9 @@ function piePanel(key,title,items,total,R){
       onmouseenter="pieHover(this,event)" onmousemove="pieMove(event)" onmouseleave="pieLeave(this)"></path>`;
   }).join('');
   const rows=items.map(it=>
-    `<div class="pie-row"><div class="pie-row-l"><div class="pie-dot" style="background:${it.color}"></div><div class="pie-name">${escHtml(it.name)}</div></div>
+    `<div class="pie-row" data-cat="${escHtml(it.name)}"><div class="pie-row-l"><div class="pie-dot" style="background:${it.color}"></div><div class="pie-name">${escHtml(it.name)}</div></div>
      <div class="pie-vals"><div class="pie-pct">${Math.round(it.value/total*100)}%</div><div class="pie-val">${fmtMoney(it.value)}</div></div></div>`).join('');
-  return`<div class="pie-panel">
+  return`<div class="pie-panel" data-panel="${key}">
     <div class="pie-head"><span>${title}</span><b>${fmtMoney(total)}</b></div>
     <div class="pie-body"><svg viewBox="0 0 120 120" width="136" height="136" style="flex:none">${wedges}</svg>
     <div class="pie-legend">${rows}</div></div></div>`;
@@ -1355,6 +1360,20 @@ function pieMove(event){
 function pieLeave(el){
   el.closest('svg').querySelectorAll('.pie-slice').forEach(s=>s.style.opacity='1');
   const tt=document.getElementById('pie-tooltip');if(tt)tt.style.display='none';
+}
+
+// Hovering a holdings row lights up the wedge it belongs to. Both sides key off
+// the category name, and the lookup is scoped to the pie matching the row's
+// type so a debt called "Car" cannot light up the asset called "Car".
+function holdingHover(cat,type){
+  const panel=document.querySelector(`.pie-panel[data-panel="${type==='liability'?'debts':'assets'}"]`);
+  if(!panel)return;
+  panel.querySelectorAll('.pie-slice').forEach(s=>{s.style.opacity=s.dataset.name===cat?'1':'0.25';});
+  panel.querySelectorAll('.pie-row').forEach(r=>{r.classList.toggle('dim',r.dataset.cat!==cat);});
+}
+function holdingLeave(){
+  document.querySelectorAll('.pie-slice').forEach(s=>{s.style.opacity='1';});
+  document.querySelectorAll('.pie-row.dim').forEach(r=>r.classList.remove('dim'));
 }
 
 // ── DEBT PAYDOWN ──
@@ -1462,7 +1481,7 @@ function renderHoldings(){
   });
   if(!rows.length){tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state">No ${holdingsFilter} entries found.</div></td></tr>`;return;}
   const ac=r=>r.type==='asset'?'#4caf7d':'#e05c5c';
-  tbody.innerHTML=rows.map(r=>{const chg=r.change!==null?`<span class="${r.change>=0?'v-g':'v-r'}">${r.change>=0?'+':''}${fmtMoney(r.change)}</span>`:`<span class="v-m">—</span>`;const spark=buildSparkline(r.all,r.type);return`<tr onclick="openCategoryDrawer('${r.cat.replace(/'/g,"\\'")}')"><td class="name-cell">${r.cat}</td><td><span class="type-badge ${r.type}">${r.type}</span></td><td class="r" style="color:${ac(r)};font-weight:500">${fmtMoney(r.value)}</td><td class="r">${chg}</td><td class="r">${spark}</td><td class="r"><div class="alloc-wrap"><div class="alloc-bar"><div class="alloc-fill" style="width:${Math.min(r.alloc,100).toFixed(1)}%;background:${ac(r)}"></div></div><span style="font-size:0.72rem;color:var(--muted)">${r.alloc.toFixed(1)}%</span></div></td><td style="color:var(--muted);font-size:0.76rem">${fmtDateLabel(r.date)}</td></tr>`;}).join('');
+  tbody.innerHTML=rows.map(r=>{const chg=r.change!==null?`<span class="${r.change>=0?'v-g':'v-r'}">${r.change>=0?'+':''}${fmtMoney(r.change)}</span>`:`<span class="v-m">—</span>`;const spark=buildSparkline(r.all,r.type);const jsCat=escHtml(r.cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'"));return`<tr onclick="openCategoryDrawer('${jsCat}')" onmouseenter="holdingHover('${jsCat}','${r.type}')" onmouseleave="holdingLeave()"><td class="name-cell">${r.cat}</td><td><span class="type-badge ${r.type}">${r.type}</span></td><td class="r" style="color:${ac(r)};font-weight:500">${fmtMoney(r.value)}</td><td class="r">${chg}</td><td class="r">${spark}</td><td class="r"><div class="alloc-wrap"><div class="alloc-bar"><div class="alloc-fill" style="width:${Math.min(r.alloc,100).toFixed(1)}%;background:${ac(r)}"></div></div><span style="font-size:0.72rem;color:var(--muted)">${r.alloc.toFixed(1)}%</span></div></td><td style="color:var(--muted);font-size:0.76rem">${fmtDateLabel(r.date)}</td></tr>`;}).join('');
   if(tfoot){
     const shownA=rows.filter(r=>r.type==='asset').reduce((s,r)=>s+r.value,0);
     const shownL=rows.filter(r=>r.type==='liability').reduce((s,r)=>s+r.value,0);
