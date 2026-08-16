@@ -1633,7 +1633,7 @@ function foldShareRows(list,slots,label){
 async function renderShareCanvas(snapshots){
   const W=1200,H=630,SC=2,PAD=48,canvas=document.getElementById('shareCanvas');
   canvas.width=W*SC;canvas.height=H*SC;const ctx=canvas.getContext('2d');ctx.scale(SC,SC);
-  try{await document.fonts.load('300 94px Outfit');await document.fonts.load('600 24px Outfit');await document.fonts.load('400 25px Outfit');await document.fonts.load('700 30px "Exo 2"');await document.fonts.ready;}catch(e){}
+  try{await document.fonts.load('300 94px Outfit');await document.fonts.load('600 24px Outfit');await document.fonts.load('400 25px Outfit');await document.fonts.load('500 20px Outfit');await document.fonts.load('700 30px "Exo 2"');await document.fonts.ready;}catch(e){}
   const first=snapshots[0],last=snapshots[snapshots.length-1],single=snapshots.length===1;
   const privEl=document.getElementById('sharePrivacy'),priv=!!(privEl&&privEl.checked);
   const GOLD='#c9a84c',CREAM='#f5f0e8',GREEN='#4caf7d',GREENL='#6fc99a',RED='#e05c5c',REDT='#ea7b74',
@@ -1697,24 +1697,28 @@ async function renderShareCanvas(snapshots){
     ctx.textAlign='right';ctx.fillText(fmtMonthLabel(last.month),x1,536);ctx.textAlign='left';
   }
   // ── BALANCE SHEET ──
-  const slots=single?6:5;
+  const slots=8;
   const own=foldShareRows(getShareHoldings(),slots,'assets'),owe=foldShareRows(getShareDebts(),slots,'debts');
   if(own.length||owe.length){
     const aX=single?PAD:492,aW=single?504:282,dX=single?648:856,dW=single?504:296;
-    const headY=single?344:330,maxRows=Math.max(own.length,owe.length);
-    const startY=single?(maxRows<=3?390:382):366;
-    const pitch=single?(maxRows<=3?40:31):31;
+    const headY=322,maxRows=Math.max(own.length,owe.length);
+    const startY=352;
+    // Rows run from startY down to a floor at 528, which leaves room for the rule
+    // and the total inside the card edge. Pitch is what gives: three rows breathe
+    // at 38, eight pack in at 25. Row type steps down with the pitch so the lines
+    // never crowd, and a short list closes early rather than stretching to fill a
+    // frame, which would advertise how little was entered.
+    const pitch=maxRows>1?Math.min(38,Math.floor(176/(maxRows-1))):38;
+    const rowSize=pitch>=34?25:pitch>=30?23:pitch>=26?22:20;
     // The rule and the total sit below whichever list is longer, so both panels
     // close on the same line however lopsided the balance sheet is.
-    const divY=startY+(maxRows-1)*pitch+30,totY=divY+34;
+    const divY=startY+(maxRows-1)*pitch+28,totY=divY+34;
     ctx.strokeStyle=HAIR;ctx.lineWidth=1;
-    if(single){ctx.beginPath();ctx.moveTo(600,322);ctx.lineTo(600,totY+14);ctx.stroke();}
-    else[452,816].forEach(x=>{ctx.beginPath();ctx.moveTo(x,314);ctx.lineTo(x,totY+14);ctx.stroke();});
-    const rowFont=single?'300 25px Outfit,sans-serif':'300 23px Outfit,sans-serif';
-    const valFont=single?'400 25px Outfit,sans-serif':'400 23px Outfit,sans-serif';
-    const totFont=single?'600 25px Outfit,sans-serif':'600 23px Outfit,sans-serif';
+    (single?[600]:[452,816]).forEach(x=>{ctx.beginPath();ctx.moveTo(x,314);ctx.lineTo(x,totY+10);ctx.stroke();});
+    const rowFont=`300 ${rowSize}px Outfit,sans-serif`;
+    const valFont=`400 ${rowSize}px Outfit,sans-serif`;
     const panel=(x,w,label,headCol,rows,total,neg)=>{
-      ctx.font=single?'500 18px Outfit,sans-serif':'500 17px Outfit,sans-serif';ctx.fillStyle=headCol;
+      ctx.font='500 17px Outfit,sans-serif';ctx.fillStyle=headCol;
       drawSpacedText(ctx,label,x,headY,2.6);
       let ry=startY;
       rows.forEach(r=>{
@@ -1726,8 +1730,8 @@ async function renderShareCanvas(snapshots){
         ry+=pitch;
       });
       ctx.strokeStyle=HAIR;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,divY);ctx.lineTo(x+w,divY);ctx.stroke();
-      ctx.font=single?'400 22px Outfit,sans-serif':'400 21px Outfit,sans-serif';ctx.fillStyle=MUT;ctx.fillText('Total',x,totY);
-      ctx.font=totFont;ctx.textAlign='right';ctx.fillStyle=neg?REDT:CREAM;ctx.fillText((neg?'-':'')+money(total),x+w,totY);ctx.textAlign='left';
+      ctx.font='400 21px Outfit,sans-serif';ctx.fillStyle=MUT;ctx.fillText('Total',x,totY);
+      ctx.font='600 23px Outfit,sans-serif';ctx.textAlign='right';ctx.fillStyle=neg?REDT:CREAM;ctx.fillText((neg?'-':'')+money(total),x+w,totY);ctx.textAlign='left';
     };
     panel(aX,aW,'ASSETS',GREEN,own,totA,false);
     panel(dX,dW,'DEBTS',RED,owe,totL,true);
