@@ -203,17 +203,27 @@ body {
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
 
 /* ── DONUT ── */
-.donut-wrap { display:flex; align-items:center; justify-content:center; gap:18px; flex:1; padding:8px 0; }
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
-.donut-svg-wrap { flex-shrink:0; position:relative; display:flex; align-items:center; justify-content:center; }
-.donut-legend { display:flex; flex-direction:column; gap:9px; flex:1; min-width:0; }
-.donut-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.donut-row-left { display:flex; align-items:center; gap:7px; min-width:0; }
-.donut-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.donut-name { font-size:0.78rem; color:var(--cream-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.donut-vals { display:flex; gap:8px; align-items:center; flex-shrink:0; }
-.donut-pct { font-size:0.68rem; color:var(--muted); }
-.donut-val { font-size:0.78rem; font-weight:500; color:var(--cream); }
+.pies { display:flex; flex-direction:column; gap:16px; padding:6px 0 2px; }
+.pie-panel { display:flex; flex-direction:column; gap:9px; }
+.pie-head { display:flex; align-items:baseline; justify-content:space-between; gap:10px; font-size:0.7rem; color:var(--muted); }
+.pie-head b { font-weight:400; font-size:0.78rem; color:var(--cream); }
+.pie-body { display:flex; align-items:center; gap:16px; }
+.pie-slice { cursor:pointer; transition:opacity .15s; }
+.pie-legend { display:flex; flex-direction:column; gap:7px; flex:1; min-width:0; }
+.pie-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.pie-row-l { display:flex; align-items:center; gap:7px; min-width:0; }
+.pie-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pie-name { font-size:0.76rem; color:var(--cream-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pie-vals { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+.pie-pct { font-size:0.66rem; color:var(--muted); }
+.pie-val { font-size:0.76rem; font-weight:500; color:var(--cream); }
+.pies-foot { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-top:12px; padding-top:11px; border-top:1px solid var(--border-soft); font-size:0.74rem; color:var(--muted); }
+.pies-foot b { font-weight:400; font-size:0.95rem; color:var(--gold-light); }
+.pie-tt { display:none; position:fixed; background:var(--navy-card); border:1px solid var(--border); border-radius:9px; padding:8px 12px; pointer-events:none; z-index:999; min-width:120px; }
+.pie-tt div:first-child { font-size:0.72rem; color:var(--cream-dim); margin-bottom:3px; }
+.pie-tt div:nth-child(2) { font-size:0.92rem; font-weight:500; color:var(--cream); }
+.pie-tt div:last-child { font-size:0.7rem; color:var(--muted); }
 
 /* ── DEBT PAYDOWN ── */
 .debt-items { display:flex; flex-direction:column; gap:14px; width:100%; }
@@ -644,7 +654,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
           <!-- DONUT + DEBT ROW -->
           <div class="two-col">
             <div class="card">
-              <div class="card-header" style="margin-bottom:0"><div class="card-title">Asset Allocation</div></div>
+              <div class="card-header" style="margin-bottom:0"><div class="card-title">What You Hold, What You Owe</div><div style="font-size:0.68rem;color:var(--muted)" id="donutNote"></div></div>
               <div id="donutWrap"><div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Add assets to see allocation.</div></div>
             </div>
             <div class="card">
@@ -1259,127 +1269,87 @@ function renderStats(){
 }
 
 // ── DONUT ──
+// Two pies rather than one. The old single pie summed gross asset values and
+// never touched liabilities, so a leveraged home dominated a chart that read as
+// "what I'm worth". Splitting them makes each pie internally honest: asset
+// slices really do add up to total assets, debt slices to total debts.
+//
+// The debt pie is scaled so its AREA is proportional to its total, which is why
+// the radius uses a square root. Drawing both at the same size would restate
+// the exact false equivalence this whole exercise started with.
+//
+// Debts inherit the colour of the asset they are tied to, so a mortgage is the
+// same gold as the home it bought and the link is visible without a connector.
+// Red is left to mean one thing only: a debt with nothing behind it.
 function renderDonut(){
   const wrap=document.getElementById('donutWrap');
-  const catMap={};
-  for(const e of allEntries){
-    if(e.type!=='asset')continue;
-    if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:Number(e.value),date:e.date};
+  const note=document.getElementById('donutNote');
+  const assets=latestByCategory('asset').filter(a=>a.value>0);
+  const debts=latestByCategory('liability').filter(d=>d.value>0);
+  if(note)note.textContent='';
+  if(!assets.length&&!debts.length){
+    wrap.innerHTML='<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Add assets to see allocation.</div>';
+    return;
   }
-  const items=Object.entries(catMap).map(([name,v])=>({name,value:v.value})).sort((a,b)=>b.value-a.value);
-  if(!items.length){wrap.innerHTML='<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">Add assets to see allocation.</div>';return;}
-  const total=items.reduce((s,i)=>s+i.value,0);
-  const R=38,cx=50,cy=50,circ=2*Math.PI*R;
-  let offset=0;
-
-  // Build path-based slices for precise hover detection
-  const slicePaths=items.map((item,idx)=>{
-    const pct=item.value/total;
-    const startAngle=(offset/circ)*2*Math.PI - Math.PI/2;
-    const endAngle=startAngle+(pct*2*Math.PI);
-    const dash=pct*circ;
-    const pathId=`slice-${idx}`;
-    // Use circle stroke for rendering, invisible wider circle for hit area
-    const stroke=`<circle class="donut-slice" id="${pathId}"
-      cx="${cx}" cy="${cy}" r="${R}" fill="none"
-      stroke="${DONUT_COLORS[idx%DONUT_COLORS.length]}"
-      stroke-width="13"
-      stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}"
-      stroke-dashoffset="${(-offset).toFixed(2)}"
-      transform="rotate(-90 ${cx} ${cy})"
-      style="cursor:pointer;transition:stroke-width .15s,opacity .15s;"
-      data-name="${item.name.replace(/"/g,'&quot;')}"
-      data-value="${fmtMoney(item.value)}"
-      data-pct="${((item.value/total)*100).toFixed(1)}"
-      data-color="${DONUT_COLORS[idx%DONUT_COLORS.length]}"
-      onmouseenter="donutHover(this,event)"
-      onmouseleave="donutLeave(this)"
-    />`;
-    offset+=dash;
-    return stroke;
-  }).join('');
-
-  const legendRows=items.map((item,i)=>{
-    const pct=((item.value/total)*100).toFixed(1);
-    return`<div class="donut-row" style="cursor:pointer" onmouseenter="legendHover(${i})" onmouseleave="legendLeave()">
-      <div class="donut-row-left"><div class="donut-dot" style="background:${DONUT_COLORS[i%DONUT_COLORS.length]}"></div><div class="donut-name">${item.name}</div></div>
-      <div class="donut-vals"><div class="donut-pct">${pct}%</div><div class="donut-val">${fmtMoney(item.value)}</div></div>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML=`
-    <div class="donut-wrap">
-      <div class="donut-svg-wrap" style="position:relative">
-        <svg viewBox="0 0 100 100" width="165" height="165" style="overflow:visible">
-          <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="13"/>
-          ${slicePaths}
-          <text id="donut-center-val" x="${cx}" y="47" text-anchor="middle" font-size="10" font-weight="500" fill="#f5f0e8" font-family="Outfit,sans-serif">${fmtMoney(total)}</text>
-          <text id="donut-center-lbl" x="${cx}" y="57" text-anchor="middle" font-size="7.5" fill="rgba(245,240,232,0.35)" font-family="Outfit,sans-serif">total assets</text>
-        </svg>
-        <div id="donut-tooltip" style="display:none;position:fixed;background:#141d35;border:1px solid rgba(201,168,76,0.25);border-radius:9px;padding:8px 12px;pointer-events:none;z-index:999;min-width:130px;">
-          <div id="donut-tt-name" style="font-size:0.72rem;color:rgba(245,240,232,0.55);margin-bottom:4px;"></div>
-          <div id="donut-tt-val" style="font-size:0.95rem;font-weight:500;color:#f5f0e8;margin-bottom:2px;"></div>
-          <div id="donut-tt-pct" style="font-size:0.7rem;color:rgba(245,240,232,0.4);"></div>
-        </div>
-      </div>
-      <div class="donut-legend">${legendRows}</div>
-    </div>`;
+  const colorFor={};
+  assets.forEach((a,i)=>{colorFor[normCat(a.category)]=DONUT_COLORS[i%DONUT_COLORS.length];});
+  const aItems=assets.map(a=>({name:a.category,value:a.value,color:colorFor[normCat(a.category)]}));
+  const dItems=debts.map(d=>{
+    const l=linkFor(d.category);
+    const tied=l&&l.state==='tied'?colorFor[normCat(l.asset_category)]:null;
+    return{name:d.category,value:d.value,color:tied||'var(--red)',tied:!!tied};
+  });
+  const totA=aItems.reduce((s,i)=>s+i.value,0),totD=dItems.reduce((s,i)=>s+i.value,0);
+  const RA=52,RD=totA>0&&totD>0?Math.max(16,RA*Math.sqrt(totD/totA)):RA;
+  wrap.innerHTML=
+    `<div class="pies">
+       ${piePanel('assets','What you hold',aItems,totA,RA)}
+       ${totD>0?piePanel('debts','What you owe',dItems,totD,RD):''}
+     </div>
+     <div class="pies-foot"><span>Left over, and yours</span><b>${fmtMoney(totA-totD)}</b></div>
+     <div id="pie-tooltip" class="pie-tt"><div id="pie-tt-name"></div><div id="pie-tt-val"></div><div id="pie-tt-pct"></div></div>`;
 }
 
-function donutHover(el,event){
-  // Thicken hovered slice
-  document.querySelectorAll('.donut-slice').forEach(s=>s.style.opacity='0.45');
+// One pie plus its legend. Slices are drawn as wedge paths so hover hit areas
+// match what is actually on screen.
+function piePanel(key,title,items,total,R){
+  const cx=60,cy=60;
+  let off=0;
+  const wedges=items.map((it,i)=>{
+    const sweep=it.value/total*360,a0=(off-90)*Math.PI/180,a1=(off+sweep-90)*Math.PI/180,large=sweep>180?1:0;
+    off+=sweep;
+    const d=items.length===1
+      ?`M ${cx} ${cy-R} A ${R} ${R} 0 1 1 ${(cx-0.01).toFixed(2)} ${cy-R} Z`
+      :`M ${cx} ${cy} L ${(cx+Math.cos(a0)*R).toFixed(2)} ${(cy+Math.sin(a0)*R).toFixed(2)} A ${R} ${R} 0 ${large} 1 ${(cx+Math.cos(a1)*R).toFixed(2)} ${(cy+Math.sin(a1)*R).toFixed(2)} Z`;
+    return`<path class="pie-slice" d="${d}" fill="${it.color}" stroke="var(--navy-card)" stroke-width="1.5"
+      data-name="${escHtml(it.name)}" data-value="${fmtMoney(it.value)}" data-pct="${(it.value/total*100).toFixed(1)}"
+      onmouseenter="pieHover(this,event)" onmousemove="pieMove(event)" onmouseleave="pieLeave(this)"></path>`;
+  }).join('');
+  const rows=items.map(it=>
+    `<div class="pie-row"><div class="pie-row-l"><div class="pie-dot" style="background:${it.color}"></div><div class="pie-name">${escHtml(it.name)}</div></div>
+     <div class="pie-vals"><div class="pie-pct">${Math.round(it.value/total*100)}%</div><div class="pie-val">${fmtMoney(it.value)}</div></div></div>`).join('');
+  return`<div class="pie-panel">
+    <div class="pie-head"><span>${title}</span><b>${fmtMoney(total)}</b></div>
+    <div class="pie-body"><svg viewBox="0 0 120 120" width="112" height="112" style="flex:none">${wedges}</svg>
+    <div class="pie-legend">${rows}</div></div></div>`;
+}
+
+function pieHover(el,event){
+  el.closest('svg').querySelectorAll('.pie-slice').forEach(s=>s.style.opacity='0.45');
   el.style.opacity='1';
-  el.style.strokeWidth='16';
-  // Update center text
-  document.getElementById('donut-center-val').textContent=el.dataset.value;
-  document.getElementById('donut-center-lbl').textContent=el.dataset.pct+'%';
-  // Show tooltip
-  const tt=document.getElementById('donut-tooltip');
-  document.getElementById('donut-tt-name').textContent=el.dataset.name;
-  document.getElementById('donut-tt-val').textContent=el.dataset.value;
-  document.getElementById('donut-tt-val').style.color=el.dataset.color;
-  document.getElementById('donut-tt-pct').textContent='of total assets';
-  tt.style.display='block';
-  tt.style.left=(event.clientX+14)+'px';
-  tt.style.top=(event.clientY-10)+'px';
-  // Follow mouse
-  el._moveHandler=function(e){tt.style.left=(e.clientX+14)+'px';tt.style.top=(e.clientY-10)+'px';};
-  document.addEventListener('mousemove',el._moveHandler);
+  const tt=document.getElementById('pie-tooltip');if(!tt)return;
+  document.getElementById('pie-tt-name').textContent=el.dataset.name;
+  document.getElementById('pie-tt-val').textContent=el.dataset.value;
+  document.getElementById('pie-tt-pct').textContent=el.dataset.pct+'%';
+  tt.style.display='block';pieMove(event);
 }
-
-function donutLeave(el){
-  document.querySelectorAll('.donut-slice').forEach(s=>{s.style.opacity='1';s.style.strokeWidth='13';});
-  document.getElementById('donut-tooltip').style.display='none';
-  // Restore center text
-  const total=allEntries.filter(e=>e.type==='asset').reduce((s,e)=>{
-    const catMap={};for(const x of allEntries){if(x.type==='asset'&&(!catMap[x.category]||x.date>catMap[x.category]))catMap[x.category]=x;}
-    return 0; // will recompute below
-  },0);
-  // Simpler: just re-render
-  const catMap={};for(const e of allEntries){if(e.type!=='asset')continue;if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:Number(e.value),date:e.date};}
-  const t=Object.values(catMap).reduce((s,v)=>s+v.value,0);
-  const valEl=document.getElementById('donut-center-val');const lblEl=document.getElementById('donut-center-lbl');
-  if(valEl)valEl.textContent=fmtMoney(t);if(lblEl)lblEl.textContent='total assets';
-  if(el._moveHandler){document.removeEventListener('mousemove',el._moveHandler);delete el._moveHandler;}
+function pieMove(event){
+  const tt=document.getElementById('pie-tooltip');if(!tt)return;
+  tt.style.left=(event.clientX+14)+'px';tt.style.top=(event.clientY-10)+'px';
 }
-
-function restoreDonutCenter(){
-  const catMap={};for(const e of allEntries){if(e.type!=='asset')continue;if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:Number(e.value),date:e.date};}
-  const t=Object.values(catMap).reduce((s,v)=>s+v.value,0);
-  const valEl=document.getElementById('donut-center-val'),lblEl=document.getElementById('donut-center-lbl');
-  if(valEl)valEl.textContent=fmtMoney(t);if(lblEl)lblEl.textContent='total assets';
-}
-function legendHover(idx){
-  const el=document.getElementById('slice-'+idx);if(!el)return;
-  document.querySelectorAll('.donut-slice').forEach(s=>s.style.opacity='0.45');
-  el.style.opacity='1';el.style.strokeWidth='16';
-  const valEl=document.getElementById('donut-center-val'),lblEl=document.getElementById('donut-center-lbl');
-  if(valEl)valEl.textContent=el.dataset.value;if(lblEl)lblEl.textContent=el.dataset.pct+'%';
-}
-function legendLeave(){
-  document.querySelectorAll('.donut-slice').forEach(s=>{s.style.opacity='1';s.style.strokeWidth='13';});
-  restoreDonutCenter();
+function pieLeave(el){
+  el.closest('svg').querySelectorAll('.pie-slice').forEach(s=>s.style.opacity='1');
+  const tt=document.getElementById('pie-tooltip');if(tt)tt.style.display='none';
 }
 
 // ── DEBT PAYDOWN ──
@@ -1626,129 +1596,119 @@ function getShareDebts(){
 }
 function drawSpacedText(ctx,text,x,y,sp){let cx=x;for(const ch of text){ctx.fillText(ch,cx,y);cx+=ctx.measureText(ch).width+sp;}return cx;}
 function fitText(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;let s=t;while(s.length>1&&ctx.measureText(s+'…').width>maxW)s=s.slice(0,-1);return s+'…';}
+// Rows beyond the slot count fold into an "Other (n)" line rather than being
+// dropped, so the visible rows always still add up to the panel's total.
+function foldShareRows(list,slots,label){
+  if(list.length<=slots)return list.map(x=>({cat:x.cat,value:x.value}));
+  const rows=list.slice(0,slots-1).map(x=>({cat:x.cat,value:x.value}));
+  const n=list.length-slots+1;
+  rows.push({cat:`Other ${label} (${n})`,value:list.slice(slots-1).reduce((s,x)=>s+x.value,0)});
+  return rows;
+}
 async function renderShareCanvas(snapshots){
   const W=1200,H=630,SC=2,PAD=48,canvas=document.getElementById('shareCanvas');
   canvas.width=W*SC;canvas.height=H*SC;const ctx=canvas.getContext('2d');ctx.scale(SC,SC);
-  try{await document.fonts.load('700 50px Outfit');await document.fonts.load('600 22px Outfit');await document.fonts.load('400 18px Outfit');await document.fonts.load('700 30px "Exo 2"');await document.fonts.ready;}catch(e){}
+  try{await document.fonts.load('300 94px Outfit');await document.fonts.load('600 24px Outfit');await document.fonts.load('400 25px Outfit');await document.fonts.load('700 30px "Exo 2"');await document.fonts.ready;}catch(e){}
   const first=snapshots[0],last=snapshots[snapshots.length-1],single=snapshots.length===1;
   const privEl=document.getElementById('sharePrivacy'),priv=!!(privEl&&privEl.checked);
-  // hero growth: period diff for multi, MoM for single
+  const GOLD='#c9a84c',CREAM='#f5f0e8',GREEN='#4caf7d',GREENL='#6fc99a',RED='#e05c5c',REDT='#ea7b74',
+        DIM='rgba(245,240,232,0.62)',MUT='rgba(245,240,232,0.38)',HAIR='rgba(255,255,255,0.12)';
+  const RX=560,RW=592;
+  // hero growth: whole period for multi-month, month over month for single
   let heroDiff,heroBase,heroSpan;
   if(single){const all=buildMonthlySnapshots(),idx=all.findIndex(x=>x.month===first.month),prev=idx>0?all[idx-1]:null;heroDiff=prev?last.netWorth-prev.netWorth:0;heroBase=prev?prev.netWorth:0;heroSpan=prev?'this month':null;}
   else{const m=snapshots.length-1;heroDiff=last.netWorth-first.netWorth;heroBase=first.netWorth;heroSpan=`over ${m} month${m>1?'s':''}`;}
-  const isUp=heroDiff>=0,accent=isUp?'#4caf7d':'#e05c5c',accentRGB=isUp?'76,175,125':'224,92,92';
-  const PALETTE=['#c9a84c','#4caf7d','#5b8def','#b07ad6','#e0a458'];
+  const isUp=heroDiff>=0,accentRGB=isUp?'76,175,125':'224,92,92';
+  const totA=last.assets,totL=last.liabilities,pct=heroBase>0?(heroDiff/heroBase*100):null;
+  const base=totA>0?totA:0;
+  const money=v=>priv?(base?Math.round(v/base*100)+'%':'•••'):fmtMoney(v);
   // ── BACKGROUND ──
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0e1530');bg.addColorStop(1,'#080c1a');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   let g1=ctx.createRadialGradient(W*0.5,-140,0,W*0.5,-140,560);g1.addColorStop(0,'rgba(201,168,76,0.15)');g1.addColorStop(1,'transparent');ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  let g2=ctx.createRadialGradient(W*0.92,H*1.08,0,W*0.92,H*1.08,500);g2.addColorStop(0,`rgba(${accentRGB},0.13)`);g2.addColorStop(1,'transparent');ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(201,168,76,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
+  let g2=ctx.createRadialGradient(W*0.9,H*1.06,0,W*0.9,H*1.06,500);g2.addColorStop(0,`rgba(${accentRGB},0.13)`);g2.addColorStop(1,'transparent');ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(76,175,125,0.42)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
   ctx.textBaseline='alphabetic';ctx.textAlign='left';
-  // ── HEADER: logo + period + net worth + growth ──
-  ctx.font='700 30px "Exo 2",sans-serif';ctx.fillStyle='#c9a84c';ctx.fillText('VestlyFi',PAD,52);
+  // ── HEADER ──
+  ctx.font='700 30px "Exo 2",sans-serif';ctx.fillStyle=GOLD;ctx.fillText('VestlyFi',PAD,52);
   const period=single?fmtMonthLabel(first.month):`${fmtMonthLabel(first.month)} – ${fmtMonthLabel(last.month)}`;
-  ctx.font='400 18px Outfit,sans-serif';const perW=ctx.measureText(period).width,perX=W-PAD-perW-30;
-  ctx.fillStyle='rgba(255,255,255,0.05)';ctx.beginPath();ctx.roundRect(perX,32,perW+30,32,16);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
-  ctx.fillStyle='rgba(245,240,232,0.62)';ctx.fillText(period,perX+15,53);
-  const pct=heroBase>0?(heroDiff/heroBase*100):null;
-  const totA=last.assets,totL=last.liabilities;
-  // eyebrow: name the big number so it can never be read as gross assets
-  ctx.font='600 14px Outfit,sans-serif';ctx.fillStyle='rgba(201,168,76,0.85)';
-  drawSpacedText(ctx,priv&&pct!==null?'NET WORTH GROWTH':'NET WORTH',PAD,86,3.2);
+  ctx.font='400 18px Outfit,sans-serif';ctx.fillStyle=DIM;ctx.textAlign='right';ctx.fillText(period,W-PAD,52);ctx.textAlign='left';
+  // ── HERO ──
+  ctx.font='500 20px Outfit,sans-serif';ctx.fillStyle=GOLD;
+  drawSpacedText(ctx,priv&&pct!==null?'NET WORTH GROWTH':'NET WORTH',PAD,124,3.4);
   const nwStr=priv?(pct!==null?`${isUp?'+':'-'}${Math.abs(pct).toFixed(1)}%`:'$•••,•••'):fmtMoney(last.netWorth);
-  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle=priv&&pct!==null?accent:'#f5f0e8';ctx.fillText(nwStr,PAD-1,132);
-  // both sides of the balance, split by a dimmed rule so neither half reads as the total
+  ctx.font='300 94px Outfit,sans-serif';ctx.fillStyle=CREAM;ctx.fillText(nwStr,PAD-2,214);
+  let sub='',subCol=MUT;
+  if(heroSpan===null&&heroDiff===0)sub='First month tracked';
+  else if(!(priv&&pct===null)){sub=`${isUp?'+':'-'}${priv?Math.abs(pct).toFixed(1)+'%':fmtMoney(Math.abs(heroDiff))} ${heroSpan||''}`.trim();subCol=isUp?GREENL:REDT;}
+  if(sub){ctx.font='400 26px Outfit,sans-serif';ctx.fillStyle=subCol;ctx.fillText(sub,PAD,256);}
+  // ── ASSETS vs DEBTS BAR ──
   if(totA>0||totL>0){
-    ctx.font='400 18px Outfit,sans-serif';
-    if(totL>0&&!priv){
-      const segA=`Assets ${fmtMoney(totA)}`,segB=`Liabilities ${fmtMoney(totL)}`;
-      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(segA,PAD,158);
-      let sx=PAD+ctx.measureText(segA).width+16;
-      ctx.fillStyle='rgba(245,240,232,0.26)';ctx.fillText('|',sx,158);
-      sx+=ctx.measureText('|').width+16;
-      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(segB,sx,158);
-    } else {
-      let dTxt;
-      if(totL<=0)dTxt=priv?'Debt-free':`Assets ${fmtMoney(totA)}, debt-free`;
-      else dTxt=totA>0?`Liabilities are ${Math.round(totL/totA*100)}% of assets and already subtracted`:'Liabilities already subtracted';
-      ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText(dTxt,PAD,158);
-    }
+    const sum=totA+totL,aPct=sum>0?totA/sum:1,y=170,BH=46,aw=RW*aPct,gw=Math.max(0,aw-4),rx=RX+aw+4,rw=Math.max(0,RW-aw-4);
+    if(gw>0){ctx.fillStyle=GREEN;ctx.beginPath();ctx.roundRect(RX,y,gw,BH,7);ctx.fill();}
+    if(rw>0){ctx.fillStyle=RED;ctx.beginPath();ctx.roundRect(rx,y,rw,BH,7);ctx.fill();}
+    ctx.font='600 24px Outfit,sans-serif';ctx.textAlign='center';
+    if(gw>54){ctx.fillStyle='#08301e';ctx.fillText(Math.round(aPct*100)+'%',RX+gw/2,y+31);}
+    if(rw>54){ctx.fillStyle='#3d0f0f';ctx.fillText(100-Math.round(aPct*100)+'%',rx+rw/2,y+31);}
+    ctx.textAlign='left';ctx.font='400 23px Outfit,sans-serif';
+    ctx.fillStyle=GREENL;ctx.fillText(priv?'assets':`${fmtMoney(totA)} assets`,RX,y+BH+34);
+    ctx.textAlign='right';ctx.fillStyle=REDT;ctx.fillText(priv?'debts':`${fmtMoney(totL)} debts`,RX+RW,y+BH+34);ctx.textAlign='left';
   }
-  if(!priv&&!(heroDiff===0&&heroSpan===null)){
-    const arrow=isUp?'▲':'▼';
-    let gTxt=`${arrow} ${isUp?'+':'-'}${fmtMoney(Math.abs(heroDiff))}`;if(pct!==null)gTxt+=`  (${isUp?'+':''}${pct.toFixed(1)}%)`;if(heroSpan)gTxt+=`  ${heroSpan}`;
-    ctx.font='600 22px Outfit,sans-serif';const gw=ctx.measureText(gTxt).width,pillW=gw+30,pillH=38,pillX=W-PAD-pillW,pillY=88;
-    ctx.fillStyle=`rgba(${accentRGB},0.16)`;ctx.beginPath();ctx.roundRect(pillX,pillY,pillW,pillH,19);ctx.fill();
-    ctx.fillStyle=accent;ctx.textBaseline='middle';ctx.fillText(gTxt,pillX+15,pillY+pillH/2+1);ctx.textBaseline='alphabetic';
-  }
-  // ── ELEMENT 1: trend chart (largest) ──
-  const cY=172,cH=178;
+  ctx.strokeStyle=HAIR;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD,294);ctx.lineTo(W-PAD,294);ctx.stroke();
+  // ── TREND ──
+  // A single month has nothing to plot, so that layout drops the chart and lets
+  // the balance sheet span the whole card instead.
   if(!single){
-    const yAW=priv?20:90,cX=PAD+yAW,cW=W-PAD-cX,vals=snapshots.map(s=>s.netWorth),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1,p=range*0.1,yMin=minV-p,yMax=maxV+p,yR=yMax-yMin;
-    const ptX=i=>cX+(i/(vals.length-1))*cW,ptY=v=>cY+cH-((v-yMin)/yR)*cH;
-    [minV,(minV+maxV)/2,maxV].forEach(v=>{const y=ptY(v);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cX,y);ctx.lineTo(cX+cW,y);ctx.stroke();if(!priv){ctx.textAlign='right';ctx.font='300 16px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.fillText(fmtMoney(v),cX-14,y+5);}});ctx.textAlign='left';
-    const fg=ctx.createLinearGradient(0,cY,0,cY+cH);fg.addColorStop(0,`rgba(${accentRGB},0.22)`);fg.addColorStop(1,'transparent');
-    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));ctx.lineTo(ptX(vals.length-1),cY+cH);ctx.lineTo(ptX(0),cY+cH);ctx.closePath();ctx.fillStyle=fg;ctx.fill();
-    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();
-    ctx.beginPath();ctx.arc(ptX(vals.length-1),ptY(vals[vals.length-1]),7,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();ctx.strokeStyle='#0e1530';ctx.lineWidth=3;ctx.stroke();
-    const step=Math.ceil(snapshots.length/6);ctx.font='300 17px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';
-    snapshots.forEach((s,i)=>{if(i%step===0||i===snapshots.length-1){ctx.textAlign=i===snapshots.length-1?'right':(i===0?'left':'center');ctx.fillText(fmtMonthLabel(s.month),ptX(i),cY+cH+26);}});ctx.textAlign='left';
+    const x0=PAD,x1=412,y0=352,y1=506,vals=snapshots.map(s=>s.netWorth),
+          minV=Math.min(...vals),maxV=Math.max(...vals),range=(maxV-minV)||1,yMin=minV-range*0.12,yMax=maxV+range*0.12,yR=yMax-yMin;
+    const ptX=i=>x0+(i/(vals.length-1||1))*(x1-x0),ptY=v=>y1-((v-yMin)/yR)*(y1-y0);
+    ctx.font='500 17px Outfit,sans-serif';ctx.fillStyle=GOLD;
+    drawSpacedText(ctx,`THE LAST ${snapshots.length-1} MONTHS`,x0,330,2.4);
+    const fg=ctx.createLinearGradient(0,y0,0,y1);fg.addColorStop(0,'rgba(201,168,76,0.26)');fg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
+    ctx.lineTo(ptX(vals.length-1),y1);ctx.lineTo(ptX(0),y1);ctx.closePath();ctx.fillStyle=fg;ctx.fill();
+    ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
+    ctx.strokeStyle='#e8c97a';ctx.lineWidth=4;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke();
+    ctx.beginPath();ctx.arc(ptX(vals.length-1),ptY(vals[vals.length-1]),8,0,Math.PI*2);ctx.fillStyle='#e8c97a';ctx.fill();
+    ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle=MUT;
+    ctx.fillText(fmtMonthLabel(first.month),x0,536);
+    ctx.textAlign='right';ctx.fillText(fmtMonthLabel(last.month),x1,536);ctx.textAlign='left';
   }
-  // ── ELEMENTS 2 & 3: side-by-side boxes (pie + balance sheet); single month has no trend, so they get the full height ──
-  const boxY=single?180:404,boxH=single?426:202,gap=24,boxW=(W-PAD*2-gap)/2,box1=PAD,box2=PAD+boxW+gap;
-  [box1,box2].forEach(bx=>{ctx.fillStyle='rgba(255,255,255,0.025)';ctx.beginPath();ctx.roundRect(bx,boxY,boxW,boxH,16);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();});
-  // ELEMENT 2: allocation pie
-  const titleFont=single?'600 15px Outfit,sans-serif':'600 13px Outfit,sans-serif',titleY=boxY+(single?38:32);
-  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'ASSET MIX',box1+24,titleY,3);
-  const alloc=getShareAllocation();
-  if(alloc.total>0){
-    let slices;
-    if(alloc.items.length<=5){slices=alloc.items.map((x,i)=>({label:x.cat,value:x.value,color:PALETTE[i%PALETTE.length]}));}
-    else{const shown=alloc.items.slice(0,4),otherV=alloc.total-shown.reduce((s,x)=>s+x.value,0);slices=shown.map((x,i)=>({label:x.cat,value:x.value,color:PALETTE[i]}));slices.push({label:'Other',value:otherV,color:'rgba(245,240,232,0.22)'});}
-    const R=single?115:66,pcx=box1+(single?34:24)+R,pcy=single?titleY+22+(boxY+boxH-24-(titleY+22))/2:boxY+108;let a0=-Math.PI/2;
-    // two passes: fill all wedges first, then draw separators, so strokes never bleed over neighboring slices
-    const cuts=[];
-    slices.forEach(s=>{const a1=a0+(s.value/alloc.total)*Math.PI*2;ctx.beginPath();ctx.moveTo(pcx,pcy);ctx.arc(pcx,pcy,R,a0,a1);ctx.closePath();ctx.fillStyle=s.color;ctx.fill();cuts.push(a0);a0=a1;});
-    ctx.strokeStyle='#0b1024';ctx.lineWidth=2.5;
-    if(slices.length>1)cuts.forEach(a=>{ctx.beginPath();ctx.moveTo(pcx,pcy);ctx.lineTo(pcx+Math.cos(a)*R,pcy+Math.sin(a)*R);ctx.stroke();});
-    ctx.beginPath();ctx.arc(pcx,pcy,R,0,Math.PI*2);ctx.stroke();
-    const lx=pcx+R+(single?30:24),lRight=box1+boxW-(single?24:18),lineH=single?36:27,dotR=single?6:5;
-    ctx.font=single?'400 20px Outfit,sans-serif':'400 16px Outfit,sans-serif';
-    let ly=single?pcy-((slices.length-1)*lineH)/2+7:boxY+52;
-    slices.forEach(s=>{ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(lx+dotR,ly-dotR,dotR,0,Math.PI*2);ctx.fill();const pctStr=Math.round(s.value/alloc.total*100)+'%';ctx.textAlign='right';ctx.fillStyle='rgba(245,240,232,0.5)';ctx.fillText(pctStr,lRight,ly);const pW=ctx.measureText(pctStr).width;ctx.textAlign='left';ctx.fillStyle='rgba(245,240,232,0.8)';ctx.fillText(fitText(ctx,s.label,lRight-(lx+dotR*2+8)-pW-10),lx+dotR*2+8,ly);ly+=lineH;});
-  } else {ctx.font='300 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.textAlign='center';ctx.fillText('No assets logged yet',box1+boxW/2,boxY+boxH/2+6);ctx.textAlign='left';}
-  // ELEMENT 3: balance sheet — assets and debts in one signed list that totals to the hero number
-  ctx.font=titleFont;ctx.fillStyle='rgba(245,240,232,0.4)';drawSpacedText(ctx,'BALANCE SHEET',box2+24,titleY,3);
-  const holdings=getShareHoldings(),debts=getShareDebts();
-  if(holdings.length||debts.length){
-    const tx=box2+24,txRight=box2+boxW-24,slots=single?6:4;
-    const vFont=single?'600 21px Outfit,sans-serif':'600 18px Outfit,sans-serif',nFont=single?'400 21px Outfit,sans-serif':'400 18px Outfit,sans-serif';
-    // Even split, so neither column looks like the whole story. Only a side that
-    // cannot fill its half hands the spare rows over to the other.
-    const half=slots/2;
-    let aShow=Math.min(holdings.length,half),dShow=Math.min(debts.length,half);
-    if(aShow<half)dShow=Math.min(debts.length,slots-aShow);
-    else if(dShow<half)aShow=Math.min(holdings.length,slots-dShow);
-    const rows=[];
-    const fold=(list,show,label)=>{if(!show)return;if(list.length>show){for(let i=0;i<show-1;i++)rows.push({cat:list[i].cat,value:list[i].value});rows.push({cat:label,value:list.slice(show-1).reduce((s,x)=>s+x.value,0)});}else for(let i=0;i<show;i++)rows.push({cat:list[i].cat,value:list[i].value});};
-    fold(holdings,aShow,`Other assets (${holdings.length-aShow+1})`);
-    const aCount=rows.length;
-    fold(debts,dShow,`Other debts (${debts.length-dShow+1})`);
-    // percentages in privacy mode are all shares of total assets, so the rows still net out on screen
-    const base=totA>0?totA:0;
-    const val=(v,neg)=>{if(!priv)return fmtMoney(neg?-v:v);if(!base)return '•••';return (neg?'-':'')+Math.round(v/base*100)+'%';};
-    const netY=boxY+boxH-(single?34:20),divY=netY-(single?30:18),startY=single?titleY+46:boxY+58;
-    // Spread whatever rows we have across the space above the divider rather than
-    // stacking them at a fixed pitch, so a short list does not leave a dead gap.
-    const rowH=rows.length>1?Math.min(single?48:26,(divY-16-startY)/(rows.length-1)):0;
-    let ry=startY;
-    rows.forEach((r,i)=>{const neg=i>=aCount;ctx.font=vFont;const vStr=val(r.value,neg);ctx.textAlign='right';ctx.fillStyle=neg?'#e07a7a':'#6fc99a';ctx.fillText(vStr,txRight,ry);const vW=ctx.measureText(vStr).width;ctx.textAlign='left';ctx.font=nFont;ctx.fillStyle='rgba(245,240,232,0.82)';ctx.fillText(fitText(ctx,r.cat,txRight-tx-vW-16),tx,ry);ry+=rowH;});
-    ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(tx,divY);ctx.lineTo(txRight,divY);ctx.stroke();
-    ctx.font=single?'700 22px Outfit,sans-serif':'700 19px Outfit,sans-serif';
-    const netStr=priv?(base?Math.round((totA-totL)/base*100)+'%':'•••'):fmtMoney(totA-totL);
-    ctx.textAlign='right';ctx.fillStyle='#f5f0e8';ctx.fillText(netStr,txRight,netY);ctx.textAlign='left';
-    ctx.fillStyle='rgba(245,240,232,0.72)';ctx.fillText('Net worth',tx,netY);
-  } else {ctx.font='300 18px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.textAlign='center';ctx.fillText('Nothing logged yet',box2+boxW/2,boxY+boxH/2+6);ctx.textAlign='left';}
+  // ── BALANCE SHEET ──
+  const slots=single?6:5;
+  const own=foldShareRows(getShareHoldings(),slots,'assets'),owe=foldShareRows(getShareDebts(),slots,'debts');
+  if(own.length||owe.length){
+    const aX=single?PAD:492,aW=single?504:282,dX=single?648:856,dW=single?504:296;
+    const headY=single?344:330,maxRows=Math.max(own.length,owe.length);
+    const startY=single?(maxRows<=3?390:382):366;
+    const pitch=single?(maxRows<=3?40:31):31;
+    // The rule and the total sit below whichever list is longer, so both panels
+    // close on the same line however lopsided the balance sheet is.
+    const divY=startY+(maxRows-1)*pitch+30,totY=divY+34;
+    ctx.strokeStyle=HAIR;ctx.lineWidth=1;
+    if(single){ctx.beginPath();ctx.moveTo(600,322);ctx.lineTo(600,totY+14);ctx.stroke();}
+    else[452,816].forEach(x=>{ctx.beginPath();ctx.moveTo(x,314);ctx.lineTo(x,totY+14);ctx.stroke();});
+    const rowFont=single?'300 25px Outfit,sans-serif':'300 23px Outfit,sans-serif';
+    const valFont=single?'400 25px Outfit,sans-serif':'400 23px Outfit,sans-serif';
+    const totFont=single?'600 25px Outfit,sans-serif':'600 23px Outfit,sans-serif';
+    const panel=(x,w,label,headCol,rows,total,neg)=>{
+      ctx.font=single?'500 18px Outfit,sans-serif':'500 17px Outfit,sans-serif';ctx.fillStyle=headCol;
+      drawSpacedText(ctx,label,x,headY,2.6);
+      let ry=startY;
+      rows.forEach(r=>{
+        ctx.font=valFont;const vStr=(neg?'-':'')+money(r.value);
+        ctx.textAlign='right';ctx.fillStyle=neg?REDT:CREAM;ctx.fillText(vStr,x+w,ry);
+        const vW=ctx.measureText(vStr).width;
+        ctx.textAlign='left';ctx.font=rowFont;ctx.fillStyle=DIM;
+        ctx.fillText(fitText(ctx,r.cat,w-vW-18),x,ry);
+        ry+=pitch;
+      });
+      ctx.strokeStyle=HAIR;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,divY);ctx.lineTo(x+w,divY);ctx.stroke();
+      ctx.font=single?'400 22px Outfit,sans-serif':'400 21px Outfit,sans-serif';ctx.fillStyle=MUT;ctx.fillText('Total',x,totY);
+      ctx.font=totFont;ctx.textAlign='right';ctx.fillStyle=neg?REDT:CREAM;ctx.fillText((neg?'-':'')+money(total),x+w,totY);ctx.textAlign='left';
+    };
+    panel(aX,aW,'ASSETS',GREEN,own,totA,false);
+    panel(dX,dW,'DEBTS',RED,owe,totL,true);
+  }
   const dataUrl=canvas.toDataURL('image/png');document.getElementById('shareGenerating').style.display='none';const img=document.getElementById('sharePreviewImg');img.src=dataUrl;img.style.display='block';
 }
 function downloadShareImage(){const canvas=document.getElementById('shareCanvas'),snaps=getFilteredSnapshots();if(!snaps.length)return;const f=snaps[0],l=snaps[snaps.length-1],dataUrl=canvas.toDataURL('image/png'),isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMob){const w=window.open();w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}else{const a=document.createElement('a');a.download=`vestlyfi-networth-${f.month}-to-${l.month}.png`;a.href=dataUrl;a.click();document.getElementById('shareMsg').textContent='Downloaded!';}}
