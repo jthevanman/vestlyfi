@@ -198,11 +198,13 @@ body {
 
 /* ── TWO COL ROW ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
-/* Beside the chart the summary stats stack into a column instead of a row.
-   Stretched to the chart's height they are much taller than their content, so
-   they centre rather than sitting against the left edge of a wide card. */
-.chart-row .stat-row2 { grid-template-columns:1fr; gap:12px; }
+/* The chart gets three quarters; the summary stats stack into a narrow column
+   beside it. align-content keeps them at their natural height instead of
+   stretching to the chart, which was padding two short lines out to 90px. */
+.chart-row { grid-template-columns:3fr 1fr; }
+.chart-row .stat-row2 { grid-template-columns:1fr; gap:10px; align-content:start; }
 .chart-row .stat-card { align-items:center; text-align:center; }
+.chart-row .stat-card.sm { padding:10px 12px; min-height:0; }
 
 /* ── DONUT ── */
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
@@ -259,6 +261,7 @@ thead th:hover { color:var(--muted); }
 thead th.sorted { color:var(--gold); }
 thead th.sorted-secondary { color:var(--muted); }
 tfoot .holdings-total-row td { padding:16px 18px; border-top:2px solid var(--gold); background:rgba(201,168,76,0.07); }
+tfoot .holdings-total-inner { display:flex; align-items:baseline; justify-content:center; gap:14px; }
 tfoot .holdings-total-lbl { font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light); font-weight:600; }
 tfoot .holdings-total-val { font-size:1.32rem; font-weight:700; letter-spacing:-0.01em; }
 thead th.r { text-align:right; }
@@ -1467,7 +1470,10 @@ function renderHoldings(){
     if(holdingsFilter==='asset'){lbl='Total Assets';val=shownA;col='var(--green)';}
     else if(holdingsFilter==='liability'){lbl='Total Liabilities';val=shownL;col='var(--red)';}
     else{lbl='Net Worth';val=shownA-shownL;col=val<0?'var(--red)':'var(--cream)';}
-    tfoot.innerHTML=`<tr class="holdings-total-row"><td class="holdings-total-lbl" colspan="2">${lbl}</td><td class="r holdings-total-val" style="color:${col}">${fmtMoney(val)}</td><td colspan="4"></td></tr>`;
+    // One cell across the table so the label and figure sit together in the
+    // middle, rather than the figure stranding itself in the Value column with
+    // four empty cells trailing after it.
+    tfoot.innerHTML=`<tr class="holdings-total-row"><td colspan="7"><div class="holdings-total-inner"><span class="holdings-total-lbl">${lbl}</span><span class="holdings-total-val" style="color:${col}">${fmtMoney(val)}</span></div></td></tr>`;
   }
 }
 
