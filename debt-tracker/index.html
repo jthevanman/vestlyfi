@@ -27,6 +27,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="/assets/currency.js"></script>
 <style>
 :root {
   --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
@@ -441,12 +442,12 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
             <div class="stats-row">
               <div class="stat-card">
                 <div class="stat-label">Tracked Debts</div>
-                <div class="stat-val red" id="statTracked">$0</div>
+                <div class="stat-val red" id="statTracked" data-money-zero>$0</div>
                 <div class="stat-note" id="statTrackedNote">0 active debts</div>
               </div>
               <div class="stat-card">
                 <div class="stat-label">Monthly Payment</div>
-                <div class="stat-val" id="statMonthly">$0</div>
+                <div class="stat-val" id="statMonthly" data-money-zero>$0</div>
                 <div class="stat-note" id="statMonthlyNote"></div>
               </div>
               <div class="stat-card">
@@ -477,7 +478,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
               <div class="rec-head">
                 <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
                 <div class="rec-title">Where your extra payments work hardest</div>
-                <div class="rec-note">Based on $100/mo extra</div>
+                <div class="rec-note" id="recNote">Based on $100/mo extra</div>
                 <button class="rec-dismiss" type="button" aria-label="Dismiss" onclick="dismissRecCard()">&#10005;</button>
               </div>
               <div class="rec-rows" id="recRows"></div>
@@ -527,7 +528,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <div class="modal-field"><label>Name</label><input type="text" id="dmName" placeholder="e.g. Car Loan"></div>
     <div class="modal-field">
       <label>Current Balance</label>
-      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmBalance" oninput="fmtComma(this)"></div>
+      <div class="input-wrap"><span class="prefix" data-money-sym>$</span><input class="has-prefix" type="text" id="dmBalance" oninput="fmtComma(this)"></div>
     </div>
     <div class="modal-field">
       <label>Interest Rate (APR)</label>
@@ -535,7 +536,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     </div>
     <div class="modal-field">
       <label>Minimum Monthly Payment</label>
-      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="dmMin" oninput="fmtComma(this)"></div>
+      <div class="input-wrap"><span class="prefix" data-money-sym>$</span><input class="has-prefix" type="text" id="dmMin" oninput="fmtComma(this)"></div>
       <div class="field-hint">For mortgages, enter <strong>principal &amp; interest only</strong>, not your full payment with escrow (property tax/insurance), or the payoff date will read too soon.</div>
     </div>
     <div class="modal-err" id="debtModalErr"></div>
@@ -553,7 +554,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     <div class="modal-sub" id="updateBalSub"></div>
     <div class="modal-field">
       <label>New Balance</label>
-      <div class="input-wrap"><span class="prefix">$</span><input class="has-prefix" type="text" id="ubNewBalance" oninput="fmtComma(this)"></div>
+      <div class="input-wrap"><span class="prefix" data-money-sym>$</span><input class="has-prefix" type="text" id="ubNewBalance" oninput="fmtComma(this)"></div>
     </div>
     <div class="modal-err" id="updateBalErr"></div>
     <div class="modal-actions">
@@ -626,9 +627,28 @@ let currentUser=null,myDebts=[],myHistory=[],payoffChartInstance=null,breakdownC
 let nwLiabLatest={},pendingNwImports=[],nwConflicts=[];
 
 /* ── HELPERS ── */
-function fmt(n){if(!isFinite(n))return'—';if(Math.abs(n)>=1e6)return'$'+(n/1e6).toFixed(2)+'M';return'$'+Math.round(n).toLocaleString();}
-function fmtComma(input){let raw=input.value.replace(/[^0-9.]/g,'');const parts=raw.split('.');parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');input.value=parts.length>1?parts[0]+'.'+parts[1]:parts[0];}
-function parseNum(s){return parseFloat((s||'').toString().replace(/,/g,''));}
+// Money display follows the account-wide currency preference (assets/currency.js).
+// This tracker shares balances with the net worth tracker through
+// debts.net_worth_category, so the two must always render the same symbol.
+function fmt(n){return VestlyCurrency.fmt(n);}
+function fmtComma(input){VestlyCurrency.groupDec(input);}
+// Keeps the old NaN-on-empty contract: callers validate with !(x>=0), which is
+// how a blank balance is rejected rather than saved as zero.
+function parseNum(s){const t=String(s==null?'':s).trim();return /[0-9]/.test(t)?VestlyCurrency.parseDec(t):NaN;}
+// Field affixes and pre-render zeroes in the static markup carry the symbol, so
+// they are only correct once the preference is known. Dynamically rendered
+// rows interpolate VestlyCurrency.symbol() directly and need nothing here.
+// The affix stays on the left of the input even in locales that print the
+// symbol after the number; it reads as a field label, not as a formatted value.
+function applyCurrencyPlaceholders(){
+  const sym=VestlyCurrency.symbol();
+  document.querySelectorAll('[data-money-sym]').forEach(el=>{el.textContent=sym;});
+  document.querySelectorAll('[data-money-zero]').forEach(el=>{el.textContent=fmt(0);});
+  // The recommendation card is built around a flat 100-a-month extra payment,
+  // so the note above it has to name that figure in the user's currency too.
+  const note=document.getElementById('recNote');
+  if(note)note.textContent=`Based on ${fmt(100)}/mo extra`;
+}
 function escHtml(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 function fitText(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;let s=t;while(s.length>1&&ctx.measureText(s+'…').width>maxW)s=s.slice(0,-1);return s+'…';}
 function monthLabel(offset){const d=new Date();const t=new Date(d.getFullYear(),d.getMonth()+offset,1);return t.toLocaleDateString('en-US',{month:'short'})+" '"+String(t.getFullYear()).slice(2);}
@@ -751,6 +771,9 @@ async function loadDashboard(){
   document.getElementById('dashLoading').style.display='flex';
   document.getElementById('dashContent').style.display='none';
   document.getElementById('headerActions').style.display='none';
+  // Currency first: everything rendered below is formatted with it.
+  await VestlyCurrency.load(sb,currentUser.id);
+  applyCurrencyPlaceholders();
   const[{data:debts},{data:hist},{data:nwLiab}]=await Promise.all([
     sb.from('debts').select('*').order('sort_order',{ascending:true}),
     sb.from('debt_balance_history').select('*').order('date',{ascending:true}),
@@ -992,8 +1015,8 @@ function renderRecCard(active,colorById){
     <div class="rec-row ${r.id===winnerId?'winner':''}">
       <div class="rec-debt">${escHtml(r.name)}</div>
       <div class="rec-apr">${r.rate.toFixed(1)}% APR</div>
-      <div class="rec-body">An extra $100/mo will save you <strong class="${r.id===winnerId?'g':''}">${fmt(r.saved)}</strong> on this debt and pay it off <strong>${r.monthsSaved} month${r.monthsSaved!==1?'s':''} sooner.</strong></div>
-      ${r.id===winnerId?'<div class="rec-badge">Best use of $100</div>':''}
+      <div class="rec-body">An extra ${fmt(100)}/mo will save you <strong class="${r.id===winnerId?'g':''}">${fmt(r.saved)}</strong> on this debt and pay it off <strong>${r.monthsSaved} month${r.monthsSaved!==1?'s':''} sooner.</strong></div>
+      ${r.id===winnerId?`<div class="rec-badge">Best use of ${fmt(100)}</div>`:''}
     </div>`).join('');
 }
 function dismissRecCard(){localStorage.setItem(REC_DISMISS_KEY,'1');document.getElementById('recCard').style.display='none';}
@@ -1043,7 +1066,7 @@ function renderDebtCards(active,included,excluded,colorById,ordered){
       <div class="dc-control">
         <div class="dc-extra">
           ${canExtra?`<span class="dc-extra-lbl">+ Extra/mo</span>
-            <span class="dc-extra-wrap"><span class="pfx">$</span><input type="text" value="${extra?extra.toLocaleString():'0'}" inputmode="numeric" oninput="fmtComma(this)" onchange="setDebtExtra('${d.id}',this.value)"></span>
+            <span class="dc-extra-wrap"><span class="pfx">${VestlyCurrency.symbol()}</span><input type="text" value="${extra?VestlyCurrency.fmtPlain(extra):'0'}" inputmode="numeric" oninput="fmtComma(this)" onchange="setDebtExtra('${d.id}',this.value)"></span>
             ${savesTag}`
           :`<span class="dc-extra-lbl" style="opacity:.55">${d.excluded?'Not in payoff plan':'Paid off'}</span>`}
         </div>
@@ -1091,9 +1114,9 @@ function openDebtModal(id){
   const d=id?myDebts.find(x=>x.id===id):null;
   document.getElementById('debtModalTitle').textContent=id?'Edit Debt':'Add a Debt';
   document.getElementById('dmName').value=d?d.name:'';
-  document.getElementById('dmBalance').value=d?Number(d.balance).toLocaleString():'';
+  document.getElementById('dmBalance').value=d?VestlyCurrency.fmtPlain(d.balance):'';
   document.getElementById('dmRate').value=d?d.rate:'';
-  document.getElementById('dmMin').value=d?Number(d.min_payment).toLocaleString():'';
+  document.getElementById('dmMin').value=d?VestlyCurrency.fmtPlain(d.min_payment):'';
   document.getElementById('debtModalErr').textContent='';
   document.getElementById('debtModal').classList.add('open');
   setTimeout(()=>document.getElementById('dmName').focus(),50);
@@ -1138,7 +1161,7 @@ function openUpdateBalModal(id){
   updatingBalDebtId=id;
   const d=myDebts.find(x=>x.id===id);
   document.getElementById('updateBalSub').textContent=`${d.name}: current balance ${fmt(Number(d.balance))}`;
-  document.getElementById('ubNewBalance').value=Number(d.balance).toLocaleString();
+  document.getElementById('ubNewBalance').value=VestlyCurrency.fmtPlain(d.balance);
   document.getElementById('updateBalErr').textContent='';
   document.getElementById('updateBalModal').classList.add('open');
   setTimeout(()=>document.getElementById('ubNewBalance').focus(),50);
@@ -1324,9 +1347,9 @@ async function openImportModal(){
         <span class="import-row-name">${escHtml(it.category)}</span>
       </div>
       <div class="import-fields">
-        <div class="f"><label>Balance</label><div class="iw"><span class="pfx">$</span><input class="pf" type="text" id="impbal_${idx}" value="${Math.round(it.value).toLocaleString()}" inputmode="numeric" oninput="fmtComma(this)"></div></div>
+        <div class="f"><label>Balance</label><div class="iw"><span class="pfx">${VestlyCurrency.symbol()}</span><input class="pf" type="text" id="impbal_${idx}" value="${VestlyCurrency.fmtPlain(it.value)}" inputmode="numeric" oninput="fmtComma(this)"></div></div>
         <div class="f"><label>APR</label><div class="iw"><input class="sf" type="number" id="impapr_${idx}" min="0" max="100" step="0.1" placeholder="0.0"><span class="sfx">%</span></div></div>
-        <div class="f"><label>Min / mo</label><div class="iw"><span class="pfx">$</span><input class="pf" type="text" id="impmin_${idx}" inputmode="numeric" placeholder="0" oninput="fmtComma(this)"></div></div>
+        <div class="f"><label>Min / mo</label><div class="iw"><span class="pfx">${VestlyCurrency.symbol()}</span><input class="pf" type="text" id="impmin_${idx}" inputmode="numeric" placeholder="0" oninput="fmtComma(this)"></div></div>
       </div>
     </div>`).join('');
   setTimeout(()=>{const f=document.getElementById('impapr_0');if(f)f.focus();},60);

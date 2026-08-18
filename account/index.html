@@ -13,6 +13,7 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="manifest" href="/site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/currency.js"></script>
 <style>
   :root {
     --navy: #0a0f1e;
@@ -173,7 +174,7 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-  .field input {
+  .field input, .field select {
     width: 100%;
     padding: 11px 14px;
     background: var(--navy-mid);
@@ -186,7 +187,10 @@
     outline: none;
     transition: border-color .15s;
   }
-  .field input:focus { border-color: var(--gold); }
+  /* Native appearance is kept deliberately: without it the control loses its
+     dropdown arrow and reads as a plain text box. */
+  .field select { cursor: pointer; }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
   .field input:disabled { opacity: 0.45; cursor: not-allowed; }
 
   /* ── BUTTONS ── */
@@ -367,6 +371,36 @@
       </div>
     </div>
 
+    <!-- ── CURRENCY ── -->
+    <div class="card">
+      <div class="card-collapsed-row" id="currencyCollapsed" onclick="openCurrencyForm()">
+        <div>
+          <div class="card-title">Currency</div>
+          <div class="card-sub" style="margin-bottom:0">
+            How amounts are shown across your trackers. Currently <span id="currencyCurrent">US Dollar</span>.
+          </div>
+        </div>
+        <button class="btn-reveal" type="button">Change currency</button>
+      </div>
+
+      <div id="currencyForm" style="display:none">
+        <hr class="divider">
+        <div class="field">
+          <label>Display currency</label>
+          <select id="currencySelect"></select>
+          <div class="card-sub" style="margin:8px 0 0">
+            This changes the symbol and number format only. Your saved amounts are
+            not converted, so pick the currency you actually enter them in.
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+          <button class="btn-save" style="margin-top:0" onclick="saveCurrency()">Save currency</button>
+          <button class="btn-signout" type="button" onclick="closeCurrencyForm()">Cancel</button>
+        </div>
+        <div class="status" id="currencyStatus"></div>
+      </div>
+    </div>
+
     <!-- ── SIGN OUT ── -->
     <div class="signout-row">
       <span class="signout-label">Signed in as <span id="signoutEmail" style="color:var(--cream-dim)"></span></span>
@@ -405,6 +439,9 @@ let currentUser = null;
     return;
   }
   currentUser = session.user;
+  // Currency before the first paint, so the snapshot never renders in the
+  // fallback symbol and then swap.
+  await VestlyCurrency.load(sb, currentUser.id);
   showPage();
 })();
 
@@ -433,12 +470,14 @@ function showPage() {
     document.getElementById('accountSince').textContent = `Member since ${mo[d.getMonth()]} ${d.getFullYear()}`;
   }
 
+  renderCurrencyCard();
   loadSnapshot();
   loadSavedResults();
 }
 
 // ── SNAPSHOT ──
-function fmtMoney(n){if(n===0)return'$0';const abs=Math.abs(n);const fmt=abs>=1000000?'$'+(abs/1000000).toFixed(2)+'M':'$'+Math.round(abs).toLocaleString();return n<0?'-'+fmt:fmt;}
+// Money display follows the account-wide currency preference (assets/currency.js).
+function fmtMoney(n){return VestlyCurrency.fmt(n);}
 function dateToMonthStr(s){return s?s.slice(0,7):'';}
 function currentMonthStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function fmtMonthLabel(s){const[y,m]=s.split('-');const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mo[parseInt(m)-1]} ${y}`;}
@@ -567,6 +606,47 @@ function closePasswordForm() {
   ['currentPassword','newPassword','confirmPassword'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('passwordStatus').textContent = '';
   checkStrength();
+}
+
+// ── CURRENCY ──
+// The setting is display-only: it relabels stored amounts, it never converts
+// them. The copy in the form says so, because a user who reads "currency" as
+// "convert my net worth to euros" would otherwise be badly misled.
+function renderCurrencyCard() {
+  const sel = document.getElementById('currencySelect');
+  const code = VestlyCurrency.code();
+  sel.innerHTML = VestlyCurrency.CURRENCIES
+    .map(c => `<option value="${c.code}"${c.code === code ? ' selected' : ''}>${c.label} (${c.code})</option>`)
+    .join('');
+  document.getElementById('currencyCurrent').textContent = `${VestlyCurrency.label()} (${code})`;
+}
+function openCurrencyForm() {
+  const form = document.getElementById('currencyForm');
+  if (form.style.display !== 'none') return; // already open
+  form.style.display = 'block';
+  document.getElementById('currencyCollapsed').style.cursor = 'default';
+}
+function closeCurrencyForm() {
+  document.getElementById('currencyForm').style.display = 'none';
+  document.getElementById('currencyCollapsed').style.cursor = 'pointer';
+  document.getElementById('currencyStatus').textContent = '';
+  renderCurrencyCard(); // discard an unsaved selection
+}
+async function saveCurrency() {
+  const status = document.getElementById('currencyStatus');
+  const code = document.getElementById('currencySelect').value;
+  status.className = 'status';
+  status.textContent = 'Saving…';
+  const { error } = await VestlyCurrency.save(sb, currentUser.id, code);
+  if (error) {
+    status.className = 'status err';
+    status.textContent = 'Could not save. Please try again.';
+    return;
+  }
+  status.className = 'status ok';
+  status.textContent = 'Currency updated.';
+  renderCurrencyCard();
+  loadSnapshot(); // redraw the net worth figures in the new currency
 }
 
 // ── CHANGE PASSWORD ──

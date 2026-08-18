@@ -26,6 +26,7 @@
 <link rel="manifest" href="/site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="/assets/currency.js"></script>
 <style>
 :root {
   --navy:        #0a0f1e;
@@ -744,7 +745,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
     <div class="modal-title" id="valuationTitle">Update Value</div>
     <div class="modal-sub" id="valuationSub"></div>
     <div class="modal-field"><label>Date</label><input type="date" id="valuationDate"></div>
-    <div class="modal-field"><label>New Value</label><input type="text" id="valuationValue" placeholder="$0" oninput="fmtModalComma(this)"></div>
+    <div class="modal-field"><label>New Value</label><input type="text" id="valuationValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this)"></div>
     <div class="modal-err" id="valuationErr"></div>
     <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeValuationModal()">Cancel</button><button class="btn-modal-save" onclick="saveValuation()">Save</button></div>
   </div>
@@ -757,7 +758,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
     <div class="modal-field"><label>Date</label><input type="date" id="entryDate"></div>
     <div class="modal-field"><label>Type</label><div class="type-toggle"><button class="type-btn asset active" id="typeAsset" onclick="setType('asset')">Asset</button><button class="type-btn liability" id="typeLiability" onclick="setType('liability')">Liability</button></div></div>
     <div class="modal-field"><label>Category</label><div class="quick-picks" id="quickPicks"></div><div class="modal-field-or">or type your own:</div><input type="text" id="entryCategory" placeholder="e.g. 401k, Home, Mortgage"></div>
-    <div class="modal-field"><label>Value</label><input type="text" id="entryValue" placeholder="$0" oninput="fmtModalComma(this)"></div>
+    <div class="modal-field"><label>Value</label><input type="text" id="entryValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this)"></div>
     <div class="modal-field" id="tieField" style="display:none">
       <span class="modal-ask">Is this debt tied to something you own?</span>
       <div class="tie-yn"><button type="button" class="tie-btn" id="tieYesBtn" onclick="setTieAnswer('yes')">Yes</button><button type="button" class="tie-btn" id="tieNoBtn" onclick="setTieAnswer('no')">No</button></div>
@@ -790,7 +791,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <div class="type-toggle locked"><button type="button" class="type-btn asset active" disabled>Asset</button><button type="button" class="type-btn" disabled>Liability</button></div>
     </div>
     <div class="modal-field"><label>Category</label><div class="quick-picks" id="assetStepPicks"></div><div class="modal-field-or">or type your own:</div><input type="text" id="assetStepCategory" placeholder="e.g. Silverado"></div>
-    <div class="modal-field"><label>Value</label><input type="text" id="assetStepValue" placeholder="$0" oninput="fmtModalComma(this)"></div>
+    <div class="modal-field"><label>Value</label><input type="text" id="assetStepValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this)"></div>
     <div class="modal-err" id="assetStepErr"></div>
     <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeAssetStep()">Back</button><button class="btn-modal-save" onclick="continueAssetStep()">Continue</button></div>
   </div>
@@ -871,9 +872,16 @@ let allLinks=[],linksTableReady=false;
 let tieAnswer=null,tieAsset=null,pendingAsset=null;
 
 // ── HELPERS ──
-function fmtMoney(n){if(n===0)return'$0';const abs=Math.abs(n);const fmt=abs>=1000000?'$'+(abs/1000000).toFixed(2)+'M':'$'+Math.round(abs).toLocaleString();return n<0?'-'+fmt:fmt;}
-function fmtModalComma(el){const raw=el.value.replace(/[^0-9]/g,'');el.value=raw?Number(raw).toLocaleString():'';}
-function parseMoney(val){return parseFloat((val||'').replace(/,/g,''))||0;}
+// Money display follows the account-wide currency preference (assets/currency.js).
+// Values are stored as plain numbers, so this relabels them, it never converts.
+function fmtMoney(n){return VestlyCurrency.fmt(n);}
+function fmtModalComma(el){VestlyCurrency.groupInt(el);}
+function parseMoney(val){return VestlyCurrency.parseInt_(val);}
+// Grouped number with no symbol, for prefilling the value inputs.
+function fmtInputVal(n){return VestlyCurrency.fmtPlain(n);}
+// Money inputs that live in the static markup carry data-money-ph; their
+// placeholder is only correct once the preference is known.
+function applyCurrencyPlaceholders(){document.querySelectorAll('[data-money-ph]').forEach(el=>{el.placeholder=VestlyCurrency.zero();});}
 function currentDateStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function currentMonthStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function dateToMonthStr(s){return s?s.slice(0,7):'';}
@@ -949,6 +957,10 @@ async function loadEntries(silent=false){
   if(!silent){document.getElementById('loadingState').style.display='flex';document.getElementById('mainContent').style.display='none';}
   let timeout;
   if(!silent)timeout=setTimeout(()=>{document.getElementById('loadingState').style.display='none';document.getElementById('mainContent').style.display='flex';isLoadingEntries=false;},5000);
+  // Currency first: every render below depends on it, and loading it after the
+  // entries would paint the whole page in the fallback symbol and then swap.
+  await VestlyCurrency.load(sb,currentUser.id);
+  applyCurrencyPlaceholders();
   try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=data||[];}catch(e){console.error(e);allEntries=[];}
   await loadLinks();
   if(timeout)clearTimeout(timeout);
@@ -1121,7 +1133,7 @@ function openAssetStep(){
   document.getElementById('assetStepTie').textContent=cat?(val>0?`${cat} · ${fmtMoney(val)}`:cat):'This debt';
   document.getElementById('assetStepDate').textContent=document.getElementById('entryDate').value||currentDateStr();
   document.getElementById('assetStepCategory').value=pendingAsset?pendingAsset.category:'';
-  document.getElementById('assetStepValue').value=pendingAsset?Number(pendingAsset.value).toLocaleString():'';
+  document.getElementById('assetStepValue').value=pendingAsset?fmtInputVal(pendingAsset.value):'';
   document.getElementById('assetStepErr').textContent='';
   renderAssetStepPicks();
   document.getElementById('entryModal').classList.remove('open');
@@ -1186,7 +1198,7 @@ function renderLinkReviewRows(){
                `<option value="new"${r.choice==='new'?' selected':''}>+ Add an asset</option>`,
                '</optgroup>']).join('');
     const extra=r.choice==='new'
-      ?`<div class="link-new"><input type="text" placeholder="Name it" value="${escHtml(r.newName)}" oninput="setReviewNew(${i},'name',this.value)"><input type="text" placeholder="$0" value="${escHtml(r.newValue)}" oninput="fmtModalComma(this);setReviewNew(${i},'value',this.value)"></div>`
+      ?`<div class="link-new"><input type="text" placeholder="Name it" value="${escHtml(r.newName)}" oninput="setReviewNew(${i},'name',this.value)"><input type="text" placeholder="${VestlyCurrency.zero()}" value="${escHtml(r.newValue)}" oninput="fmtModalComma(this);setReviewNew(${i},'value',this.value)"></div>`
       :'';
     return`<div class="link-row"><div class="link-row-l"><div class="link-row-name">${escHtml(r.category)}</div><div class="link-row-val">${fmtMoney(r.value)}</div></div><select onchange="setReviewChoice(${i},this.value)">${opts}</select></div>${extra}`;
   }).join('');
@@ -1259,7 +1271,8 @@ function renderStats(){
   const s=buildMonthlySnapshots();
   const g1=document.getElementById('statGrid'),g2=document.getElementById('statRow2');
   if(!s.length){
-    g1.innerHTML=`<div class="stat-card hero"><div class="stat-label">Net Worth</div><div class="stat-value">$0</div><div class="stat-change">No data yet</div></div><div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">$0</div></div><div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">$0</div></div>`;
+    const z=fmtMoney(0);
+    g1.innerHTML=`<div class="stat-card hero"><div class="stat-label">Net Worth</div><div class="stat-value">${z}</div><div class="stat-change">No data yet</div></div><div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">${z}</div></div><div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">${z}</div></div>`;
     g2.innerHTML=`<div class="stat-card sm"><div class="stat-label">Month over Month</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">Debt-to-Asset</div><div class="stat-value sm">—</div></div>`;
     return;
   }
@@ -1512,7 +1525,7 @@ function closeDrawer(){document.getElementById('categoryDrawer').classList.remov
 (function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
 
 let valuationCategory=null,valuationEntryType=null;
-function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=Number(latest.value).toLocaleString();document.getElementById('valuationErr').textContent='';document.getElementById('valuationModal').classList.add('open');}
+function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';document.getElementById('valuationModal').classList.add('open');}
 function closeValuationModal(){document.getElementById('valuationModal').classList.remove('open');}
 async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!value||value<=0){err.textContent='Please enter a value greater than 0.';return;}err.textContent='';const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
 document.getElementById('valuationDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
@@ -1537,7 +1550,7 @@ function openEditModal(id){
   const dv=e.date.length===7?e.date+'-01':e.date;
   document.getElementById('entryDate').value=dv;
   document.getElementById('entryCategory').value=e.category;
-  document.getElementById('entryValue').value=Number(e.value).toLocaleString();
+  document.getElementById('entryValue').value=fmtInputVal(e.value);
   document.getElementById('modalErr').textContent='';
   setType(e.type);
   document.getElementById('entryModal').classList.add('open');
@@ -1576,7 +1589,7 @@ async function saveEntry(){
 
 let bulkHistoryType='asset',bulkHistoryCategory='';
 function openBulkHistoryModal(){const cat=document.getElementById('entryCategory').value.trim();if(!cat){document.getElementById('modalErr').textContent='Please enter a category first.';return;}bulkHistoryCategory=cat;bulkHistoryType=selectedType;const d=document.getElementById('entryDate').value,v=document.getElementById('entryValue').value.trim();closeModal();document.getElementById('bulkHistoryTitle').textContent=`Historical Data: ${cat}`;document.getElementById('bulkErr').textContent='';const c=document.getElementById('bulkRows');c.innerHTML='';addBulkRow(d,v);addBulkRow();addBulkRow();document.getElementById('bulkHistoryModal').classList.add('open');}
-function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows');const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';row.innerHTML=`<input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;"><input type="text" class="bulk-value" placeholder="$0" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;font-weight:300;outline:none;"><button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;c.appendChild(row);}
+function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows');const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';row.innerHTML=`<input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;"><input type="text" class="bulk-value" placeholder="${VestlyCurrency.zero()}" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;font-weight:300;outline:none;"><button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;c.appendChild(row);}
 function closeBulkHistoryModal(){document.getElementById('bulkHistoryModal').classList.remove('open');}
 async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!value||value<=0){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value greater than 0.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
 
@@ -1592,7 +1605,7 @@ function openUpdateModal(){
   document.getElementById('updateEntriesList').innerHTML=Object.values(latest).map(e=>{
     const tied=e.type==='liability'?tiedAssetFor(e.category):null;
     const sub=tied?`${e.type} · tied to ${escHtml(tied)}`:e.type;
-    return`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${escHtml(e.category)}</div><div class="update-entry-type ${e.type}">${sub}</div></div><input class="update-entry-input" type="text" data-category="${escHtml(e.category)}" data-type="${e.type}" value="${Number(e.value).toLocaleString()}" oninput="fmtModalComma(this)"></div>`;
+    return`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${escHtml(e.category)}</div><div class="update-entry-type ${e.type}">${sub}</div></div><input class="update-entry-input" type="text" data-category="${escHtml(e.category)}" data-type="${e.type}" value="${fmtInputVal(e.value)}" oninput="fmtModalComma(this)"></div>`;
   }).join('');
   document.getElementById('updateModal').classList.add('open');
 }
@@ -1621,6 +1634,11 @@ function getShareDebts(){
 }
 function drawSpacedText(ctx,text,x,y,sp){let cx=x;for(const ch of text){ctx.fillText(ch,cx,y);cx+=ctx.measureText(ch).width+sp;}return cx;}
 function fitText(ctx,t,maxW){if(ctx.measureText(t).width<=maxW)return t;let s=t;while(s.length>1&&ctx.measureText(s+'…').width>maxW)s=s.slice(0,-1);return s+'…';}
+// Sets ctx.font to the largest size at or below px that keeps text inside maxW.
+// The hero number cannot be truncated like a category name can, so it is the
+// type size that gives. A three-letter symbol and a negative sign both push
+// "CHF-847'250" past the column the assets/debts bar starts in.
+function fitFont(ctx,text,px,maxW,weight){let s=px;ctx.font=`${weight} ${s}px Outfit,sans-serif`;while(s>54&&ctx.measureText(text).width>maxW){s-=2;ctx.font=`${weight} ${s}px Outfit,sans-serif`;}return s;}
 // Rows beyond the slot count fold into an "Other (n)" line rather than being
 // dropped, so the visible rows always still add up to the panel's total.
 function foldShareRows(list,slots,label){
@@ -1658,8 +1676,9 @@ async function renderShareCanvas(snapshots){
   // ── HERO ──
   ctx.font='500 20px Outfit,sans-serif';ctx.fillStyle=GOLD;
   drawSpacedText(ctx,priv&&pct!==null?'NET WORTH GROWTH':'NET WORTH',PAD,124,3.4);
-  const nwStr=priv?(pct!==null?`${isUp?'+':'-'}${Math.abs(pct).toFixed(1)}%`:'$•••,•••'):fmtMoney(last.netWorth);
-  ctx.font='300 94px Outfit,sans-serif';ctx.fillStyle=CREAM;ctx.fillText(nwStr,PAD-2,214);
+  const nwStr=priv?(pct!==null?`${isUp?'+':'-'}${Math.abs(pct).toFixed(1)}%`:VestlyCurrency.masked()):fmtMoney(last.netWorth);
+  // 24px gutter so the number never touches the assets/debts bar at RX.
+  fitFont(ctx,nwStr,94,RX-(PAD-2)-24,'300');ctx.fillStyle=CREAM;ctx.fillText(nwStr,PAD-2,214);
   let sub='',subCol=MUT;
   if(heroSpan===null&&heroDiff===0)sub='First month tracked';
   else if(!(priv&&pct===null)){sub=`${isUp?'+':'-'}${priv?Math.abs(pct).toFixed(1)+'%':fmtMoney(Math.abs(heroDiff))} ${heroSpan||''}`.trim();subCol=isUp?GREENL:REDT;}
