@@ -179,6 +179,12 @@
    * per user is enough and the rest would be dead round trips. */
   let loadedFor = null;
 
+  /* Whether the active currency is a choice the user actually made, as opposed
+   * to the USD default they have never been asked about. The onboarding prompt
+   * keys off this: someone who has already picked must not be asked again, and
+   * the cached value alone cannot tell the two apart. */
+  let explicit = false;
+
   async function load(client, userId) {
     sb = client || sb;
     if (!sb || !userId) return active.code;
@@ -191,6 +197,7 @@
        * picker. That is the USD default, not an error, and nothing is written
        * until the user actually chooses. */
       setActive(data && data.currency ? data.currency : FALLBACK);
+      explicit = !!(data && data.currency);
       loadedFor = userId;
     } catch (e) {
       /* Left unmarked so a transient failure retries on the next call rather
@@ -209,8 +216,32 @@
     );
     if (error) return { error };
     setActive(code);
+    explicit = true;
+    loadedFor = userId;
     listeners.forEach(fn => { try { fn(code); } catch (e) { console.error(e); } });
     return {};
+  }
+
+  /* Formats a zero in a currency other than the active one, for previewing a
+   * pick before it is committed. Deliberately does not touch global state: a
+   * currency the user is only considering must not start relabelling the page
+   * behind them. */
+  function zeroFor(code) {
+    const c = byCode[code] || byCode[FALLBACK];
+    return new Intl.NumberFormat(c.locale, {
+      style: 'currency', currency: c.code, minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(0);
+  }
+
+  /* Re-groups a whole-unit input in a currency other than the active one, so a
+   * previewed pick governs the separators in the field the user is typing in.
+   * Same no-global-state rule as zeroFor. */
+  function groupIntFor(el, code) {
+    const c = byCode[code] || byCode[FALLBACK];
+    const raw = el.value.replace(/[^0-9]/g, '');
+    el.value = raw
+      ? new Intl.NumberFormat(c.locale, { maximumFractionDigits: 0 }).format(Number(raw))
+      : '';
   }
 
   initFromCache();
@@ -234,6 +265,11 @@
     /* Decorative stand-in for a hidden amount in private mode. Built from the
      * formatted zero so the symbol keeps its side of the number. */
     masked: () => nfMoney.format(0).replace('0', '•••,•••'),
+    zeroFor: zeroFor,
+    groupIntFor: groupIntFor,
+    /* False means the user has never chosen; the active currency is the
+     * default. Callers use this to decide whether to ask. */
+    isExplicit: () => explicit,
     onChange: fn => { listeners.push(fn); }
   };
 })();
