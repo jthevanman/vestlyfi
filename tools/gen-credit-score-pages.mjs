@@ -31,12 +31,13 @@ for (let s = 500; s <= 800; s += 10) SCORES.push(s);
 const PILLAR_SLUG = 'credit-score-to-buy-a-house';
 const PILLAR_URL = `https://vestlyfi.com/house-affordability/${PILLAR_SLUG}/`;
 
-// Estimated 30-yr fixed rate by score (national-average ballpark, mid-2026).
-// Piecewise-linear between anchors. Below 620 assumes FHA pricing.
+// Estimated 30-yr fixed rate by score (national-average ballpark).
+// 760 anchor tracks the Freddie Mac PMMS 30-yr fixed avg (6.66%, week of
+// 2026-08-27). Piecewise-linear between anchors. Below 620 assumes FHA pricing.
 const RATE_ANCHORS = [
-  [500, 7.60], [560, 7.35], [580, 7.25], [600, 7.15], [620, 7.05],
-  [640, 6.95], [660, 6.85], [680, 6.75], [700, 6.68], [720, 6.60],
-  [740, 6.55], [760, 6.50], [800, 6.45],
+  [500, 7.76], [560, 7.51], [580, 7.41], [600, 7.31], [620, 7.21],
+  [640, 7.11], [660, 7.01], [680, 6.91], [700, 6.84], [720, 6.76],
+  [740, 6.71], [760, 6.66], [800, 6.61],
 ];
 
 function rateFor(score) {
