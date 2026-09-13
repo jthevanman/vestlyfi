@@ -82,6 +82,14 @@ function daysBetween(fromIso: string, toIso: string): number {
   );
 }
 
+// Rejects malformed and impossible dates (2026-02-30, 2026-13-01) without
+// throwing: Date.parse returns NaN for some and silently rolls others over.
+function isRealDate(iso: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const t = Date.parse(iso + "T00:00:00Z");
+  return !Number.isNaN(t) && new Date(t).toISOString().slice(0, 10) === iso;
+}
+
 // "July 14", or "December 20, 2025" when the snapshot is from another year.
 function plainDate(iso: string, today: string): string {
   const d = new Date(iso + "T12:00:00Z");
@@ -96,37 +104,43 @@ function money(value: number, currency: string | null): string {
   }).format(value);
 }
 
+function unsubscribeUrl(token: string): string {
+  return `${Deno.env.get("SUPABASE_URL")}/functions/v1/net-worth-reminder?unsubscribe=${token}`;
+}
+
+// Styled like a personal email: no background, no centered card, left-aligned.
 function emailHtml(opts: {
   monthName: string; lastDate: string; today: string;
   netWorth: number; currency: string | null; token: string;
 }): string {
   const trackerUrl = `${SITE}/net-worth/`;
-  const unsubUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/net-worth-reminder?unsubscribe=${opts.token}`;
-  return `<!doctype html><html><body style="margin:0;padding:0;background:#f6f5f2">
-<div style="max-width:520px;margin:0 auto;padding:32px 24px;font-family:Arial,Helvetica,sans-serif;color:#22252e">
-  <p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
-  <p style="margin:0 0 16px;font-size:16px"><strong>Time to log your ${opts.monthName} net worth.</strong></p>
-  <p style="margin:0 0 16px">You last logged on ${plainDate(opts.lastDate, opts.today)}, when your net worth was <strong>${money(opts.netWorth, opts.currency)}</strong>. A few minutes of updated balances keeps your trend line honest.</p>
-  <p style="margin:0 0 16px"><a href="${trackerUrl}" style="color:#8a6d1f;font-weight:bold">Log your ${opts.monthName} snapshot</a></p>
-  <p style="margin:0 0 16px">Once it's in, tap Share under your chart to turn the change into a clean image you can post or send.</p>
-  <p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubUrl}" style="color:#8b8e98">Unsubscribe</a></p>
+  const p = `style="margin:0 0 16px"`;
+  return `<!doctype html><html><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
+<div style="max-width:560px">
+<p ${p}>Hi,</p>
+<p ${p}>It's time to log your ${opts.monthName} net worth. You last logged on ${plainDate(opts.lastDate, opts.today)}, when your net worth was <strong>${money(opts.netWorth, opts.currency)}</strong>.</p>
+<p ${p}>A few minutes of updated balances keeps your trend line honest: <a href="${trackerUrl}" style="color:#8a6d1f">log your ${opts.monthName} snapshot</a>.</p>
+<p ${p}>Once it's in, tap Share under your chart to turn the change into a clean image you can post or send.</p>
+<p ${p}>VestlyFi</p>
+<p style="margin:32px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
 </div></body></html>`;
 }
 
+// Plain text on purpose: Supabase serves function responses on supabase.co as
+// text/plain, so an HTML page would show up as raw markup. Also answers the
+// one-click POST mail clients send for the List-Unsubscribe-Post header.
 async function handleUnsubscribe(token: string): Promise<Response> {
   const { data, error } = await sb
     .from("email_subscriptions")
     .update({ unsubscribed_at: new Date().toISOString() })
     .eq("token", token)
+    .eq("topic", TOPIC)
     .select("email");
   const ok = !error && data && data.length > 0;
   const msg = ok
-    ? "You're unsubscribed. No more net worth reminders will be sent to this address."
+    ? "You're unsubscribed. VestlyFi will not send any more net worth reminders to this address."
     : "That unsubscribe link wasn't recognized. It may have already been used.";
-  return new Response(
-    `<!doctype html><html><body style="font-family:Arial,sans-serif;background:#0a0f1e;color:#f5f0e8;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0"><div style="text-align:center;padding:24px"><p style="font-size:20px;color:#e8c97a;margin-bottom:12px">VestlyFi</p><p>${msg}</p></div></body></html>`,
-    { status: ok ? 200 : 404, headers: { "Content-Type": "text/html" } },
-  );
+  return new Response(msg, { status: ok ? 200 : 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }
 
 function json(body: unknown, status = 200): Response {
@@ -146,7 +160,9 @@ Deno.serve(async (req: Request) => {
   const simulateFailure = url.searchParams.get("simulate_failure") === "1";
   const only = url.searchParams.get("only")?.trim().toLowerCase() || null;
   const today = url.searchParams.get("test_date") ?? new Date().toISOString().slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(today)) return json({ error: "test_date must be YYYY-MM-DD" }, 400);
+  if (!isRealDate(today)) {
+    return json({ error: "test_date must be a real YYYY-MM-DD date" }, 400);
+  }
   const monthName = MONTHS[Number(today.slice(5, 7)) - 1];
   const reminderKey = reminderKeyFor("<user_id>", today);
 
@@ -235,7 +251,13 @@ Deno.serve(async (req: Request) => {
       : await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from: FROM, to: [email], subject: `Log your ${monthName} net worth`, html }),
+        body: JSON.stringify({
+          from: FROM, to: [email], subject: `Log your ${monthName} net worth`, html,
+          headers: {
+            "List-Unsubscribe": `<${unsubscribeUrl(sub.token)}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
+        }),
       });
     if (res.ok) { sent++; }
     else {

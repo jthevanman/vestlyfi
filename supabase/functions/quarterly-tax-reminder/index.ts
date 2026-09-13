@@ -33,6 +33,9 @@ const DEADLINES = [
   { date: "2027-09-15", label: "Q3 2027" },
 ];
 const OFFSETS = [7, 1]; // days before the deadline to send
+// Stays under Resend's default 2 requests/second. A rate-limited send is not
+// retried by tomorrow's run, since that run targets a different reminder.
+const SEND_GAP_MS = 600;
 
 const sb = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -57,10 +60,26 @@ function daysBetween(fromIso: string, toIso: string): number {
   );
 }
 
+// Rejects malformed and impossible dates (2026-02-30, 2026-13-01) without
+// throwing: Date.parse returns NaN for some and silently rolls others over.
+function isRealDate(iso: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const t = Date.parse(iso + "T00:00:00Z");
+  return !Number.isNaN(t) && new Date(t).toISOString().slice(0, 10) === iso;
+}
+
 function prettyDate(iso: string): string {
   const d = new Date(iso + "T12:00:00Z");
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   return `${months[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function unsubscribeUrl(token: string): string {
+  return `${Deno.env.get("SUPABASE_URL")}/functions/v1/quarterly-tax-reminder?unsubscribe=${token}`;
 }
 
 function emailHtml(opts: {
@@ -72,9 +91,9 @@ function emailHtml(opts: {
     ? `${SITE}/calculators/quarterly-tax/${opts.stateSlug}/`
     : `${SITE}/calculators/quarterly-tax/`;
   const savedLine = opts.savedId
-    ? `<p style="margin:0 0 16px">Your saved calculation${opts.savedLabel ? ` (<strong>${opts.savedLabel}</strong>)` : ""} is one click away: <a href="${calcUrl}?saved=${opts.savedId}" style="color:#8a6d1f">open it here</a>.</p>`
+    ? `<p style="margin:0 0 16px">Your saved calculation${opts.savedLabel ? ` (<strong>${escapeHtml(opts.savedLabel)}</strong>)` : ""} is one click away: <a href="${calcUrl}?saved=${opts.savedId}" style="color:#8a6d1f">open it here</a>.</p>`
     : `<p style="margin:0 0 16px">Not sure what you owe? The <a href="${calcUrl}" style="color:#8a6d1f">quarterly tax calculator</a> takes about a minute.</p>`;
-  const unsubUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/quarterly-tax-reminder?unsubscribe=${opts.token}`;
+  const unsubUrl = unsubscribeUrl(opts.token);
   return `<!doctype html><html><body style="margin:0;padding:0;background:#f6f5f2">
 <div style="max-width:520px;margin:0 auto;padding:32px 24px;font-family:Arial,Helvetica,sans-serif;color:#22252e">
   <p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
@@ -85,20 +104,21 @@ function emailHtml(opts: {
 </div></body></html>`;
 }
 
+// Plain text on purpose: Supabase serves function responses on supabase.co as
+// text/plain, so an HTML page would show up as raw markup. Also answers the
+// one-click POST mail clients send for the List-Unsubscribe-Post header.
 async function handleUnsubscribe(token: string): Promise<Response> {
   const { data, error } = await sb
     .from("email_subscriptions")
     .update({ unsubscribed_at: new Date().toISOString() })
     .eq("token", token)
+    .eq("topic", "quarterly-tax-deadlines")
     .select("email");
   const ok = !error && data && data.length > 0;
   const msg = ok
-    ? "You're unsubscribed. No more deadline reminders will be sent to this address."
+    ? "You're unsubscribed. VestlyFi will not send any more deadline reminders to this address."
     : "That unsubscribe link wasn't recognized. It may have already been used.";
-  return new Response(
-    `<!doctype html><html><body style="font-family:Arial,sans-serif;background:#0a0f1e;color:#f5f0e8;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0"><div style="text-align:center;padding:24px"><p style="font-size:20px;color:#e8c97a;margin-bottom:12px">VestlyFi</p><p>${msg}</p></div></body></html>`,
-    { status: ok ? 200 : 404, headers: { "Content-Type": "text/html" } },
-  );
+  return new Response(msg, { status: ok ? 200 : 404, headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }
 
 Deno.serve(async (req: Request) => {
@@ -114,6 +134,9 @@ Deno.serve(async (req: Request) => {
   const resendKey = Deno.env.get("RESEND_API_KEY") ?? "";
   const dryRun = url.searchParams.get("dry_run") === "1" || !resendKey;
   const today = url.searchParams.get("test_date") ?? new Date().toISOString().slice(0, 10);
+  if (!isRealDate(today)) {
+    return new Response(JSON.stringify({ error: "test_date must be a real YYYY-MM-DD date" }), { status: 400 });
+  }
 
   // Which reminder (if any) fires today?
   let target: { date: string; label: string; daysOut: number } | null = null;
@@ -170,18 +193,28 @@ Deno.serve(async (req: Request) => {
   const wouldSend: string[] = [];
   for (const sub of subs ?? []) {
     // Claim before sending: the unique constraint makes retries safe.
-    const { data: claim } = await sb
+    const { data: claim, error: claimErr } = await sb
       .from("reminder_sends")
       .insert({ email: sub.email, reminder_key: reminderKey })
       .select("id")
       .maybeSingle();
-    if (!claim) { alreadySent++; continue; }
+    if (!claim) {
+      if (claimErr && claimErr.code !== "23505") {
+        failed++;
+        console.error(`claim failed for ${sub.email}: ${claimErr.message}`);
+      } else {
+        alreadySent++;
+      }
+      continue;
+    }
 
     if (dryRun) {
       wouldSend.push(sub.email);
       await sb.from("reminder_sends").delete().eq("id", claim.id); // release claim
       continue;
     }
+
+    if (sent + failed > 0) await new Promise((r) => setTimeout(r, SEND_GAP_MS));
 
     const save = sub.user_id ? latestSaveByUser.get(sub.user_id) : undefined;
     const html = emailHtml({
@@ -196,6 +229,10 @@ Deno.serve(async (req: Request) => {
         from: FROM, to: [sub.email],
         subject: `${target.label} estimated taxes are due ${target.daysOut === 1 ? "tomorrow" : prettyDate(target.date)}`,
         html,
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl(sub.token)}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
     });
     if (res.ok) { sent++; }
