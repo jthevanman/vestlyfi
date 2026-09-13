@@ -95,13 +95,8 @@ function unsubscribeUrl(token: string): string {
 // A centered, bordered block on white. Text inside stays left-aligned.
 // No balances in the email on purpose: inboxes get shared, forwarded, and
 // previewed on lock screens, so the email only says when they last logged.
-//
-// sendId goes in an invisible span at the very end. Gmail threads emails with
-// the same subject and hides whatever trailing content matches an earlier
-// message behind a "..." toggle, which swallowed everything after the first
-// paragraph. A value unique to each send means the tail never matches.
 function emailHtml(opts: {
-  monthName: string; lastDate: string; today: string; token: string; sendId: string;
+  monthName: string; lastDate: string; today: string; token: string;
 }): string {
   const trackerUrl = `${SITE}/net-worth/`;
   const p = `style="margin:0 0 16px"`;
@@ -111,7 +106,7 @@ function emailHtml(opts: {
 <p ${p}>It's time to log your ${opts.monthName} net worth. You last logged a snapshot on ${plainDate(opts.lastDate, opts.today)}.</p>
 <p ${p}>A few minutes of updated balances keeps your trend line honest: <a href="${trackerUrl}" style="color:#8a6d1f">log your ${opts.monthName} snapshot</a>.</p>
 <p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
-</div><span style="display:none;font-size:0;line-height:0;max-height:0;overflow:hidden;opacity:0;color:#ffffff">${opts.sendId}</span></body></html>`;
+</div></body></html>`;
 }
 
 // Plain text on purpose: Supabase serves function responses on supabase.co as
@@ -230,7 +225,7 @@ Deno.serve(async (req: Request) => {
 
     if (sent + failed > 0) await new Promise((r) => setTimeout(r, SEND_GAP_MS));
 
-    const html = emailHtml({ monthName, lastDate: current.last_date, today, token: sub.token, sendId: claim.id });
+    const html = emailHtml({ monthName, lastDate: current.last_date, today, token: sub.token });
     const res = simulateFailure
       ? new Response("simulated failure", { status: 500 })
       : await fetch("https://api.resend.com/emails", {
@@ -239,6 +234,10 @@ Deno.serve(async (req: Request) => {
         body: JSON.stringify({
           from: FROM, to: [email], subject: `Log your ${monthName} net worth`, html,
           headers: {
+            // Unique per send so Gmail never threads reminders that share a
+            // subject. Threaded copies get their repeated content, or the
+            // whole message, folded behind a "..." toggle.
+            "X-Entity-Ref-ID": claim.id,
             "List-Unsubscribe": `<${unsubscribeUrl(sub.token)}>`,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
           },
