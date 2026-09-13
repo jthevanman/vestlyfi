@@ -108,21 +108,19 @@ function unsubscribeUrl(token: string): string {
   return `${Deno.env.get("SUPABASE_URL")}/functions/v1/net-worth-reminder?unsubscribe=${token}`;
 }
 
-// Styled like a personal email: no background, no centered card, left-aligned.
+// A centered, bordered block on white. Text inside stays left-aligned.
 function emailHtml(opts: {
   monthName: string; lastDate: string; today: string;
   netWorth: number; currency: string | null; token: string;
 }): string {
   const trackerUrl = `${SITE}/net-worth/`;
   const p = `style="margin:0 0 16px"`;
-  return `<!doctype html><html><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
-<div style="max-width:560px">
-<p ${p}>Hi,</p>
+  return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#ffffff">
+<div style="max-width:520px;margin:0 auto;padding:28px 24px;border:1px solid #e3e1dc;border-radius:8px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
+<p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
 <p ${p}>It's time to log your ${opts.monthName} net worth. You last logged on ${plainDate(opts.lastDate, opts.today)}, when your net worth was <strong>${money(opts.netWorth, opts.currency)}</strong>.</p>
 <p ${p}>A few minutes of updated balances keeps your trend line honest: <a href="${trackerUrl}" style="color:#8a6d1f">log your ${opts.monthName} snapshot</a>.</p>
-<p ${p}>Once it's in, tap Share under your chart to turn the change into a clean image you can post or send.</p>
-<p ${p}>VestlyFi</p>
-<p style="margin:32px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
+<p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
 </div></body></html>`;
 }
 
