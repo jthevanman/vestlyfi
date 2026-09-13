@@ -8,3 +8,4 @@ tools/
 data/
 *.md
 .github/
+supabase/
