@@ -43,15 +43,6 @@ function reminderKeyFor(userId: string, today: string): string {
   return `net-worth:${userId}:${today.slice(0, 7)}`;
 }
 
-// Mirrors the currency-to-locale table in assets/currency.js so amounts read
-// the same way they do in the tracker.
-const CURRENCY_LOCALES: Record<string, string> = {
-  USD: "en-US", EUR: "de-DE", GBP: "en-GB", CAD: "en-CA", AUD: "en-AU", NZD: "en-NZ",
-  CHF: "de-CH", JPY: "ja-JP", CNY: "zh-CN", HKD: "en-HK", SGD: "en-SG", INR: "en-IN",
-  KRW: "ko-KR", SEK: "sv-SE", NOK: "nb-NO", DKK: "da-DK", PLN: "pl-PL", CZK: "cs-CZ",
-  ZAR: "en-ZA", BRL: "pt-BR", MXN: "es-MX", AED: "en-AE", ILS: "he-IL", TRY: "tr-TR",
-};
-
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 const sb = createClient(
@@ -97,28 +88,22 @@ function plainDate(iso: string, today: string): string {
   return iso.slice(0, 4) === today.slice(0, 4) ? base : `${base}, ${d.getUTCFullYear()}`;
 }
 
-function money(value: number, currency: string | null): string {
-  const code = currency && CURRENCY_LOCALES[currency] ? currency : "USD";
-  return new Intl.NumberFormat(CURRENCY_LOCALES[code], {
-    style: "currency", currency: code, minimumFractionDigits: 0, maximumFractionDigits: 0,
-  }).format(value);
-}
-
 function unsubscribeUrl(token: string): string {
   return `${Deno.env.get("SUPABASE_URL")}/functions/v1/net-worth-reminder?unsubscribe=${token}`;
 }
 
 // A centered, bordered block on white. Text inside stays left-aligned.
+// No balances in the email on purpose: inboxes get shared, forwarded, and
+// previewed on lock screens, so the email only says when they last logged.
 function emailHtml(opts: {
-  monthName: string; lastDate: string; today: string;
-  netWorth: number; currency: string | null; token: string;
+  monthName: string; lastDate: string; today: string; token: string;
 }): string {
   const trackerUrl = `${SITE}/net-worth/`;
   const p = `style="margin:0 0 16px"`;
   return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#ffffff">
 <div style="max-width:520px;margin:0 auto;padding:28px 24px;border:1px solid #e3e1dc;border-radius:8px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
 <p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
-<p ${p}>It's time to log your ${opts.monthName} net worth. You last logged on ${plainDate(opts.lastDate, opts.today)}, when your net worth was <strong>${money(opts.netWorth, opts.currency)}</strong>.</p>
+<p ${p}>It's time to log your ${opts.monthName} net worth. You last logged a snapshot on ${plainDate(opts.lastDate, opts.today)}.</p>
 <p ${p}>A few minutes of updated balances keeps your trend line honest: <a href="${trackerUrl}" style="color:#8a6d1f">log your ${opts.monthName} snapshot</a>.</p>
 <p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
 </div></body></html>`;
@@ -240,10 +225,7 @@ Deno.serve(async (req: Request) => {
 
     if (sent + failed > 0) await new Promise((r) => setTimeout(r, SEND_GAP_MS));
 
-    const html = emailHtml({
-      monthName, lastDate: current.last_date, today,
-      netWorth: Number(current.net_worth), currency: current.currency, token: sub.token,
-    });
+    const html = emailHtml({ monthName, lastDate: current.last_date, today, token: sub.token });
     const res = simulateFailure
       ? new Response("simulated failure", { status: 500 })
       : await fetch("https://api.resend.com/emails", {
