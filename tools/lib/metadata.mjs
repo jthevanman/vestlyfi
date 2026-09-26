@@ -15,9 +15,13 @@ export function generateStateMetadata(s) {
   return {
     url,
     title,
-    description: clamp(description, 300),
+    // A hand-written metaDescription (short, state fact first) wins over the
+    // template sentence, which runs past Google's ~160-character cut.
+    description: s.metaDescription || clamp(description, 300),
     canonical: url,
-    noindex: !!s.needsVerification,
+    // indexWhilePending: an editorial call to index a page whose state rates
+    // are still unverified (it shows the pending banner and federal-only math).
+    noindex: !!s.needsVerification && !s.indexWhilePending,
     ogImage: `${SITE}/og-image.png`,
   };
 }

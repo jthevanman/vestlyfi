@@ -9,7 +9,7 @@
  * - Writes NEEDS_VERIFICATION.md.
  * - Prints a summary table of all pages with verification + index status.
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadAllStates, loadIndex } from './lib/getStateData.mjs';
@@ -21,7 +21,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const OUT_ROOT = join(ROOT, 'calculators', 'quarterly-tax');
 const SITE = 'https://vestlyfi.com';
-const TODAY = '2026-07-05';
+const TODAY = '2026-07-05'; // fallback lastmod for URLs the sitemap has never listed
+const RUN_DATE = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; })();
+
+// Writes the page and reports whether its bytes changed, so the sitemap can
+// bump lastmod only for pages that really changed on this run.
+function writePage(file, html) {
+  const changed = !existsSync(file) || readFileSync(file, 'utf8') !== html;
+  if (changed) writeFileSync(file, html);
+  return changed;
+}
 
 const engineSource = readFileSync(join(__dirname, 'lib', 'taxEngine.mjs'), 'utf8');
 
@@ -43,7 +52,7 @@ function generate() {
   // National hub
   const natMeta = nationalMetadata(2026);
   ensureDir(OUT_ROOT);
-  writeFileSync(join(OUT_ROOT, 'index.html'),
+  const hubChanged = writePage(join(OUT_ROOT, 'index.html'),
     renderNationalPage({ meta: natMeta, engineSource, index, faqs: NATIONAL_FAQS }));
 
   // State spokes
@@ -53,8 +62,9 @@ function generate() {
     const html = renderStatePage({ state, copy, meta, engineSource });
     const dir = join(OUT_ROOT, state.slug);
     ensureDir(dir);
-    writeFileSync(join(dir, 'index.html'), html);
+    const changed = writePage(join(dir, 'index.html'), html);
     summary.push({
+      changed,
       name: state.name,
       abbr: state.abbreviation,
       type: state.hasStateIncomeTax ? 'income-tax' : 'no-tax',
@@ -64,24 +74,30 @@ function generate() {
     });
   }
 
-  updateSitemap(summary);
+  updateSitemap(summary, hubChanged);
   writeNeedsVerification(states);
   printSummary(summary);
 }
 
-function updateSitemap(summary) {
+function updateSitemap(summary, hubChanged) {
   const path = join(ROOT, 'sitemap.xml');
   let xml = readFileSync(path, 'utf8');
 
+  // Keep each URL's existing lastmod unless its page changed on this run.
+  const prevLastmod = new Map();
+  for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) prevLastmod.set(m[1], m[2]);
+  const lastmodFor = (loc, changed) => (changed ? RUN_DATE : prevLastmod.get(loc) || TODAY);
+
   const indexable = summary.filter((s) => s.indexed);
+  const hubLoc = `${SITE}/calculators/quarterly-tax/`;
   const entries = [
-    { loc: `${SITE}/calculators/quarterly-tax/`, priority: '0.8' },
-    ...indexable.map((s) => ({ loc: `${SITE}${s.url}`, priority: '0.6' })),
+    { loc: hubLoc, priority: '0.8', lastmod: lastmodFor(hubLoc, hubChanged) },
+    ...indexable.map((s) => ({ loc: `${SITE}${s.url}`, priority: '0.6', lastmod: lastmodFor(`${SITE}${s.url}`, s.changed) })),
   ];
   const block =
     `  <!-- BEGIN quarterly-tax (generated) -->\n` +
     entries.map((e) =>
-      `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${TODAY}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`
+      `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`
     ).join('\n') +
     `\n  <!-- END quarterly-tax (generated) -->`;
 

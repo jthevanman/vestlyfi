@@ -510,6 +510,7 @@ export function renderStatePage({ state, copy, meta, engineSource }) {
   <div class="section">
     <h2>${esc(copy.howTitle)}</h2>
     ${copy.howBody.map((p, i) => `<p>${esc(p)}${i === copy.howBody.length - 1 ? agencyLink : ''}</p>`).join('\n    ')}
+    <p>For every 2026 federal due date, the weekend rule, and the four states that set their own dates, see the <a href="/calculators/quarterly-tax/deadlines/">2026 quarterly tax deadline guide</a>.</p>
   </div>
 
   ${reminderWidget({ stateSlug: state.slug, source: 'state-page' })}

@@ -51,5 +51,7 @@
     "https://www.ftb.ca.gov/"
   ],
   "needsVerification": true,
-  "lastVerified": null
+  "lastVerified": null,
+  "metaDescription": "California front-loads estimated taxes: 30% due in Q1, 40% in Q2, nothing in Q3, 30% in Q4, not four equal payments. Free calculator with 2026 due dates.",
+  "indexWhilePending": true
 }

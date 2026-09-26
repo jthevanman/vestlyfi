@@ -110,6 +110,15 @@ body {
 .auth-link:hover { color:var(--gold-light); }
 .auth-form-title { font-size:1.2rem; font-weight:400; margin-bottom:6px; }
 .auth-form-sub { font-size:0.8rem; color:var(--muted); line-height:1.6; margin-bottom:22px; }
+.demo-entry { margin-top:26px; padding-top:22px; border-top:1px solid var(--border-soft); text-align:center; }
+.demo-entry p { font-size:0.78rem; color:var(--muted); margin-bottom:10px; }
+.btn-demo { width:100%; padding:12px; background:none; color:var(--gold-light); border:1px solid var(--border); border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.86rem; font-weight:500; cursor:pointer; transition:border-color .15s, background .15s; }
+.btn-demo:hover { border-color:var(--gold); background:var(--gold-dim); }
+.demo-banner { display:none; align-items:center; gap:14px; flex-wrap:wrap; padding:14px 18px; margin-bottom:20px; background:var(--gold-dim); border:1px solid var(--border); border-radius:12px; font-size:0.84rem; color:var(--cream-dim); }
+.demo-banner strong { color:var(--cream); font-weight:500; }
+.demo-banner-text { flex:1; min-width:200px; line-height:1.5; }
+.demo-banner .btn-auth { width:auto; margin:0; padding:10px 18px; font-size:0.84rem; }
+.demo-banner .auth-link { font-size:0.8rem; }
 
 /* ══ APP SHELL ══ */
 #appScreen { display:none; min-height:100vh; }
@@ -532,6 +541,10 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <button class="btn-auth" onclick="updatePassword()">Update password</button>
       <div class="auth-msg" id="npMsg"></div>
     </div>
+    <div class="demo-entry" id="demoEntry">
+      <p>Not ready to sign up?</p>
+      <button type="button" class="btn-demo" onclick="startDemo()">See a sample dashboard</button>
+    </div>
   </div>
   <section class="auth-faq">
     <h2>Net worth tracker: common questions</h2>
@@ -623,6 +636,12 @@ footer span { color:var(--muted); font-size:0.72rem; }
             <button class="btn-secondary" onclick="openUpdateModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>Update Values</button>
             <button class="btn-primary" onclick="openLogModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Entry</button>
           </div>
+        </div>
+
+        <div class="demo-banner" id="demoBanner">
+          <div class="demo-banner-text"><strong>This is sample data.</strong> Create a free account to track your own net worth. No bank linking, a few minutes a month.</div>
+          <button type="button" class="btn-auth" onclick="exitDemo(true)">Create free account</button>
+          <button type="button" class="auth-link" onclick="exitDemo(false)">Back</button>
         </div>
 
         <div id="loadingState" class="loading-state" style="display:none"><div class="loading-spinner"></div>Loading your portfolio…</div>
@@ -987,15 +1006,109 @@ function setUserChip(){if(!currentUser)return;const e=currentUser.email||'';docu
 
 let initDone=false,recoveryMode=false;
 if(window.location.hash.includes('type=recovery'))recoveryMode=true;
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else{showAuth();}initDone=true;})();
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();openUpdateFromLink();}else if(new URLSearchParams(location.search).has('demo')){startDemo();}else{showAuth();}initDone=true;})();
 sb.auth.onAuthStateChange(async(event,session)=>{
   if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
   if(recoveryMode&&event==='SIGNED_IN')return;
   if(!initDone&&event==='SIGNED_IN')return;
-  if(event==='SIGNED_IN'&&session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}
+  if(event==='SIGNED_IN'&&session?.user){clearDemo();currentUser=session.user;showApp();setUserChip();await loadEntries();openUpdateFromLink();}
   else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;showAuth();}
 });
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUser&&!isLoadingEntries)loadEntries(true);});
+
+// ?update=1 (the monthly reminder email links here) opens Update Values as soon
+// as the entries are in, so logging this month is one click from the inbox.
+// The param survives a sign-in round trip and is dropped once used.
+function openUpdateFromLink(){
+  const q=new URLSearchParams(location.search);
+  if(!q.has('update')||!allEntries.length)return;
+  q.delete('update');
+  if(history.replaceState)history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));
+  openUpdateModal();
+}
+
+// ══ SAMPLE DASHBOARD ══
+// Signed-out visitors can explore the real dashboard filled with a made-up
+// year of history, so they see what they get before creating an account.
+// Nothing here touches Supabase: the sample lives only in allEntries, and every
+// action that would write (or open a form that writes) sends the visitor to
+// Create Account instead. Viewing actions (chart range, holdings tabs and
+// sorting, category drawers, the share card) work as normal.
+let demoMode=false;
+const DEMO_GATED=['openLogModal','openUpdateModal','openBulkHistoryModal','openValuationFromDrawer','editFromDrawer','deleteFromDrawer','openLinkReview','openAssetStep','dismissLinkBanner','signOut'];
+DEMO_GATED.forEach(name=>{
+  const real=window[name];
+  if(typeof real!=='function')return;
+  window[name]=function(...args){if(demoMode){exitDemo(true);return;}return real.apply(this,args);};
+});
+
+// Twelve monthly snapshots ending this month. Start and end values per
+// category, with a small wobble on market-linked accounts so the trend line
+// looks like a real one rather than a ruler.
+function buildDemoEntries(){
+  const plan=[
+    ['asset','Cash & Savings',14200,21800,0],
+    ['asset','401k',58400,79600,0.035],
+    ['asset','Roth IRA',19800,28900,0.035],
+    ['asset','Brokerage',7600,15400,0.04],
+    ['asset','Home',405000,421000,0.004],
+    ['asset','Car',23500,19200,0],
+    ['liability','Mortgage',338600,330100,0],
+    ['liability','Auto Loan',15800,8900,0],
+    ['liability','Student Loan',21400,15200,0],
+    ['liability','Credit Card',3100,1200,0.25],
+  ];
+  const wobble=[0,1,-1,1,0,-2,1,1,-1,0,1,0];
+  const now=new Date(),out=[];let id=1;
+  for(let i=0;i<12;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()-11+i,1);
+    const date=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+    const t=i/11;
+    for(const[type,category,a,b,w]of plan){
+      const v=(a+(b-a)*t)*(1+w*wobble[i]);
+      out.push({id:'demo-'+(id++),user_id:null,date,type,category,value:Math.round(v/10)*10,updated_at:date+'T12:00:00Z'});
+    }
+  }
+  return out;
+}
+
+function startDemo(){
+  demoMode=true;
+  allEntries=buildDemoEntries();
+  allLinks=[
+    {liability_category:'Mortgage',state:'tied',asset_category:'Home'},
+    {liability_category:'Auto Loan',state:'tied',asset_category:'Car'},
+    {liability_category:'Student Loan',state:'standalone',asset_category:null},
+    {liability_category:'Credit Card',state:'standalone',asset_category:null},
+  ];
+  linksTableReady=false; // keeps the tie-your-debts banner hidden
+  showApp();
+  document.getElementById('userEmail').textContent='Sample data';
+  document.getElementById('userAvatar').textContent='S';
+  document.getElementById('demoBanner').style.display='flex';
+  document.getElementById('loadingState').style.display='none';
+  document.getElementById('mainContent').style.display='flex';
+  renderAll();
+  window.scrollTo(0,0);
+  if(typeof gtag==='function')gtag('event','nw_demo_start');
+}
+
+function clearDemo(){
+  if(!demoMode)return;
+  demoMode=false;allEntries=[];allLinks=[];
+  document.getElementById('demoBanner').style.display='none';
+}
+
+function exitDemo(toSignup){
+  clearDemo();
+  showAuth();
+  if(toSignup){
+    switchTab('signup');
+    if(typeof gtag==='function')gtag('event','nw_demo_signup_click');
+    setTimeout(()=>document.getElementById('suEmail').focus(),50);
+  }
+  window.scrollTo(0,0);
+}
 
 // ── LOAD ──
 async function loadEntries(silent=false){

@@ -35,7 +35,9 @@
  *   state hasn't published 2026 brackets yet), the page shows a prominent "figures
  *   pending" banner but is still indexed; sweep-update when the new year publishes.
  * @property {string} [stateTaxBasis] - 'federal_taxable_income' | 'federal_agi' | 'state_gross'
- * @property {boolean} needsVerification - true => page ships noindex
+ * @property {boolean} needsVerification - true => page ships noindex (unless indexWhilePending)
+ * @property {boolean} [indexWhilePending] - index the page anyway while rates are unverified
+ * @property {string} [metaDescription] - hand-written meta description; overrides the template one
  * @property {string|null} lastVerified  - ISO date the data was verified
  */
 
