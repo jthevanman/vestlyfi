@@ -1,8 +1,10 @@
 // Monthly net worth reminder sender.
 //
 // Invoked daily by pg_cron (16:00 UTC, two hours after the tax job so one
-// Resend outage cannot take both down). Emails account holders whose latest
-// net worth snapshot is 30+ days old, prompting them to log this month.
+// Resend outage cannot take both down), but it only sends on the 1st of the
+// month: to account holders whose latest net worth snapshot was more than 30
+// days old on the 1st, prompting them to log the new month. Days 2-3 are retry
+// days for anyone the 1st missed; every other day returns without sending.
 //
 // Audience: every user with at least one net_worth_entries row is upserted into
 // email_subscriptions (topic net-worth-monthly) at send time, so they hold an
@@ -34,6 +36,8 @@ const TOPIC = "net-worth-monthly";
 const FROM = "VestlyFi <reminders@vestlyfi.com>";
 const SITE = "https://vestlyfi.com";
 const DORMANT_DAYS = 30;
+// Sends go out on the 1st; days 2 through this one only retry misses.
+const RETRY_THROUGH_DAY = 3;
 const SEND_GAP_MS = 600; // stays under Resend's default 2 requests/second
 
 // One reminder per user per calendar month, however long they stay dormant: a
@@ -98,14 +102,17 @@ function unsubscribeUrl(token: string): string {
 function emailHtml(opts: {
   monthName: string; lastDate: string; today: string; token: string;
 }): string {
-  const trackerUrl = `${SITE}/net-worth/`;
+  // ?update=1 opens Update Values as soon as the dashboard loads (after sign-in
+  // if needed). The utm tags let GA attribute the visit to this email.
+  const trackerUrl = `${SITE}/net-worth/?update=1&utm_source=reminder&utm_medium=email&utm_campaign=nw-monthly`;
   const p = `style="margin:0 0 16px"`;
   return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#ffffff">
 <div style="max-width:520px;margin:0 auto;padding:28px 24px;border:1px solid #e3e1dc;border-radius:8px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
 <p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
 <p ${p}>It's time to log your ${opts.monthName} net worth. You last logged a snapshot on ${plainDate(opts.lastDate, opts.today)}.</p>
-<p ${p}>A few minutes of updated balances keeps your trend line honest: <a href="${trackerUrl}" style="color:#8a6d1f">log your ${opts.monthName} snapshot</a>.</p>
-<p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, and only when you haven't logged a snapshot in ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
+<p style="margin:0 0 24px">A few minutes of updated balances keeps your trend line honest.</p>
+<p style="margin:0 0 8px"><a href="${trackerUrl}" style="display:inline-block;padding:12px 22px;background:#c9a84c;color:#0a0f1e;font-weight:bold;text-decoration:none;border-radius:8px">Update my net worth</a></p>
+<p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, on the 1st, and only when you haven't logged a snapshot in over ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
 </div></body></html>`;
 }
 
@@ -149,6 +156,15 @@ Deno.serve(async (req: Request) => {
   const monthName = MONTHS[Number(today.slice(5, 7)) - 1];
   const reminderKey = reminderKeyFor("<user_id>", today);
 
+  // Outside the send window there is nothing to do. The monthly reminder key
+  // already stops a retry day from emailing anyone the 1st reached.
+  if (Number(today.slice(8, 10)) > RETRY_THROUGH_DAY) {
+    return json({ reminderKey, skipped: `sends run on days 1-${RETRY_THROUGH_DAY} of the month`, sent: 0 });
+  }
+  // Dormancy is judged as of the 1st, so a retry day never picks up someone
+  // who only crossed 30 days after the 1st.
+  const firstOfMonth = `${today.slice(0, 8)}01`;
+
   // 1. Latest snapshot per user. Only users with entries come back.
   const { data: snaps, error: snapsErr } = await sb.rpc("net_worth_latest_snapshots");
   if (snapsErr) return json({ error: snapsErr.message }, 500);
@@ -171,10 +187,10 @@ Deno.serve(async (req: Request) => {
   if (subsErr) return json({ error: subsErr.message }, 500);
   const subByEmail = new Map((subs ?? []).map((s) => [s.email, s]));
 
-  // 3. Dormant 30+ days, still subscribed.
+  // 3. More than 30 days dormant as of the 1st, still subscribed.
   const candidates = withEmail.filter((s) => {
     const sub = subByEmail.get(s.email!);
-    return daysBetween(s.last_date, today) >= DORMANT_DAYS
+    return daysBetween(s.last_date, firstOfMonth) > DORMANT_DAYS
       && sub && !sub.unsubscribed_at
       && (!only || s.email === only);
   });
@@ -217,7 +233,7 @@ Deno.serve(async (req: Request) => {
       console.error(`freshness re-check failed for ${email}: ${freshErr?.message ?? "no snapshot"}`);
       continue;
     }
-    if (daysBetween(current.last_date, today) < DORMANT_DAYS) {
+    if (daysBetween(current.last_date, firstOfMonth) <= DORMANT_DAYS) {
       skippedFresh++;
       await releaseClaim(claim.id);
       continue;
