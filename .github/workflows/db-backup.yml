@@ -1,0 +1,61 @@
+name: Supabase Nightly Backup
+
+# Dumps the public (app data) and auth (user accounts) schemas, encrypts the
+# dump with age, and keeps it as a workflow artifact for 90 days. The repo is
+# public, so the dump is never stored unencrypted. The private key lives only
+# at ~/.config/vestlyfi/backup-age-key.txt on Justin's Mac (plus password manager).
+#
+# Restore:
+#   gh run download <run-id> -n <artifact-name>
+#   age -d -i ~/.config/vestlyfi/backup-age-key.txt vestlyfi-*.dump.age > backup.dump
+#   pg_restore --list backup.dump                      # inspect
+#   pg_restore -d "$DB_URL" --no-owner --data-only -t net_worth_entries backup.dump   # e.g. one table
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # daily at 07:00 UTC (3am ET)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    env:
+      AGE_RECIPIENT: age15twwqqv6249x73dk86s4dqj6ljj8hg3mj3jr627zww7a0qx8n5rq9xhpav
+    steps:
+      - name: Install pg_dump 17 and age
+        run: |
+          sudo apt-get install -y -qq postgresql-common > /dev/null
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y > /dev/null
+          sudo apt-get install -y -qq postgresql-client-17 age > /dev/null
+          /usr/lib/postgresql/17/bin/pg_dump --version
+
+      - name: Dump and encrypt
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          umask 077
+          STAMP=$(date -u +%Y-%m-%d)
+          echo "STAMP=$STAMP" >> "$GITHUB_ENV"
+          /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" \
+            --format=custom --no-owner --no-privileges \
+            --schema=public --schema=auth \
+            --file=backup.dump
+          # Sanity check: the dump must contain the core tables.
+          /usr/lib/postgresql/17/bin/pg_restore --list backup.dump > toc.txt
+          for t in net_worth_entries user_settings email_subscriptions users; do
+            grep -q "TABLE DATA .* $t " toc.txt || { echo "missing table data: $t"; exit 1; }
+          done
+          age -r "$AGE_RECIPIENT" -o "vestlyfi-$STAMP.dump.age" backup.dump
+          rm -f backup.dump toc.txt
+          ls -l "vestlyfi-$STAMP.dump.age"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vestlyfi-db-${{ env.STAMP }}
+          path: vestlyfi-${{ env.STAMP }}.dump.age
+          retention-days: 90
+          if-no-files-found: error
