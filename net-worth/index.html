@@ -453,6 +453,8 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
 .update-entry-type.liability { color:var(--red); }
 .update-entry-input { width:110px; padding:7px 10px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.82rem; outline:none; transition:border-color .15s; text-align:right; }
 .update-entry-input:focus { border-color:var(--gold); }
+.update-paid { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:0.72rem; color:var(--cream-dim); cursor:pointer; }
+.update-paid input { accent-color:var(--gold); margin:0; }
 .update-entries-list { max-height:300px; overflow-y:auto; margin-bottom:14px; }
 .update-modal-date { margin-bottom:14px; }
 .update-modal-date label { display:block; font-size:0.68rem; color:var(--muted); margin-bottom:5px; letter-spacing:0.05em; text-transform:uppercase; }
@@ -770,7 +772,12 @@ footer span { color:var(--muted); font-size:0.72rem; }
     <div class="modal-title" id="valuationTitle">Update Value</div>
     <div class="modal-sub" id="valuationSub"></div>
     <div class="modal-field"><label>Date</label><input type="date" id="valuationDate"></div>
-    <div class="modal-field"><label>New Value</label><input type="text" id="valuationValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this)"></div>
+    <div class="modal-field"><label>New Value</label><input type="text" id="valuationValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this);syncValuationPaidOff()"></div>
+    <div class="modal-field" id="valPaidOffField" style="display:none">
+      <span class="modal-ask">Paid off? Remove it from your tracker?</span>
+      <div class="tie-yn"><button type="button" class="tie-btn" id="valPaidNoBtn" onclick="setValuationPaidOff(false)">No, keep it</button><button type="button" class="tie-btn" id="valPaidYesBtn" onclick="setValuationPaidOff(true)">Yes, remove it</button></div>
+      <div class="modal-note">Its past balances stay in your chart.</div>
+    </div>
     <div class="modal-err" id="valuationErr"></div>
     <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeValuationModal()">Cancel</button><button class="btn-modal-save" onclick="saveValuation()">Save</button></div>
   </div>
@@ -788,7 +795,12 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <select id="firstCurrencySelect" onchange="onFirstCurrencyPick()"></select>
       <div class="modal-note">Used for every amount you log. You can change it later in your account.</div>
     </div>
-    <div class="modal-field"><label>Value</label><input type="text" id="entryValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this)"></div>
+    <div class="modal-field"><label>Value</label><input type="text" id="entryValue" placeholder="$0" data-money-ph oninput="fmtModalComma(this);syncPaidOffField()"></div>
+    <div class="modal-field" id="paidOffField" style="display:none">
+      <span class="modal-ask">Paid off? Remove it from your tracker?</span>
+      <div class="tie-yn"><button type="button" class="tie-btn" id="paidNoBtn" onclick="setPaidOffAnswer(false)">No, keep it</button><button type="button" class="tie-btn" id="paidYesBtn" onclick="setPaidOffAnswer(true)">Yes, remove it</button></div>
+      <div class="modal-note">Its past balances stay in your chart.</div>
+    </div>
     <div class="modal-field" id="tieField" style="display:none">
       <span class="modal-ask">Is this debt tied to something you own?</span>
       <div class="tie-yn"><button type="button" class="tie-btn" id="tieYesBtn" onclick="setTieAnswer('yes')">Yes</button><button type="button" class="tie-btn" id="tieNoBtn" onclick="setTieAnswer('no')">No</button></div>
@@ -900,6 +912,10 @@ let allLinks=[],linksTableReady=false;
 // Entry-modal tie state. tieAnswer is null | 'yes' | 'no'. pendingAsset holds an
 // asset the user built in the add-asset step; it is not written until saveEntry.
 let tieAnswer=null,tieAsset=null,pendingAsset=null;
+// A debt saved at 0 is either paid off for good (hidden from lists) or just
+// at 0 for now, like a credit card. Defaults to "for now" so nothing is hidden
+// unless the user says so.
+let paidOffAnswer=false,valuationPaidOff=false;
 
 // ── HELPERS ──
 // Money display follows the account-wide currency preference (assets/currency.js).
@@ -917,6 +933,9 @@ function fmtModalComma(el){
   VestlyCurrency.groupInt(el);
 }
 function parseMoney(val){return VestlyCurrency.parseInt_(val);}
+// parseMoney reads a blank field as 0, so this tells "left empty" apart from
+// a typed 0, which is how a paid-off loan or an emptied account is recorded.
+function hasMoney(val){return /[0-9]/.test(String(val==null?'':val));}
 // Grouped number with no symbol, for prefilling the value inputs.
 function fmtInputVal(n){return VestlyCurrency.fmtPlain(n);}
 // Money inputs that live in the static markup carry data-money-ph; their
@@ -1186,6 +1205,8 @@ function tiedAssetFor(liabilityCategory){
 // No recorded answer: either no row at all, or asked and skipped.
 function unansweredDebts(){
   return latestByCategory('liability').filter(d=>{
+    // A debt logged at 0 is paid off; asking what it is tied to is noise.
+    if(d.value<=0)return false;
     const l=linkFor(d.category);
     return !l||l.state==='skipped';
   });
@@ -1250,7 +1271,7 @@ async function saveLink(liabilityCategory,state,assetCategory){
 let tieOptions=[];
 
 function resetTieState(){
-  tieAnswer=null;tieAsset=null;pendingAsset=null;
+  tieAnswer=null;tieAsset=null;pendingAsset=null;paidOffAnswer=false;
   const n=document.getElementById('tieNote');if(n)n.textContent='';
 }
 
@@ -1553,7 +1574,7 @@ function renderDebt(){
   const wrap=document.getElementById('debtWrap'),lblEl=document.getElementById('debtTotalLabel');
   const catMap={};
   for(const e of allEntries){if(e.type!=='liability')continue;if(!catMap[e.category]||e.date>catMap[e.category].latest.date){if(!catMap[e.category])catMap[e.category]={all:[]};catMap[e.category].latest=e;}catMap[e.category].all=catMap[e.category].all||[];catMap[e.category].all.push(e);}
-  const items=Object.entries(catMap).map(([name,v])=>({name,current:Number(v.latest.value),all:v.all.sort((a,b)=>a.date.localeCompare(b.date))})).sort((a,b)=>b.current-a.current);
+  const items=Object.entries(catMap).filter(([,v])=>!v.latest.paid_off).map(([name,v])=>({name,current:Number(v.latest.value),all:v.all.sort((a,b)=>a.date.localeCompare(b.date))})).sort((a,b)=>b.current-a.current);
   if(!items.length){wrap.innerHTML='<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">No liabilities logged yet.</div>';lblEl.textContent='—';return;}
   const totalDebt=items.reduce((s,i)=>s+i.current,0);
   lblEl.textContent=`${fmtMoney(totalDebt)} remaining`;
@@ -1639,7 +1660,9 @@ function renderHoldings(){
   for(const e of allEntries){if(!catMap[e.category]){catMap[e.category]={type:e.type,all:[]};}if(!catMap[e.category].latest||e.date>catMap[e.category].latest.date)catMap[e.category].latest=e;catMap[e.category].all.push(e);}
   const snaps=buildMonthlySnapshots();
   const totalA=snaps.length?snaps[snaps.length-1].assets:0,totalL=snaps.length?snaps[snaps.length-1].liabilities:0;
-  let rows=Object.entries(catMap).map(([cat,v])=>{const sorted=v.all.slice().sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1],prev2=sorted.length>1?sorted[sorted.length-2]:null,change=prev2?Number(latest.value)-Number(prev2.value):null,total=v.type==='asset'?totalA:totalL,alloc=total>0?(Number(latest.value)/total)*100:0;return{cat,type:v.type,value:Number(latest.value),change,alloc,date:latest.date,all:sorted};});
+  let rows=Object.entries(catMap).map(([cat,v])=>{const sorted=v.all.slice().sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1],prev2=sorted.length>1?sorted[sorted.length-2]:null,change=prev2?Number(latest.value)-Number(prev2.value):null,total=v.type==='asset'?totalA:totalL,alloc=total>0?(Number(latest.value)/total)*100:0;return{cat,type:v.type,value:Number(latest.value),change,alloc,date:latest.date,all:sorted,paidOff:!!latest.paid_off};});
+  // Paid-off loans leave the list; their history still shows in the chart.
+  rows=rows.filter(r=>!r.paidOff);
   if(holdingsFilter!=='all')rows=rows.filter(r=>r.type===holdingsFilter);
   rows.sort((a,b)=>{
     for(const{key,dir}of holdingsSortStack){
@@ -1684,9 +1707,9 @@ function closeDrawer(){document.getElementById('categoryDrawer').classList.remov
 (function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
 
 let valuationCategory=null,valuationEntryType=null;
-function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';document.getElementById('valuationModal').classList.add('open');}
+function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
 function closeValuationModal(){document.getElementById('valuationModal').classList.remove('open');}
-async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!value||value<=0){err.textContent='Please enter a value greater than 0.';return;}err.textContent='';const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
+async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
 document.getElementById('valuationDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 document.getElementById('valuationValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 
@@ -1714,16 +1737,35 @@ function openEditModal(id){
   document.getElementById('entryCategory').value=e.category;
   document.getElementById('entryValue').value=fmtInputVal(e.value);
   document.getElementById('modalErr').textContent='';
+  paidOffAnswer=!!e.paid_off;
   setType(e.type);
   document.getElementById('entryModal').classList.add('open');
 }
 function closeModal(){document.getElementById('entryModal').classList.remove('open');editingId=null;resetTieState();}
-function setType(type){selectedType=type;document.getElementById('typeAsset').className='type-btn asset'+(type==='asset'?' active':'');document.getElementById('typeLiability').className='type-btn liability'+(type==='liability'?' active':'');renderQuickPicks(type);syncTieField();}
+function setType(type){selectedType=type;document.getElementById('typeAsset').className='type-btn asset'+(type==='asset'?' active':'');document.getElementById('typeLiability').className='type-btn liability'+(type==='liability'?' active':'');renderQuickPicks(type);syncTieField();syncPaidOffField();}
+// The paid-off question only applies to a debt typed as exactly 0.
+function isZeroDebt(type,raw){return type==='liability'&&hasMoney(raw)&&parseMoney(raw)===0;}
+function syncPaidOffField(){
+  const show=isZeroDebt(selectedType,document.getElementById('entryValue').value);
+  if(!show)paidOffAnswer=false;
+  document.getElementById('paidOffField').style.display=show?'':'none';
+  document.getElementById('paidNoBtn').classList.toggle('active',!paidOffAnswer);
+  document.getElementById('paidYesBtn').classList.toggle('active',paidOffAnswer);
+}
+function setPaidOffAnswer(v){paidOffAnswer=v;syncPaidOffField();}
+function syncValuationPaidOff(){
+  const show=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value);
+  if(!show)valuationPaidOff=false;
+  document.getElementById('valPaidOffField').style.display=show?'':'none';
+  document.getElementById('valPaidNoBtn').classList.toggle('active',!valuationPaidOff);
+  document.getElementById('valPaidYesBtn').classList.toggle('active',valuationPaidOff);
+}
+function setValuationPaidOff(v){valuationPaidOff=v;syncValuationPaidOff();}
 async function saveEntry(){
   const date=document.getElementById('entryDate').value,category=document.getElementById('entryCategory').value.trim(),value=parseMoney(document.getElementById('entryValue').value),err=document.getElementById('modalErr');
   if(!date){err.textContent='Please select a date.';return;}
   if(!category){err.textContent='Please enter a category.';return;}
-  if(!value||value<=0){err.textContent='Please enter a value greater than 0.';return;}
+  if(!hasMoney(document.getElementById('entryValue').value)){err.textContent='Please enter a value.';return;}
   err.textContent='';
   // Currency is settled before the entry is written, so the amount that comes
   // back is rendered in the currency it was typed in rather than flashing the
@@ -1738,8 +1780,9 @@ async function saveEntry(){
   // The tie question is deliberately not required. Saving without answering is
   // allowed; the debt just lands in the unassigned pile until the user gets to
   // it. Blocking a save on a money tracker is worse than an incomplete chart.
+  const paid_off=isZeroDebt(selectedType,document.getElementById('entryValue').value)&&paidOffAnswer;
   if(editingId){
-    const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,updated_at:new Date().toISOString()}).eq('id',editingId);
+    const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,paid_off,updated_at:new Date().toISOString()}).eq('id',editingId);
     if(error){err.textContent='Error saving.';return;}
   }else{
     const rows=[];
@@ -1747,7 +1790,7 @@ async function saveEntry(){
     // closed, so abandoning this entry cannot strand an asset nobody meant to
     // create.
     if(selectedType==='liability'&&tieAnswer==='yes'&&pendingAsset)rows.push({user_id:currentUser.id,date,type:'asset',category:pendingAsset.category,value:pendingAsset.value});
-    rows.push({user_id:currentUser.id,date,type:selectedType,category,value});
+    rows.push({user_id:currentUser.id,date,type:selectedType,category,value,paid_off});
     const{error}=await sb.from('net_worth_entries').insert(rows);
     if(error){err.textContent='Error saving.';return;}
   }
@@ -1763,7 +1806,7 @@ let bulkHistoryType='asset',bulkHistoryCategory='';
 function openBulkHistoryModal(){const cat=document.getElementById('entryCategory').value.trim();if(!cat){document.getElementById('modalErr').textContent='Please enter a category first.';return;}bulkHistoryCategory=cat;bulkHistoryType=selectedType;const d=document.getElementById('entryDate').value,v=document.getElementById('entryValue').value.trim();closeModal();document.getElementById('bulkHistoryTitle').textContent=`Historical Data: ${cat}`;document.getElementById('bulkErr').textContent='';const c=document.getElementById('bulkRows');c.innerHTML='';addBulkRow(d,v);addBulkRow();addBulkRow();document.getElementById('bulkHistoryModal').classList.add('open');}
 function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows');const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';row.innerHTML=`<input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;"><input type="text" class="bulk-value" placeholder="${VestlyCurrency.zero()}" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;font-weight:300;outline:none;"><button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;c.appendChild(row);}
 function closeBulkHistoryModal(){document.getElementById('bulkHistoryModal').classList.remove('open');}
-async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!value||value<=0){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value greater than 0.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
+async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!hasMoney(row.querySelector('.bulk-value').value)){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
 
 function openUpdateModal(){
   if(!allEntries.length){alert('No entries yet to update.');return;}
@@ -1774,15 +1817,25 @@ function openUpdateModal(){
   for(const e of allEntries){const k=e.type+' '+e.category;if(!latest[k]||e.date>latest[k].date)latest[k]=e;}
   document.getElementById('updateDate').value=currentDateStr();
   document.getElementById('updateModalErr').textContent='';
-  document.getElementById('updateEntriesList').innerHTML=Object.values(latest).map(e=>{
+  // Paid-off loans are done, so they are not asked about every month.
+  document.getElementById('updateEntriesList').innerHTML=Object.values(latest).filter(e=>!e.paid_off).map(e=>{
     const tied=e.type==='liability'?tiedAssetFor(e.category):null;
     const sub=tied?`${e.type} · tied to ${escHtml(tied)}`:e.type;
-    return`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${escHtml(e.category)}</div><div class="update-entry-type ${e.type}">${sub}</div></div><input class="update-entry-input" type="text" data-category="${escHtml(e.category)}" data-type="${e.type}" value="${fmtInputVal(e.value)}" oninput="fmtModalComma(this)"></div>`;
+    // Only shown once a debt reads $0, since that is the only time it applies.
+    const paid=e.type==='liability'?`<label class="update-paid" style="display:none"><input type="checkbox" class="update-paid-box"> Paid off, remove from tracker</label>`:'';
+    return`<div class="update-entry-row"><div class="update-entry-info"><div class="update-entry-name">${escHtml(e.category)}</div><div class="update-entry-type ${e.type}">${sub}</div>${paid}</div><input class="update-entry-input" type="text" data-category="${escHtml(e.category)}" data-type="${e.type}" data-prev="${Number(e.value)||0}" value="${fmtInputVal(e.value)}" oninput="fmtModalComma(this);syncUpdatePaid(this)"></div>`;
   }).join('');
+  document.querySelectorAll('#updateEntriesList .update-entry-input').forEach(syncUpdatePaid);
   document.getElementById('updateModal').classList.add('open');
 }
+function syncUpdatePaid(inp){
+  const lbl=inp.closest('.update-entry-row').querySelector('.update-paid');if(!lbl)return;
+  const zero=hasMoney(inp.value)&&parseMoney(inp.value)===0;
+  lbl.style.display=zero?'':'none';
+  if(!zero)lbl.querySelector('input').checked=false;
+}
 function closeUpdateModal(){document.getElementById('updateModal').classList.remove('open');}
-async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){const v=parseMoney(inp.value);if(v<=0)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v});}if(!toInsert.length){err.textContent='No values to save.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
+async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
 
 function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');setTimeout(()=>renderShareCanvas(s),50);}
 function closeShareModal(){document.getElementById('shareModal').classList.remove('open');}
