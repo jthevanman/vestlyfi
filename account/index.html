@@ -480,7 +480,9 @@ function fmtMonthLabel(s){const[y,m]=s.split('-');const mo=['Jan','Feb','Mar','A
 async function loadSnapshot() {
   let entries = [];
   try {
-    const { data, error } = await sb.from('net_worth_entries').select('category,value,type,date').order('date', { ascending: true });
+    // Same-date entries are ordered by when they were saved, so the latest one
+    // wins below, matching the net worth tracker.
+    const { data, error } = await sb.from('net_worth_entries').select('category,value,type,date').order('date', { ascending: true }).order('updated_at', { ascending: true });
     if (error) throw error;
     entries = data || [];
   } catch (e) { console.error(e); return; }
@@ -495,7 +497,7 @@ async function loadSnapshot() {
   const snapshots = [], lastKnown = {};
   for (const month of months) {
     const me = entries.filter(e => dateToMonthStr(e.date) === month);
-    for (const e of me) lastKnown[e.category] = { value: Number(e.value), type: e.type };
+    for (const e of me) lastKnown[e.type + ' ' + e.category] = { value: Number(e.value), type: e.type };
     let a = 0, l = 0;
     for (const c of Object.values(lastKnown)) { if (c.type === 'asset') a += c.value; else l += c.value; }
     snapshots.push({ month, assets: a, liabilities: l, netWorth: a - l });

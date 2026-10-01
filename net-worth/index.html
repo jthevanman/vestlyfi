@@ -1130,6 +1130,17 @@ function exitDemo(toSignup){
 }
 
 // ── LOAD ──
+// Oldest first, and within one date, the most recently saved last. Every
+// "latest value" lookup on the page relies on this: it walks the array and
+// lets a later entry replace an earlier one with the same date (>=, not >).
+// Without the tiebreak, two entries on the same date came back in no fixed
+// order, and the stat cards and the lists each picked a different one, so a
+// debt updated to 0 on the same day could still count at its old balance.
+function entryOrder(a,b){
+  if(a.date!==b.date)return a.date<b.date?-1:1;
+  const ta=a.updated_at||a.created_at||'',tb=b.updated_at||b.created_at||'';
+  return ta<tb?-1:ta>tb?1:0;
+}
 async function loadEntries(silent=false){
   if(isLoadingEntries)return;isLoadingEntries=true;
   if(!silent){document.getElementById('loadingState').style.display='flex';document.getElementById('mainContent').style.display='none';}
@@ -1139,7 +1150,7 @@ async function loadEntries(silent=false){
   // entries would paint the whole page in the fallback symbol and then swap.
   await VestlyCurrency.load(sb,currentUser.id);
   applyCurrencyPlaceholders();
-  try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=data||[];}catch(e){console.error(e);allEntries=[];}
+  try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=(data||[]).sort(entryOrder);}catch(e){console.error(e);allEntries=[];}
   await loadLinks();
   if(timeout)clearTimeout(timeout);
   isLoadingEntries=false;
@@ -1184,7 +1195,7 @@ function latestByCategory(type){
     if(e.type!==type)continue;
     const k=normCat(e.category);
     if(!k)continue;
-    if(!m[k]||e.date>m[k].date)m[k]={category:e.category,value:Number(e.value)||0,date:e.date};
+    if(!m[k]||e.date>=m[k].date)m[k]={category:e.category,value:Number(e.value)||0,date:e.date};
   }
   return Object.values(m).sort((a,b)=>b.value-a.value);
 }
@@ -1573,7 +1584,7 @@ function holdingLeave(){
 function renderDebt(){
   const wrap=document.getElementById('debtWrap'),lblEl=document.getElementById('debtTotalLabel');
   const catMap={};
-  for(const e of allEntries){if(e.type!=='liability')continue;if(!catMap[e.category]||e.date>catMap[e.category].latest.date){if(!catMap[e.category])catMap[e.category]={all:[]};catMap[e.category].latest=e;}catMap[e.category].all=catMap[e.category].all||[];catMap[e.category].all.push(e);}
+  for(const e of allEntries){if(e.type!=='liability')continue;if(!catMap[e.category]||e.date>=catMap[e.category].latest.date){if(!catMap[e.category])catMap[e.category]={all:[]};catMap[e.category].latest=e;}catMap[e.category].all=catMap[e.category].all||[];catMap[e.category].all.push(e);}
   const items=Object.entries(catMap).filter(([,v])=>!v.latest.paid_off).map(([name,v])=>({name,current:Number(v.latest.value),all:v.all.sort((a,b)=>a.date.localeCompare(b.date))})).sort((a,b)=>b.current-a.current);
   if(!items.length){wrap.innerHTML='<div style="color:var(--muted);font-size:0.82rem;text-align:center;padding:20px 0">No liabilities logged yet.</div>';lblEl.textContent='—';return;}
   const totalDebt=items.reduce((s,i)=>s+i.current,0);
@@ -1616,8 +1627,16 @@ function renderChart(){
   ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#141d35',borderColor:'rgba(201,168,76,0.25)',borderWidth:1,titleColor:'rgba(245,240,232,0.5)',bodyColor:'#f5f0e8',padding:12,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(245,240,232,0.3)',font:{family:'Outfit',size:11}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'rgba(245,240,232,0.3)',font:{family:'Outfit',size:11},callback:v=>fmtMoney(v)}}}}});
 }
 
+// One entry per date, the last saved winning. Saving the update screen twice in
+// a day writes the same values twice, and comparing those to each other made
+// every change read +0 and every sparkline go flat.
+function onePerDate(sorted){
+  const out=[];
+  for(const e of sorted){if(out.length&&out[out.length-1].date===e.date)out[out.length-1]=e;else out.push(e);}
+  return out;
+}
 function buildSparkline(entries,type){
-  const sorted=entries.slice().sort((a,b)=>a.date.localeCompare(b.date));
+  const sorted=onePerDate(entries.slice().sort((a,b)=>a.date.localeCompare(b.date)));
   if(sorted.length<2)return'<span style="color:var(--muted);font-size:0.7rem">—</span>';
   const last6=sorted.slice(-6),vals=last6.map(e=>Number(e.value)),mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1,W=48,H=20,pad=2;
   const pts=vals.map((v,i)=>{const x=pad+(i/(vals.length-1))*(W-pad*2);const y=H-pad-((v-mn)/range)*(H-pad*2);return`${x.toFixed(1)},${y.toFixed(1)}`;}).join(' ');
@@ -1657,10 +1676,10 @@ function renderHoldings(){
   if(tfoot)tfoot.innerHTML='';
   if(!allEntries.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty-state">No entries yet. Add your first asset or liability.</div></td></tr>';return;}
   const catMap={};
-  for(const e of allEntries){if(!catMap[e.category]){catMap[e.category]={type:e.type,all:[]};}if(!catMap[e.category].latest||e.date>catMap[e.category].latest.date)catMap[e.category].latest=e;catMap[e.category].all.push(e);}
+  for(const e of allEntries){if(!catMap[e.category]){catMap[e.category]={type:e.type,all:[]};}if(!catMap[e.category].latest||e.date>=catMap[e.category].latest.date)catMap[e.category].latest=e;catMap[e.category].all.push(e);}
   const snaps=buildMonthlySnapshots();
   const totalA=snaps.length?snaps[snaps.length-1].assets:0,totalL=snaps.length?snaps[snaps.length-1].liabilities:0;
-  let rows=Object.entries(catMap).map(([cat,v])=>{const sorted=v.all.slice().sort((a,b)=>a.date.localeCompare(b.date));const latest=sorted[sorted.length-1],prev2=sorted.length>1?sorted[sorted.length-2]:null,change=prev2?Number(latest.value)-Number(prev2.value):null,total=v.type==='asset'?totalA:totalL,alloc=total>0?(Number(latest.value)/total)*100:0;return{cat,type:v.type,value:Number(latest.value),change,alloc,date:latest.date,all:sorted,paidOff:!!latest.paid_off};});
+  let rows=Object.entries(catMap).map(([cat,v])=>{const sorted=onePerDate(v.all.slice().sort((a,b)=>a.date.localeCompare(b.date)));const latest=sorted[sorted.length-1],prev2=sorted.length>1?sorted[sorted.length-2]:null,change=prev2?Number(latest.value)-Number(prev2.value):null,total=v.type==='asset'?totalA:totalL,alloc=total>0?(Number(latest.value)/total)*100:0;return{cat,type:v.type,value:Number(latest.value),change,alloc,date:latest.date,all:sorted,paidOff:!!latest.paid_off};});
   // Paid-off loans leave the list; their history still shows in the chart.
   rows=rows.filter(r=>!r.paidOff);
   if(holdingsFilter!=='all')rows=rows.filter(r=>r.type===holdingsFilter);
@@ -1693,7 +1712,7 @@ function renderHoldings(){
 
 let activeDrawerCategory=null;
 function openCategoryDrawer(cat){
-  const entries=allEntries.filter(e=>e.category===cat).sort((a,b)=>b.date.localeCompare(a.date));
+  const entries=allEntries.filter(e=>e.category===cat).reverse();
   if(!entries.length)return;activeDrawerCategory=cat;const type=entries[0].type;
   document.getElementById('drawerTitle').textContent=cat;const te=document.getElementById('drawerType');te.textContent=type;te.className='drawer-type '+type;
   const ab=document.getElementById('drawerAddValBtn');ab.className=`btn-add-section ${type==='asset'?'btn-add-asset':'btn-add-liability'}`;ab.style.width='100%';ab.style.padding='8px';
@@ -1707,7 +1726,7 @@ function closeDrawer(){document.getElementById('categoryDrawer').classList.remov
 (function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
 
 let valuationCategory=null,valuationEntryType=null;
-function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries.sort((a,b)=>b.date.localeCompare(a.date))[0];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
+function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries[entries.length-1];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
 function closeValuationModal(){document.getElementById('valuationModal').classList.remove('open');}
 async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
 document.getElementById('valuationDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
@@ -1814,7 +1833,7 @@ function openUpdateModal(){
   // and owe a "Silverado" loan, and keying on the name alone showed only one of
   // them. buildMonthlySnapshots() was fixed for this same reason.
   const latest={};
-  for(const e of allEntries){const k=e.type+' '+e.category;if(!latest[k]||e.date>latest[k].date)latest[k]=e;}
+  for(const e of allEntries){const k=e.type+' '+e.category;if(!latest[k]||e.date>=latest[k].date)latest[k]=e;}
   document.getElementById('updateDate').value=currentDateStr();
   document.getElementById('updateModalErr').textContent='';
   // Paid-off loans are done, so they are not asked about every month.
@@ -1842,19 +1861,19 @@ function closeShareModal(){document.getElementById('shareModal').classList.remov
 function onPrivacyToggle(){const s=getFilteredSnapshots();if(s.length)renderShareCanvas(s);}
 function getShareAllocation(){
   const catMap={};
-  for(const e of allEntries){if(e.type!=='asset')continue;const v=Number(e.value);if(!catMap[e.category]||e.date>catMap[e.category].date)catMap[e.category]={value:v,date:e.date};}
+  for(const e of allEntries){if(e.type!=='asset')continue;const v=Number(e.value);if(!catMap[e.category]||e.date>=catMap[e.category].date)catMap[e.category]={value:v,date:e.date};}
   const items=Object.entries(catMap).map(([cat,d])=>({cat,value:d.value})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
   const total=items.reduce((s,x)=>s+x.value,0);
   return {items,total};
 }
 function getShareHoldings(){
   const m={};
-  for(const e of allEntries){if(e.type!=='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>m[e.category].date)m[e.category]={value:v,date:e.date};}
+  for(const e of allEntries){if(e.type!=='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>=m[e.category].date)m[e.category]={value:v,date:e.date};}
   return Object.entries(m).map(([cat,d])=>({cat,value:d.value})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
 }
 function getShareDebts(){
   const m={};
-  for(const e of allEntries){if(e.type==='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>m[e.category].date)m[e.category]={value:v,date:e.date};}
+  for(const e of allEntries){if(e.type==='asset')continue;const v=Number(e.value);if(!m[e.category]||e.date>=m[e.category].date)m[e.category]={value:v,date:e.date};}
   return Object.entries(m).map(([cat,d])=>({cat,value:d.value})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
 }
 function drawSpacedText(ctx,text,x,y,sp){let cx=x;for(const ch of text){ctx.fillText(ch,cx,y);cx+=ctx.measureText(ch).width+sp;}return cx;}
