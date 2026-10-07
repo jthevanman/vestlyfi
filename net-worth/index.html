@@ -214,13 +214,13 @@ body {
 
 /* ── TWO COL ROW ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
-/* The chart gets three quarters; the summary stats stack into a narrow column
-   beside it. align-content keeps them at their natural height instead of
-   stretching to the chart, which was padding two short lines out to 90px. */
+/* The chart gets three quarters; the summary stats sit beside it as plain
+   floating text (no card chrome, the page has plenty of boxes), spread evenly
+   down the full height of the chart card. */
 .chart-row { grid-template-columns:3fr 1fr; }
-.chart-row .stat-row2 { grid-template-columns:1fr; gap:10px; align-content:start; }
-.chart-row .stat-card { align-items:center; text-align:center; }
-.chart-row .stat-card.sm { padding:10px 12px; min-height:0; }
+.chart-row .stat-row2 { display:flex; flex-direction:column; justify-content:space-evenly; gap:10px; }
+.chart-row .stat-card { align-items:center; text-align:center; background:none; border:none; border-radius:0; }
+.chart-row .stat-card.sm { padding:0; min-height:0; }
 
 /* ── DONUT ── */
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
@@ -476,7 +476,8 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
   .two-col { grid-template-columns:1fr; }
   /* Stacked on narrow screens there is no chart beside them, so they go back
      to sitting in a row. */
-  .chart-row .stat-row2 { grid-template-columns:1fr 1fr; gap:10px; }
+  .chart-row .stat-row2 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .chart-row .stat-row2 .stat-card:last-child { grid-column:auto; }
   /* Two pies side by side stop being legible well before the card does. */
   .pies { flex-direction:column; gap:18px; }
   .page-header { flex-direction:column; }
@@ -1464,7 +1465,7 @@ function renderStats(){
   if(!s.length){
     const z=fmtMoney(0);
     g1.innerHTML=`<div class="stat-card hero"><div class="stat-label">Net Worth</div><div class="stat-value">${z}</div><div class="stat-change">No data yet</div></div><div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">${z}</div></div><div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">${z}</div></div>`;
-    g2.innerHTML=`<div class="stat-card sm"><div class="stat-label">Month over Month</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">Debt-to-Asset</div><div class="stat-value sm">—</div></div>`;
+    g2.innerHTML=`<div class="stat-card sm"><div class="stat-label">One Month Change</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm">—</div></div><div class="stat-card sm"><div class="stat-label">Debt-to-Asset</div><div class="stat-value sm">—</div></div>`;
     return;
   }
   const last=s[s.length-1],prev=s.length>1?s[s.length-2]:null,first=s[0];
@@ -1477,8 +1478,8 @@ function renderStats(){
     <div class="stat-card green-tint"><div class="stat-label">Total Assets</div><div class="stat-value green">${fmtMoney(last.assets)}</div></div>
     <div class="stat-card red-tint"><div class="stat-label">Total Liabilities</div><div class="stat-value red">${fmtMoney(last.liabilities)}</div></div>`;
   g2.innerHTML=`
-    <div class="stat-card sm"><div class="stat-label">Month over Month</div><div class="stat-value sm ${mom!==null?(mom>=0?'green':'red'):''}">${mom!==null?(mom>=0?'+':'')+fmtMoney(mom):'—'}</div></div>
-    <div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm ${allTime>=0?'gold':'red'}">${allTime>=0?'+':''}${fmtMoney(allTime)}</div></div>
+    <div class="stat-card sm"><div class="stat-label">One Month Change</div><div class="stat-value sm ${mom!==null?(mom>=0?'green':'red'):''}">${mom!==null?(mom>=0?'+':'')+fmtMoney(mom):'—'}</div></div>
+    <div class="stat-card sm"><div class="stat-label">All-Time Gain</div><div class="stat-value sm ${allTime>=0?'green':'red'}">${allTime>=0?'+':''}${fmtMoney(allTime)}</div></div>
     <div class="stat-card sm"><div class="stat-label">Debt-to-Asset <span class="info-icon">i<span class="info-tooltip">Liabilities ÷ Assets. Under 30% is healthy, 30–60% moderate, above 60% high.</span></span></div><div class="stat-value sm" style="color:${ratioColor}">${ratio}</div></div>`;
 }
 
