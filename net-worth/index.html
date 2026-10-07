@@ -205,22 +205,30 @@ body {
 .period-btn.active { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
 .chart-wrap { position:relative; height:170px; width:100%; }
 .chart-empty { height:100%; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:0.83rem; text-align:center; line-height:1.65; }
-.chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); flex-wrap:wrap; gap:10px; width:100%; }
+/* nowrap keeps Share pinned to the right edge on phones instead of dropping
+   onto its own line under the debt summary. */
+.chart-footer { display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft); flex-wrap:nowrap; gap:10px; width:100%; }
+.chart-footer .chart-stat { min-width:0; }
 .chart-stat { font-size:0.76rem; color:var(--muted); }
 .chart-stat .up   { color:var(--green); font-weight:500; }
 .chart-stat .down { color:var(--red); font-weight:500; }
-.btn-share { padding:5px 12px; background:none; border:1px solid var(--border); color:var(--gold); border-radius:7px; font-family:'Outfit',sans-serif; font-size:0.72rem; font-weight:500; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:5px; }
+.btn-share { padding:7px 15px; background:none; border:1px solid var(--border); color:var(--gold); border-radius:8px; font-family:'Outfit',sans-serif; font-size:0.8rem; font-weight:500; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:6px; flex-shrink:0; }
 .btn-share:hover { background:var(--gold-dim); }
 
 /* ── TWO COL ROW ── */
 .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
-/* The chart gets three quarters; the summary stats sit beside it as plain
-   floating text (no card chrome, the page has plenty of boxes), spread evenly
-   down the full height of the chart card. */
-.chart-row { grid-template-columns:3fr 1fr; }
-.chart-row .stat-row2 { display:flex; flex-direction:column; justify-content:space-evenly; gap:10px; }
-.chart-row .stat-card { align-items:center; text-align:center; background:none; border:none; border-radius:0; }
-.chart-row .stat-card.sm { padding:0; min-height:0; }
+/* The summary stats share the chart's card as a side panel, so they read as
+   part of the chart instead of floating beside it. The 28px gap keeps the plot
+   at the width it had as a separate 3fr card (719px at the 1100px cap). */
+.chart-card { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,1fr); gap:28px; }
+.chart-main { display:flex; flex-direction:column; min-width:0; }
+.chart-stats { display:flex; flex-direction:column; justify-content:space-evenly; gap:14px; border-left:1px solid var(--border-soft); padding-left:24px; }
+.chart-stats .stat-card { background:none; border:none; border-radius:0; padding:0; min-height:0; align-items:flex-start; text-align:left; }
+.chart-stats .stat-label { font-size:0.72rem; letter-spacing:0.02em; margin-bottom:6px; }
+.chart-stats .stat-value.sm { font-size:1.4rem; }
+/* Anchored under the icon and opening leftward, so it stays on screen from
+   the right edge of the page. */
+.chart-stats .info-tooltip { left:auto; right:-4px; top:18px; }
 
 /* ── DONUT ── */
 #donutWrap { display:flex; flex-direction:column; justify-content:center; flex:1; }
@@ -474,10 +482,12 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
   .stat-row2 { grid-template-columns:1fr 1fr; }
   .stat-row2 .stat-card:last-child { grid-column:span 2; }
   .two-col { grid-template-columns:1fr; }
-  /* Stacked on narrow screens there is no chart beside them, so they go back
-     to sitting in a row. */
-  .chart-row .stat-row2 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-  .chart-row .stat-row2 .stat-card:last-child { grid-column:auto; }
+  /* No room beside the chart on narrow screens, so the stats drop under it
+     as a row of three. */
+  .chart-card { grid-template-columns:minmax(0,1fr); gap:14px; }
+  .chart-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; border-left:none; padding-left:0; border-top:1px solid var(--border-soft); padding-top:14px; }
+  .chart-stats .stat-label { font-size:0.62rem; letter-spacing:0; }
+  .chart-stats .stat-value.sm { font-size:1.05rem; }
   /* Two pies side by side stop being legible well before the card does. */
   .pies { flex-direction:column; gap:18px; }
   .page-header { flex-direction:column; }
@@ -663,8 +673,8 @@ footer span { color:var(--muted); font-size:0.72rem; }
           </div>
 
           <!-- LINE CHART + SUMMARY STATS -->
-          <div class="two-col chart-row">
-          <div class="card">
+          <div class="card chart-card">
+          <div class="chart-main">
             <div class="card-header">
               <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
                 <div class="card-title">Net Worth History</div>
@@ -681,14 +691,11 @@ footer span { color:var(--muted); font-size:0.72rem; }
               <canvas id="nwChart" style="display:none"></canvas>
             </div>
             <div class="chart-footer" id="chartFooter" style="display:none">
-              <div style="display:flex;gap:18px;flex-wrap:wrap;">
-                <div class="chart-stat" id="chartPeriodSummary"></div>
-                <div class="chart-stat" id="chartDebtSummary"></div>
-              </div>
-              <button class="btn-share" onclick="openShareModal()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
+              <div class="chart-stat" id="chartDebtSummary"></div>
+              <button class="btn-share" onclick="openShareModal()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share</button>
             </div>
           </div>
-          <div class="stat-row2" id="statRow2"></div>
+          <div class="chart-stats" id="statRow2"></div>
           </div>
 
           <!-- ASSETS + DEBTS -->
@@ -1615,11 +1622,10 @@ function renderChart(){
     empty.style.display='block';empty.style.alignItems='flex-start';empty.style.height='auto';
     const gainCls=nwDiff>=0?'up':'down',gainSign=nwDiff>=0?'+':'';
     empty.innerHTML=`<div class="snap-stat-view"><div class="snap-top"><div class="snap-top-left"><div class="snap-period">${fmtMonthLabel(s.month)}</div><div class="snap-nw">${fmtMoney(s.netWorth)}</div></div>${nwDiff!==null?`<div class="snap-top-right"><div class="snap-gain-label">This month</div><div class="snap-gain ${gainCls}">${gainSign}${fmtMoney(nwDiff)}</div></div>`:''}</div><div class="snap-bottom-row"><div class="snap-tile"><div class="snap-tile-label">Total Assets</div><div class="snap-tile-val assets">${fmtMoney(s.assets)}</div></div><div class="snap-tile"><div class="snap-tile-label">Total Liabilities</div><div class="snap-tile-val liabs">${fmtMoney(s.liabilities)}</div></div></div></div>`;
-    canvas.style.display='none';footer.style.display='flex';footer.style.justifyContent='flex-end';document.getElementById('chartPeriodSummary').innerHTML='';document.getElementById('chartDebtSummary').innerHTML='';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;
+    canvas.style.display='none';footer.style.display='flex';footer.style.justifyContent='flex-end';document.getElementById('chartDebtSummary').innerHTML='';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;
   }
   empty.style.display='none';empty.style.height='';canvas.style.display='block';footer.style.display='flex';footer.style.justifyContent='';
-  const first=snaps[0],last=snaps[snaps.length-1],diff=last.netWorth-first.netWorth,sign=diff>=0?'+':'',cls=diff>=0?'up':'down';
-  document.getElementById('chartPeriodSummary').innerHTML=`Total gain &nbsp;<span class="${cls}">${sign}${fmtMoney(diff)}</span>`;
+  const first=snaps[0],last=snaps[snaps.length-1];
   const ld=first.liabilities-last.liabilities,debtEl=document.getElementById('chartDebtSummary');
   if(first.liabilities>0||last.liabilities>0){debtEl.innerHTML=`${ld>=0?'Debt paid off':'Debt added'} &nbsp;<span class="${ld>=0?'up':'down'}">${fmtMoney(Math.abs(ld))}</span>`;debtEl.style.display='block';}else{debtEl.style.display='none';}
   if(chartInstance)chartInstance.destroy();
