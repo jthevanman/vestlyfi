@@ -40,14 +40,41 @@ test('SE tax: Social Security wage base caps the SS portion', () => {
   // taxableSE 230875 > 184500 base -> SS = 184500*0.124=22878 ; Medicare=230875*0.029
   close(r.ssPortion, 22878);
   close(r.medicarePortion, 6695.375);
-  close(r.seTax, 29573.375);
+  // Additional Medicare: (230875-200000)*0.009 = 277.875 ; not in the deductible half
+  close(r.addlMedicare, 277.875);
+  close(r.seTax, 29851.25);
+  close(r.halfDeduction, 14786.6875);
 });
 
 test('SE tax: W-2 wages consume the SS wage base first', () => {
   const r = computeSelfEmploymentTax(50000, 'single', 180000);
   // ssRoom = 184500-180000 = 4500 ; SS = 4500*0.124=558 ; Medicare=46175*0.029
+  // Additional Medicare room = 200000-180000 = 20000 -> (46175-20000)*0.009 = 235.575
   close(r.ssPortion, 558);
-  close(r.seTax, 558 + 46175 * 0.029);
+  close(r.addlMedicare, 235.575);
+  close(r.seTax, 558 + 46175 * 0.029 + 235.575);
+});
+
+test('SE tax: Additional Medicare uses the $250k threshold when married', () => {
+  const r = computeSelfEmploymentTax(400000, 'married', 0);
+  // taxableSE 369400 -> (369400-250000)*0.009 = 1074.6
+  close(r.addlMedicare, 1074.6);
+  assert.equal(computeSelfEmploymentTax(200000, 'married', 0).addlMedicare, 0);
+});
+
+test('SE tax: none under $400 of net SE earnings', () => {
+  // $300 profit -> 277.05 net earnings, under the $400 floor
+  assert.equal(computeSelfEmploymentTax(300, 'single', 0).seTax, 0);
+  // $434 profit -> 400.80 net earnings, at the floor, so SE tax applies
+  close(computeSelfEmploymentTax(434, 'single', 0).seTax, 400.799 * 0.153, 0.01);
+  assert.equal(estimateQuarterly({ selfEmploymentIncome: 300 }, { hasStateIncomeTax: false }).totalAnnual, 0);
+});
+
+test('estimateQuarterly: $400k single owes Additional Medicare on top of SE tax', () => {
+  const r = estimateQuarterly({ selfEmploymentIncome: 400000 }, { hasStateIncomeTax: false });
+  // taxableSE 369400 -> SS 22878 + Medicare 10712.6 + Additional (169400*0.009) 1524.6
+  close(r.se.seTax, 22878 + 10712.6 + 1524.6);
+  close(r.federalAGI, 400000 - (22878 + 10712.6) / 2);
 });
 
 // --- Full estimate: CA (state noindex, brackets present) --------------------

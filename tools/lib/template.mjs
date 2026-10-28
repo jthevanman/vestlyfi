@@ -545,7 +545,7 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
     { label: 'Quarterly Estimated Tax' },
   ];
   const jsonLdBlocks = [
-    webAppSchema(meta, 'Quarterly Estimated Tax Calculator'),
+    webAppSchema(meta, '1099 Quarterly Estimated Tax Calculator'),
     faqSchema(faqs),
     breadcrumbSchema(crumbs),
   ].map((o) => `<script type="application/ld+json">\n${jsonld(o)}\n</script>`).join('\n');
@@ -565,7 +565,7 @@ export function renderNationalPage({ meta, engineSource, index, faqs }) {
 <div class="page">
   ${crumbsHtml(crumbs)}
   <div class="page-tag">Side-Income Tools</div>
-  <h1>Quarterly Estimated Tax Calculator (2026)</h1>
+  <h1>1099 Tax Calculator: Quarterly Estimated Taxes (2026)</h1>
   <p class="intro">If you freelance, run a business, or earn 1099 income, the IRS wants its taxes four times a year, not once in April. This calculator estimates your 2026 federal quarterly payments, including self-employment tax and federal income tax, and shows your due dates and safe-harbor targets. Pick your state below to add state income tax to the estimate.</p>
 
   ${calcMarkup('federal')}

@@ -30,8 +30,8 @@ export function nationalMetadata(taxYear = 2026) {
   const url = `${SITE}/calculators/quarterly-tax/`;
   return {
     url,
-    title: `Quarterly Estimated Tax Calculator ${taxYear} (Self-Employed & 1099) | VestlyFi`,
-    description: `Free ${taxYear} quarterly estimated tax calculator for freelancers, 1099 workers, and the self-employed. Estimate your federal self-employment and income tax, get your due dates, and jump to your state.`,
+    title: `1099 Tax Calculator ${taxYear}: Quarterly Estimated Taxes | VestlyFi`,
+    description: `Calculate taxes on 1099 income for ${taxYear}. Enter what you earn and see your self-employment tax, federal income tax, what to pay each quarter, and when it's due.`,
     canonical: url,
     noindex: false,
     ogImage: `${SITE}/og-image.png`,
