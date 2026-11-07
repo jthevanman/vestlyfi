@@ -1723,22 +1723,29 @@ function renderBalanceSheetView(s){
   return `<div class="bs-view"><div class="bs-hero"><div class="bs-head"><span class="bs-label gold">Net Worth</span><span class="bs-period">${fmtMonthLabel(s.month)}</span></div><div class="bs-hero-body"><div class="bs-hero-num"><div class="bs-nw">${fmtMoney(s.netWorth)}</div><div class="bs-sub ${subCls}">${sub}</div></div><div class="bs-hero-bar">${bar}</div></div></div>${col('Assets','green',getShareHoldings(),totA,false)}${col('Debts','red',getShareDebts(),totL,true)}</div>`;
 }
 // The hero number cannot be cut off like an account name, so its type shrinks
-// until it fits its column. Rerun on resize, since the column width follows the
-// window.
+// until it fits its column. It refits whenever the chart box changes width,
+// watched on the box itself: the box can narrow without a window resize event
+// (the stats panel dropping under the chart, a scrollbar appearing).
 function fitBalanceSheet(){
   const nw=document.querySelector('#chartWrap.bs-mode .bs-nw');if(!nw)return;
   nw.style.fontSize='';let fs=parseFloat(getComputedStyle(nw).fontSize);
   while(fs>14&&nw.scrollWidth>nw.clientWidth){fs-=1;nw.style.fontSize=fs+'px';}
 }
-let bsFitTimer;window.addEventListener('resize',()=>{clearTimeout(bsFitTimer);bsFitTimer=setTimeout(fitBalanceSheet,120);});
+if(window.ResizeObserver){let bsW=-1;new ResizeObserver(es=>{const w=Math.round(es[0].contentRect.width);if(w!==bsW){bsW=w;fitBalanceSheet();}}).observe(document.getElementById('chartWrap'));}
+else{let bsFitTimer;window.addEventListener('resize',()=>{clearTimeout(bsFitTimer);bsFitTimer=setTimeout(fitBalanceSheet,120);});}
 function renderChart(){
   syncPeriodButtons();
   const snaps=getFilteredSnapshots(),wrap=document.getElementById('chartWrap'),empty=document.getElementById('chartEmpty'),canvas=document.getElementById('nwChart'),footer=document.getElementById('chartFooter');
   wrap.classList.toggle('bs-mode',snaps.length===1);
-  if(!snaps.length){empty.textContent='Log entries for two or more months to see your trend.';empty.style.display='flex';empty.style.height='';canvas.style.display='none';footer.style.display='none';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
+  // Destroy before hiding the canvas, never after: Chart.js puts the canvas's
+  // original inline style back on destroy, display:block included. Hiding first
+  // left an invisible 150px canvas hanging below the chart box, on top of the
+  // Share button on phones, so 1M could not be shared there.
+  if(snaps.length<2&&chartInstance){chartInstance.destroy();chartInstance=null;}
+  if(!snaps.length){empty.textContent='Log entries for two or more months to see your trend.';empty.style.display='flex';empty.style.height='';canvas.style.display='none';footer.style.display='none';return;}
   if(snaps.length===1){
     canvas.style.display='none';empty.style.display='block';empty.style.height='';
-    empty.innerHTML=renderBalanceSheetView(snaps[0]);fitBalanceSheet();footer.style.display='flex';footer.style.justifyContent='flex-end';document.getElementById('chartDebtSummary').innerHTML='';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;
+    empty.innerHTML=renderBalanceSheetView(snaps[0]);fitBalanceSheet();footer.style.display='flex';footer.style.justifyContent='flex-end';document.getElementById('chartDebtSummary').innerHTML='';return;
   }
   empty.style.display='none';empty.style.height='';canvas.style.display='block';footer.style.display='flex';footer.style.justifyContent='';
   const first=snaps[0],last=snaps[snaps.length-1];
@@ -2028,7 +2035,7 @@ function syncUpdatePaid(inp){
 function closeUpdateModal(){document.getElementById('updateModal').classList.remove('open');}
 async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const error=await writeEntries(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
 
-function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');setTimeout(()=>renderShareCanvas(s),50);}
+function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=f.month===l.month?fmtMonthLabel(f.month):`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');setTimeout(()=>renderShareCanvas(s),50);}
 function closeShareModal(){document.getElementById('shareModal').classList.remove('open');}
 function onPrivacyToggle(){const s=getFilteredSnapshots();if(s.length)renderShareCanvas(s);}
 function getShareAllocation(){
