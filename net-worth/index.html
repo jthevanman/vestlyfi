@@ -425,7 +425,8 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
 .drawer { background:var(--navy-mid); border:1px solid var(--border); border-radius:18px; padding:22px; width:100%; max-width:480px; max-height:84vh; display:flex; flex-direction:column; }
 .drawer-handle { width:36px; height:3px; background:var(--border-soft); border-radius:2px; margin:0 auto 18px; }
 .drawer-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
-.drawer-title { font-size:1rem; font-weight:500; }
+.drawer-title { font-size:1rem; font-weight:500; word-break:break-word; }
+.drawer-title-row { display:flex; align-items:center; gap:10px; }
 .drawer-type { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
 .drawer-type.asset { color:var(--green); }
 .drawer-type.liability { color:var(--red); }
@@ -769,7 +770,7 @@ footer span { color:var(--muted); font-size:0.72rem; }
 <div class="drawer-overlay" id="categoryDrawer">
   <div class="drawer">
     <div class="drawer-handle"></div>
-    <div class="drawer-header"><div><div class="drawer-title" id="drawerTitle"></div><div class="drawer-type" id="drawerType"></div></div><button class="btn-drawer-close" onclick="closeDrawer()">×</button></div>
+    <div class="drawer-header"><div><div class="drawer-title-row"><div class="drawer-title" id="drawerTitle"></div><button class="btn-drawer-edit" onclick="openRenameFromDrawer()">Rename</button></div><div class="drawer-type" id="drawerType"></div></div><button class="btn-drawer-close" onclick="closeDrawer()">×</button></div>
     <div style="margin-bottom:11px;"><button id="drawerAddValBtn" class="btn-add-section btn-add-asset" onclick="openValuationFromDrawer()" style="width:100%;padding:8px;">+ Log New Value</button></div>
     <div class="drawer-history" id="drawerHistory"></div>
   </div>
@@ -788,6 +789,16 @@ footer span { color:var(--muted); font-size:0.72rem; }
     </div>
     <div class="modal-err" id="valuationErr"></div>
     <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeValuationModal()">Cancel</button><button class="btn-modal-save" onclick="saveValuation()">Save</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="renameModal">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title">Rename Account</div>
+    <div class="modal-sub" id="renameSub"></div>
+    <div class="modal-field"><label>New name</label><input type="text" id="renameInput" maxlength="80"></div>
+    <div class="modal-err" id="renameErr"></div>
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeRenameModal()">Cancel</button><button class="btn-modal-save" id="renameSaveBtn" onclick="saveRename()">Rename</button></div>
   </div>
 </div>
 
@@ -1062,7 +1073,7 @@ function openUpdateFromLink(){
 // Create Account instead. Viewing actions (chart range, holdings tabs and
 // sorting, category drawers, the share card) work as normal.
 let demoMode=false;
-const DEMO_GATED=['openLogModal','openUpdateModal','openBulkHistoryModal','openValuationFromDrawer','editFromDrawer','deleteFromDrawer','openLinkReview','openAssetStep','dismissLinkBanner','signOut'];
+const DEMO_GATED=['openLogModal','openUpdateModal','openBulkHistoryModal','openValuationFromDrawer','openRenameFromDrawer','editFromDrawer','deleteFromDrawer','openLinkReview','openAssetStep','dismissLinkBanner','signOut'];
 DEMO_GATED.forEach(name=>{
   const real=window[name];
   if(typeof real!=='function')return;
@@ -1730,7 +1741,46 @@ function editFromDrawer(id){closeDrawer();setTimeout(()=>openEditModal(id),150);
 async function deleteFromDrawer(id){if(!confirm('Delete this entry?'))return;const{error}=await sb.from('net_worth_entries').delete().eq('id',id);if(error){console.error(error);return;}await loadEntries();if(activeDrawerCategory&&allEntries.some(e=>e.category===activeDrawerCategory))openCategoryDrawer(activeDrawerCategory);else activeDrawerCategory=null;}
 function closeDrawer(){document.getElementById('categoryDrawer').classList.remove('open');}
 
-(function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
+// ── RENAME ──
+// An account's name is repeated on every dated entry and is also how debt ties
+// and the debt tracker find it, so the rename runs as one database function
+// (rename_net_worth_category) that moves all of them together. Values and
+// dates are untouched.
+let renameCategory=null,renameType=null;
+function openRenameFromDrawer(){
+  if(!activeDrawerCategory)return;
+  const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;
+  renameCategory=activeDrawerCategory;renameType=entries[0].type;
+  const n=entries.length;
+  document.getElementById('renameSub').textContent=`All ${n} ${n===1?'entry':'entries'} under "${renameCategory}" move to the new name. Values and dates stay the same.`;
+  const input=document.getElementById('renameInput');input.value=renameCategory;
+  document.getElementById('renameErr').textContent='';
+  document.getElementById('renameModal').classList.add('open');
+  setTimeout(()=>{input.focus();input.select();},50);
+}
+function closeRenameModal(){document.getElementById('renameModal').classList.remove('open');}
+async function saveRename(){
+  const input=document.getElementById('renameInput'),err=document.getElementById('renameErr'),btn=document.getElementById('renameSaveBtn');
+  const name=input.value.trim();
+  if(!name){err.textContent='Please enter a name.';return;}
+  if(name===renameCategory){closeRenameModal();return;}
+  const takenMsg=`You already have ${renameType==='asset'?'an asset':'a liability'} called "${name}". Pick a different name.`;
+  const taken=allEntries.some(e=>e.type===renameType&&e.category!==renameCategory&&normCat(e.category)===normCat(name));
+  if(taken){err.textContent=takenMsg;return;}
+  err.textContent='';btn.disabled=true;
+  const{error}=await sb.rpc('rename_net_worth_category',{p_type:renameType,p_old:renameCategory,p_new:name});
+  btn.disabled=false;
+  if(error){console.error(error);err.textContent=/name_taken/.test(error.message||'')?takenMsg:'Could not rename. Please try again.';return;}
+  // The debt tracker remembers which net worth debts the user said not to
+  // import, by name. Carry that answer over so the rename does not re-ask.
+  if(renameType==='liability'){try{const k='vf_debt_nwsync_dismissed',d=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(d)&&d.some(s=>normCat(s)===normCat(renameCategory))){d.push(name);localStorage.setItem(k,JSON.stringify(d));}}catch(e){}}
+  closeRenameModal();
+  await loadEntries(true);
+  if(allEntries.some(e=>e.category===name))openCategoryDrawer(name);
+}
+document.getElementById('renameInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveRename();});
+
+(function(){const pairs=[{id:'entryModal',close:()=>closeModal()},{id:'updateModal',close:()=>closeUpdateModal()},{id:'shareModal',close:()=>closeShareModal()},{id:'valuationModal',close:()=>closeValuationModal()},{id:'renameModal',close:()=>closeRenameModal()},{id:'categoryDrawer',close:()=>closeDrawer()},{id:'bugModal',close:()=>closeBugModal()},{id:'bulkHistoryModal',close:()=>closeBulkHistoryModal()},{id:'assetStepModal',close:()=>closeAssetStep()},{id:'linkReviewModal',close:()=>closeLinkReview()}];pairs.forEach(({id,close})=>{const el=document.getElementById(id);let down=false;el.addEventListener('mousedown',e=>{down=e.target===el;});el.addEventListener('mouseup',e=>{if(e.target!==el)down=false;});el.addEventListener('click',e=>{if(e.target===el&&down)close();down=false;});});})();
 
 let valuationCategory=null,valuationEntryType=null;
 function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries[entries.length-1];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
