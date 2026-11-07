@@ -309,22 +309,51 @@ tbody td.name-cell { color:var(--cream); font-weight:400; }
 .v-m { color:var(--muted); }
 .empty-state { padding:32px 20px; text-align:center; color:var(--muted); font-size:0.83rem; line-height:1.7; width:100%; }
 
-/* ── SNAP STAT (single month) ── */
-.snap-stat-view { display:flex; flex-direction:column; gap:12px; padding:4px 0; }
-.snap-top { display:flex; align-items:flex-end; justify-content:space-between; padding-bottom:14px; border-bottom:1px solid var(--border-soft); }
-.snap-period { font-size:0.6rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:7px; }
-.snap-nw { font-size:2rem; font-weight:400; color:var(--cream); letter-spacing:-0.03em; line-height:1; }
-.snap-top-right { text-align:right; }
-.snap-gain-label { font-size:0.6rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:7px; }
-.snap-gain { font-size:1.3rem; font-weight:500; line-height:1; }
-.snap-gain.up { color:var(--green); }
-.snap-gain.down { color:var(--red); }
-.snap-bottom-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.snap-tile { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:10px; padding:12px 14px; }
-.snap-tile-label { font-size:0.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:6px; }
-.snap-tile-val { font-size:1.15rem; font-weight:400; letter-spacing:-0.02em; }
-.snap-tile-val.assets { color:var(--green); }
-.snap-tile-val.liabs { color:var(--red); }
+/* ── 1M BALANCE SHEET (the share card's single-month layout, live) ── */
+.chart-wrap.bs-mode { height:auto; container-type:inline-size; }
+.bs-view { display:flex; flex-direction:column; gap:16px; padding:4px 0; text-align:left; color:var(--cream); font-size:0.85rem; line-height:1.4; }
+.bs-hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:24px; align-items:end; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.12); }
+.bs-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; }
+.bs-label { font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; font-weight:500; }
+.bs-label.gold { color:var(--gold); }
+.bs-label.green { color:var(--green); }
+.bs-label.red { color:var(--red); }
+.bs-period { font-size:0.75rem; color:rgba(245,240,232,0.62); }
+.bs-nw { font-size:2.6rem; font-weight:300; letter-spacing:-0.03em; line-height:1.1; margin-top:8px; overflow-wrap:anywhere; }
+.bs-sub { font-size:0.92rem; margin-top:4px; }
+.bs-sub.up { color:#6fc99a; }
+.bs-sub.down { color:#ea7b74; }
+.bs-sub.flat { color:var(--muted); }
+.bs-bar { display:flex; gap:4px; height:28px; }
+.bs-bar > div { min-width:4px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:600; overflow:hidden; }
+.bs-bar .a { background:var(--green); color:#08301e; }
+.bs-bar .l { background:var(--red); color:#3d0f0f; }
+.bs-bar-legend { display:flex; justify-content:space-between; gap:12px; font-size:0.8rem; margin-top:8px; }
+.bs-bar-legend .a { color:#6fc99a; }
+.bs-bar-legend .l { color:#ea7b74; text-align:right; }
+.bs-lists { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+.bs-col { display:flex; flex-direction:column; min-width:0; }
+.bs-col:first-child { padding-right:22px; border-right:1px solid rgba(255,255,255,0.12); }
+.bs-col:last-child { padding-left:22px; }
+.bs-col .bs-label { margin-bottom:8px; }
+.bs-rows { flex:1; }
+.bs-row { display:flex; justify-content:space-between; gap:12px; padding:4px 0; }
+.bs-row .n { color:rgba(245,240,232,0.62); font-weight:300; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bs-row .v { flex-shrink:0; }
+.bs-total { display:flex; justify-content:space-between; gap:12px; border-top:1px solid rgba(255,255,255,0.12); margin-top:8px; padding-top:9px; }
+.bs-total span:first-child { color:rgba(245,240,232,0.38); }
+.bs-total .v { font-weight:500; }
+.bs-view .neg { color:#ea7b74; }
+/* Side by side gets cramped below ~520px of card, so the hero and the two
+   lists stack. A container query, since the card's width depends on the
+   sidebar and the stats panel, not just the viewport. */
+@container (max-width:520px) {
+  .bs-hero { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .bs-lists { grid-template-columns:minmax(0,1fr); gap:18px; }
+  .bs-col:first-child { padding-right:0; border-right:none; }
+  .bs-col:last-child { padding-left:0; }
+  .bs-nw { font-size:2.2rem; }
+}
 
 /* ── LOADING ── */
 .loading-state { display:flex; align-items:center; justify-content:center; padding:80px 0; color:var(--muted); font-size:0.83rem; gap:10px; }
@@ -681,10 +710,13 @@ footer span { color:var(--muted); font-size:0.72rem; }
                 <div class="card-title">Net Worth History</div>
               </div>
               <div class="period-btns" id="chartPeriodBtns">
-                <button class="period-btn" onclick="setChartPeriod(1)">1M</button>
-                <button class="period-btn" onclick="setChartPeriod(3)">3M</button>
-                <button class="period-btn active" onclick="setChartPeriod(12)">1Y</button>
-                <button class="period-btn" onclick="setChartPeriod(0)">All</button>
+                <button class="period-btn" data-m="1" onclick="setChartPeriod(1)">1M</button>
+                <button class="period-btn" data-m="3" onclick="setChartPeriod(3)">3M</button>
+                <button class="period-btn" data-m="6" onclick="setChartPeriod(6)">6M</button>
+                <button class="period-btn active" data-m="12" onclick="setChartPeriod(12)">1Y</button>
+                <button class="period-btn" data-m="36" onclick="setChartPeriod(36)">3Y</button>
+                <button class="period-btn" data-m="60" onclick="setChartPeriod(60)">5Y</button>
+                <button class="period-btn" data-m="0" onclick="setChartPeriod(0)">All</button>
               </div>
             </div>
             <div class="chart-wrap" id="chartWrap" style="margin:0 auto;">
@@ -1646,16 +1678,42 @@ function renderDebt(){
 
 // ── LINE CHART ──
 let chartPeriodMonths=12;
-function setChartPeriod(m){chartPeriodMonths=m;document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));const lbl={1:'1M',3:'3M',12:'1Y',0:'All'};document.querySelectorAll('.period-btn').forEach(b=>{if(b.textContent===lbl[m])b.classList.add('active');});renderChart();}
+function setChartPeriod(m){chartPeriodMonths=m;renderChart();}
 function getFilteredSnapshots(){const all=buildMonthlySnapshots();if(!chartPeriodMonths||all.length<=chartPeriodMonths)return all;return all.slice(-chartPeriodMonths);}
+// A range as long as the user's whole history draws the same chart as All, so
+// it is hidden rather than offered as a button that changes nothing. 1M always
+// stays: it is the balance sheet view, not a shorter line. A hidden range that
+// is still selected reads as All, which is what it is showing.
+function syncPeriodButtons(n){
+  let active=chartPeriodMonths;if(active>1&&active>=n)active=0;
+  document.querySelectorAll('#chartPeriodBtns .period-btn').forEach(b=>{const m=+b.dataset.m;b.hidden=m>1&&m>=n;b.classList.toggle('active',m===active);});
+}
+// The 1M view is the share card's single-month layout, live on the page: the
+// hero number, the assets vs debts bar, and the balance sheet. The rows come from
+// the same helpers the card uses, so what is on screen is what gets shared.
+function renderBalanceSheetView(s){
+  const all=buildMonthlySnapshots(),idx=all.findIndex(x=>x.month===s.month),prev=idx>0?all[idx-1]:null;
+  let sub='First month tracked',subCls='flat';
+  if(prev){const d=s.netWorth-prev.netWorth;sub=`${d>=0?'+':'-'}${fmtMoney(Math.abs(d))} this month`;subCls=d>=0?'up':'down';}
+  const totA=s.assets,totL=s.liabilities,sum=totA+totL;
+  let bar='';
+  if(sum>0){
+    const aPct=Math.round(totA/sum*100),lPct=100-aPct;
+    bar=`<div class="bs-bar">${totA>0?`<div class="a" style="flex:${totA}">${aPct>=10?aPct+'%':''}</div>`:''}${totL>0?`<div class="l" style="flex:${totL}">${lPct>=10?lPct+'%':''}</div>`:''}</div><div class="bs-bar-legend"><span class="a">${fmtMoney(totA)} assets</span><span class="l">${fmtMoney(totL)} debts</span></div>`;
+  }
+  const own=foldShareRows(getShareHoldings(),8,'assets'),owe=foldShareRows(getShareDebts(),8,'debts');
+  const col=(label,cls,rows,total,neg)=>`<div class="bs-col"><div class="bs-label ${cls}">${label}</div><div class="bs-rows">${rows.length?rows.map(r=>`<div class="bs-row"><span class="n">${escHtml(r.cat)}</span><span class="v${neg?' neg':''}">${neg?'-':''}${fmtMoney(r.value)}</span></div>`).join(''):`<div class="bs-row"><span class="n">None</span></div>`}</div><div class="bs-total"><span>Total</span><span class="v${neg&&total>0?' neg':''}">${neg&&total>0?'-':''}${fmtMoney(total)}</span></div></div>`;
+  const lists=own.length||owe.length?`<div class="bs-lists">${col('Assets','green',own,totA,false)}${col('Debts','red',owe,totL,true)}</div>`:'';
+  return `<div class="bs-view"><div class="bs-hero"><div><div class="bs-head"><span class="bs-label gold">Net Worth</span><span class="bs-period">${fmtMonthLabel(s.month)}</span></div><div class="bs-nw">${fmtMoney(s.netWorth)}</div><div class="bs-sub ${subCls}">${sub}</div></div><div>${bar}</div></div>${lists}</div>`;
+}
 function renderChart(){
-  const snaps=getFilteredSnapshots(),empty=document.getElementById('chartEmpty'),canvas=document.getElementById('nwChart'),footer=document.getElementById('chartFooter');
-  if(!snaps.length){empty.style.display='flex';canvas.style.display='none';footer.style.display='none';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
+  syncPeriodButtons(buildMonthlySnapshots().length);
+  const snaps=getFilteredSnapshots(),wrap=document.getElementById('chartWrap'),empty=document.getElementById('chartEmpty'),canvas=document.getElementById('nwChart'),footer=document.getElementById('chartFooter');
+  wrap.classList.toggle('bs-mode',snaps.length===1);
+  if(!snaps.length){empty.textContent='Log entries for two or more months to see your trend.';empty.style.display='flex';empty.style.height='';canvas.style.display='none';footer.style.display='none';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;}
   if(snaps.length===1){
-    const s=snaps[0],all=buildMonthlySnapshots(),idx=all.findIndex(x=>x.month===s.month),prev=idx>0?all[idx-1]:null,nwDiff=prev?s.netWorth-prev.netWorth:null;
-    empty.style.display='block';empty.style.alignItems='flex-start';empty.style.height='auto';
-    const gainCls=nwDiff>=0?'up':'down',gainSign=nwDiff>=0?'+':'';
-    empty.innerHTML=`<div class="snap-stat-view"><div class="snap-top"><div class="snap-top-left"><div class="snap-period">${fmtMonthLabel(s.month)}</div><div class="snap-nw">${fmtMoney(s.netWorth)}</div></div>${nwDiff!==null?`<div class="snap-top-right"><div class="snap-gain-label">This month</div><div class="snap-gain ${gainCls}">${gainSign}${fmtMoney(nwDiff)}</div></div>`:''}</div><div class="snap-bottom-row"><div class="snap-tile"><div class="snap-tile-label">Total Assets</div><div class="snap-tile-val assets">${fmtMoney(s.assets)}</div></div><div class="snap-tile"><div class="snap-tile-label">Total Liabilities</div><div class="snap-tile-val liabs">${fmtMoney(s.liabilities)}</div></div></div></div>`;
+    empty.style.display='block';empty.style.height='auto';
+    empty.innerHTML=renderBalanceSheetView(snaps[0]);
     canvas.style.display='none';footer.style.display='flex';footer.style.justifyContent='flex-end';document.getElementById('chartDebtSummary').innerHTML='';if(chartInstance){chartInstance.destroy();chartInstance=null;}return;
   }
   empty.style.display='none';empty.style.height='';canvas.style.display='block';footer.style.display='flex';footer.style.justifyContent='';
