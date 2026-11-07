@@ -1160,6 +1160,29 @@ function entryOrder(a,b){
   const ta=a.updated_at||a.created_at||'',tb=b.updated_at||b.created_at||'';
   return ta<tb?-1:ta>tb?1:0;
 }
+// One account on one date is one observation. Saving it again (the update
+// screen twice in a morning, a corrected balance) used to add a second row,
+// and live data built up copies that every total had to skip and the history
+// drawer listed in full. Now a save for a date that already has a value
+// overwrites the one shown and clears any older copies under it.
+function entryKey(e){return e.type+'\u0000'+e.category+'\u0000'+e.date;}
+async function writeEntries(rows){
+  const now=new Date().toISOString(),byKey=new Map();
+  for(const r of rows)byKey.set(entryKey(r),r);
+  const toInsert=[],updates=[],stale=[];
+  for(const r of byKey.values()){
+    const hits=allEntries.filter(e=>entryKey(e)===entryKey(r));
+    if(!hits.length){toInsert.push(r);continue;}
+    // allEntries is in entryOrder, so the last hit is the one the page shows.
+    const keep=hits[hits.length-1];
+    updates.push(sb.from('net_worth_entries').update({value:r.value,paid_off:!!r.paid_off,updated_at:now}).eq('id',keep.id));
+    hits.slice(0,-1).forEach(h=>stale.push(h.id));
+  }
+  if(toInsert.length){const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error)return error;}
+  for(const{error}of await Promise.all(updates))if(error)return error;
+  if(stale.length){const{error}=await sb.from('net_worth_entries').delete().in('id',stale);if(error)return error;}
+  return null;
+}
 async function loadEntries(silent=false){
   if(isLoadingEntries)return;isLoadingEntries=true;
   if(!silent){document.getElementById('loadingState').style.display='flex';document.getElementById('mainContent').style.display='none';}
@@ -1442,7 +1465,7 @@ async function saveLinkReview(){
   }
   if(!links.length){closeLinkReview();return;}
   if(newAssets.length){
-    const{error}=await sb.from('net_worth_entries').insert(newAssets);
+    const error=await writeEntries(newAssets);
     if(error){err.textContent='Error saving.';return;}
   }
   const{error}=await sb.from('net_worth_debt_links').upsert(links,{onConflict:'user_id,liability_category'});
@@ -1730,7 +1753,11 @@ function renderHoldings(){
 
 let activeDrawerCategory=null;
 function openCategoryDrawer(cat){
-  const entries=allEntries.filter(e=>e.category===cat).reverse();
+  // One row per date (and type, since an asset and a loan can share a name),
+  // the last saved winning, so older copies from before saves overwrote do
+  // not list next to the value every total actually uses.
+  const perDay=new Map();for(const e of allEntries)if(e.category===cat)perDay.set(entryKey(e),e);
+  const entries=[...perDay.values()].reverse();
   if(!entries.length)return;activeDrawerCategory=cat;const type=entries[0].type;
   document.getElementById('drawerTitle').textContent=cat;const te=document.getElementById('drawerType');te.textContent=type;te.className='drawer-type '+type;
   const ab=document.getElementById('drawerAddValBtn');ab.className=`btn-add-section ${type==='asset'?'btn-add-asset':'btn-add-liability'}`;ab.style.width='100%';ab.style.padding='8px';
@@ -1738,7 +1765,7 @@ function openCategoryDrawer(cat){
   document.getElementById('categoryDrawer').classList.add('open');
 }
 function editFromDrawer(id){closeDrawer();setTimeout(()=>openEditModal(id),150);}
-async function deleteFromDrawer(id){if(!confirm('Delete this entry?'))return;const{error}=await sb.from('net_worth_entries').delete().eq('id',id);if(error){console.error(error);return;}await loadEntries();if(activeDrawerCategory&&allEntries.some(e=>e.category===activeDrawerCategory))openCategoryDrawer(activeDrawerCategory);else activeDrawerCategory=null;}
+async function deleteFromDrawer(id){if(!confirm('Delete this entry?'))return;const row=allEntries.find(e=>e.id===id);if(!row)return;const ids=allEntries.filter(e=>entryKey(e)===entryKey(row)).map(e=>e.id);const{error}=await sb.from('net_worth_entries').delete().in('id',ids);if(error){console.error(error);return;}await loadEntries();if(activeDrawerCategory&&allEntries.some(e=>e.category===activeDrawerCategory))openCategoryDrawer(activeDrawerCategory);else activeDrawerCategory=null;}
 function closeDrawer(){document.getElementById('categoryDrawer').classList.remove('open');}
 
 // ── RENAME ──
@@ -1785,7 +1812,7 @@ document.getElementById('renameInput').addEventListener('keydown',e=>{if(e.key==
 let valuationCategory=null,valuationEntryType=null;
 function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries[entries.length-1];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
 function closeValuationModal(){document.getElementById('valuationModal').classList.remove('open');}
-async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const{error}=await sb.from('net_worth_entries').insert([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
+async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const error=await writeEntries([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
 document.getElementById('valuationDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 document.getElementById('valuationValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 
@@ -1860,6 +1887,10 @@ async function saveEntry(){
   if(editingId){
     const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,paid_off,updated_at:new Date().toISOString()}).eq('id',editingId);
     if(error){err.textContent='Error saving.';return;}
+    // Moving an entry onto a date that account already has a value for makes
+    // the edited one the value for that date; the other copies go.
+    const k=entryKey({type:selectedType,category,date}),stale=allEntries.filter(e=>e.id!==editingId&&entryKey(e)===k).map(e=>e.id);
+    if(stale.length){const{error:dErr}=await sb.from('net_worth_entries').delete().in('id',stale);if(dErr)console.error(dErr);}
   }else{
     const rows=[];
     // An asset built in the add-asset step is written here, not when that step
@@ -1867,7 +1898,7 @@ async function saveEntry(){
     // create.
     if(selectedType==='liability'&&tieAnswer==='yes'&&pendingAsset)rows.push({user_id:currentUser.id,date,type:'asset',category:pendingAsset.category,value:pendingAsset.value});
     rows.push({user_id:currentUser.id,date,type:selectedType,category,value,paid_off});
-    const{error}=await sb.from('net_worth_entries').insert(rows);
+    const error=await writeEntries(rows);
     if(error){err.textContent='Error saving.';return;}
   }
   if(selectedType==='liability'&&tieAnswer){
@@ -1882,7 +1913,7 @@ let bulkHistoryType='asset',bulkHistoryCategory='';
 function openBulkHistoryModal(){const cat=document.getElementById('entryCategory').value.trim();if(!cat){document.getElementById('modalErr').textContent='Please enter a category first.';return;}bulkHistoryCategory=cat;bulkHistoryType=selectedType;const d=document.getElementById('entryDate').value,v=document.getElementById('entryValue').value.trim();closeModal();document.getElementById('bulkHistoryTitle').textContent=`Historical Data: ${cat}`;document.getElementById('bulkErr').textContent='';const c=document.getElementById('bulkRows');c.innerHTML='';addBulkRow(d,v);addBulkRow();addBulkRow();document.getElementById('bulkHistoryModal').classList.add('open');}
 function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows');const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';row.innerHTML=`<input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;"><input type="text" class="bulk-value" placeholder="${VestlyCurrency.zero()}" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;font-weight:300;outline:none;"><button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;c.appendChild(row);}
 function closeBulkHistoryModal(){document.getElementById('bulkHistoryModal').classList.remove('open');}
-async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!hasMoney(row.querySelector('.bulk-value').value)){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
+async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!hasMoney(row.querySelector('.bulk-value').value)){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const error=await writeEntries(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
 
 function openUpdateModal(){
   if(!allEntries.length){alert('No entries yet to update.');return;}
@@ -1911,7 +1942,7 @@ function syncUpdatePaid(inp){
   if(!zero)lbl.querySelector('input').checked=false;
 }
 function closeUpdateModal(){document.getElementById('updateModal').classList.remove('open');}
-async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const{error}=await sb.from('net_worth_entries').insert(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
+async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const error=await writeEntries(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
 
 function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');setTimeout(()=>renderShareCanvas(s),50);}
 function closeShareModal(){document.getElementById('shareModal').classList.remove('open');}

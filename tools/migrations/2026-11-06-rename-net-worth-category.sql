@@ -49,8 +49,11 @@ begin
     raise exception 'name_taken';
   end if;
 
+  -- updated_at is left alone on purpose: the page orders entries that share a
+  -- date by it to decide which one counts, and stamping every renamed row with
+  -- the same instant would make that choice arbitrary.
   update net_worth_entries
-     set category = new_name, updated_at = now()
+     set category = new_name
    where user_id = uid and type = p_type and category = p_old;
   get diagnostics moved = row_count;
   if moved = 0 then raise exception 'not_found'; end if;
