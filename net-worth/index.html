@@ -1685,7 +1685,7 @@ function renderDebt(){
     const paidPct=original>0?Math.min(100,Math.max(0,((original-item.current)/original)*100)):0;
     const isGood=paidPct>=50;
     return`<div class="debt-item">
-      <div class="debt-item-header"><div class="debt-item-name">${item.name}</div><div class="debt-item-right"><div class="debt-item-bal">${fmtMoney(item.current)}</div><div class="debt-item-pct ${isGood?'good':'warn'}">${paidPct.toFixed(0)}% paid</div></div></div>
+      <div class="debt-item-header"><div class="debt-item-name">${escHtml(item.name)}</div><div class="debt-item-right"><div class="debt-item-bal">${fmtMoney(item.current)}</div><div class="debt-item-pct ${isGood?'good':'warn'}">${paidPct.toFixed(0)}% paid</div></div></div>
       <div class="progress-track"><div class="progress-fill ${isGood?'good':'warn'}" style="width:${paidPct.toFixed(1)}%"></div></div>
       <div class="debt-sub">Original: ${fmtMoney(original)}</div>
     </div>`;
@@ -1820,7 +1820,7 @@ function renderHoldings(){
   const ac=r=>r.type==='asset'?'#4caf7d':'#e05c5c';
   // A debt going up is bad news, so its change reads red, the same way the
   // sparkline and the drawer history already color it.
-  tbody.innerHTML=rows.map(r=>{const good=r.type==='liability'?r.change<=0:r.change>=0;const chg=r.change!==null?`<span class="${good?'v-g':'v-r'}">${r.change>=0?'+':''}${fmtMoney(r.change)}</span>`:`<span class="v-m">—</span>`;const spark=buildSparkline(r.all,r.type);const jsCat=escHtml(r.cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'"));return`<tr onclick="openCategoryDrawer('${jsCat}')" onmouseenter="holdingHover('${jsCat}','${r.type}')" onmouseleave="holdingLeave()"><td class="name-cell">${r.cat}</td><td><span class="type-badge ${r.type}">${r.type}</span></td><td class="r" style="color:${ac(r)};font-weight:500">${fmtMoney(r.value)}</td><td class="r">${chg}</td><td class="r">${spark}</td><td class="r"><div class="alloc-wrap"><div class="alloc-bar"><div class="alloc-fill" style="width:${Math.min(r.alloc,100).toFixed(1)}%;background:${ac(r)}"></div></div><span style="font-size:0.72rem;color:var(--muted)">${r.alloc.toFixed(1)}%</span></div></td><td style="color:var(--muted);font-size:0.76rem">${fmtDateLabel(r.date)}</td></tr>`;}).join('');
+  tbody.innerHTML=rows.map(r=>{const good=r.type==='liability'?r.change<=0:r.change>=0;const chg=r.change!==null?`<span class="${good?'v-g':'v-r'}">${r.change>=0?'+':''}${fmtMoney(r.change)}</span>`:`<span class="v-m">—</span>`;const spark=buildSparkline(r.all,r.type);const jsCat=escHtml(r.cat.replace(/\\/g,'\\\\').replace(/'/g,"\\'"));return`<tr onclick="openCategoryDrawer('${jsCat}')" onmouseenter="holdingHover('${jsCat}','${r.type}')" onmouseleave="holdingLeave()"><td class="name-cell">${escHtml(r.cat)}</td><td><span class="type-badge ${r.type}">${r.type}</span></td><td class="r" style="color:${ac(r)};font-weight:500">${fmtMoney(r.value)}</td><td class="r">${chg}</td><td class="r">${spark}</td><td class="r"><div class="alloc-wrap"><div class="alloc-bar"><div class="alloc-fill" style="width:${Math.min(r.alloc,100).toFixed(1)}%;background:${ac(r)}"></div></div><span style="font-size:0.72rem;color:var(--muted)">${r.alloc.toFixed(1)}%</span></div></td><td style="color:var(--muted);font-size:0.76rem">${fmtDateLabel(r.date)}</td></tr>`;}).join('');
   if(tfoot){
     const shownA=rows.filter(r=>r.type==='asset').reduce((s,r)=>s+r.value,0);
     const shownL=rows.filter(r=>r.type==='liability').reduce((s,r)=>s+r.value,0);
