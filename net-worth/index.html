@@ -108,6 +108,12 @@ body {
 .auth-field input:focus { border-color:var(--gold); }
 .btn-auth { width:100%; padding:13px; margin-top:8px; background:var(--gold); color:var(--navy); border:none; border-radius:10px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:background .15s; }
 .btn-auth:hover { background:var(--gold-light); }
+.btn-auth:disabled { opacity:0.6; cursor:default; }
+.pw-wrap { position:relative; }
+.auth-field .pw-wrap input { padding-right:64px; }
+.pw-toggle { position:absolute; right:6px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.74rem; cursor:pointer; padding:6px 8px; }
+.pw-toggle:hover { color:var(--gold-light); }
+#signupSentEmail { color:var(--cream); font-weight:500; word-break:break-all; }
 .auth-msg { font-size:0.8rem; margin-top:10px; text-align:center; min-height:18px; }
 .auth-msg.err { color:var(--red); }
 .auth-msg.ok  { color:var(--green); }
@@ -578,18 +584,29 @@ footer span { color:var(--muted); font-size:0.72rem; }
       <button class="auth-tab" onclick="switchTab('signup')">Create Account</button>
     </div>
     <div id="signinForm">
-      <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
+      <div class="auth-field"><label for="siEmail">Email</label><input type="email" id="siEmail" name="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="auth-field"><label for="siPassword">Password</label><input type="password" id="siPassword" name="password" autocomplete="current-password" placeholder="••••••••"></div>
       <button class="btn-auth" onclick="signIn()">Sign In</button>
       <div class="auth-alt"><button type="button" class="auth-link" onclick="showResetForm()">Forgot your password?</button></div>
       <div class="auth-msg" id="siMsg"></div>
+      <div class="auth-alt" id="siResendWrap" style="display:none"><button type="button" class="auth-link" onclick="resendConfirmation('siMsg')">Resend the confirmation email</button></div>
     </div>
     <div id="signupForm" style="display:none">
-      <div class="auth-field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 6 characters"></div>
-      <div class="auth-field"><label>Confirm Password</label><input type="password" id="suPasswordConfirm" placeholder="Re-enter your password"></div>
-      <button class="btn-auth" onclick="signUp()">Create Account</button>
-      <div class="auth-msg" id="suMsg"></div>
+      <div id="signupFields">
+        <div class="auth-field"><label for="suEmail">Email</label><input type="email" id="suEmail" name="email" autocomplete="email" placeholder="you@example.com"></div>
+        <div class="auth-field"><label for="suPassword">Password</label><div class="pw-wrap"><input type="password" id="suPassword" name="new-password" autocomplete="new-password" placeholder="At least 6 characters"><button type="button" class="pw-toggle" onclick="togglePw('suPassword',this)" aria-label="Show password">Show</button></div></div>
+        <button class="btn-auth" id="suBtn" onclick="signUp()">Create Account</button>
+        <div class="auth-msg" id="suMsg"></div>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="switchTab('signin')">Already have an account? Sign in</button></div>
+      </div>
+      <div id="signupSent" style="display:none">
+        <h2 class="auth-form-title">Check your email</h2>
+        <p class="auth-form-sub">We sent a link to <strong id="signupSentEmail"></strong>. Click it and your tracker opens, already signed in. It can take a minute, and it may land in spam.</p>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="resendConfirmation('sentMsg')">Did not get it? Resend the email</button></div>
+        <div class="auth-msg" id="sentMsg"></div>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="resetSignupForm()">Use a different email</button></div>
+        <div class="auth-alt"><button type="button" class="auth-link" onclick="switchTab('signin')">Opened the link on another device? Sign in</button></div>
+      </div>
     </div>
     <div id="resetForm" style="display:none">
       <h2 class="auth-form-title">Reset your password</h2>
@@ -975,6 +992,9 @@ footer span { color:var(--muted); font-size:0.72rem; }
 </div>
 
 <script>
+// The part of the address after #, read before Supabase consumes it. A working
+// confirmation link arrives with type=signup; a dead one with error_code.
+const landingHash=window.location.hash||'';
 const{createClient}=supabase;
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
@@ -1071,15 +1091,47 @@ const QUICK_LIABILITIES=['Credit Card','Auto Loan','Mortgage','Student Loan','Pe
 const DONUT_COLORS=['#c9a84c','#4caf7d','#60a5fa','#a78bfa','#fb923c','#f472b6','#34d399','#e8c97a'];
 
 // ── AUTH ──
-function switchTab(t){
+// setAuthTab only changes what is on screen. switchTab is the same thing plus
+// the analytics event, for when a person (or a flow acting for them) moves.
+function setAuthTab(t){
   document.getElementById('authTabs').style.display='flex';
   document.getElementById('resetForm').style.display='none';
   document.getElementById('newPasswordForm').style.display='none';
   document.querySelectorAll('.auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
   document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
   document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
-  track('nw_auth_tab',{tab:t});
 }
+function switchTab(t){setAuthTab(t);track('nw_auth_tab',{tab:t});}
+
+// ── WHICH FORM A SIGNED-OUT VISITOR SEES FIRST ──
+// Someone new should land on Create Account; someone who has used the tracker
+// in this browser should land on Sign In. vf_has_account is written on every
+// sign-in from here on. vf_currency has been written on every signed-in load
+// since August 2026, so it recognises existing users on day one, before the
+// new flag exists in their browser. The monthly reminder email only goes to
+// people who already have an account.
+function defaultAuthTab(){
+  const q=new URLSearchParams(location.search);
+  if(q.has('update')||q.get('utm_campaign')==='nw-monthly')return'signin';
+  try{if(localStorage.getItem('vf_has_account')==='1'||localStorage.getItem('vf_currency'))return'signin';}catch(e){}
+  return'signup';
+}
+function rememberAccount(){try{localStorage.setItem('vf_has_account','1');}catch(e){}}
+// Set before the session check below, so nobody watches the tabs swap.
+setAuthTab(defaultAuthTab());
+
+// A confirmation or reset link that has expired, or that a mail scanner opened
+// first, comes back with an error in the address instead of a session.
+function handleDeadLink(){
+  if(!/[#&]error(_code)?=/.test(landingHash))return false;
+  setAuthTab('signin');
+  const m=document.getElementById('siMsg');m.className='auth-msg err';
+  m.textContent='That email link has expired or was already used. If you have confirmed your email, sign in here. If not, create your account again to get a new link.';
+  if(history.replaceState)history.replaceState(null,'',location.pathname+location.search);
+  track('nw_auth_link_error',{code:(landingHash.match(/error_code=([a-z0-9_]+)/)||[])[1]||'unknown'});
+  return true;
+}
+function togglePw(id,btn){const el=document.getElementById(id),show=el.type==='password';el.type=show?'text':'password';btn.textContent=show?'Hide':'Show';btn.setAttribute('aria-label',show?'Hide password':'Show password');}
 function showSigninForm(){switchTab('signin');}
 function showResetForm(){
   document.getElementById('authTabs').style.display='none';
@@ -1101,16 +1153,73 @@ function showNewPasswordForm(){
 async function requestReset(){const email=document.getElementById('rsEmail').value.trim(),msg=document.getElementById('rsMsg');if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';return;}msg.className='auth-msg';msg.textContent='Sending…';const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/net-worth/'});if(error){msg.className='auth-msg err';msg.textContent=error.message;}else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link. It may take a minute. Check your spam folder too.';}}
 async function updatePassword(){const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');if(pw!==cf){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}if(pw.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}msg.className='auth-msg';msg.textContent='Updating…';const{error}=await sb.auth.updateUser({password:pw});if(error){msg.className='auth-msg err';msg.textContent=error.message;return;}msg.className='auth-msg ok';msg.textContent='Password updated! Loading your account…';recoveryMode=false;if(history.replaceState)history.replaceState(null,'',window.location.pathname);setTimeout(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();}else{switchTab('signin');document.getElementById('siMsg').className='auth-msg ok';document.getElementById('siMsg').textContent='Password updated. Please sign in.';}},800);}
 ['siEmail','siPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signIn();}));
-['suEmail','suPassword','suPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
+['suEmail','suPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
 document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='Enter')requestReset();});
 ['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
 document.getElementById('entryValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
 document.getElementById('entryCategory').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
-async function signIn(){const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');msg.className='auth-msg';msg.textContent='Signing in…';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;track('nw_signin_error',{code:authErrCode(error)});}else{msg.className='auth-msg ok';msg.textContent='Success!';}}
+async function signIn(){const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');msg.className='auth-msg';msg.textContent='Signing in…';document.getElementById('siResendWrap').style.display='none';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.className='auth-msg err';
+  // Signed up but never clicked the email: say so and offer to send it again,
+  // rather than leaving them with "Email not confirmed".
+  if(authErrCode(error)==='email_not_confirmed'||/not confirmed/i.test(error.message||'')){msg.textContent='Confirm your email first. Click the link we sent you, or resend it below.';pendingEmail=email;document.getElementById('siResendWrap').style.display='';}
+  else msg.textContent=error.message;
+  track('nw_signin_error',{code:authErrCode(error)});}else{msg.className='auth-msg ok';msg.textContent='Success!';}}
 // Supabase's short error code (for example invalid_credentials), never its
 // message text, so nothing a person typed can end up in analytics.
 function authErrCode(error){return String((error&&(error.code||error.status))||'unknown').slice(0,40);}
-async function signUp(){const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';track('nw_signup_error',{code:'password_mismatch'});return;}if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';track('nw_signup_error',{code:'password_short'});return;}msg.className='auth-msg';msg.textContent='Creating account…';const{error}=await sb.auth.signUp({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;track('nw_signup_error',{code:authErrCode(error)});}else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';track('nw_signup_submit',{method:'email'});}}
+// The confirmation link opens the tracker itself, so the click that confirms
+// the email also signs the person in. Without this it went to the homepage,
+// which cannot sign anyone in, and they had to find their way back and log in.
+function signupRedirect(){return window.location.origin+'/net-worth/';}
+function signupErrText(error){
+  const c=authErrCode(error);
+  if(c==='over_email_send_rate_limit'||c==='over_request_rate_limit'||c==='429')return'Too many attempts just now. Wait a minute and try again.';
+  if(/failed to fetch|networkerror|load failed/i.test((error&&error.message)||''))return'Could not reach the server. Check your connection and try again.';
+  return(error&&error.message)||'Something went wrong. Please try again.';
+}
+// The address a confirmation email was last sent to, for the resend buttons.
+let pendingEmail='',resendAt=0;
+function showSignupSent(email){document.getElementById('signupSentEmail').textContent=email;document.getElementById('sentMsg').textContent='';document.getElementById('signupFields').style.display='none';document.getElementById('signupSent').style.display='block';}
+function resetSignupForm(){document.getElementById('signupSent').style.display='none';document.getElementById('signupFields').style.display='block';document.getElementById('suMsg').textContent='';}
+async function signUp(){
+  const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,msg=document.getElementById('suMsg'),btn=document.getElementById('suBtn');
+  if(btn.disabled)return;
+  if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';track('nw_signup_error',{code:'email_missing'});return;}
+  if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';track('nw_signup_error',{code:'password_short'});return;}
+  msg.className='auth-msg';msg.textContent='Creating account…';btn.disabled=true;
+  let data=null,error=null;
+  try{({data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:signupRedirect()}}));}catch(e){error=e;}
+  btn.disabled=false;
+  if(error){msg.className='auth-msg err';msg.textContent=signupErrText(error);track('nw_signup_error',{code:authErrCode(error)});return;}
+  // A session straight away means no email step was needed; the sign-in
+  // handler below takes over from here.
+  if(data&&data.session){msg.textContent='';track('nw_signup_submit',{method:'email'});return;}
+  // An address that already has a confirmed account comes back looking like a
+  // success, but with no identities, and no email is ever sent. That used to
+  // leave the person waiting for a message that was not coming. If the
+  // password they typed is the right one they are simply signed in; if not,
+  // they are moved to Sign In with the address filled in.
+  if(data&&data.user&&Array.isArray(data.user.identities)&&data.user.identities.length===0){
+    msg.textContent='You already have an account. Signing you in…';
+    let sErr=null;
+    try{({error:sErr}=await sb.auth.signInWithPassword({email,password}));}catch(e){sErr=e;}
+    msg.textContent='';
+    if(!sErr){track('nw_signup_existing',{result:'signed_in'});return;}
+    setAuthTab('signin');document.getElementById('siEmail').value=email;
+    const sm=document.getElementById('siMsg');sm.className='auth-msg err';sm.textContent='You already have an account with this email. Enter your password to sign in, or use "Forgot your password?".';
+    track('nw_signup_existing',{result:'needs_password'});return;
+  }
+  pendingEmail=email;showSignupSent(email);track('nw_signup_submit',{method:'email'});
+}
+async function resendConfirmation(msgId){
+  const msg=document.getElementById(msgId);if(!pendingEmail)return;
+  if(Date.now()-resendAt<60000){msg.className='auth-msg';msg.textContent='Just sent. Give it a minute before trying again.';return;}
+  resendAt=Date.now();msg.className='auth-msg';msg.textContent='Sending…';
+  let error=null;
+  try{({error}=await sb.auth.resend({type:'signup',email:pendingEmail,options:{emailRedirectTo:signupRedirect()}}));}catch(e){error=e;}
+  if(error){resendAt=0;msg.className='auth-msg err';msg.textContent=signupErrText(error);track('nw_signup_resend',{ok:0});}
+  else{msg.className='auth-msg ok';msg.textContent='Sent. Check your inbox and your spam folder.';track('nw_signup_resend',{ok:1});}
+}
 async function signOut(){await sb.auth.signOut();}
 function showAuth(){document.getElementById('authScreen').style.display='flex';document.getElementById('appScreen').style.display='none';}
 function showApp(){document.getElementById('authScreen').style.display='none';document.getElementById('appScreen').style.display='block';}
@@ -1120,7 +1229,7 @@ let initDone=false,recoveryMode=false;
 if(window.location.hash.includes('type=recovery'))recoveryMode=true;
 // The monthly reminder email links here with ?update=1 and its campaign tag.
 (()=>{const q=new URLSearchParams(location.search);if(q.has('update')||q.get('utm_campaign')==='nw-monthly')track('nw_reminder_landing');})();
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();trackAppOpen(true);openUpdateFromLink();}else if(new URLSearchParams(location.search).has('demo')){startDemo();}else{showAuth();track('nw_auth_view');}initDone=true;})();
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;rememberAccount();if(/type=signup/.test(landingHash))track('nw_signup_confirmed');showApp();setUserChip();await loadEntries();trackAppOpen(true);openUpdateFromLink();}else if(new URLSearchParams(location.search).has('demo')){startDemo();}else{showAuth();const dead=handleDeadLink();track('nw_auth_view',{tab:dead?'signin':defaultAuthTab()});}initDone=true;})();
 sb.auth.onAuthStateChange(async(event,session)=>{
   if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
   if(recoveryMode&&event==='SIGNED_IN')return;
@@ -1129,11 +1238,11 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     // Supabase repeats SIGNED_IN when a tab regains focus, so only the first
     // one after being signed out counts as a login.
     const fresh=!currentUser;
-    clearDemo();currentUser=session.user;showApp();setUserChip();
+    clearDemo();currentUser=session.user;rememberAccount();showApp();setUserChip();
     if(fresh){const age=Date.now()-new Date(session.user.created_at||0).getTime();track('nw_login',{method:(session.user.app_metadata&&session.user.app_metadata.provider)||'email',account:age<864e5?'new':'returning'});}
     await loadEntries();if(fresh)trackAppOpen(false);openUpdateFromLink();
   }
-  else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;appOpenTracked=false;showAuth();}
+  else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;appOpenTracked=false;resetSignupForm();setAuthTab('signin');showAuth();}
 });
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUser&&!isLoadingEntries)loadEntries(true);});
 

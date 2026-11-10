@@ -40,7 +40,12 @@
   ]
 }
 </script>
-<script>if(window.location.hash.includes('type=recovery')||window.location.hash.includes('type=email_change')){window.location.replace('/net-worth/'+window.location.hash);}</script>
+<script>
+// Email links from the tracker (password reset, email change, signup
+// confirmation, and their expired versions) can land here. This page cannot
+// sign anyone in, so they are passed on to the tracker, which can.
+(function(){var h=window.location.hash;if(h.includes('type=recovery')||h.includes('type=email_change')||h.includes('type=signup')||/[#&]error_code=/.test(h)){window.location.replace('/net-worth/'+h);}})();
+</script>
 <script>
 // Visiting any page with ?internal=1 marks this browser as the site owner's, so
 // its visits stay out of Google Analytics. ?internal=0 undoes it. This has to
