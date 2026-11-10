@@ -21,6 +21,11 @@ so this file is never served.
   (all tried and dropped on Nov 9).
 - The line climbs with the occasional dip and jump, and the scale refits so it
   never leaves the frame. Small dots mark monthly check-ins.
+- Under the headline, "Plus calculators for ___ →" swaps the calculator name
+  every 2.4s (slot-machine style) and links to /calculators/ only. It sits in
+  the subheading so the H1 stays "VestlyFi Net Worth Tracker".
+- On load the headline words rise in one by one, then the rest, then the
+  band's line draws itself in from the left before it starts drifting.
 - Scrolling holds the page while the band grows into a net worth dashboard
   preview (sample data), then normal scrolling continues.
 - The dashboard preview always shows debts next to assets, and they add up to
@@ -32,7 +37,11 @@ so this file is never served.
 - [x] Branch created from `main` (Nov 9 2026)
 - [x] Prototype at `/home-v2/` (noindex, no analytics, "Prototype" badge)
 - [x] Confirm Vercel builds a preview link for this branch (it does, on every push)
+- [x] Rotating calculators line and load-in intro (Nov 9)
+- [x] Reduced-motion version checked (static list, still dashboard)
 - [ ] Try the prototype on a phone and decide: keep going or drop it
+- [ ] Optional, if the top still feels plain: own/owe/net worth ticker tied to
+      the line, and a slow gold glow behind the headline
 - [ ] Tune: drift speed, line wiggle, band height, scroll length
 - [ ] Decide on the optional debt line in the band
 - [ ] Move the hero share card into the page (the "share your progress" moment)

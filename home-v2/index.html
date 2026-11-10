@@ -75,8 +75,43 @@ nav {
 }
 .intro p {
   font-size:clamp(1rem, 1.6vw, 1.15rem); line-height:1.6;
-  color:rgba(245,240,232,0.62); margin:18px 0 28px; max-width:31em;
+  color:rgba(245,240,232,0.62); margin:18px 0 10px; max-width:31em;
 }
+
+/* Rotating calculators line. The word box glides to each word's width so the
+   centred line never jumps. */
+.rot-line {
+  display:inline-flex; align-items:center; justify-content:center; flex-wrap:wrap;
+  gap:0 0.35em; margin:0 0 30px; line-height:1.4;
+  font-size:clamp(0.95rem, 1.4vw, 1.05rem); color:rgba(245,240,232,0.62); text-decoration:none;
+}
+.rot-wrap { display:inline-flex; align-items:center; gap:0.4em; }
+.rot {
+  position:relative; display:inline-block; height:1.4em; overflow:hidden;
+  transition:width .45s cubic-bezier(.2,.7,.2,1);
+}
+.rot span {
+  position:absolute; left:0; top:0; white-space:nowrap; line-height:1.4em;
+  color:var(--gold-light); font-weight:500;
+  transform:translateY(100%); opacity:0;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s;
+}
+.rot span.on  { transform:none; opacity:1; }
+.rot span.out { transform:translateY(-100%); opacity:0; }
+.rot-arrow { color:var(--gold); transition:transform .15s; }
+.rot-line:hover .rot-arrow { transform:translateX(3px); }
+.rot-static { display:none; color:var(--gold-light); font-weight:500; }
+
+/* Load-in: headline words rise one after another, then the rest follows.
+   Plays once. The band's line draws itself in from the script. */
+@keyframes rise { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
+.intro h1 .w { display:inline-block; animation:rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.intro h1 .w:nth-child(2) { animation-delay:.08s; }
+.intro h1 .w:nth-child(3) { animation-delay:.16s; }
+.intro h1 .w:nth-child(4) { animation-delay:.24s; }
+.intro p   { animation:rise .8s cubic-bezier(.2,.7,.2,1) .4s both; }
+.rot-line  { animation:rise .8s cubic-bezier(.2,.7,.2,1) .55s both; }
+.ctas      { animation:rise .8s cubic-bezier(.2,.7,.2,1) .7s both; }
 .ctas { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
 .btn-gold, .btn-ghost {
   display:inline-flex; align-items:center; justify-content:center;
@@ -137,6 +172,7 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   nav { padding:0 20px; }
   .nav-links { display:none; }
   .intro { bottom:96px; }
+  .rot-line { flex-direction:column; gap:2px; }
   .ctas { flex-direction:column; width:100%; max-width:320px; }
   .dash-head { left:14px; right:14px; top:16px; flex-direction:column; gap:8px; }
   .dash-num { font-size:2rem; }
@@ -159,6 +195,9 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
 .still .pin { position:relative; top:0; height:auto; overflow:visible; }
 .still .intro { position:relative; opacity:1 !important; transform:none !important; visibility:visible !important; padding:64px 24px 36px; }
 .still .viz-box { position:relative; height:min(620px, 88svh); }
+.still .intro * { animation:none !important; }
+.still .rot, .still .rot-arrow { display:none; }
+.still .rot-static { display:inline; }
 </style>
 </head>
 <body>
@@ -179,8 +218,16 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
 <section class="stage" id="stage">
   <div class="pin" id="pin">
     <div class="intro" id="intro">
-      <h1>VestlyFi Net Worth Tracker</h1>
+      <h1><span class="w">VestlyFi</span> <span class="w">Net</span> <span class="w">Worth</span> <span class="w">Tracker</span></h1>
       <p>Add up what you own, subtract what you owe, and watch where the number is heading.</p>
+      <a class="rot-line" href="/calculators/" aria-label="Plus calculators for mortgage payoff, retirement, Coast FIRE and more">
+        <span>Plus calculators for</span>
+        <span class="rot-wrap">
+          <span class="rot" id="rot" aria-hidden="true"><span>mortgage payoff</span><span>retirement</span><span>Coast FIRE</span><span>debt payoff</span><span>house affordability</span><span>compound interest</span></span>
+          <span class="rot-static">mortgage payoff, retirement, Coast FIRE and more</span>
+          <span class="rot-arrow" aria-hidden="true">→</span>
+        </span>
+      </a>
       <div class="ctas">
         <a class="btn-gold" href="/net-worth/">Start tracking</a>
         <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
@@ -316,12 +363,28 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   var ymin = null, ymax = null, pulses = [], lastCk = Math.floor(T/STEP);
   var GOLD = '201,168,76';
 
+  // On load the line draws itself in from the left, after the headline has
+  // mostly risen in, and only then starts drifting. Scrolling skips it.
+  var DRAW_DELAY = 0.8, DRAW_DUR = 1.2;
+  // The clock starts when the headline's own animation does, so a slow first
+  // paint can't leave the line finished before the words have risen.
+  var drawStart = Infinity, drawDone = reduce;
+  function startDraw(){ if (drawStart === Infinity) drawStart = performance.now(); }
+  intro.querySelector('.w').addEventListener('animationstart', startDraw);
+  setTimeout(startDraw, 1500);
+
   function draw(now, dt){
     var p = progress();
     var g = ease(clamp((p-0.06)/0.74, 0, 1));
 
+    var drawIn = 1;
+    if (!drawDone) {
+      drawIn = p > 0.01 ? 1 : drawStart === Infinity ? 0 : clamp(((now-drawStart)/1000 - DRAW_DELAY)/DRAW_DUR, 0, 1);
+      if (drawIn >= 1) drawDone = true;
+    }
+
     // The drift slows to a stop as the band becomes the dashboard chart.
-    T += (reduce ? 0 : SPEED*Math.pow(1-g, 1.5)) * dt;
+    T += (reduce || !drawDone ? 0 : SPEED*Math.pow(1-g, 1.5)) * dt;
     ensure(Math.ceil(T) + 3);
 
     var band = { x:0, y:H-bandH, w:W, h:bandH };
@@ -365,6 +428,23 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     var headY = Y(headV);
     pts.push([headX, headY]);
 
+    // Draw-in: everything left of rx is shown, and the dot rides the edge.
+    var hx = headX, hy = headY;
+    if (drawIn < 1) {
+      var de = 1 - Math.pow(1-drawIn, 3);
+      hx = plot.x + (headX-plot.x)*de;
+      hy = pts[0][1];
+      for (i = 1; i < pts.length; i++) {
+        if (pts[i][0] >= hx) {
+          var s0 = pts[i-1], s1 = pts[i], f = s1[0] > s0[0] ? (hx-s0[0])/(s1[0]-s0[0]) : 1;
+          hy = lerp(s0[1], s1[1], clamp(f,0,1));
+          break;
+        }
+      }
+    }
+    ctx.save();
+    ctx.beginPath(); ctx.rect(card.x, card.y, Math.max(0, hx-card.x), card.h); ctx.clip();
+
     // Area under the line.
     var fill = ctx.createLinearGradient(0, plot.y, 0, plot.y+plot.h);
     fill.addColorStop(0, 'rgba('+GOLD+','+(0.16+0.06*g)+')');
@@ -401,14 +481,17 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
       ctx.strokeStyle = 'rgba(232,201,122,'+(0.55*(1-pu.t/0.9))+')'; ctx.lineWidth = 1.2; ctx.stroke();
     }
 
-    // Glowing head.
+    ctx.restore();
+
+    // Glowing head (hidden until the draw-in starts moving).
+    ctx.globalAlpha = clamp(drawIn*6, 0, 1);
     var beat = reduce ? 0.5 : 0.5 + 0.5*Math.sin(now/600);
-    var halo = ctx.createRadialGradient(headX, headY, 0, headX, headY, 12 + 5*beat);
+    var halo = ctx.createRadialGradient(hx, hy, 0, hx, hy, 12 + 5*beat);
     halo.addColorStop(0, 'rgba(232,201,122,0.45)');
     halo.addColorStop(1, 'rgba(232,201,122,0)');
     ctx.fillStyle = halo;
-    ctx.beginPath(); ctx.arc(headX, headY, 12 + 5*beat, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(headX, headY, 3.6, 0, Math.PI*2);
+    ctx.beginPath(); ctx.arc(hx, hy, 12 + 5*beat, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(hx, hy, 3.6, 0, Math.PI*2);
     ctx.fillStyle = '#e8c97a'; ctx.fill();
 
     ctx.restore();
@@ -443,6 +526,25 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   new ResizeObserver(resize).observe(box);
   resize();
   setRunning();
+
+  // ── Rotating calculators line ──
+  var rot = document.getElementById('rot');
+  var words = [].slice.call(rot.children), wi = 0;
+  function sizeRot(){ rot.style.width = words[wi].offsetWidth + 'px'; }
+  words[0].classList.add('on');
+  sizeRot();
+  if (document.fonts) document.fonts.ready.then(sizeRot);
+  window.addEventListener('resize', sizeRot);
+  if (!reduce) setInterval(function(){
+    // Skip turns while nobody can see it (tab hidden or scrolled past).
+    if (document.hidden || parseFloat(intro.style.opacity || '1') < 0.05) return;
+    var prev = words[wi];
+    prev.classList.remove('on'); prev.classList.add('out');
+    setTimeout(function(){ prev.classList.remove('out'); }, 520);
+    wi = (wi + 1) % words.length;
+    words[wi].classList.add('on');
+    sizeRot();
+  }, 2400);
 })();
 </script>
 </body>
