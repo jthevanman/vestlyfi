@@ -30,7 +30,7 @@ so this file is never served.
 
 - [x] Branch created from `main` (Nov 9 2026)
 - [x] Prototype at `/home-v2/` (noindex, no analytics, "Prototype" badge)
-- [ ] Confirm Vercel builds a preview link for this branch
+- [x] Confirm Vercel builds a preview link for this branch (it does, on every push)
 - [ ] Try the prototype on a phone and decide: keep going or drop it
 - [ ] Tune: drift speed, line wiggle, band height, scroll length
 - [ ] Decide on the optional debt line in the band
