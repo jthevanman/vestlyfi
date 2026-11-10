@@ -343,15 +343,8 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     ctx.save();
     ctx.beginPath(); ctx.rect(card.x, card.y, card.w, card.h); ctx.clip();
 
-    // Faint gridlines, a little stronger once it reads as a dashboard.
-    ctx.strokeStyle = 'rgba(255,255,255,'+(0.03+0.03*g)+')'; ctx.lineWidth = 1;
-    for (var gi = 1; gi <= 3; gi++) {
-      var gy = Math.round(plot.y + plot.h*gi/4) + 0.5;
-      ctx.beginPath(); ctx.moveTo(plot.x, gy); ctx.lineTo(plot.x+plot.w, gy); ctx.stroke();
-    }
-
-    // The head sits mid-screen in the band (history left, projection right)
-    // and moves to the right edge as the chart fills the dashboard.
+    // The head sits mid-screen in the band and moves to the right edge as the
+    // chart fills the dashboard.
     var anchor = 0.5 + 0.5*g;
     var headX = plot.x + plot.w*anchor;
     var dx = (plot.w*anchor)/windowCount;
@@ -359,20 +352,8 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     var i0 = Math.max(base, i1 - windowCount - 1);
     var headV = lerp(val(i1), val(i1+1), frac);
 
-    // Recent trend, for the projection.
-    var n = Math.min(40, i1-i0), sx=0, sy=0, sxy=0, sxx=0;
-    for (var j = 0; j < n; j++) { var xi = j, yi = val(i1-n+1+j); sx+=xi; sy+=yi; sxy+=xi*yi; sxx+=xi*xi; }
-    var slope = n > 1 ? (n*sxy - sx*sy)/(n*sxx - sx*sx) : 0;
-    var projA = 1 - g;
-    var projSteps = (plot.x + plot.w - headX)/dx;
-    var projEnd = headV + slope*projSteps;
-
     var lo = headV, hi = headV;
     for (var i = i0; i <= i1; i++) { var vi = val(i); if (vi < lo) lo = vi; if (vi > hi) hi = vi; }
-    var spread = Math.abs(projEnd-headV)*0.35 + (hi-lo)*0.04;
-    // Fitting the whole projection would squash the history into the bottom
-    // of the band, so only part of it counts; the rest heads off the top.
-    if (projA > 0.02) hi = Math.max(hi, headV + (projEnd-headV)*0.45*projA);
     var pad = (hi-lo)*0.14 || 1;
     if (ymin === null || dt === 0) { ymin = lo-pad; ymax = hi+pad; }
     else { var kk = 1 - Math.exp(-dt*2.5); ymin += (lo-pad-ymin)*kk; ymax += (hi+pad-ymax)*kk; }
@@ -402,27 +383,6 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     ctx.beginPath();
     for (i = 0; i < pts.length; i++) i ? ctx.lineTo(pts[i][0], pts[i][1]) : ctx.moveTo(pts[i][0], pts[i][1]);
     ctx.strokeStyle = lg; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
-
-    // Projection: a widening cone and a dashed trend line to the right edge.
-    if (projA > 0.01) {
-      var ex = plot.x + plot.w;
-      ctx.beginPath();
-      ctx.moveTo(headX, headY);
-      ctx.lineTo(ex, Y(projEnd + spread));
-      ctx.lineTo(ex, Y(projEnd - spread));
-      ctx.closePath();
-      var cg = ctx.createLinearGradient(headX, 0, ex, 0);
-      cg.addColorStop(0, 'rgba('+GOLD+','+(0.10*projA)+')');
-      cg.addColorStop(1, 'rgba('+GOLD+',0)');
-      ctx.fillStyle = cg; ctx.fill();
-      ctx.beginPath(); ctx.moveTo(headX, headY); ctx.lineTo(ex, Y(projEnd));
-      ctx.setLineDash([5,6]);
-      var dg = ctx.createLinearGradient(headX, 0, ex, 0);
-      dg.addColorStop(0, 'rgba(232,201,122,'+(0.6*projA)+')');
-      dg.addColorStop(1, 'rgba(232,201,122,0)');
-      ctx.strokeStyle = dg; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.setLineDash([]);
-    }
 
     // Monthly check-in dots, and a ring when a new one lands at the head.
     var ck = Math.floor(T/STEP);

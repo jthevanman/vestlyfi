@@ -16,8 +16,9 @@ so this file is never served.
 - The 01/02/03 "how it works" cards are gone.
 - First screen: a big centered headline and the two buttons, with a thin
   animated net worth line along the bottom. No text in the band and no click
-  target. The moving dot stays mid-screen: history on the left, a faint
-  dashed projection on the right.
+  target. The moving dot stays mid-screen with history on the left and open
+  space on the right. No gridlines, no dashed projection, no shaded cone
+  (all tried and dropped on Nov 9).
 - The line climbs with the occasional dip and jump, and the scale refits so it
   never leaves the frame. Small dots mark monthly check-ins.
 - Scrolling holds the page while the band grows into a net worth dashboard
