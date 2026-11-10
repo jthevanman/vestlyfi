@@ -7,6 +7,11 @@
      branch, is never indexed, and has no analytics so test visits stay out
      of GA. Delete this folder before the branch merges (see REDESIGN.md). -->
 <meta name="robots" content="noindex, nofollow">
+<script>
+// Which candidate top to show: ?hero=a|b|c, default a. Set before paint so
+// the page never flashes the wrong one.
+(function(){ var h = (new URLSearchParams(location.search).get('hero') || 'a').toLowerCase(); if (!/^[abc]$/.test(h)) h = 'a'; document.documentElement.setAttribute('data-hero', h); })();
+</script>
 <title>VestlyFi | Homepage prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,11 +54,18 @@ nav {
 .nav-links a:hover, .nav-links a.active { color:var(--cream); }
 
 .proto-flag {
-  position:fixed; right:12px; top:76px; z-index:60; pointer-events:none;
+  position:fixed; right:12px; top:76px; z-index:60;
+  display:flex; align-items:center; gap:8px;
   font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
-  color:var(--gold); background:rgba(10,15,30,0.88);
-  border:1px solid var(--border); border-radius:6px; padding:4px 8px;
+  color:var(--gold); background:rgba(10,15,30,0.92);
+  border:1px solid var(--border); border-radius:8px; padding:4px 4px 4px 9px;
 }
+.proto-flag button {
+  font-family:'Outfit',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0;
+  width:26px; height:24px; border-radius:5px; cursor:pointer;
+  background:none; border:1px solid var(--border-soft); color:var(--muted);
+}
+.proto-flag button.on { background:var(--gold); border-color:var(--gold); color:var(--navy); }
 
 /* ── STAGE ──
    The stage is taller than the screen. Its inner .pin sticks under the nav
@@ -66,53 +78,78 @@ nav {
 
 .intro {
   position:absolute; left:0; right:0; top:0; bottom:140px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding:0 24px; will-change:opacity, transform;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 24px; will-change:opacity, transform;
 }
-.intro h1 {
-  font-size:clamp(2.4rem, 6vw, 4.4rem); font-weight:500;
-  line-height:1.04; letter-spacing:-0.02em; text-wrap:balance; max-width:12em;
-}
-.intro p {
-  font-size:clamp(1rem, 1.6vw, 1.15rem); line-height:1.6;
-  color:rgba(245,240,232,0.62); margin:18px 0 10px; max-width:31em;
+.ctas { display:flex; flex-wrap:wrap; gap:12px; }
+
+/* Three candidate tops, switched with the A/B/C buttons (or ?hero=a|b|c).
+   Only one shows at a time. */
+.hero { display:none; width:100%; }
+html[data-hero="a"] .hero-a,
+html[data-hero="b"] .hero-b,
+html[data-hero="c"] .hero-c { display:flex; }
+.eyebrow {
+  font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--gold); font-weight:500;
 }
 
-/* Rotating calculators line. The word box glides to each word's width so the
-   centred line never jumps. */
-.rot-line {
-  display:inline-flex; align-items:center; justify-content:center; flex-wrap:wrap;
-  gap:0 0.35em; margin:0 0 30px; line-height:1.4;
-  font-size:clamp(0.95rem, 1.4vw, 1.05rem); color:rgba(245,240,232,0.62); text-decoration:none;
+/* A: the live number. It reads the height of the dot on the line below, so
+   the two move together. Debts are always shown next to assets. */
+.hero-a { flex-direction:column; align-items:center; text-align:center; }
+.big-num {
+  font-size:clamp(3.6rem, 11vw, 8.4rem); font-weight:600; line-height:1;
+  letter-spacing:-0.04em; margin:16px 0 18px; font-variant-numeric:tabular-nums;
 }
-.rot-wrap { display:inline-flex; align-items:center; gap:0.4em; }
-.rot {
-  position:relative; display:inline-block; height:1.4em; overflow:hidden;
-  transition:width .45s cubic-bezier(.2,.7,.2,1);
-}
-.rot span {
-  position:absolute; left:0; top:0; white-space:nowrap; line-height:1.4em;
-  color:var(--gold-light); font-weight:500;
-  transform:translateY(100%); opacity:0;
-  transition:transform .5s cubic-bezier(.2,.7,.2,1), opacity .5s;
-}
-.rot span.on  { transform:none; opacity:1; }
-.rot span.out { transform:translateY(-100%); opacity:0; }
-.rot-arrow { color:var(--gold); transition:transform .15s; }
-.rot-line:hover .rot-arrow { transform:translateX(3px); }
-.rot-static { display:none; color:var(--gold-light); font-weight:500; }
+.eq { display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline; gap:6px 14px; font-size:clamp(0.95rem, 1.6vw, 1.1rem); color:var(--muted); font-variant-numeric:tabular-nums; }
+.eq b { color:var(--cream); font-weight:500; }
+.eq b.red { color:var(--red); }
+.eq i { font-style:normal; color:rgba(245,240,232,0.25); }
+.hero-a .lede { margin:22px 0 26px; font-size:1.02rem; line-height:1.6; color:rgba(245,240,232,0.62); }
+.hero-a .ctas { justify-content:center; }
+.sample-tag { margin-top:16px; font-size:0.7rem; color:rgba(245,240,232,0.28); }
 
-/* Load-in: headline words rise one after another, then the rest follows.
-   Plays once. The band's line draws itself in from the script. */
-@keyframes rise { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
-.intro h1 .w { display:inline-block; animation:rise .8s cubic-bezier(.2,.7,.2,1) both; }
-.intro h1 .w:nth-child(2) { animation-delay:.08s; }
-.intro h1 .w:nth-child(3) { animation-delay:.16s; }
-.intro h1 .w:nth-child(4) { animation-delay:.24s; }
-.intro p   { animation:rise .8s cubic-bezier(.2,.7,.2,1) .4s both; }
-.rot-line  { animation:rise .8s cubic-bezier(.2,.7,.2,1) .55s both; }
-.ctas      { animation:rise .8s cubic-bezier(.2,.7,.2,1) .7s both; }
-.ctas { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+/* B: the statement. Left-aligned type, three lines, three weights. */
+.hero-b { flex-direction:column; align-items:flex-start; max-width:1040px; margin:0 auto; }
+.statement {
+  font-size:clamp(2.6rem, 6.6vw, 5.4rem); font-weight:500; line-height:1.02;
+  letter-spacing:-0.035em; margin:18px 0 34px;
+}
+.statement span { display:block; }
+.statement .dim { color:rgba(245,240,232,0.42); }
+.statement .gold { color:var(--gold-light); }
+.quiet-link { margin-top:22px; font-size:0.88rem; color:var(--muted); text-decoration:none; transition:color .15s; }
+.quiet-link:hover { color:var(--gold-light); }
+
+/* C: the tool grid. The tracker gets the big tile; the other tools share a row.
+   The tiles link to the same pages as the current homepage's tool cards. */
+.hero-c {
+  max-width:1080px; margin:0 auto;
+  display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);
+  gap:48px; align-items:center;
+}
+html:not([data-hero="c"]) .hero-c { display:none !important; }
+.hero-c h1 { font-size:clamp(2.2rem, 4.4vw, 3.5rem); font-weight:500; line-height:1.06; letter-spacing:-0.02em; margin-top:14px; }
+.hero-c .lede { margin:16px 0 26px; font-size:1.02rem; line-height:1.6; color:rgba(245,240,232,0.62); max-width:26em; }
+.bento { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+.tile {
+  display:flex; flex-direction:column; gap:8px; padding:14px 16px;
+  border:1px solid var(--border-soft); border-radius:14px; background:rgba(20,29,53,0.55);
+  color:var(--cream); text-decoration:none; transition:border-color .15s, background .15s;
+}
+.tile:hover { border-color:var(--border); background:rgba(20,29,53,0.95); }
+.tile-big { grid-column:1 / -1; padding:18px 20px; }
+.tile-tag { font-size:0.56rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; padding:3px 7px; border-radius:4px; width:fit-content; }
+.tag-nw   { color:#4caf7d; background:rgba(76,175,125,0.1);  border:1px solid rgba(76,175,125,0.18); }
+.tag-debt { color:#f87171; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.18); }
+.tag-calc { color:#60a5fa; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
+.tag-diag { color:var(--gold); background:var(--gold-dim);   border:1px solid var(--border); }
+.tile-title { font-size:0.92rem; font-weight:400; line-height:1.25; }
+.tile-big .tile-title { font-size:1.15rem; }
+.tile-big .tile-row { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; }
+.tile-big .tile-num { font-size:1.6rem; font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+.tile svg { display:block; width:100%; height:38px; }
+.tile-big svg { height:64px; }
 .btn-gold, .btn-ghost {
   display:inline-flex; align-items:center; justify-content:center;
   font-family:'Outfit',sans-serif; font-size:0.9rem; text-decoration:none;
@@ -171,9 +208,22 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
 @media(max-width:640px) {
   nav { padding:0 20px; }
   .nav-links { display:none; }
-  .intro { bottom:96px; }
-  .rot-line { flex-direction:column; gap:2px; }
+  .intro { bottom:96px; padding:0 20px; }
   .ctas { flex-direction:column; width:100%; max-width:320px; }
+  .statement { font-size:2.35rem; margin:14px 0 28px; }
+  .hero-c { grid-template-columns:1fr; gap:22px; }
+  .hero-c h1 { font-size:2rem; margin-top:10px; }
+  .hero-c .lede { margin:10px 0 18px; font-size:0.95rem; }
+  .hero-c .ctas { flex-direction:row; max-width:none; }
+  .hero-c .ctas a { flex:1; padding:12px 10px; font-size:0.85rem; }
+  .tile { padding:11px 12px; gap:6px; }
+  .tile-big { padding:14px 16px; }
+  .tile-title { font-size:0.8rem; }
+  .tile-tag { font-size:0.5rem; letter-spacing:0.08em; padding:2px 5px; }
+  .tile-big .tile-title { font-size:1rem; }
+  .tile-big .tile-num { font-size:1.3rem; }
+  .tile svg { height:24px; }
+  .tile-big svg { height:44px; }
   .dash-head { left:14px; right:14px; top:16px; flex-direction:column; gap:8px; }
   .dash-num { font-size:2rem; }
   .dash-side { display:none; }
@@ -195,9 +245,6 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
 .still .pin { position:relative; top:0; height:auto; overflow:visible; }
 .still .intro { position:relative; opacity:1 !important; transform:none !important; visibility:visible !important; padding:64px 24px 36px; }
 .still .viz-box { position:relative; height:min(620px, 88svh); }
-.still .intro * { animation:none !important; }
-.still .rot, .still .rot-arrow { display:none; }
-.still .rot-static { display:inline; }
 </style>
 </head>
 <body>
@@ -213,25 +260,89 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   </div>
 </nav>
 
-<div class="proto-flag">Prototype</div>
+<div class="proto-flag">Prototype
+  <button type="button" data-h="a">A</button><button type="button" data-h="b">B</button><button type="button" data-h="c">C</button>
+</div>
 
 <section class="stage" id="stage">
   <div class="pin" id="pin">
     <div class="intro" id="intro">
-      <h1><span class="w">VestlyFi</span> <span class="w">Net</span> <span class="w">Worth</span> <span class="w">Tracker</span></h1>
-      <p>Add up what you own, subtract what you owe, and watch where the number is heading.</p>
-      <a class="rot-line" href="/calculators/" aria-label="Plus calculators for mortgage payoff, retirement, Coast FIRE and more">
-        <span>Plus calculators for</span>
-        <span class="rot-wrap">
-          <span class="rot" id="rot" aria-hidden="true"><span>mortgage payoff</span><span>retirement</span><span>Coast FIRE</span><span>debt payoff</span><span>house affordability</span><span>compound interest</span></span>
-          <span class="rot-static">mortgage payoff, retirement, Coast FIRE and more</span>
-          <span class="rot-arrow" aria-hidden="true">→</span>
-        </span>
-      </a>
-      <div class="ctas">
-        <a class="btn-gold" href="/net-worth/">Start tracking</a>
-        <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
+
+      <!-- A: the live number -->
+      <div class="hero hero-a">
+        <h1 class="eyebrow">VestlyFi Net Worth Tracker</h1>
+        <div class="big-num" data-nw>$230,500</div>
+        <div class="eq"><span>Own <b data-own>$412,300</b></span><i>−</i><span>Owe <b class="red">$181,800</b></span></div>
+        <p class="lede">Enter your balances when you check in. VestlyFi charts where the number is heading.</p>
+        <div class="ctas">
+          <a class="btn-gold" href="/net-worth/">Start tracking</a>
+          <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
+        </div>
+        <div class="sample-tag">Sample numbers</div>
       </div>
+
+      <!-- B: the statement -->
+      <div class="hero hero-b">
+        <h1 class="eyebrow">VestlyFi Net Worth Tracker</h1>
+        <p class="statement"><span>Everything you own.</span><span class="dim">Everything you owe.</span><span class="gold">One number.</span></p>
+        <div class="ctas">
+          <a class="btn-gold" href="/net-worth/">Start tracking</a>
+          <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
+        </div>
+        <a class="quiet-link" href="/calculators/">Plus calculators for mortgages, retirement and FIRE&nbsp;→</a>
+      </div>
+
+      <!-- C: the tool grid -->
+      <div class="hero hero-c">
+        <div>
+          <h1>VestlyFi Net Worth Tracker</h1>
+          <p class="lede">Track what you own and owe in one place, then plan the next move with calculators for mortgages, retirement and debt.</p>
+          <div class="ctas">
+            <a class="btn-gold" href="/net-worth/">Start tracking</a>
+            <a class="btn-ghost" href="/net-worth/?demo=1">See a sample</a>
+          </div>
+        </div>
+        <div class="bento">
+          <a class="tile tile-big" href="/net-worth/">
+            <span class="tile-tag tag-nw">Net Worth Tracker</span>
+            <div class="tile-row"><span class="tile-title">Track your net worth</span><span class="tile-num" data-nw>$230,500</span></div>
+            <svg viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9a84c" stop-opacity="0.28"/><stop offset="1" stop-color="#c9a84c" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0 54 L30 50 L60 46 L90 48 L120 38 L150 40 L180 30 L210 32 L240 22 L270 16 L300 10 L300 64 L0 64 Z" fill="url(#tg)"/>
+              <path d="M0 54 L30 50 L60 46 L90 48 L120 38 L150 40 L180 30 L210 32 L240 22 L270 16 L300 10" fill="none" stroke="#e8c97a" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a class="tile" href="/debt-tracker/">
+            <span class="tile-tag tag-debt">Debt</span>
+            <span class="tile-title">Pay down debt</span>
+            <svg viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+              <rect x="0" y="4" width="16" height="36" rx="2" fill="rgba(248,113,113,0.55)"/>
+              <rect x="26" y="12" width="16" height="28" rx="2" fill="rgba(248,113,113,0.45)"/>
+              <rect x="52" y="20" width="16" height="20" rx="2" fill="rgba(248,113,113,0.35)"/>
+              <rect x="78" y="28" width="16" height="12" rx="2" fill="rgba(248,113,113,0.25)"/>
+              <rect x="104" y="35" width="16" height="5" rx="2" fill="rgba(248,113,113,0.18)"/>
+            </svg>
+          </a>
+          <a class="tile" href="/calculators/">
+            <span class="tile-tag tag-calc">Calculators</span>
+            <span class="tile-title">Run the numbers</span>
+            <svg viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 37 C 45 36, 80 28, 120 3" fill="none" stroke="#60a5fa" stroke-width="2" vector-effect="non-scaling-stroke"/>
+              <path d="M0 37 L120 22" fill="none" stroke="rgba(96,165,250,0.35)" stroke-width="1.5" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </a>
+          <a class="tile" href="/create-a-diagram/">
+            <span class="tile-tag tag-diag">Diagrams</span>
+            <span class="tile-title">Map your budget</span>
+            <svg viewBox="0 0 120 40" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0 20 C 50 20, 60 6, 120 6" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="5" vector-effect="non-scaling-stroke"/>
+              <path d="M0 20 C 50 20, 60 20, 120 20" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+              <path d="M0 20 C 50 20, 60 34, 120 34" fill="none" stroke="rgba(201,168,76,0.25)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
     </div>
 
     <div class="viz-box" id="vizBox">
@@ -241,8 +352,8 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
         <div class="dash-head">
           <div>
             <div class="dash-label">Net Worth</div>
-            <div class="dash-num">$230,500</div>
-            <div class="dash-chg"><b>+$80,900</b> over 11 months</div>
+            <div class="dash-num" data-nw>$230,500</div>
+            <div class="dash-chg"><b data-chg>+$80,900</b> over 11 months</div>
           </div>
           <div class="period-btns" aria-hidden="true">
             <span>1M</span><span>3M</span><span>6M</span><span class="on">1Y</span><span>3Y</span><span>5Y</span><span>All</span>
@@ -251,10 +362,10 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
 
         <div class="dash-side">
           <div>
-            <div class="side-head"><span>Assets</span><b>$412,300</b></div>
+            <div class="side-head"><span>Assets</span><b data-own>$412,300</b></div>
             <div class="side-row">Home<b>$310,000</b></div>
             <div class="side-row">401(k)<b>$64,800</b></div>
-            <div class="side-row">Brokerage<b>$22,500</b></div>
+            <div class="side-row">Brokerage<b data-brk>$22,500</b></div>
             <div class="side-row">Savings<b>$15,000</b></div>
           </div>
           <div>
@@ -263,11 +374,11 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
             <div class="side-row">Car loan<b>$12,600</b></div>
             <div class="side-row">Student loan<b>$6,800</b></div>
           </div>
-          <div class="side-net"><span>Net worth</span><b>$230,500</b></div>
+          <div class="side-net"><span>Net worth</span><b data-nw>$230,500</b></div>
         </div>
 
         <div class="dash-sum">
-          <div><span>Assets</span><b>$412,300</b></div>
+          <div><span>Assets</span><b data-own>$412,300</b></div>
           <div><span>Debts</span><b class="red">$181,800</b></div>
         </div>
 
@@ -363,15 +474,36 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   var ymin = null, ymax = null, pulses = [], lastCk = Math.floor(T/STEP);
   var GOLD = '201,168,76';
 
-  // On load the line draws itself in from the left, after the headline has
-  // mostly risen in, and only then starts drifting. Scrolling skips it.
-  var DRAW_DELAY = 0.8, DRAW_DUR = 1.2;
-  // The clock starts when the headline's own animation does, so a slow first
-  // paint can't leave the line finished before the words have risen.
+  // On load the line draws itself in from the left, and only then starts
+  // drifting. Scrolling skips it. The clock starts on the first frame so a
+  // slow first paint can't eat the animation.
+  var DRAW_DELAY = 0.3, DRAW_DUR = 1.2;
   var drawStart = Infinity, drawDone = reduce;
-  function startDraw(){ if (drawStart === Infinity) drawStart = performance.now(); }
-  intro.querySelector('.w').addEventListener('animationstart', startDraw);
-  setTimeout(startDraw, 1500);
+  requestAnimationFrame(function(){ drawStart = performance.now(); });
+
+  // ── Live net worth ──
+  // The sample net worth follows the dot: it rises as the line climbs and
+  // gives a little back on dips. Debts stay put and assets are net worth plus
+  // debts, so the numbers always add up. Brokerage absorbs the change so the
+  // dashboard's asset list adds up too.
+  var OWE = 181800, BASE_NW = 230500, YEAR_AGO = 149600;
+  var v0 = null, liveNW = BASE_NW, shownNW = -1, lastNum = 0;
+  var nwEls = document.querySelectorAll('[data-nw]'), ownEls = document.querySelectorAll('[data-own]');
+  var brkEls = document.querySelectorAll('[data-brk]'), chgEls = document.querySelectorAll('[data-chg]');
+  function money(n){ return '$' + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+  function setAll(els, s){ for (var q = 0; q < els.length; q++) els[q].textContent = s; }
+  function updateNumbers(now){
+    if (now - lastNum < 110) return;
+    lastNum = now;
+    var nw = Math.round(liveNW);
+    if (nw === shownNW) return;
+    shownNW = nw;
+    setAll(nwEls, money(nw));
+    setAll(ownEls, money(nw + OWE));
+    setAll(brkEls, money(22500 + nw - BASE_NW));
+    var chg = nw - YEAR_AGO;
+    setAll(chgEls, (chg < 0 ? '−' : '+') + money(chg));
+  }
 
   function draw(now, dt){
     var p = progress();
@@ -414,9 +546,16 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     var i1 = Math.floor(T), frac = T - i1;
     var i0 = Math.max(base, i1 - windowCount - 1);
     var headV = lerp(val(i1), val(i1+1), frac);
+    if (v0 === null) v0 = headV;
+    liveNW = BASE_NW * Math.pow(headV/v0, 0.15);
 
     var lo = headV, hi = headV;
     for (var i = i0; i <= i1; i++) { var vi = val(i); if (vi < lo) lo = vi; if (vi > hi) hi = vi; }
+    // A minimum vertical range, so a few percent dip reads as a few percent
+    // instead of a crash. Wider on the dashboard, where it sits next to a
+    // "+$80,900" headline.
+    var minSpan = hi * lerp(0.10, 0.22, g);
+    if (hi - lo < minSpan) lo = hi - minSpan;
     var pad = (hi-lo)*0.14 || 1;
     if (ymin === null || dt === 0) { ymin = lo-pad; ymax = hi+pad; }
     else { var kk = 1 - Math.exp(-dt*2.5); ymin += (lo-pad-ymin)*kk; ymax += (hi+pad-ymax)*kk; }
@@ -506,6 +645,7 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
     var od = reduce ? 1 : clamp((p-0.74)/0.18, 0, 1);
     dash.style.opacity = od;
     dash.style.visibility = od > 0.01 ? 'visible' : 'hidden';
+    updateNumbers(now);
   }
 
   // Run only while the stage is on screen and the tab is visible.
@@ -527,24 +667,19 @@ footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px 
   resize();
   setRunning();
 
-  // ── Rotating calculators line ──
-  var rot = document.getElementById('rot');
-  var words = [].slice.call(rot.children), wi = 0;
-  function sizeRot(){ rot.style.width = words[wi].offsetWidth + 'px'; }
-  words[0].classList.add('on');
-  sizeRot();
-  if (document.fonts) document.fonts.ready.then(sizeRot);
-  window.addEventListener('resize', sizeRot);
-  if (!reduce) setInterval(function(){
-    // Skip turns while nobody can see it (tab hidden or scrolled past).
-    if (document.hidden || parseFloat(intro.style.opacity || '1') < 0.05) return;
-    var prev = words[wi];
-    prev.classList.remove('on'); prev.classList.add('out');
-    setTimeout(function(){ prev.classList.remove('out'); }, 520);
-    wi = (wi + 1) % words.length;
-    words[wi].classList.add('on');
-    sizeRot();
-  }, 2400);
+  // ── Prototype A/B/C switcher ──
+  var swBtns = document.querySelectorAll('.proto-flag button');
+  function markHero(){
+    var h = document.documentElement.getAttribute('data-hero');
+    for (var q = 0; q < swBtns.length; q++) swBtns[q].classList.toggle('on', swBtns[q].getAttribute('data-h') === h);
+  }
+  for (var q = 0; q < swBtns.length; q++) swBtns[q].addEventListener('click', function(){
+    var h = this.getAttribute('data-h');
+    document.documentElement.setAttribute('data-hero', h);
+    try { history.replaceState(null, '', '?hero=' + h); } catch (e) {}
+    markHero();
+  });
+  markHero();
 })();
 </script>
 </body>
