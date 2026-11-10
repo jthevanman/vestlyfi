@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Prototype for the homepage redesign. Lives only on the home-redesign
+     branch, is never indexed, and has no analytics so test visits stay out
+     of GA. Delete this folder before the branch merges (see REDESIGN.md). -->
+<meta name="robots" content="noindex, nofollow">
+<title>VestlyFi | Homepage prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+:root {
+  --navy:       #0a0f1e;
+  --navy-card:  #141d35;
+  --navy-light: #1a2540;
+  --gold:       #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim:   rgba(201,168,76,0.10);
+  --cream:      #f5f0e8;
+  --cream-dim:  rgba(245,240,232,0.6);
+  --muted:      rgba(245,240,232,0.38);
+  --border:     rgba(201,168,76,0.15);
+  --border-soft:rgba(255,255,255,0.07);
+  --green:      #4caf7d;
+  --red:        #e05c5c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:var(--navy); color:var(--cream);
+  font-family:'Outfit',sans-serif; font-weight:300;
+  overflow-x:hidden;
+}
+
+/* ── NAV (same as the live homepage) ── */
+nav {
+  position:sticky; top:0; z-index:50;
+  padding:0 40px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border-soft);
+  background:#0a0f1e;
+}
+.nav-logo { font-family:'Exo 2',sans-serif; font-size:1.2rem; color:var(--gold); text-decoration:none; }
+.nav-links { display:flex; gap:28px; align-items:center; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:0.82rem; transition:color .15s; }
+.nav-links a:hover, .nav-links a.active { color:var(--cream); }
+
+.proto-flag {
+  position:fixed; right:12px; top:76px; z-index:60; pointer-events:none;
+  font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gold); background:rgba(10,15,30,0.88);
+  border:1px solid var(--border); border-radius:6px; padding:4px 8px;
+}
+
+/* ── STAGE ──
+   The stage is taller than the screen. Its inner .pin sticks under the nav
+   while the extra height scrolls past, and that scroll distance drives the
+   band growing into the dashboard (progress 0 to 1). */
+.stage { position:relative; height:calc(240svh - 64px); }
+.pin { position:sticky; top:64px; height:calc(100svh - 64px); overflow:hidden; }
+.viz-box { position:absolute; inset:0; }
+#viz { position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+.intro {
+  position:absolute; left:0; right:0; top:0; bottom:140px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:0 24px; will-change:opacity, transform;
+}
+.intro h1 {
+  font-size:clamp(2.4rem, 6vw, 4.4rem); font-weight:500;
+  line-height:1.04; letter-spacing:-0.02em; text-wrap:balance; max-width:12em;
+}
+.intro p {
+  font-size:clamp(1rem, 1.6vw, 1.15rem); line-height:1.6;
+  color:rgba(245,240,232,0.62); margin:18px 0 28px; max-width:31em;
+}
+.ctas { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.btn-gold, .btn-ghost {
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:'Outfit',sans-serif; font-size:0.9rem; text-decoration:none;
+  padding:13px 22px; border-radius:9px; transition:background .15s, border-color .15s;
+}
+.btn-gold { background:var(--gold); color:var(--navy); font-weight:600; }
+.btn-gold:hover { background:var(--gold-light); }
+.btn-ghost { border:1px solid var(--border); color:var(--gold-light); font-weight:500; }
+.btn-ghost:hover { border-color:var(--gold); background:var(--gold-dim); }
+
+/* ── DASHBOARD OVERLAY ──
+   Laid out once at the card's final size and faded in at the end. The canvas
+   draws the card and the chart underneath it. */
+.dash { position:absolute; opacity:0; visibility:hidden; }
+.dash-head { position:absolute; left:24px; top:20px; right:284px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.dash-label { font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light); font-weight:500; }
+.dash-num { font-size:2.3rem; font-weight:600; letter-spacing:-0.02em; line-height:1.15; margin-top:4px; }
+.dash-chg { font-size:0.8rem; color:var(--muted); margin-top:2px; }
+.dash-chg b { color:var(--green); font-weight:500; }
+.period-btns { display:flex; gap:3px; margin-top:4px; }
+.period-btns span { padding:3px 9px; border-radius:5px; border:1px solid var(--border-soft); color:var(--muted); font-size:0.7rem; }
+.period-btns span.on { background:var(--navy-light); color:var(--cream); border-color:var(--border); }
+
+.dash-side {
+  position:absolute; right:0; top:20px; bottom:76px; width:260px; padding:0 24px;
+  border-left:1px solid var(--border-soft);
+  display:flex; flex-direction:column; justify-content:center; gap:22px;
+}
+.side-head { display:flex; justify-content:space-between; align-items:baseline; padding-bottom:7px; margin-bottom:8px; border-bottom:1px solid var(--border-soft); }
+.side-head span { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+.side-head b { font-weight:400; font-size:1.05rem; }
+.side-head b.red { color:var(--red); }
+.side-row { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--cream-dim); padding:3px 0; }
+.side-row b { font-weight:500; color:var(--cream); }
+.side-net { display:flex; justify-content:space-between; align-items:baseline; padding-top:10px; border-top:1px solid var(--gold); }
+.side-net span { font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-light); font-weight:600; }
+.side-net b { font-weight:600; font-size:1.05rem; }
+
+.dash-sum { display:none; }
+.dash-foot {
+  position:absolute; left:24px; right:284px; bottom:0; height:64px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  border-top:1px solid var(--border-soft);
+}
+.sample-note { font-size:0.74rem; color:var(--muted); }
+.dash-foot .btn-gold { padding:10px 18px; font-size:0.85rem; }
+
+/* ── AFTER THE STAGE (placeholder for the rest of the homepage) ── */
+.after { max-width:840px; margin:0 auto; padding:72px 40px 80px; }
+.rule { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+.rule span { font-size:0.65rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:rgba(245,240,232,0.18); }
+.rule i { flex:1; height:1px; background:var(--border-soft); }
+.placeholder { border:1px dashed var(--border); border-radius:14px; padding:40px 24px; text-align:center; color:var(--muted); font-size:0.88rem; line-height:1.6; }
+footer { max-width:680px; margin:0 auto; padding:24px 40px 48px; border-top:1px solid var(--border-soft); font-size:0.75rem; color:var(--muted); text-align:center; }
+
+@media(max-width:640px) {
+  nav { padding:0 20px; }
+  .nav-links { display:none; }
+  .intro { bottom:96px; }
+  .ctas { flex-direction:column; width:100%; max-width:320px; }
+  .dash-head { left:14px; right:14px; top:16px; flex-direction:column; gap:8px; }
+  .dash-num { font-size:2rem; }
+  .dash-side { display:none; }
+  .dash-sum {
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+    position:absolute; left:14px; right:14px; bottom:72px;
+  }
+  .dash-sum div { border:1px solid var(--border-soft); border-radius:10px; padding:9px 12px; }
+  .dash-sum span { display:block; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+  .dash-sum b { font-weight:500; font-size:1rem; }
+  .dash-sum b.red { color:var(--red); }
+  .dash-foot { left:14px; right:14px; height:60px; }
+  .after { padding:56px 20px 64px; }
+}
+
+/* Reduced motion: no pinning and no drift. The headline sits on top and the
+   finished dashboard preview sits under it as ordinary content. */
+.still .stage { height:auto; }
+.still .pin { position:relative; top:0; height:auto; overflow:visible; }
+.still .intro { position:relative; opacity:1 !important; transform:none !important; visibility:visible !important; padding:64px 24px 36px; }
+.still .viz-box { position:relative; height:min(620px, 88svh); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">VestlyFi</a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/calculators/">Calculators</a>
+    <a href="/create-a-diagram/">Diagrams</a>
+    <a href="/net-worth/">Net Worth Tracker</a>
+    <a href="/account/">Account</a>
+  </div>
+</nav>
+
+<div class="proto-flag">Prototype</div>
+
+<section class="stage" id="stage">
+  <div class="pin" id="pin">
+    <div class="intro" id="intro">
+      <h1>VestlyFi Net Worth Tracker</h1>
+      <p>Add up what you own, subtract what you owe, and watch where the number is heading.</p>
+      <div class="ctas">
+        <a class="btn-gold" href="/net-worth/">Start tracking</a>
+        <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
+      </div>
+    </div>
+
+    <div class="viz-box" id="vizBox">
+      <canvas id="viz" aria-hidden="true"></canvas>
+
+      <div class="dash" id="dash">
+        <div class="dash-head">
+          <div>
+            <div class="dash-label">Net Worth</div>
+            <div class="dash-num">$230,500</div>
+            <div class="dash-chg"><b>+$80,900</b> over 11 months</div>
+          </div>
+          <div class="period-btns" aria-hidden="true">
+            <span>1M</span><span>3M</span><span>6M</span><span class="on">1Y</span><span>3Y</span><span>5Y</span><span>All</span>
+          </div>
+        </div>
+
+        <div class="dash-side">
+          <div>
+            <div class="side-head"><span>Assets</span><b>$412,300</b></div>
+            <div class="side-row">Home<b>$310,000</b></div>
+            <div class="side-row">401(k)<b>$64,800</b></div>
+            <div class="side-row">Brokerage<b>$22,500</b></div>
+            <div class="side-row">Savings<b>$15,000</b></div>
+          </div>
+          <div>
+            <div class="side-head"><span>Debts</span><b class="red">$181,800</b></div>
+            <div class="side-row">Mortgage<b>$162,400</b></div>
+            <div class="side-row">Car loan<b>$12,600</b></div>
+            <div class="side-row">Student loan<b>$6,800</b></div>
+          </div>
+          <div class="side-net"><span>Net worth</span><b>$230,500</b></div>
+        </div>
+
+        <div class="dash-sum">
+          <div><span>Assets</span><b>$412,300</b></div>
+          <div><span>Debts</span><b class="red">$181,800</b></div>
+        </div>
+
+        <div class="dash-foot">
+          <span class="sample-note">Sample data</span>
+          <a class="btn-gold" href="/net-worth/">Start tracking</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="after">
+  <div class="rule"><i></i><span>All tools</span><i></i></div>
+  <div class="placeholder">Prototype placeholder. The share card and the tools section from the current homepage go here.</div>
+</section>
+
+<footer>© 2026 VestlyFi</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) document.documentElement.classList.add('still');
+
+  var stage = document.getElementById('stage');
+  var pin = document.getElementById('pin');
+  var box = document.getElementById('vizBox');
+  var cv = document.getElementById('viz');
+  var ctx = cv.getContext('2d');
+  var intro = document.getElementById('intro');
+  var dash = document.getElementById('dash');
+
+  var NAV_H = 64;
+  var STEP = 13;          // one check-in dot every STEP points
+  var SPEED = 2.6;        // points per second while the band drifts
+  var BAND_IN = { l:0, t:20, r:0, b:0 };
+  var FIN_IN_DESK = { l:24, t:124, r:284, b:76 };
+  var FIN_IN_MOB  = { l:14, t:136, r:14, b:140 };
+
+  var W = 0, H = 0, dpr = 1, mobile = false, bandH = 112, FIN = null, windowCount = 90;
+
+  // ── Net worth series ──
+  // Mostly a slow climb, with the odd dip (a market drop that recovers) and
+  // the odd jump (a bonus, a loan paid off). The scale refits as it climbs,
+  // so the values can grow without the line ever leaving the frame.
+  var v = [], base = 0, ev = null;
+  function gauss(){ var u=0, w=0; while(!u) u=Math.random(); while(!w) w=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*w); }
+  function step(){
+    var last = v.length ? v[v.length-1] : 100;
+    var r = 0.0032 + gauss()*0.0045;
+    if (ev) { r += ev.r; if (--ev.n <= 0) ev = ev.next || null; }
+    else {
+      var x = Math.random();
+      if (x < 0.012) ev = { r:-0.009-Math.random()*0.005, n:5+(Math.random()*5|0), next:{ r:0.004, n:10 } };
+      else if (x < 0.022) r += 0.015 + Math.random()*0.015;
+    }
+    v.push(last*(1+r) + 0.12);
+  }
+  function val(i){ return v[i-base]; }
+  function ensure(upTo){ while (base + v.length < upTo) step(); if (v.length > 4000) { v.splice(0, 2000); base += 2000; } }
+
+  var T = 0;
+  for (var k = 0; k < 400; k++) step();
+  T = 300;
+
+  function clamp(x,a,b){ return x<a?a:x>b?b:x; }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+
+  function resize(){
+    W = box.clientWidth; H = box.clientHeight;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
+    mobile = W < 640;
+    bandH = mobile ? 96 : 140;
+    var fw = mobile ? W-24 : Math.min(1040, W-48);
+    var fh = Math.min(H - (mobile ? 24 : 56), mobile ? 600 : 560);
+    FIN = { x:(W-fw)/2, y:(H-fh)/2, w:fw, h:fh };
+    dash.style.left = FIN.x+'px'; dash.style.top = FIN.y+'px';
+    dash.style.width = FIN.w+'px'; dash.style.height = FIN.h+'px';
+    windowCount = Math.max(40, Math.round((W/2)/(mobile ? 5 : 8)));
+    ymin = null;
+    draw(performance.now(), 0);
+  }
+
+  function progress(){
+    if (reduce) return 1;
+    var len = stage.offsetHeight - pin.offsetHeight;
+    if (len <= 0) return 0;
+    return clamp((NAV_H - stage.getBoundingClientRect().top)/len, 0, 1);
+  }
+
+  var ymin = null, ymax = null, pulses = [], lastCk = Math.floor(T/STEP);
+  var GOLD = '201,168,76';
+
+  function draw(now, dt){
+    var p = progress();
+    var g = ease(clamp((p-0.06)/0.74, 0, 1));
+
+    // The drift slows to a stop as the band becomes the dashboard chart.
+    T += (reduce ? 0 : SPEED*Math.pow(1-g, 1.5)) * dt;
+    ensure(Math.ceil(T) + 3);
+
+    var band = { x:0, y:H-bandH, w:W, h:bandH };
+    var card = { x:lerp(band.x,FIN.x,g), y:lerp(band.y,FIN.y,g), w:lerp(band.w,FIN.w,g), h:lerp(band.h,FIN.h,g) };
+    var fin = mobile ? FIN_IN_MOB : FIN_IN_DESK;
+    var ins = { l:lerp(BAND_IN.l,fin.l,g), t:lerp(BAND_IN.t,fin.t,g), r:lerp(BAND_IN.r,fin.r,g), b:lerp(BAND_IN.b,fin.b,g) };
+    var plot = { x:card.x+ins.l, y:card.y+ins.t, w:card.w-ins.l-ins.r, h:card.h-ins.t-ins.b };
+
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    if (g > 0.002) {
+      ctx.beginPath();
+      ctx.roundRect(card.x+0.5, card.y+0.5, card.w-1, card.h-1, 14*g);
+      ctx.fillStyle = 'rgba(20,29,53,'+g+')'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,'+(0.07*g)+')'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(card.x, card.y, card.w, card.h); ctx.clip();
+
+    // Faint gridlines, a little stronger once it reads as a dashboard.
+    ctx.strokeStyle = 'rgba(255,255,255,'+(0.03+0.03*g)+')'; ctx.lineWidth = 1;
+    for (var gi = 1; gi <= 3; gi++) {
+      var gy = Math.round(plot.y + plot.h*gi/4) + 0.5;
+      ctx.beginPath(); ctx.moveTo(plot.x, gy); ctx.lineTo(plot.x+plot.w, gy); ctx.stroke();
+    }
+
+    // The head sits mid-screen in the band (history left, projection right)
+    // and moves to the right edge as the chart fills the dashboard.
+    var anchor = 0.5 + 0.5*g;
+    var headX = plot.x + plot.w*anchor;
+    var dx = (plot.w*anchor)/windowCount;
+    var i1 = Math.floor(T), frac = T - i1;
+    var i0 = Math.max(base, i1 - windowCount - 1);
+    var headV = lerp(val(i1), val(i1+1), frac);
+
+    // Recent trend, for the projection.
+    var n = Math.min(40, i1-i0), sx=0, sy=0, sxy=0, sxx=0;
+    for (var j = 0; j < n; j++) { var xi = j, yi = val(i1-n+1+j); sx+=xi; sy+=yi; sxy+=xi*yi; sxx+=xi*xi; }
+    var slope = n > 1 ? (n*sxy - sx*sy)/(n*sxx - sx*sx) : 0;
+    var projA = 1 - g;
+    var projSteps = (plot.x + plot.w - headX)/dx;
+    var projEnd = headV + slope*projSteps;
+
+    var lo = headV, hi = headV;
+    for (var i = i0; i <= i1; i++) { var vi = val(i); if (vi < lo) lo = vi; if (vi > hi) hi = vi; }
+    var spread = Math.abs(projEnd-headV)*0.35 + (hi-lo)*0.04;
+    // Fitting the whole projection would squash the history into the bottom
+    // of the band, so only part of it counts; the rest heads off the top.
+    if (projA > 0.02) hi = Math.max(hi, headV + (projEnd-headV)*0.45*projA);
+    var pad = (hi-lo)*0.14 || 1;
+    if (ymin === null || dt === 0) { ymin = lo-pad; ymax = hi+pad; }
+    else { var kk = 1 - Math.exp(-dt*2.5); ymin += (lo-pad-ymin)*kk; ymax += (hi+pad-ymax)*kk; }
+    function Y(val_){ return plot.y + plot.h*(1-(val_-ymin)/(ymax-ymin)); }
+    function X(i_){ return headX - (T-i_)*dx; }
+
+    var pts = [];
+    for (i = i0; i <= i1; i++) pts.push([X(i), Y(val(i))]);
+    var headY = Y(headV);
+    pts.push([headX, headY]);
+
+    // Area under the line.
+    var fill = ctx.createLinearGradient(0, plot.y, 0, plot.y+plot.h);
+    fill.addColorStop(0, 'rgba('+GOLD+','+(0.16+0.06*g)+')');
+    fill.addColorStop(1, 'rgba('+GOLD+',0)');
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], plot.y+plot.h);
+    for (i = 0; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.lineTo(headX, plot.y+plot.h); ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+
+    // The line, fading in from the left edge while it is a band.
+    var lg = ctx.createLinearGradient(plot.x, 0, headX, 0);
+    lg.addColorStop(0, 'rgba('+GOLD+','+g+')');
+    lg.addColorStop(Math.max(0.001, 0.35*(1-g)), 'rgba('+GOLD+',1)');
+    lg.addColorStop(1, 'rgba(232,201,122,1)');
+    ctx.beginPath();
+    for (i = 0; i < pts.length; i++) i ? ctx.lineTo(pts[i][0], pts[i][1]) : ctx.moveTo(pts[i][0], pts[i][1]);
+    ctx.strokeStyle = lg; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+
+    // Projection: a widening cone and a dashed trend line to the right edge.
+    if (projA > 0.01) {
+      var ex = plot.x + plot.w;
+      ctx.beginPath();
+      ctx.moveTo(headX, headY);
+      ctx.lineTo(ex, Y(projEnd + spread));
+      ctx.lineTo(ex, Y(projEnd - spread));
+      ctx.closePath();
+      var cg = ctx.createLinearGradient(headX, 0, ex, 0);
+      cg.addColorStop(0, 'rgba('+GOLD+','+(0.10*projA)+')');
+      cg.addColorStop(1, 'rgba('+GOLD+',0)');
+      ctx.fillStyle = cg; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(headX, headY); ctx.lineTo(ex, Y(projEnd));
+      ctx.setLineDash([5,6]);
+      var dg = ctx.createLinearGradient(headX, 0, ex, 0);
+      dg.addColorStop(0, 'rgba(232,201,122,'+(0.6*projA)+')');
+      dg.addColorStop(1, 'rgba(232,201,122,0)');
+      ctx.strokeStyle = dg; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Monthly check-in dots, and a ring when a new one lands at the head.
+    var ck = Math.floor(T/STEP);
+    if (ck > lastCk) { lastCk = ck; if (!reduce) pulses.push({ i:ck*STEP, t:0 }); }
+    for (i = Math.ceil(i0/STEP)*STEP; i <= i1; i += STEP) {
+      var cx = X(i), cy = Y(val(i));
+      var a = g + (1-g)*clamp((cx-plot.x)/(plot.w*anchor*0.35), 0, 1);
+      ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(20,29,53,'+a+')'; ctx.fill();
+      ctx.strokeStyle = 'rgba('+GOLD+','+a+')'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+    for (i = pulses.length-1; i >= 0; i--) {
+      var pu = pulses[i]; pu.t += dt;
+      if (pu.t > 0.9 || pu.i < base) { pulses.splice(i,1); continue; }
+      ctx.beginPath(); ctx.arc(X(pu.i), Y(val(pu.i)), 3 + pu.t*16, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(232,201,122,'+(0.55*(1-pu.t/0.9))+')'; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+
+    // Glowing head.
+    var beat = reduce ? 0.5 : 0.5 + 0.5*Math.sin(now/600);
+    var halo = ctx.createRadialGradient(headX, headY, 0, headX, headY, 12 + 5*beat);
+    halo.addColorStop(0, 'rgba(232,201,122,0.45)');
+    halo.addColorStop(1, 'rgba(232,201,122,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(headX, headY, 12 + 5*beat, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(headX, headY, 3.6, 0, Math.PI*2);
+    ctx.fillStyle = '#e8c97a'; ctx.fill();
+
+    ctx.restore();
+
+    // Headline fades and lifts away; the dashboard text fades in at the end.
+    if (!reduce) {
+      var io = 1 - clamp(p/0.28, 0, 1);
+      intro.style.opacity = io;
+      intro.style.transform = 'translateY(' + (-p*90) + 'px)';
+      intro.style.visibility = io > 0.01 ? 'visible' : 'hidden';
+    }
+    var od = reduce ? 1 : clamp((p-0.74)/0.18, 0, 1);
+    dash.style.opacity = od;
+    dash.style.visibility = od > 0.01 ? 'visible' : 'hidden';
+  }
+
+  // Run only while the stage is on screen and the tab is visible.
+  var running = false, onScreen = true, last = 0;
+  function loop(now){
+    if (!running) return;
+    var dt = Math.min(0.05, (now-last)/1000); last = now;
+    draw(now, dt);
+    requestAnimationFrame(loop);
+  }
+  function setRunning(){
+    var want = !reduce && onScreen && !document.hidden;
+    if (want && !running) { running = true; last = performance.now(); requestAnimationFrame(loop); }
+    else if (!want) running = false;
+  }
+  new IntersectionObserver(function(es){ onScreen = es[0].isIntersecting; setRunning(); }).observe(stage);
+  document.addEventListener('visibilitychange', setRunning);
+  new ResizeObserver(resize).observe(box);
+  resize();
+  setRunning();
+})();
+</script>
+</body>
+</html>
