@@ -41,6 +41,12 @@
 }
 </script>
 <script>if(window.location.hash.includes('type=recovery')||window.location.hash.includes('type=email_change')){window.location.replace('/net-worth/'+window.location.hash);}</script>
+<script>
+// Visiting any page with ?internal=1 marks this browser as the site owner's, so
+// its visits stay out of Google Analytics. ?internal=0 undoes it. This has to
+// run before the analytics config below.
+try{var vfq=new URLSearchParams(location.search);if(vfq.has('internal')){if(vfq.get('internal')==='0')localStorage.removeItem('vf_internal');else localStorage.setItem('vf_internal','1');}if(localStorage.getItem('vf_internal')==='1')window['ga-disable-G-NPZ7QVQQNS']=true;}catch(e){}
+</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -313,8 +319,8 @@ footer {
     <h1>VestlyFi Net Worth Tracker</h1>
     <p class="hero-sub">Net worth is the one number that adds up everything: your savings, investments, and home, minus what you owe. Enter your balances whenever you check in, and VestlyFi charts where that number is heading.</p>
     <div class="hero-ctas">
-      <a class="btn-gold" href="/net-worth/">Start tracking</a>
-      <a class="btn-ghost" href="/net-worth/?demo=1">See a sample dashboard</a>
+      <a class="btn-gold" href="/net-worth/" onclick="try{gtag('event','home_cta_click',{cta:'start_tracking'})}catch(e){}">Start tracking</a>
+      <a class="btn-ghost" href="/net-worth/?demo=1" onclick="try{gtag('event','home_cta_click',{cta:'sample_dashboard'})}catch(e){}">See a sample dashboard</a>
     </div>
   </div>
   <figure class="hero-visual">

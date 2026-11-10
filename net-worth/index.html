@@ -17,6 +17,12 @@
 <meta name="twitter:image" content="https://vestlyfi.com/og-image.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"VestlyFi Net Worth Tracker","url":"https://vestlyfi.com/net-worth/","description":"Free net worth tracker with no bank linking. Log assets and liabilities, see your wealth trend, and share your progress.","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"provider":{"@type":"Organization","name":"VestlyFi","url":"https://vestlyfi.com"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a net worth tracker?","acceptedAnswer":{"@type":"Answer","text":"A net worth tracker is a tool that records your assets (cash, investments, property) and liabilities (loans, credit cards) over time so you can see your true net worth (what you own minus what you owe) and watch it grow month to month."}},{"@type":"Question","name":"How do I calculate my net worth?","acceptedAnswer":{"@type":"Answer","text":"Add up the current value of everything you own, then subtract everything you owe. The result is your net worth. VestlyFi does the math for you: log each asset and liability and it totals your net worth automatically and charts the trend."}},{"@type":"Question","name":"Is the VestlyFi net worth tracker free?","acceptedAnswer":{"@type":"Answer","text":"Yes. Tracking your net worth on VestlyFi is completely free, with no spreadsheet to maintain. Create an account, log your assets and liabilities, and update them whenever you like."}},{"@type":"Question","name":"Is my financial data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your data is tied to your own account and is only visible to you when you're signed in. We never sell your information, and you can update or delete your entries at any time."}},{"@type":"Question","name":"Can I track my net worth without a spreadsheet?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. VestlyFi replaces the manual spreadsheet: it stores your history, calculates monthly changes, shows your asset allocation, and lets you share a clean snapshot of your progress."}},{"@type":"Question","name":"What is the best free net worth tracker?","acceptedAnswer":{"@type":"Answer","text":"It depends on whether you want to link your bank accounts. If you're comfortable sharing credentials, apps like Monarch Money sync automatically but charge a subscription. If you'd rather keep your logins to yourself, VestlyFi tracks the same picture (total net worth, monthly trend, asset allocation) from a few minutes of manual entry per month, completely free with no upsells."}},{"@type":"Question","name":"Do I have to link my bank accounts to track my net worth?","acceptedAnswer":{"@type":"Answer","text":"No. VestlyFi is manual by design: you enter balances yourself, so no bank credentials ever leave your hands. Monthly manual updates take a few minutes and have a side benefit: you actually look at your numbers instead of letting an app scroll past them."}}]}</script>
+<script>
+// Visiting any page with ?internal=1 marks this browser as the site owner's, so
+// its visits stay out of Google Analytics. ?internal=0 undoes it. This has to
+// run before the analytics config below.
+try{var vfq=new URLSearchParams(location.search);if(vfq.has('internal')){if(vfq.get('internal')==='0')localStorage.removeItem('vf_internal');else localStorage.setItem('vf_internal','1');}if(localStorage.getItem('vf_internal')==='1')window['ga-disable-G-NPZ7QVQQNS']=true;}catch(e){}
+</script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -973,6 +979,21 @@ const{createClient}=supabase;
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
 let currentUser=null,allEntries=[],editingId=null,selectedType='asset',chartInstance=null,isLoadingEntries=false,holdingsFilter='all',holdingsSortStack=[{key:'value',dir:-1}];
+
+// ── FUNNEL TRACKING ──
+// The one door for every Google Analytics event on this page. It sends counts
+// and yes/no flags only: never an amount, an account name or an email. It
+// cannot throw, so a blocked or missing analytics script never breaks the
+// tracker.
+function track(name,params){try{if(typeof gtag==='function')gtag('event',name,params||{});}catch(e){}}
+// A failed load leaves allEntries empty, which looks the same as a new account.
+// This keeps the two apart so tracking does not count an outage as an empty
+// account.
+let entriesLoadFailed=false,appOpenTracked=false;
+function trackAppOpen(restored){
+  if(appOpenTracked||!currentUser)return;appOpenTracked=true;
+  track('nw_app_open',{state:entriesLoadFailed?'load_failed':allEntries.length?'has_data':'empty',restored:restored?1:0});
+}
 // Rows from net_worth_debt_links. Empty until the migration is applied, which
 // the page degrades to gracefully: no banner, no tie question, everything else
 // behaves exactly as it did before.
@@ -1057,6 +1078,7 @@ function switchTab(t){
   document.querySelectorAll('.auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
   document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
   document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
+  track('nw_auth_tab',{tab:t});
 }
 function showSigninForm(){switchTab('signin');}
 function showResetForm(){
@@ -1084,8 +1106,11 @@ document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='En
 ['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
 document.getElementById('entryValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
 document.getElementById('entryCategory').addEventListener('keydown',e=>{if(e.key==='Enter')saveEntry();});
-async function signIn(){const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');msg.className='auth-msg';msg.textContent='Signing in…';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;}else{msg.className='auth-msg ok';msg.textContent='Success!';}}
-async function signUp(){const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}msg.className='auth-msg';msg.textContent='Creating account…';const{error}=await sb.auth.signUp({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;}else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';}}
+async function signIn(){const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');msg.className='auth-msg';msg.textContent='Signing in…';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;track('nw_signin_error',{code:authErrCode(error)});}else{msg.className='auth-msg ok';msg.textContent='Success!';}}
+// Supabase's short error code (for example invalid_credentials), never its
+// message text, so nothing a person typed can end up in analytics.
+function authErrCode(error){return String((error&&(error.code||error.status))||'unknown').slice(0,40);}
+async function signUp(){const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';track('nw_signup_error',{code:'password_mismatch'});return;}if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';track('nw_signup_error',{code:'password_short'});return;}msg.className='auth-msg';msg.textContent='Creating account…';const{error}=await sb.auth.signUp({email,password});if(error){msg.className='auth-msg err';msg.textContent=error.message;track('nw_signup_error',{code:authErrCode(error)});}else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';track('nw_signup_submit',{method:'email'});}}
 async function signOut(){await sb.auth.signOut();}
 function showAuth(){document.getElementById('authScreen').style.display='flex';document.getElementById('appScreen').style.display='none';}
 function showApp(){document.getElementById('authScreen').style.display='none';document.getElementById('appScreen').style.display='block';}
@@ -1093,13 +1118,22 @@ function setUserChip(){if(!currentUser)return;const e=currentUser.email||'';docu
 
 let initDone=false,recoveryMode=false;
 if(window.location.hash.includes('type=recovery'))recoveryMode=true;
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();openUpdateFromLink();}else if(new URLSearchParams(location.search).has('demo')){startDemo();}else{showAuth();}initDone=true;})();
+// The monthly reminder email links here with ?update=1 and its campaign tag.
+(()=>{const q=new URLSearchParams(location.search);if(q.has('update')||q.get('utm_campaign')==='nw-monthly')track('nw_reminder_landing');})();
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(recoveryMode){showNewPasswordForm();}else if(session?.user){currentUser=session.user;showApp();setUserChip();await loadEntries();trackAppOpen(true);openUpdateFromLink();}else if(new URLSearchParams(location.search).has('demo')){startDemo();}else{showAuth();track('nw_auth_view');}initDone=true;})();
 sb.auth.onAuthStateChange(async(event,session)=>{
   if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
   if(recoveryMode&&event==='SIGNED_IN')return;
   if(!initDone&&event==='SIGNED_IN')return;
-  if(event==='SIGNED_IN'&&session?.user){clearDemo();currentUser=session.user;showApp();setUserChip();await loadEntries();openUpdateFromLink();}
-  else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;showAuth();}
+  if(event==='SIGNED_IN'&&session?.user){
+    // Supabase repeats SIGNED_IN when a tab regains focus, so only the first
+    // one after being signed out counts as a login.
+    const fresh=!currentUser;
+    clearDemo();currentUser=session.user;showApp();setUserChip();
+    if(fresh){const age=Date.now()-new Date(session.user.created_at||0).getTime();track('nw_login',{method:(session.user.app_metadata&&session.user.app_metadata.provider)||'email',account:age<864e5?'new':'returning'});}
+    await loadEntries();if(fresh)trackAppOpen(false);openUpdateFromLink();
+  }
+  else if(event==='SIGNED_OUT'){currentUser=null;allEntries=[];recoveryMode=false;appOpenTracked=false;showAuth();}
 });
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&currentUser&&!isLoadingEntries)loadEntries(true);});
 
@@ -1241,7 +1275,7 @@ async function loadEntries(silent=false){
   // entries would paint the whole page in the fallback symbol and then swap.
   await VestlyCurrency.load(sb,currentUser.id);
   applyCurrencyPlaceholders();
-  try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=(data||[]).sort(entryOrder);}catch(e){console.error(e);allEntries=[];}
+  try{const{data,error}=await sb.from('net_worth_entries').select('*').order('date',{ascending:true});if(error)throw error;allEntries=(data||[]).sort(entryOrder);entriesLoadFailed=false;}catch(e){console.error(e);allEntries=[];entriesLoadFailed=true;}
   await loadLinks();
   if(timeout)clearTimeout(timeout);
   isLoadingEntries=false;
@@ -1889,6 +1923,7 @@ async function saveRename(){
   const{error}=await sb.rpc('rename_net_worth_category',{p_type:renameType,p_old:renameCategory,p_new:name});
   btn.disabled=false;
   if(error){console.error(error);err.textContent=/name_taken/.test(error.message||'')?takenMsg:'Could not rename. Please try again.';return;}
+  track('nw_account_rename');
   // The debt tracker remembers which net worth debts the user said not to
   // import, by name. Carry that answer over so the rename does not re-ask.
   if(renameType==='liability'){try{const k='vf_debt_nwsync_dismissed',d=JSON.parse(localStorage.getItem(k)||'[]');if(Array.isArray(d)&&d.some(s=>normCat(s)===normCat(renameCategory))){d.push(name);localStorage.setItem(k,JSON.stringify(d));}}catch(e){}}
@@ -1903,7 +1938,7 @@ document.getElementById('renameInput').addEventListener('keydown',e=>{if(e.key==
 let valuationCategory=null,valuationEntryType=null;
 function openValuationFromDrawer(){if(!activeDrawerCategory)return;const entries=allEntries.filter(e=>e.category===activeDrawerCategory);if(!entries.length)return;const latest=entries[entries.length-1];valuationCategory=activeDrawerCategory;valuationEntryType=latest.type;document.getElementById('valuationTitle').textContent=activeDrawerCategory;document.getElementById('valuationSub').textContent=`Current value: ${fmtMoney(Number(latest.value))}`;document.getElementById('valuationDate').value=currentDateStr();document.getElementById('valuationValue').value=fmtInputVal(latest.value);document.getElementById('valuationErr').textContent='';valuationPaidOff=false;syncValuationPaidOff();document.getElementById('valuationModal').classList.add('open');}
 function closeValuationModal(){document.getElementById('valuationModal').classList.remove('open');}
-async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const error=await writeEntries([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';return;}closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
+async function saveValuation(){const date=document.getElementById('valuationDate').value,value=parseMoney(document.getElementById('valuationValue').value),err=document.getElementById('valuationErr');if(!date){err.textContent='Please select a date.';return;}if(!hasMoney(document.getElementById('valuationValue').value)){err.textContent='Please enter a value.';return;}err.textContent='';const paid_off=isZeroDebt(valuationEntryType,document.getElementById('valuationValue').value)&&valuationPaidOff;const error=await writeEntries([{user_id:currentUser.id,date,type:valuationEntryType,category:valuationCategory,value,paid_off}]);if(error){err.textContent='Error saving.';track('nw_save_error',{where:'valuation'});return;}track('nw_valuation_save');closeValuationModal();await loadEntries(true);if(!paid_off&&valuationCategory&&allEntries.some(e=>e.category===valuationCategory))openCategoryDrawer(valuationCategory);}
 document.getElementById('valuationDate').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 document.getElementById('valuationValue').addEventListener('keydown',e=>{if(e.key==='Enter')saveValuation();});
 
@@ -1975,9 +2010,11 @@ async function saveEntry(){
   // allowed; the debt just lands in the unassigned pile until the user gets to
   // it. Blocking a save on a money tracker is worse than an incomplete chart.
   const paid_off=isZeroDebt(selectedType,document.getElementById('entryValue').value)&&paidOffAnswer;
+  const wasEmpty=!allEntries.length&&!entriesLoadFailed;
   if(editingId){
     const{error}=await sb.from('net_worth_entries').update({date,type:selectedType,category,value,paid_off,updated_at:new Date().toISOString()}).eq('id',editingId);
-    if(error){err.textContent='Error saving.';return;}
+    if(error){err.textContent='Error saving.';track('nw_save_error',{where:'entry_edit'});return;}
+    track('nw_entry_edit');
     // Moving an entry onto a date that account already has a value for makes
     // the edited one the value for that date; the other copies go.
     const k=entryKey({type:selectedType,category,date}),stale=allEntries.filter(e=>e.id!==editingId&&entryKey(e)===k).map(e=>e.id);
@@ -1990,7 +2027,9 @@ async function saveEntry(){
     if(selectedType==='liability'&&tieAnswer==='yes'&&pendingAsset)rows.push({user_id:currentUser.id,date,type:'asset',category:pendingAsset.category,value:pendingAsset.value});
     rows.push({user_id:currentUser.id,date,type:selectedType,category,value,paid_off});
     const error=await writeEntries(rows);
-    if(error){err.textContent='Error saving.';return;}
+    if(error){err.textContent='Error saving.';track('nw_save_error',{where:'entry_add'});return;}
+    track('nw_entry_add',{type:selectedType,first:wasEmpty?1:0});
+    if(wasEmpty)track('nw_first_entry',{via:'entry'});
   }
   if(selectedType==='liability'&&tieAnswer){
     if(tieAnswer==='no')await saveLink(category,'standalone',null);
@@ -2004,7 +2043,7 @@ let bulkHistoryType='asset',bulkHistoryCategory='';
 function openBulkHistoryModal(){const cat=document.getElementById('entryCategory').value.trim();if(!cat){document.getElementById('modalErr').textContent='Please enter a category first.';return;}bulkHistoryCategory=cat;bulkHistoryType=selectedType;const d=document.getElementById('entryDate').value,v=document.getElementById('entryValue').value.trim();closeModal();document.getElementById('bulkHistoryTitle').textContent=`Historical Data: ${cat}`;document.getElementById('bulkErr').textContent='';const c=document.getElementById('bulkRows');c.innerHTML='';addBulkRow(d,v);addBulkRow();addBulkRow();document.getElementById('bulkHistoryModal').classList.add('open');}
 function addBulkRow(date='',value=''){const c=document.getElementById('bulkRows');const row=document.createElement('div');row.style.cssText='display:flex;gap:8px;align-items:center;';row.innerHTML=`<input type="date" class="bulk-date" value="${date}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;outline:none;"><input type="text" class="bulk-value" placeholder="${VestlyCurrency.zero()}" oninput="fmtModalComma(this)" value="${value}" style="flex:1;min-width:0;padding:9px 11px;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.83rem;font-weight:300;outline:none;"><button onclick="this.closest('div').remove()" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;line-height:1;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--muted)'">×</button>`;c.appendChild(row);}
 function closeBulkHistoryModal(){document.getElementById('bulkHistoryModal').classList.remove('open');}
-async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!hasMoney(row.querySelector('.bulk-value').value)){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const error=await writeEntries(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';return;}closeBulkHistoryModal();await loadEntries(true);}
+async function saveBulkHistory(){const rows=document.querySelectorAll('#bulkRows > div'),err=document.getElementById('bulkErr');err.textContent='';const toInsert=[];let hasError=false;rows.forEach((row,i)=>{const date=row.querySelector('.bulk-date').value,value=parseMoney(row.querySelector('.bulk-value').value);if(!date&&!row.querySelector('.bulk-value').value.trim())return;if(!date){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please select a date.`;hasError=true;return;}if(!hasMoney(row.querySelector('.bulk-value').value)){err.style.color='var(--red)';err.textContent=`Row ${i+1}: please enter a value.`;hasError=true;return;}toInsert.push({user_id:currentUser.id,date,type:bulkHistoryType,category:bulkHistoryCategory,value});});if(hasError)return;if(!toInsert.length){err.style.color='var(--red)';err.textContent='Please fill in at least one row.';return;}const wasEmpty=!allEntries.length&&!entriesLoadFailed;const error=await writeEntries(toInsert);if(error){err.style.color='var(--red)';err.textContent='Error saving.';track('nw_save_error',{where:'bulk_history'});return;}track('nw_bulk_history_save',{rows:toInsert.length});if(wasEmpty)track('nw_first_entry',{via:'bulk_history'});closeBulkHistoryModal();await loadEntries(true);}
 
 function openUpdateModal(){
   if(!allEntries.length){alert('No entries yet to update.');return;}
@@ -2033,9 +2072,13 @@ function syncUpdatePaid(inp){
   if(!zero)lbl.querySelector('input').checked=false;
 }
 function closeUpdateModal(){document.getElementById('updateModal').classList.remove('open');}
-async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const error=await writeEntries(toInsert);if(error){err.textContent='Error saving.';return;}closeUpdateModal();await loadEntries();}
+async function saveUpdates(){const date=document.getElementById('updateDate').value,err=document.getElementById('updateModalErr');if(!date){err.textContent='Please select a date.';return;}const inputs=document.querySelectorAll('#updateEntriesList .update-entry-input'),toInsert=[];for(const inp of inputs){if(!hasMoney(inp.value))continue;const v=parseMoney(inp.value),box=inp.closest('.update-entry-row').querySelector('.update-paid-box'),paid=!!(box&&box.checked);if(v===0&&Number(inp.dataset.prev)===0&&!paid)continue;toInsert.push({user_id:currentUser.id,date,type:inp.dataset.type,category:inp.dataset.category,value:v,paid_off:paid});}if(!toInsert.length){err.textContent='No values to save.';return;}const error=await writeEntries(toInsert);if(error){err.textContent='Error saving.';track('nw_save_error',{where:'update'});return;}track('nw_update_save',{count:toInsert.length});closeUpdateModal();await loadEntries();}
 
-function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=f.month===l.month?fmtMonthLabel(f.month):`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');setTimeout(()=>renderShareCanvas(s),50);}
+function openShareModal(){const s=getFilteredSnapshots();if(!s.length)return;const f=s[0],l=s[s.length-1];document.getElementById('shareModalSub').textContent=f.month===l.month?fmtMonthLabel(f.month):`${fmtMonthLabel(f.month)} – ${fmtMonthLabel(l.month)}`;document.getElementById('sharePreviewImg').style.display='none';document.getElementById('shareGenerating').style.display='block';document.getElementById('shareMsg').textContent='';const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);document.getElementById('downloadBtn').textContent=isMob?'Save Image':'Download';document.getElementById('shareModal').classList.add('open');track('nw_share_open',shareTrackParams(s));setTimeout(()=>renderShareCanvas(s),50);}
+// What a share event says about the card: how many months it spans, whether
+// the amounts are hidden, and whether it is the sample dashboard. Nothing on
+// the card itself is sent.
+function shareTrackParams(snaps){return{months:snaps.length,hidden:document.getElementById('sharePrivacy').checked?1:0,demo:demoMode?1:0};}
 function closeShareModal(){document.getElementById('shareModal').classList.remove('open');}
 function onPrivacyToggle(){const s=getFilteredSnapshots();if(s.length)renderShareCanvas(s);}
 function getShareAllocation(){
@@ -2180,8 +2223,8 @@ async function renderShareCanvas(snapshots){
   }
   const dataUrl=canvas.toDataURL('image/png');document.getElementById('shareGenerating').style.display='none';const img=document.getElementById('sharePreviewImg');img.src=dataUrl;img.style.display='block';
 }
-function downloadShareImage(){const canvas=document.getElementById('shareCanvas'),snaps=getFilteredSnapshots();if(!snaps.length)return;const f=snaps[0],l=snaps[snaps.length-1],dataUrl=canvas.toDataURL('image/png'),isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);if(isMob){const w=window.open();w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}else{const a=document.createElement('a');a.download=`vestlyfi-networth-${f.month}-to-${l.month}.png`;a.href=dataUrl;a.click();document.getElementById('shareMsg').textContent='Downloaded!';}}
-async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied to clipboard!';});}catch(e){msg.textContent='Copy not supported. Use Download instead.';msg.style.color='var(--red)';}}
+function downloadShareImage(){const canvas=document.getElementById('shareCanvas'),snaps=getFilteredSnapshots();if(!snaps.length)return;const f=snaps[0],l=snaps[snaps.length-1],dataUrl=canvas.toDataURL('image/png'),isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);track('nw_share_download',{...shareTrackParams(snaps),mobile:isMob?1:0});if(isMob){const w=window.open();w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}else{const a=document.createElement('a');a.download=`vestlyfi-networth-${f.month}-to-${l.month}.png`;a.href=dataUrl;a.click();document.getElementById('shareMsg').textContent='Downloaded!';}}
+async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg'),tp=shareTrackParams(getFilteredSnapshots());try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.textContent='Copied to clipboard!';track('nw_share_copy',tp);});}catch(e){msg.textContent='Copy not supported. Use Download instead.';msg.style.color='var(--red)';}}
 
 const FORMSPREE='https://formspree.io/f/xjgaydej';
 function openBugModal(){document.getElementById('bugDescription').value='';document.getElementById('bugEmail').value='';document.getElementById('bugPage').value=window.location.pathname;document.getElementById('bugErr').textContent='';document.getElementById('bugSubmitBtn').textContent='Send Report';document.getElementById('bugSubmitBtn').disabled=false;document.getElementById('bugModal').classList.add('open');setTimeout(()=>document.getElementById('bugDescription').focus(),50);}
