@@ -235,8 +235,14 @@ const EXTRA_CSS = `<style>
 .sched tr.hl td{color:var(--gold-light);}
 </style>`;
 
+// The hub (current === null) links every score. Score pages link only their
+// neighbors (within NEARBY points): 31 near-identical sibling links on every
+// page read as a doorway grid, and the hub already carries the full list.
+const NEARBY = 30;
+
 function chipsHtml(current) {
-  return `<div class="score-chips">` + SCORES.map((s) => s === current
+  const list = current === null ? SCORES : SCORES.filter((s) => Math.abs(s - current) <= NEARBY);
+  return `<div class="score-chips">` + list.map((s) => s === current
     ? `<span>${s}</span>`
     : `<a href="/car-affordability/${s}-credit-score/">${s}</a>`
   ).join('') + `</div>`;
@@ -454,13 +460,16 @@ function renderScorePage(score) {
     { label: 'Car Affordability', href: '/car-affordability/' },
     { label: `${score} Credit Score` },
   ];
+  const ex = affordCar(apr);
+  // Title and description lead with "car loan" because that is how searchers
+  // phrase it ("640 credit score car loan", "car loan with 640 credit score");
+  // the old "how much car can I afford" framing ranked on page 2-3 for those.
   const meta = {
-    title: `How Much Car Can I Afford With a ${score} Credit Score? | VestlyFi`,
-    description: band.desc(score),
+    title: `${score} Credit Score Car Loan: Your Rate and Car Budget | VestlyFi`,
+    description: `With a ${score} credit score, a new-car loan runs about ${apr.toFixed(1)}% APR and a used-car loan about ${estUsed(score).toFixed(1)}%. On $4,500/mo take-home with $3,000 down, that buys roughly a ${usdK(ex.sticker)} car.`,
     canonical: url, url, ogImage: `${SITE}/og-image.png`, noindex: false,
   };
 
-  const ex = affordCar(apr);
   const best = affordCar(estNew(800));
   const monthlyCost = Math.round((affordCar(apr).interest - best.interest) / EXAMPLE.term / 5) * 5;
   const good = isGoodForCar(score);
@@ -493,8 +502,8 @@ ${EXTRA_CSS}
 <div class="page">
   ${crumbsHtml(crumbs)}
   <div class="page-tag"><a href="/car-affordability/" style="color:inherit;text-decoration:none;">Car Affordability</a> · ${score} Credit Score</div>
-  <h1>How much car can you afford with a ${score} credit score?</h1>
-  <p class="intro">The calculator is prefilled with an estimated ${apr.toFixed(2)}% APR for a new-car loan at a ${score} score (${tier.name.toLowerCase()} tier). Enter your take-home pay and down payment; adjust anything, including the rate if you already have a quote.</p>
+  <h1>${score} credit score car loan: your rate and how much car you can afford</h1>
+  <p class="intro">With a ${score} credit score, expect a car loan rate around <strong>${apr.toFixed(1)}% APR on a new car</strong> and ${estUsed(score).toFixed(1)}% on a used one (${tier.name.toLowerCase()} tier). The calculator below is prefilled with that rate. Enter your take-home pay and down payment to see the car price it supports, and change the rate if you already have a quote.</p>
 
   ${calcMarkup(apr)}
 
@@ -534,8 +543,8 @@ ${EXTRA_CSS}
   </div>
 ${improveHtml}
   <div class="section">
-    <h2>Every credit score, same math</h2>
-    <p>Rates step down at 601, 661, and 781. Pick your exact score, or use the <a href="/car-affordability/">main car affordability calculator</a> if credit is not your constraint:</p>
+    <h2>Car loans at nearby credit scores</h2>
+    <p>Rates step down at 601, 661, and 781. Compare scores close to yours, or see <a href="/car-affordability/">car loan rates for every credit score</a> on the main calculator:</p>
     ${chipsHtml(score)}
     <p>Cars are the smaller half of the credit question. See <a href="/house-affordability/${score}-credit-score/">how much house you can afford with a ${score} credit score</a>, and <a href="/house-affordability/credit-score-to-buy-a-house/">what credit score you need to buy a house</a>.</p>
   </div>
