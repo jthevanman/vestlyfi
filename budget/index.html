@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Budget | VestlyFi</title>
+<!-- Unlaunched: keep out of search until the budget tracker goes public.
+     No analytics, no sitemap entry, no links from other pages. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/currency.js"></script>
+<style>
+:root {
+  --navy:        #0a0f1e;
+  --navy-mid:    #111827;
+  --navy-light:  #1a2540;
+  --navy-card:   #141d35;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c97a;
+  --gold-dim:    rgba(201,168,76,0.10);
+  --cream:       #f5f0e8;
+  --cream-dim:   rgba(245,240,232,0.6);
+  --muted:       rgba(245,240,232,0.38);
+  --border:      rgba(201,168,76,0.15);
+  --border-soft: rgba(255,255,255,0.07);
+  --green:       #4caf7d;
+  --green-dim:   rgba(76,175,125,0.12);
+  --red:         #e05c5c;
+  --red-dim:     rgba(224,92,92,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; overflow-x:hidden; }
+button { font-family:inherit; }
+input, select { font-family:inherit; }
+.hidden { display:none !important; }
+
+/* ── Auth ── */
+#authScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+.auth-panel { width:100%; max-width:380px; }
+.brand { font-family:'Exo 2',sans-serif; font-size:1.15rem; color:var(--gold); text-decoration:none; }
+.auth-title { font-size:1.4rem; font-weight:400; margin:18px 0 6px; }
+.auth-sub { font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:22px; }
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:0.68rem; color:var(--muted); margin-bottom:5px; letter-spacing:0.05em; text-transform:uppercase; }
+.field input, .field select { width:100%; padding:11px 13px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-size:16px; font-weight:300; outline:none; transition:border-color .15s; }
+.field input:focus, .field select:focus { border-color:var(--gold); }
+.field select option, .field select optgroup { background:var(--navy-mid); }
+.msg { font-size:0.8rem; min-height:20px; margin-top:8px; color:var(--cream-dim); }
+.msg.err { color:var(--red); }
+.auth-alt { font-size:0.8rem; color:var(--muted); margin-top:18px; line-height:1.6; }
+.auth-alt a { color:var(--gold); }
+
+/* ── Buttons ── */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 16px; border-radius:9px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background .15s, border-color .15s, color .15s; }
+.btn-gold { background:var(--gold); color:var(--navy); }
+.btn-gold:hover { background:var(--gold-light); }
+.btn-gold:disabled { opacity:.55; cursor:default; }
+.btn-ghost { background:none; border:1px solid var(--border-soft); color:var(--cream-dim); font-weight:400; }
+.btn-ghost:hover { border-color:var(--border); color:var(--cream); }
+.btn-danger { background:none; border:1px solid rgba(224,92,92,0.35); color:var(--red); font-weight:400; }
+.btn-block { width:100%; }
+.link-btn { background:none; border:none; color:var(--muted); font-size:0.78rem; cursor:pointer; padding:4px 2px; }
+.link-btn:hover { color:var(--cream); }
+
+/* ── App shell ── */
+.app { max-width:760px; margin:0 auto; padding:16px 16px calc(110px + env(safe-area-inset-bottom)); }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 0 18px; }
+.topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
+.link-btn, .pill { white-space:nowrap; }
+.app-foot { display:flex; align-items:center; justify-content:center; gap:10px; font-size:0.74rem; color:var(--muted); padding:8px 0; }
+.pill { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); border:1px solid var(--border); border-radius:20px; padding:2px 8px; }
+.topbar-right { display:flex; align-items:center; gap:4px; }
+
+.month-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px; }
+.month-label { font-size:1.35rem; font-weight:400; }
+.month-btns { display:flex; gap:6px; }
+.icon-btn { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); cursor:pointer; font-size:1rem; }
+.icon-btn:hover { border-color:var(--border); color:var(--cream); }
+.icon-btn:disabled { opacity:.35; cursor:default; }
+
+.stats { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+.stat { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:12px; padding:12px 14px; min-width:0; }
+.stat-label { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.stat-value { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stat-value.pos { color:var(--green); }
+.stat-value.neg { color:var(--red); }
+.stat-note { font-size:0.68rem; color:var(--muted); margin-top:3px; }
+
+.card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:16px; margin-bottom:14px; }
+.card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+.card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
+
+/* Spending by category */
+.grp { padding:8px 0 4px; }
+.grp + .grp { border-top:1px solid var(--border-soft); margin-top:6px; padding-top:12px; }
+.grp-row { display:flex; justify-content:space-between; font-size:0.86rem; font-weight:500; margin-bottom:6px; }
+.cat-row { padding:6px 0 6px 10px; }
+.cat-line { display:flex; justify-content:space-between; gap:10px; font-size:0.82rem; color:var(--cream-dim); }
+.cat-line .amt { color:var(--cream); white-space:nowrap; }
+.cat-line .of { color:var(--muted); font-size:0.74rem; margin-left:4px; }
+.bar { height:4px; border-radius:2px; background:var(--border-soft); margin-top:6px; overflow:hidden; }
+.bar > span { display:block; height:100%; background:var(--gold); border-radius:2px; }
+.bar.over > span { background:var(--red); }
+
+/* Transactions */
+.day { padding-top:6px; }
+.day + .day { margin-top:6px; }
+.day-label { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); padding:6px 0; }
+.tx { display:flex; align-items:center; gap:12px; width:100%; padding:10px 4px; border:none; background:none; color:inherit; text-align:left; cursor:pointer; border-radius:8px; }
+.tx:hover { background:rgba(255,255,255,0.03); }
+.tx-main { flex:1; min-width:0; }
+.tx-desc { font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tx-meta { font-size:0.72rem; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tx-amt { font-size:0.9rem; font-weight:500; white-space:nowrap; }
+.tx-amt.in { color:var(--green); }
+.tx-amt.xfer { color:var(--muted); }
+
+/* Floating add button */
+.fab { position:fixed; right:max(16px, calc(50% - 380px + 16px)); bottom:calc(20px + env(safe-area-inset-bottom)); width:60px; height:60px; border-radius:50%; border:none; background:var(--gold); color:var(--navy); font-size:2rem; line-height:1; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,0.45); z-index:50; display:flex; align-items:center; justify-content:center; }
+.fab:hover { background:var(--gold-light); }
+
+/* ── Sheets (bottom on phones, centered on desktop) ── */
+.sheet-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; justify-content:center; }
+.sheet-overlay.open { display:flex; }
+.sheet { background:var(--navy-mid); border:1px solid var(--border); border-bottom:none; border-radius:18px 18px 0 0; width:100%; max-width:520px; max-height:92vh; overflow-y:auto; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); }
+@media (min-width:640px) {
+  .sheet-overlay { align-items:center; padding:20px; }
+  .sheet { border-radius:18px; border-bottom:1px solid var(--border); padding:22px; }
+}
+.sheet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+.sheet-title { font-size:1rem; font-weight:500; }
+.close-x { background:none; border:none; color:var(--muted); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px; }
+.close-x:hover { color:var(--cream); }
+
+.seg { display:flex; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:10px; padding:3px; margin-bottom:12px; }
+.seg button { flex:1; padding:8px 6px; border:none; border-radius:8px; background:none; color:var(--muted); font-size:0.82rem; cursor:pointer; }
+.seg button.on { background:var(--navy-light); color:var(--cream); }
+.seg button.on.spent { color:var(--red); }
+.seg button.on.received { color:var(--green); }
+
+.amount-wrap { display:flex; align-items:center; gap:6px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:12px; padding:6px 14px; margin-bottom:14px; }
+.amount-wrap:focus-within { border-color:var(--gold); }
+.amount-sym { font-size:1.6rem; color:var(--muted); }
+.amount-input { flex:1; min-width:0; background:none; border:none; outline:none; color:var(--cream); font-size:2rem; font-weight:500; padding:6px 0; }
+
+.chips-label { font-size:0.68rem; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:6px; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.chip { padding:7px 12px; border-radius:20px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); font-size:0.8rem; cursor:pointer; }
+.chip:hover { border-color:var(--border); color:var(--cream); }
+.chip.on { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
+.chip.add { border-style:dashed; color:var(--muted); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.inline-form { display:flex; gap:6px; margin:-2px 0 12px; flex-wrap:wrap; }
+.inline-form input, .inline-form select { flex:1; min-width:120px; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-size:16px; outline:none; }
+.inline-form input:focus, .inline-form select:focus { border-color:var(--gold); }
+.sheet-actions { display:flex; gap:8px; margin-top:6px; }
+.sheet-actions .btn { flex:1; }
+
+/* Manage sheet */
+.m-grp { margin-bottom:16px; }
+.m-grp-title { font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+.m-row { display:flex; align-items:center; gap:6px; padding:5px 0; }
+.m-row input[type=text] { flex:1; min-width:0; padding:8px 10px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-size:16px; outline:none; }
+.m-row input.target { flex:0 0 96px; text-align:right; }
+.m-row input:focus { border-color:var(--gold); }
+.m-row select { padding:8px 6px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-size:14px; }
+.m-row.dim input[type=text] { opacity:.45; }
+.m-toggle { flex:0 0 auto; background:none; border:1px solid var(--border-soft); color:var(--muted); border-radius:7px; padding:6px 8px; font-size:0.72rem; cursor:pointer; }
+.m-toggle:hover { color:var(--cream); border-color:var(--border); }
+.m-hint { font-size:0.74rem; color:var(--muted); line-height:1.55; margin-bottom:12px; }
+
+.toast { position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--cream); font-size:0.82rem; padding:10px 16px; border-radius:10px; z-index:300; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); }
+.toast.show { opacity:1; }
+.toast.err { border-color:rgba(224,92,92,0.5); }
+
+@media (max-width:560px) {
+  .stats { grid-template-columns:1fr 1fr; }
+  .month-label { font-size:1.15rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIGN IN ══ -->
+<div id="authScreen" class="hidden">
+  <div class="auth-panel">
+    <a class="brand" href="/">VestlyFi</a>
+    <h1 class="auth-title">Budget tracker</h1>
+    <p class="auth-sub">Sign in with your VestlyFi account. It's the same login as the net worth tracker.</p>
+    <div class="field"><label for="siEmail">Email</label><input id="siEmail" type="email" autocomplete="email"></div>
+    <div class="field"><label for="siPassword">Password</label><input id="siPassword" type="password" autocomplete="current-password"></div>
+    <button class="btn btn-gold btn-block" id="siBtn" onclick="signIn()">Sign in</button>
+    <div class="msg" id="siMsg"></div>
+    <p class="auth-alt">No account yet? <a href="/net-worth/">Create one on the net worth tracker</a>, then come back here.</p>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="appScreen" class="hidden">
+  <div class="app">
+    <div class="topbar">
+      <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
+      <div class="topbar-right">
+        <button class="link-btn" onclick="openManage('categories')">Categories</button>
+        <button class="link-btn" onclick="openManage('accounts')">Accounts</button>
+      </div>
+    </div>
+
+    <div class="month-nav">
+      <div class="month-label" id="monthLabel"></div>
+      <div class="month-btns">
+        <button class="icon-btn" onclick="shiftMonth(-1)" aria-label="Previous month">&#8249;</button>
+        <button class="icon-btn" id="nextMonthBtn" onclick="shiftMonth(1)" aria-label="Next month">&#8250;</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Income</div><div class="stat-value" id="sIncome"></div></div>
+      <div class="stat"><div class="stat-label">Spent</div><div class="stat-value" id="sSpent"></div></div>
+      <div class="stat"><div class="stat-label">Saved</div><div class="stat-value" id="sSaved"></div></div>
+      <div class="stat"><div class="stat-label">Savings rate</div><div class="stat-value" id="sRate"></div><div class="stat-note" id="sRateNote"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Spending by category</div></div>
+      <div id="catBreakdown"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Transactions</div><div class="card-title" id="txCount"></div></div>
+      <div id="txList"></div>
+    </div>
+    <div class="app-foot"><span id="userEmail"></span><button class="link-btn" onclick="signOut()">Sign out</button></div>
+  </div>
+  <button class="fab" onclick="openAdd()" aria-label="Add transaction">+</button>
+</div>
+
+<!-- ══ ADD / EDIT SHEET ══ -->
+<div class="sheet-overlay" id="addSheet" onclick="if(event.target===this)closeSheet('addSheet')">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+    <div class="sheet-head"><div class="sheet-title" id="addTitle">Add transaction</div><button class="close-x" onclick="closeSheet('addSheet')" aria-label="Close">&times;</button></div>
+
+    <div class="seg" id="modeSeg">
+      <button class="spent on" data-mode="spent" onclick="setMode('spent')">Spent</button>
+      <button class="received" data-mode="received" onclick="setMode('received')">Received</button>
+    </div>
+
+    <div class="amount-wrap">
+      <span class="amount-sym" id="amountSym">$</span>
+      <input class="amount-input" id="fAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Amount">
+    </div>
+
+    <div class="chips-label">Category</div>
+    <div class="chips" id="catChips"></div>
+    <div class="field"><select id="fCategory" aria-label="All categories"></select></div>
+
+    <div class="chips-label">Account</div>
+    <div class="chips" id="acctChips"></div>
+    <div class="inline-form hidden" id="newAcctForm">
+      <input id="newAcctName" type="text" placeholder="e.g. Chase card" maxlength="80">
+      <select id="newAcctKind">
+        <option value="credit_card">Credit card</option>
+        <option value="checking">Checking</option>
+        <option value="savings">Savings</option>
+        <option value="cash">Cash</option>
+        <option value="other">Other</option>
+      </select>
+      <button class="btn btn-ghost" onclick="createAccountFromSheet()">Add</button>
+    </div>
+
+    <div class="row2">
+      <div class="field"><label for="fDate">Date</label><input id="fDate" type="date"></div>
+      <div class="field"><label for="fDesc">What was it?</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
+    </div>
+
+    <div class="msg err" id="addMsg"></div>
+    <div class="sheet-actions">
+      <button class="btn btn-danger hidden" id="deleteBtn" onclick="deleteTx()">Delete</button>
+      <button class="btn btn-gold" id="saveBtn" onclick="saveTx()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MANAGE SHEET ══ -->
+<div class="sheet-overlay" id="manageSheet" onclick="if(event.target===this)closeSheet('manageSheet')">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="manageTitle">
+    <div class="sheet-head"><div class="sheet-title" id="manageTitle">Categories</div><button class="close-x" onclick="closeSheet('manageSheet')" aria-label="Close">&times;</button></div>
+    <div class="seg">
+      <button data-tab="categories" onclick="openManage('categories')">Categories</button>
+      <button data-tab="accounts" onclick="openManage('accounts')">Accounts</button>
+    </div>
+    <div id="manageBody"></div>
+    <div class="msg err" id="manageMsg"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
+
+const LAST_ACCT_KEY = 'vf_budget_last_account';
+const CASH = '__cash__'; // A "Cash" chip that becomes a real account on first save.
+
+let user = null;
+let groups = [], cats = [], accounts = [];
+let monthTx = [], recentTx = [];
+let viewMonth = firstOfMonth(new Date());
+let editing = null;           // transaction being edited, or null when adding
+let mode = 'spent';           // 'spent' | 'received'
+let selCat = null;            // category id
+let selAcct = null;           // account id or CASH
+let manageTab = 'categories';
+let booted = false;
+
+/* ── helpers ── */
+function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function pad(n){return String(n).padStart(2,'0');}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function firstOfMonth(d){return new Date(d.getFullYear(), d.getMonth(), 1);}
+function lastOfMonth(d){return new Date(d.getFullYear(), d.getMonth()+1, 0);}
+function parseYmd(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function sameMonth(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth();}
+function norm(s){return String(s||'').trim().toLowerCase();}
+
+// Budget amounts need cents; VestlyCurrency.fmt rounds to whole units.
+let nfCents = null, nfCentsKey = '';
+function money(n){
+  const key = VestlyCurrency.locale()+'|'+VestlyCurrency.code();
+  if (!nfCents || key !== nfCentsKey) {
+    nfCents = new Intl.NumberFormat(VestlyCurrency.locale(), { style:'currency', currency:VestlyCurrency.code(), minimumFractionDigits:2, maximumFractionDigits:2 });
+    nfCentsKey = key;
+  }
+  return nfCents.format(Number(n)||0);
+}
+// Whole-unit format for the summary tiles, where cents are noise.
+function moneyWhole(n){return VestlyCurrency.fmt(n);}
+
+function toast(text, isErr){
+  const t = document.getElementById('toast');
+  t.textContent = text; t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>{ t.className = 'toast'; }, 2400);
+}
+function errText(e){
+  if (!e) return 'Something went wrong.';
+  if (e.code === '23505') return 'That name is already in use.';
+  return e.message || 'Something went wrong.';
+}
+
+const groupById = id => groups.find(g => g.id === id);
+const catById = id => cats.find(c => c.id === id);
+const acctById = id => accounts.find(a => a.id === id);
+function kindOfCat(c){ const g = c && groupById(c.group_id); return g ? g.kind : null; }
+function visibleCats(){ return cats.filter(c => !c.hidden && !(groupById(c.group_id)||{}).hidden); }
+function sortedGroups(){ return groups.slice().sort((a,b)=>a.sort_order-b.sort_order || a.name.localeCompare(b.name)); }
+function catsIn(gid, includeHidden){ return cats.filter(c => c.group_id===gid && (includeHidden || !c.hidden)).sort((a,b)=>a.sort_order-b.sort_order || a.name.localeCompare(b.name)); }
+function liveAccounts(){ return accounts.filter(a => !a.archived).sort((a,b)=>a.sort_order-b.sort_order || a.created_at.localeCompare(b.created_at)); }
+
+/* ── auth ── */
+async function signIn(){
+  const email = document.getElementById('siEmail').value.trim();
+  const password = document.getElementById('siPassword').value;
+  const msg = document.getElementById('siMsg');
+  msg.className = 'msg'; msg.textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { msg.className = 'msg err'; msg.textContent = error.message; }
+}
+['siEmail','siPassword'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); }));
+async function signOut(){ await sb.auth.signOut(); }
+
+function showAuth(){ document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
+function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
+
+async function boot(session){
+  if (!session || !session.user) { user = null; booted = false; showAuth(); return; }
+  if (booted && user && user.id === session.user.id) return;
+  user = session.user; booted = true;
+  document.getElementById('userEmail').textContent = user.email || '';
+  showApp();
+  try { await VestlyCurrency.load(sb, user.id); } catch (e) { console.error(e); }
+  document.getElementById('amountSym').textContent = VestlyCurrency.symbol();
+  // Creates the starter categories the first time this user opens the page.
+  const { error } = await sb.rpc('seed_budget_defaults');
+  if (error) console.error(error);
+  await loadMeta();
+  await loadMonth();
+}
+
+sb.auth.getSession().then(({ data }) => boot(data.session));
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') { user = null; booted = false; showAuth(); return; }
+  if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') boot(session);
+});
+
+/* ── data ── */
+async function loadMeta(){
+  const [g, c, a, r] = await Promise.all([
+    sb.from('budget_groups').select('*').order('sort_order'),
+    sb.from('budget_categories').select('*').order('sort_order'),
+    sb.from('budget_accounts').select('*').order('sort_order'),
+    sb.from('budget_transactions').select('category_id,account_id').order('created_at', { ascending:false }).limit(300)
+  ]);
+  for (const res of [g,c,a,r]) if (res.error) { console.error(res.error); toast('Could not load your budget.', true); }
+  groups = g.data || []; cats = c.data || []; accounts = a.data || []; recentTx = r.data || [];
+}
+
+async function loadMonth(){
+  const start = ymd(viewMonth), end = ymd(lastOfMonth(viewMonth));
+  const { data, error } = await sb.from('budget_transactions').select('*')
+    .gte('date', start).lte('date', end)
+    .order('date', { ascending:false }).order('created_at', { ascending:false });
+  if (error) { console.error(error); toast('Could not load transactions.', true); }
+  monthTx = data || [];
+  render();
+}
+
+function shiftMonth(delta){
+  viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+delta, 1);
+  loadMonth();
+}
+
+/* ── month math ──
+   income  : income categories, plus uncategorized money in
+   spent   : expense categories, plus uncategorized money out (refunds lower it)
+   transfer: counted as neither */
+function monthTotals(){
+  let income = 0, spent = 0;
+  for (const t of monthTx) {
+    const k = kindOfCat(catById(t.category_id));
+    const amt = Number(t.amount);
+    if (k === 'transfer') continue;
+    if (k === 'income') income += amt;
+    else if (k === 'expense') spent -= amt;
+    else if (amt > 0) income += amt; else spent -= amt;
+  }
+  return { income, spent, saved: income - spent };
+}
+
+/* ── render ── */
+function render(){
+  const loc = VestlyCurrency.locale();
+  document.getElementById('monthLabel').textContent = viewMonth.toLocaleDateString(loc, { month:'long', year:'numeric' });
+  document.getElementById('nextMonthBtn').disabled = sameMonth(viewMonth, new Date());
+
+  const { income, spent, saved } = monthTotals();
+  document.getElementById('sIncome').textContent = moneyWhole(income);
+  document.getElementById('sSpent').textContent = moneyWhole(spent);
+  const sv = document.getElementById('sSaved');
+  sv.textContent = moneyWhole(saved);
+  sv.className = 'stat-value' + (saved > 0 ? ' pos' : saved < 0 ? ' neg' : '');
+  const rate = document.getElementById('sRate'), note = document.getElementById('sRateNote');
+  if (income > 0) { rate.textContent = Math.round(saved / income * 100) + '%'; note.textContent = ''; }
+  else { rate.textContent = '0%'; note.textContent = 'No income logged'; }
+
+  renderBreakdown();
+  renderTxList();
+}
+
+function renderBreakdown(){
+  const el = document.getElementById('catBreakdown');
+  const spentByCat = {}; let uncat = 0;
+  for (const t of monthTx) {
+    const c = catById(t.category_id), amt = Number(t.amount);
+    if (!c) { if (amt < 0) uncat -= amt; continue; }
+    if (kindOfCat(c) !== 'expense') continue;
+    spentByCat[c.id] = (spentByCat[c.id] || 0) - amt;
+  }
+  let html = '';
+  for (const g of sortedGroups()) {
+    if (g.kind !== 'expense') continue;
+    const rows = catsIn(g.id, true).filter(c => (spentByCat[c.id] || 0) !== 0 || (!c.hidden && c.monthly_target != null));
+    if (!rows.length) continue;
+    const total = rows.reduce((s,c) => s + (spentByCat[c.id] || 0), 0);
+    html += `<div class="grp"><div class="grp-row"><span>${escHtml(g.name)}</span><span>${money(total)}</span></div>`;
+    for (const c of rows) {
+      const s = spentByCat[c.id] || 0, tgt = c.monthly_target != null ? Number(c.monthly_target) : null;
+      let bar = '';
+      if (tgt != null && tgt > 0) {
+        const pct = Math.max(0, Math.min(100, s / tgt * 100));
+        bar = `<div class="bar${s > tgt ? ' over' : ''}"><span style="width:${pct}%"></span></div>`;
+      }
+      html += `<div class="cat-row"><div class="cat-line"><span>${escHtml(c.name)}</span><span><span class="amt">${money(s)}</span>${tgt != null ? `<span class="of">of ${money(tgt)}</span>` : ''}</span></div>${bar}</div>`;
+    }
+    html += '</div>';
+  }
+  if (uncat > 0) html += `<div class="grp"><div class="grp-row"><span>Uncategorized</span><span>${money(uncat)}</span></div></div>`;
+  el.innerHTML = html || '<div class="empty">No spending logged this month.</div>';
+}
+
+function renderTxList(){
+  const el = document.getElementById('txList');
+  document.getElementById('txCount').textContent = monthTx.length ? monthTx.length + (monthTx.length === 1 ? ' entry' : ' entries') : '';
+  if (!monthTx.length) {
+    el.innerHTML = '<div class="empty">Nothing logged for this month yet.<br>Tap + to add your first transaction.</div>';
+    return;
+  }
+  const loc = VestlyCurrency.locale();
+  const byDay = {};
+  for (const t of monthTx) (byDay[t.date] = byDay[t.date] || []).push(t);
+  let html = '';
+  for (const day of Object.keys(byDay).sort().reverse()) {
+    const label = parseYmd(day).toLocaleDateString(loc, { weekday:'short', month:'short', day:'numeric' });
+    html += `<div class="day"><div class="day-label">${escHtml(label)}</div>`;
+    for (const t of byDay[day]) {
+      const c = catById(t.category_id), a = acctById(t.account_id), k = kindOfCat(c);
+      const amt = Number(t.amount);
+      const title = t.description || (c ? c.name : 'Uncategorized');
+      const meta = [t.description ? (c ? c.name : 'Uncategorized') : null, a ? a.name : null].filter(Boolean).join(' · ');
+      const cls = k === 'transfer' ? 'xfer' : amt > 0 ? 'in' : '';
+      const shown = amt > 0 ? '+' + money(amt) : money(-amt);
+      html += `<button class="tx" onclick="openEdit('${t.id}')"><div class="tx-main"><div class="tx-desc">${escHtml(title)}</div>${meta ? `<div class="tx-meta">${escHtml(meta)}</div>` : ''}</div><div class="tx-amt ${cls}">${escHtml(shown)}</div></button>`;
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* ── add / edit sheet ── */
+function openSheet(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeSheet(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  ['addSheet','manageSheet'].forEach(id => { if (document.getElementById(id).classList.contains('open')) closeSheet(id); });
+});
+
+function defaultAccount(){
+  let last = null;
+  try { last = localStorage.getItem(LAST_ACCT_KEY); } catch (e) {}
+  if (last && last !== CASH && liveAccounts().some(a => a.id === last)) return last;
+  const cash = liveAccounts().find(a => norm(a.name) === 'cash');
+  return cash ? cash.id : CASH;
+}
+
+function openAdd(){
+  editing = null;
+  document.getElementById('addTitle').textContent = 'Add transaction';
+  document.getElementById('deleteBtn').classList.add('hidden');
+  document.getElementById('fAmount').value = '';
+  document.getElementById('fDesc').value = '';
+  const today = new Date();
+  // Adding while looking at a past month defaults to that month's last day.
+  document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
+  mode = 'spent'; selCat = null; selAcct = defaultAccount();
+  document.getElementById('newAcctForm').classList.add('hidden');
+  document.getElementById('addMsg').textContent = '';
+  renderSheet();
+  openSheet('addSheet');
+  // Focus inside the tap itself: iOS only raises the keyboard for a focus
+  // that happens during the user's gesture, not one from a timer.
+  document.getElementById('fAmount').focus();
+}
+
+function openEdit(id){
+  const t = monthTx.find(x => x.id === id); if (!t) return;
+  editing = t;
+  document.getElementById('addTitle').textContent = 'Edit transaction';
+  document.getElementById('deleteBtn').classList.remove('hidden');
+  const amt = Number(t.amount);
+  mode = amt > 0 ? 'received' : 'spent';
+  document.getElementById('fAmount').value = new Intl.NumberFormat(VestlyCurrency.locale(), { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(amt));
+  document.getElementById('fDesc').value = t.description || '';
+  document.getElementById('fDate').value = t.date;
+  selCat = t.category_id; selAcct = t.account_id || null;
+  document.getElementById('newAcctForm').classList.add('hidden');
+  document.getElementById('addMsg').textContent = '';
+  renderSheet();
+  openSheet('addSheet');
+}
+
+function setMode(m){ mode = m; renderSheet(); }
+
+// Everyday purchases first for a new user; bills like rent are logged rarely.
+const STARTER_PRIORITY = ['groceries','dining out','gas','shopping','subscriptions','entertainment','health','gifts','paycheck','other income'];
+function starterRank(c){ const i = STARTER_PRIORITY.indexOf(norm(c.name)); return i === -1 ? 99 : i; }
+
+// Most-used categories first (from recent entries), then everyday ones.
+function chipCats(){
+  const want = mode === 'received' ? 'income' : 'expense';
+  const pool = visibleCats().filter(c => kindOfCat(c) === want);
+  const uses = {};
+  for (const t of recentTx) if (t.category_id) uses[t.category_id] = (uses[t.category_id] || 0) + 1;
+  const gOrder = id => (groupById(id) || { sort_order:0 }).sort_order;
+  pool.sort((a,b) => (uses[b.id]||0) - (uses[a.id]||0) || starterRank(a) - starterRank(b) || gOrder(a.group_id) - gOrder(b.group_id) || a.sort_order - b.sort_order);
+  const top = pool.slice(0, 8);
+  const sel = catById(selCat);
+  if (sel && !top.some(c => c.id === sel.id)) top.push(sel);
+  return top;
+}
+
+function renderSheet(){
+  document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+
+  document.getElementById('catChips').innerHTML = chipCats().map(c =>
+    `<button class="chip${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')">${escHtml(c.name)}</button>`).join('');
+
+  const sel = document.getElementById('fCategory');
+  let opts = `<option value="">${selCat ? 'Uncategorized' : 'All categories…'}</option>`;
+  for (const g of sortedGroups()) {
+    if (g.hidden) continue;
+    const list = catsIn(g.id, false);
+    if (!list.length) continue;
+    opts += `<optgroup label="${escHtml(g.name)}">` + list.map(c => `<option value="${c.id}"${c.id === selCat ? ' selected' : ''}>${escHtml(c.name)}</option>`).join('') + '</optgroup>';
+  }
+  sel.innerHTML = opts;
+  sel.value = selCat || '';
+
+  const live = liveAccounts();
+  let chips = live.map(a => `<button class="chip${a.id === selAcct ? ' on' : ''}" onclick="pickAcct('${a.id}')">${escHtml(a.name)}</button>`).join('');
+  if (!live.some(a => norm(a.name) === 'cash')) chips += `<button class="chip${selAcct === CASH ? ' on' : ''}" onclick="pickAcct('${CASH}')">Cash</button>`;
+  // An edited entry may point at an archived account; keep it visible.
+  const cur = acctById(selAcct);
+  if (cur && cur.archived) chips = `<button class="chip on">${escHtml(cur.name)}</button>` + chips;
+  chips += `<button class="chip add" onclick="toggleNewAcct()">+ Account</button>`;
+  document.getElementById('acctChips').innerHTML = chips;
+}
+
+function pickCat(id){
+  selCat = (selCat === id) ? null : id;
+  const k = kindOfCat(catById(selCat));
+  if (k === 'income') mode = 'received';
+  else if (k === 'expense') mode = 'spent';
+  renderSheet();
+}
+document.getElementById('fCategory').addEventListener('change', e => pickCat(e.target.value || null));
+function pickAcct(id){ selAcct = id; renderSheet(); }
+function toggleNewAcct(){
+  const f = document.getElementById('newAcctForm');
+  f.classList.toggle('hidden');
+  if (!f.classList.contains('hidden')) document.getElementById('newAcctName').focus();
+}
+
+async function insertAccount(name, kind){
+  const sort = accounts.reduce((m,a) => Math.max(m, a.sort_order), 0) + 1;
+  const { data, error } = await sb.from('budget_accounts').insert({ user_id:user.id, name, kind, sort_order:sort }).select().single();
+  if (error) return { error };
+  accounts.push(data);
+  return { data };
+}
+
+async function createAccountFromSheet(){
+  const name = document.getElementById('newAcctName').value.trim();
+  const kind = document.getElementById('newAcctKind').value;
+  const msg = document.getElementById('addMsg');
+  if (!name) { msg.textContent = 'Name the account.'; return; }
+  const { data, error } = await insertAccount(name, kind);
+  if (error) { msg.textContent = errText(error); return; }
+  msg.textContent = '';
+  document.getElementById('newAcctName').value = '';
+  document.getElementById('newAcctForm').classList.add('hidden');
+  selAcct = data.id;
+  renderSheet();
+}
+
+document.getElementById('fAmount').addEventListener('input', e => VestlyCurrency.groupDec(e.target));
+document.getElementById('fAmount').addEventListener('keydown', e => { if (e.key === 'Enter') saveTx(); });
+
+async function resolveAccount(){
+  if (selAcct !== CASH) return { id: selAcct || null };
+  const existing = liveAccounts().find(a => norm(a.name) === 'cash') || accounts.find(a => norm(a.name) === 'cash');
+  if (existing) return { id: existing.id };
+  const { data, error } = await insertAccount('Cash', 'cash');
+  if (error) return { error };
+  return { id: data.id };
+}
+
+async function saveTx(){
+  const msg = document.getElementById('addMsg');
+  const amount = VestlyCurrency.parseDec(document.getElementById('fAmount').value);
+  const date = document.getElementById('fDate').value;
+  if (!(amount > 0)) { msg.textContent = 'Enter an amount.'; document.getElementById('fAmount').focus(); return; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) { msg.textContent = 'Pick a date.'; return; }
+  const btn = document.getElementById('saveBtn'); btn.disabled = true; msg.textContent = '';
+  try {
+    const acct = await resolveAccount();
+    if (acct.error) { msg.textContent = errText(acct.error); return; }
+    const row = {
+      account_id: acct.id,
+      category_id: selCat || null,
+      date,
+      amount: Math.round(amount * 100) / 100 * (mode === 'received' ? 1 : -1),
+      description: document.getElementById('fDesc').value.trim()
+    };
+    const res = editing
+      ? await sb.from('budget_transactions').update(row).eq('id', editing.id)
+      : await sb.from('budget_transactions').insert({ ...row, user_id:user.id });
+    if (res.error) { msg.textContent = errText(res.error); return; }
+    try { if (acct.id) localStorage.setItem(LAST_ACCT_KEY, acct.id); } catch (e) {}
+    if (!editing) recentTx.unshift({ category_id: row.category_id, account_id: row.account_id });
+    closeSheet('addSheet');
+    const savedMonth = parseYmd(date);
+    toast(sameMonth(savedMonth, viewMonth) ? (editing ? 'Updated' : 'Saved')
+      : 'Saved to ' + savedMonth.toLocaleDateString(VestlyCurrency.locale(), { month:'long', year:'numeric' }));
+    await loadMonth();
+  } finally { btn.disabled = false; }
+}
+
+async function deleteTx(){
+  if (!editing) return;
+  if (!confirm('Delete this transaction? This cannot be undone.')) return;
+  const { error } = await sb.from('budget_transactions').delete().eq('id', editing.id);
+  if (error) { document.getElementById('addMsg').textContent = errText(error); return; }
+  closeSheet('addSheet');
+  toast('Deleted');
+  await loadMonth();
+}
+
+/* ── manage sheet ── */
+function openManage(tab){
+  manageTab = tab;
+  document.getElementById('manageTitle').textContent = tab === 'accounts' ? 'Accounts' : 'Categories';
+  document.querySelectorAll('#manageSheet .seg button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  document.getElementById('manageMsg').textContent = '';
+  renderManage();
+  if (!document.getElementById('manageSheet').classList.contains('open')) openSheet('manageSheet');
+}
+
+function renderManage(){
+  const body = document.getElementById('manageBody');
+  if (manageTab === 'accounts') {
+    const list = accounts.slice().sort((a,b) => (a.archived - b.archived) || a.sort_order - b.sort_order);
+    const kinds = [['credit_card','Credit card'],['checking','Checking'],['savings','Savings'],['cash','Cash'],['other','Other']];
+    let html = '<p class="m-hint">Accounts are where money moves: a card, checking, cash. They are only for the budget and are not linked to your net worth.</p>';
+    if (!list.length) html += '<div class="empty">No accounts yet. Add one below, or pick Cash when adding a transaction.</div>';
+    for (const a of list) {
+      html += `<div class="m-row${a.archived ? ' dim' : ''}">
+        <input type="text" value="${escHtml(a.name)}" maxlength="80" onchange="renameAccount('${a.id}', this)">
+        <select onchange="updateAccount('${a.id}', { kind:this.value })">${kinds.map(([v,l]) => `<option value="${v}"${a.kind === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+        <button class="m-toggle" onclick="updateAccount('${a.id}', { archived:${!a.archived} })">${a.archived ? 'Restore' : 'Archive'}</button>
+      </div>`;
+    }
+    html += `<div class="inline-form" style="margin-top:12px"><input id="mAcctName" type="text" placeholder="New account name" maxlength="80"><select id="mAcctKind">${kinds.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</select><button class="btn btn-ghost" onclick="addAccountFromManage()">Add</button></div>`;
+    body.innerHTML = html;
+    return;
+  }
+  let html = '<p class="m-hint">Rename, hide or add categories. A monthly target is optional; leave it blank for no target. Transfers (like paying a credit card) never count as spending.</p>';
+  for (const g of sortedGroups()) {
+    html += `<div class="m-grp"><div class="m-grp-title">${escHtml(g.name)}</div>`;
+    for (const c of catsIn(g.id, true)) {
+      const tgt = c.monthly_target != null ? new Intl.NumberFormat(VestlyCurrency.locale(), { maximumFractionDigits:2 }).format(Number(c.monthly_target)) : '';
+      html += `<div class="m-row${c.hidden ? ' dim' : ''}">
+        <input type="text" value="${escHtml(c.name)}" maxlength="60" onchange="renameCategory('${c.id}', this)">
+        ${g.kind === 'expense' ? `<input type="text" class="target" inputmode="decimal" placeholder="Target" value="${escHtml(tgt)}" onchange="setTarget('${c.id}', this)" aria-label="Monthly target">` : ''}
+        <button class="m-toggle" onclick="updateCategory('${c.id}', { hidden:${!c.hidden} })">${c.hidden ? 'Show' : 'Hide'}</button>
+      </div>`;
+    }
+    html += `<div class="inline-form" style="margin-top:4px"><input id="newCat_${g.id}" type="text" placeholder="Add to ${escHtml(g.name)}" maxlength="60" onkeydown="if(event.key==='Enter')addCategory('${g.id}')"><button class="btn btn-ghost" onclick="addCategory('${g.id}')">Add</button></div></div>`;
+  }
+  body.innerHTML = html;
+}
+
+function manageErr(e){ document.getElementById('manageMsg').textContent = errText(e); }
+
+async function updateCategory(id, patch){
+  const { data, error } = await sb.from('budget_categories').update(patch).eq('id', id).select().single();
+  if (error) { manageErr(error); renderManage(); return false; }
+  cats = cats.map(c => c.id === id ? data : c);
+  document.getElementById('manageMsg').textContent = '';
+  renderManage(); render();
+  return true;
+}
+function renameCategory(id, el){
+  const name = el.value.trim();
+  if (!name) { el.value = catById(id).name; return; }
+  updateCategory(id, { name });
+}
+function setTarget(id, el){
+  const raw = el.value.trim();
+  updateCategory(id, { monthly_target: raw === '' ? null : Math.round(VestlyCurrency.parseDec(raw) * 100) / 100 });
+}
+async function addCategory(groupId){
+  const input = document.getElementById('newCat_' + groupId);
+  const name = input.value.trim();
+  if (!name) return;
+  const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
+  const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
+  if (error) { manageErr(error); return; }
+  cats.push(data);
+  document.getElementById('manageMsg').textContent = '';
+  renderManage();
+}
+
+async function updateAccount(id, patch){
+  const { data, error } = await sb.from('budget_accounts').update(patch).eq('id', id).select().single();
+  if (error) { manageErr(error); renderManage(); return; }
+  accounts = accounts.map(a => a.id === id ? data : a);
+  document.getElementById('manageMsg').textContent = '';
+  renderManage(); render();
+}
+function renameAccount(id, el){
+  const name = el.value.trim();
+  if (!name) { el.value = acctById(id).name; return; }
+  updateAccount(id, { name });
+}
+async function addAccountFromManage(){
+  const name = document.getElementById('mAcctName').value.trim();
+  if (!name) return;
+  const { error } = await insertAccount(name, document.getElementById('mAcctKind').value);
+  if (error) { manageErr(error); return; }
+  document.getElementById('manageMsg').textContent = '';
+  renderManage();
+}
+</script>
+</body>
+</html>
