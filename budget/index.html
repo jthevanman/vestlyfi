@@ -9,26 +9,19 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&family=Schibsted+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
-<!-- Prototype font candidate from Fontshare (ITF Free Font License, free for commercial use). -->
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/currency.js"></script>
 <script>
 // Prototype theme switch, applied before paint so there is no flash.
 (function(){var d=document.documentElement;function pick(key,param,list,def){try{var q=new URLSearchParams(location.search).get(param);var v=q||localStorage.getItem(key)||def;if(list.indexOf(v)<0)v=def;if(q)localStorage.setItem(key,v);return v;}catch(e){return def;}}
-d.dataset.theme=pick('vf_budget_theme_v2','theme',['onyx','graphite','evergreen'],'graphite');
-d.dataset.font=pick('vf_budget_font','font',['outfit','schibsted','general','newsreader'],'outfit');})();
+d.dataset.theme=pick('vf_budget_theme_v2','theme',['onyx','graphite','evergreen'],'graphite');})();
 </script>
 <style>
-/* Font candidates (Nov 2026 prototype). Switch with the Font row or
-   ?font=outfit|schibsted|general|newsreader. --font-display sets the big
-   figures: month, summary numbers and the amount. */
-:root, :root[data-font="outfit"] { --font-body:'Outfit',sans-serif; --font-display:'Outfit',sans-serif; --w-body:300; --w-display:500; }
-:root[data-font="schibsted"]  { --font-body:'Schibsted Grotesk',sans-serif; --font-display:'Schibsted Grotesk',sans-serif; --w-body:400; --w-display:600; }
-:root[data-font="general"]    { --font-body:'General Sans',sans-serif; --font-display:'General Sans',sans-serif; --w-body:400; --w-display:500; }
-:root[data-font="newsreader"] { --font-body:'Hanken Grotesk',sans-serif; --font-display:'Newsreader',serif; --w-body:400; --w-display:500; }
+/* Type: Outfit stays the site font (decided Nov 11 2026 after comparing
+   Schibsted Grotesk, General Sans and Newsreader). */
+:root { --font-body:'Outfit',sans-serif; --font-display:'Outfit',sans-serif; --w-body:300; --w-display:500; }
 .month-label, .sum-value, .amount-input, .amount-sym, .sheet-title, .grp-row, .auth-title { font-family:var(--font-display); }
 .sum-value, .amount-input { font-weight:var(--w-display); }
 
@@ -315,12 +308,6 @@ input, select { font-family:inherit; }
         <button class="link-btn" onclick="openManage('categories')">Categories</button>
         <button class="link-btn" onclick="openManage('accounts')">Accounts</button>
       </div>
-    </div>
-    <div class="proto" id="protoFonts">Font
-      <button data-f="outfit" onclick="setFont('outfit')">Outfit</button>
-      <button data-f="schibsted" onclick="setFont('schibsted')">Schibsted</button>
-      <button data-f="general" onclick="setFont('general')">General</button>
-      <button data-f="newsreader" onclick="setFont('newsreader')">Newsreader</button>
     </div>
 
     <div class="month-nav">
@@ -789,13 +776,7 @@ function setTheme(t){
   document.documentElement.dataset.theme = t;
   try { localStorage.setItem('vf_budget_theme_v2', t); } catch (e) {}
 }
-function setFont(f){
-  document.documentElement.dataset.font = f;
-  try { localStorage.setItem('vf_budget_font', f); } catch (e) {}
-  document.querySelectorAll('#protoFonts button').forEach(b => b.classList.toggle('on', b.dataset.f === f));
-  sizeAmount();
-}
-setFont(document.documentElement.dataset.font || 'outfit');
+
 
 function pickCat(id){
   selCat = (selCat === id) ? null : id;
