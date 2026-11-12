@@ -15,18 +15,20 @@
 <script src="/assets/currency.js"></script>
 <style>
 :root {
-  --navy:        #0a0f1e;
-  --navy-mid:    #111827;
-  --navy-light:  #1a2540;
-  --navy-card:   #141d35;
+  /* Black theme trial (Nov 2026). Neutral grays, no blue tint; gold stays
+     the only accent. If it sticks, these become the site-wide tokens. */
+  --bg:          #000000;
+  --raised:      #0f0f10;   /* sheets */
+  --surface:     #121213;   /* inputs, list cards */
+  --surface-2:   #1c1c1e;   /* selected / hover fill */
   --gold:        #c9a84c;
   --gold-light:  #e8c97a;
-  --gold-dim:    rgba(201,168,76,0.10);
+  --gold-dim:    rgba(201,168,76,0.12);
   --cream:       #f5f0e8;
-  --cream-dim:   rgba(245,240,232,0.6);
-  --muted:       rgba(245,240,232,0.38);
-  --border:      rgba(201,168,76,0.15);
-  --border-soft: rgba(255,255,255,0.07);
+  --cream-dim:   rgba(245,240,232,0.62);
+  --muted:       rgba(245,240,232,0.42);
+  --border:      rgba(201,168,76,0.28);
+  --line:        rgba(255,255,255,0.09);
   --green:       #4caf7d;
   --green-dim:   rgba(76,175,125,0.12);
   --red:         #e05c5c;
@@ -34,7 +36,7 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-text-size-adjust:100%; }
-body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; overflow-x:hidden; }
+body { background:var(--bg); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; overflow-x:hidden; }
 button { font-family:inherit; }
 input, select { font-family:inherit; }
 .hidden { display:none !important; }
@@ -47,9 +49,9 @@ input, select { font-family:inherit; }
 .auth-sub { font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:22px; }
 .field { margin-bottom:14px; }
 .field label { display:block; font-size:0.68rem; color:var(--muted); margin-bottom:5px; letter-spacing:0.05em; text-transform:uppercase; }
-.field input, .field select { width:100%; padding:11px 13px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-size:16px; font-weight:300; outline:none; transition:border-color .15s; }
+.field input, .field select { width:100%; padding:11px 13px; background:var(--surface); border:1px solid var(--line); border-radius:9px; color:var(--cream); font-size:16px; font-weight:300; outline:none; transition:border-color .15s; }
 .field input:focus, .field select:focus { border-color:var(--gold); }
-.field select option, .field select optgroup { background:var(--navy-mid); }
+.field select option, .field select optgroup { background:var(--raised); }
 .msg { font-size:0.8rem; min-height:20px; margin-top:8px; color:var(--cream-dim); }
 .msg.err { color:var(--red); }
 .auth-alt { font-size:0.8rem; color:var(--muted); margin-top:18px; line-height:1.6; }
@@ -57,10 +59,10 @@ input, select { font-family:inherit; }
 
 /* ── Buttons ── */
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 16px; border-radius:9px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background .15s, border-color .15s, color .15s; }
-.btn-gold { background:var(--gold); color:var(--navy); }
+.btn-gold { background:var(--gold); color:var(--bg); }
 .btn-gold:hover { background:var(--gold-light); }
 .btn-gold:disabled { opacity:.55; cursor:default; }
-.btn-ghost { background:none; border:1px solid var(--border-soft); color:var(--cream-dim); font-weight:400; }
+.btn-ghost { background:none; border:1px solid var(--line); color:var(--cream-dim); font-weight:400; }
 .btn-ghost:hover { border-color:var(--border); color:var(--cream); }
 .btn-danger { background:none; border:1px solid rgba(224,92,92,0.35); color:var(--red); font-weight:400; }
 .btn-block { width:100%; }
@@ -68,7 +70,7 @@ input, select { font-family:inherit; }
 .link-btn:hover { color:var(--cream); }
 
 /* ── App shell ── */
-.app { max-width:760px; margin:0 auto; padding:16px 16px calc(110px + env(safe-area-inset-bottom)); }
+.app { max-width:760px; margin:0 auto; padding:16px 16px calc(120px + env(safe-area-inset-bottom)); }
 .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 0 18px; }
 .topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
 .link-btn, .pill { white-space:nowrap; }
@@ -79,32 +81,35 @@ input, select { font-family:inherit; }
 .month-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px; }
 .month-label { font-size:1.35rem; font-weight:400; }
 .month-btns { display:flex; gap:6px; }
-.icon-btn { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); cursor:pointer; font-size:1rem; }
+.icon-btn { width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; border:1px solid var(--line); background:none; color:var(--cream-dim); cursor:pointer; font-size:1rem; }
 .icon-btn:hover { border-color:var(--border); color:var(--cream); }
 .icon-btn:disabled { opacity:.35; cursor:default; }
 
-.stats { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px; margin-bottom:14px; }
-.stat { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:12px; padding:12px 14px; min-width:0; }
-.stat-label { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
-.stat-value { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.stat-value.pos { color:var(--green); }
-.stat-value.neg { color:var(--red); }
-.stat-note { font-size:0.68rem; color:var(--muted); margin-top:3px; }
+/* Month summary: plain figures between hairlines, no boxes. */
+.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:18px; }
+.sum-item { padding:16px 0 16px 16px; min-width:0; }
+.sum-item:first-child { padding-left:0; }
+.sum-item + .sum-item { border-left:1px solid var(--line); }
+.sum-label { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.sum-value { font-size:1.6rem; font-weight:500; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
+.sum-value.pos { color:var(--green); }
+.sum-value.neg { color:var(--red); }
+.sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-.card { background:var(--navy-card); border:1px solid var(--border-soft); border-radius:14px; padding:16px; margin-bottom:14px; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px; }
 .card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 .empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
 
 /* Spending by category */
 .grp { padding:8px 0 4px; }
-.grp + .grp { border-top:1px solid var(--border-soft); margin-top:6px; padding-top:12px; }
+.grp + .grp { border-top:1px solid var(--line); margin-top:6px; padding-top:12px; }
 .grp-row { display:flex; justify-content:space-between; font-size:0.86rem; font-weight:500; margin-bottom:6px; }
 .cat-row { padding:6px 0 6px 10px; }
 .cat-line { display:flex; justify-content:space-between; gap:10px; font-size:0.82rem; color:var(--cream-dim); }
 .cat-line .amt { color:var(--cream); white-space:nowrap; }
 .cat-line .of { color:var(--muted); font-size:0.74rem; margin-left:4px; }
-.bar { height:4px; border-radius:2px; background:var(--border-soft); margin-top:6px; overflow:hidden; }
+.bar { height:4px; border-radius:2px; background:var(--line); margin-top:6px; overflow:hidden; }
 .bar > span { display:block; height:100%; background:var(--gold); border-radius:2px; }
 .bar.over > span { background:var(--red); }
 
@@ -121,14 +126,17 @@ input, select { font-family:inherit; }
 .tx-amt.in { color:var(--green); }
 .tx-amt.xfer { color:var(--muted); }
 
-/* Floating add button */
-.fab { position:fixed; right:max(16px, calc(50% - 380px + 16px)); bottom:calc(20px + env(safe-area-inset-bottom)); width:60px; height:60px; border-radius:50%; border:none; background:var(--gold); color:var(--navy); font-size:2rem; line-height:1; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,0.45); z-index:50; display:flex; align-items:center; justify-content:center; }
-.fab:hover { background:var(--gold-light); }
+/* Docked add button: full width, always in reach of a thumb. */
+.add-dock { position:fixed; left:0; right:0; bottom:0; z-index:50; padding:20px 16px calc(14px + env(safe-area-inset-bottom)); background:linear-gradient(to top, var(--bg) 62%, rgba(0,0,0,0)); pointer-events:none; }
+.add-btn { pointer-events:auto; display:flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:728px; height:58px; margin:0 auto; border:none; border-radius:14px; background:var(--gold); color:#000; font-size:1.05rem; font-weight:600; letter-spacing:0.01em; cursor:pointer; transition:background .15s, transform .1s; }
+.add-btn:hover { background:var(--gold-light); }
+.add-btn:active { transform:scale(0.99); }
+.add-btn svg { width:20px; height:20px; }
 
 /* ── Sheets (bottom on phones, centered on desktop) ── */
 .sheet-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; justify-content:center; }
 .sheet-overlay.open { display:flex; }
-.sheet { background:var(--navy-mid); border:1px solid var(--border); border-bottom:none; border-radius:18px 18px 0 0; width:100%; max-width:520px; max-height:92vh; overflow-y:auto; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); }
+.sheet { background:var(--raised); border:1px solid var(--border); border-bottom:none; border-radius:18px 18px 0 0; width:100%; max-width:520px; max-height:92vh; overflow-y:auto; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); }
 @media (min-width:640px) {
   .sheet-overlay { align-items:center; padding:20px; }
   .sheet { border-radius:18px; border-bottom:1px solid var(--border); padding:22px; }
@@ -138,26 +146,27 @@ input, select { font-family:inherit; }
 .close-x { background:none; border:none; color:var(--muted); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px; }
 .close-x:hover { color:var(--cream); }
 
-.seg { display:flex; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:10px; padding:3px; margin-bottom:12px; }
+.seg { display:flex; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:3px; margin-bottom:12px; }
 .seg button { flex:1; padding:8px 6px; border:none; border-radius:8px; background:none; color:var(--muted); font-size:0.82rem; cursor:pointer; }
-.seg button.on { background:var(--navy-light); color:var(--cream); }
+.seg button.on { background:var(--surface-2); color:var(--cream); }
 .seg button.on.spent { color:var(--red); }
 .seg button.on.received { color:var(--green); }
 
-.amount-wrap { display:flex; align-items:center; gap:6px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:12px; padding:6px 14px; margin-bottom:14px; }
+.amount-wrap { display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:6px 14px; margin-bottom:14px; }
 .amount-wrap:focus-within { border-color:var(--gold); }
 .amount-sym { font-size:1.6rem; color:var(--muted); }
 .amount-input { flex:1; min-width:0; background:none; border:none; outline:none; color:var(--cream); font-size:2rem; font-weight:500; padding:6px 0; }
 
 .chips-label { font-size:0.68rem; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:6px; }
-.chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
-.chip { padding:7px 12px; border-radius:20px; border:1px solid var(--border-soft); background:none; color:var(--cream-dim); font-size:0.8rem; cursor:pointer; }
-.chip:hover { border-color:var(--border); color:var(--cream); }
+/* Picks are an even grid of same-size tiles, not pills sized to their text. */
+.chips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; margin-bottom:12px; }
+.chip { height:44px; padding:0 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface); color:var(--cream-dim); font-size:0.86rem; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; transition:border-color .15s, background .15s, color .15s; }
+.chip:hover { border-color:rgba(255,255,255,0.18); color:var(--cream); }
 .chip.on { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
-.chip.add { border-style:dashed; color:var(--muted); }
+.chip.add { background:none; border-style:dashed; color:var(--muted); }
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .inline-form { display:flex; gap:6px; margin:-2px 0 12px; flex-wrap:wrap; }
-.inline-form input, .inline-form select { flex:1; min-width:120px; padding:9px 11px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-size:16px; outline:none; }
+.inline-form input, .inline-form select { flex:1; min-width:120px; padding:9px 11px; background:var(--surface); border:1px solid var(--line); border-radius:9px; color:var(--cream); font-size:16px; outline:none; }
 .inline-form input:focus, .inline-form select:focus { border-color:var(--gold); }
 .sheet-actions { display:flex; gap:8px; margin-top:6px; }
 .sheet-actions .btn { flex:1; }
@@ -166,22 +175,25 @@ input, select { font-family:inherit; }
 .m-grp { margin-bottom:16px; }
 .m-grp-title { font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
 .m-row { display:flex; align-items:center; gap:6px; padding:5px 0; }
-.m-row input[type=text] { flex:1; min-width:0; padding:8px 10px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-size:16px; outline:none; }
-.m-row input.target { flex:0 0 96px; text-align:right; }
+.m-row input[type=text] { flex:1; min-width:0; padding:8px 10px; background:var(--surface); border:1px solid var(--line); border-radius:8px; color:var(--cream); font-size:16px; outline:none; }
+/* Fixed-width columns so every row lines up, whatever the group. */
+.m-row input.target, .m-row .target-gap { flex:0 0 96px; }
+.m-row input.target { text-align:right; }
 .m-row input:focus { border-color:var(--gold); }
-.m-row select { padding:8px 6px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:8px; color:var(--cream); font-size:14px; }
+.m-row select { flex:0 0 124px; padding:8px 6px; background:var(--surface); border:1px solid var(--line); border-radius:8px; color:var(--cream); font-size:14px; }
 .m-row.dim input[type=text] { opacity:.45; }
-.m-toggle { flex:0 0 auto; background:none; border:1px solid var(--border-soft); color:var(--muted); border-radius:7px; padding:6px 8px; font-size:0.72rem; cursor:pointer; }
+.m-toggle { flex:0 0 68px; height:36px; background:none; border:1px solid var(--line); color:var(--muted); border-radius:8px; font-size:0.74rem; cursor:pointer; }
 .m-toggle:hover { color:var(--cream); border-color:var(--border); }
 .m-hint { font-size:0.74rem; color:var(--muted); line-height:1.55; margin-bottom:12px; }
 
-.toast { position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--navy-light); border:1px solid var(--border); color:var(--cream); font-size:0.82rem; padding:10px 16px; border-radius:10px; z-index:300; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); }
+.toast { position:fixed; left:50%; bottom:calc(104px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--surface-2); border:1px solid var(--border); color:var(--cream); font-size:0.82rem; padding:10px 16px; border-radius:10px; z-index:300; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); }
 .toast.show { opacity:1; }
 .toast.err { border-color:rgba(224,92,92,0.5); }
 
 @media (max-width:560px) {
-  .stats { grid-template-columns:1fr 1fr; }
   .month-label { font-size:1.15rem; }
+  .sum-item { padding-left:12px; }
+  .sum-value { font-size:1.25rem; }
 }
 </style>
 </head>
@@ -220,11 +232,10 @@ input, select { font-family:inherit; }
       </div>
     </div>
 
-    <div class="stats">
-      <div class="stat"><div class="stat-label">Income</div><div class="stat-value" id="sIncome"></div></div>
-      <div class="stat"><div class="stat-label">Spent</div><div class="stat-value" id="sSpent"></div></div>
-      <div class="stat"><div class="stat-label">Saved</div><div class="stat-value" id="sSaved"></div></div>
-      <div class="stat"><div class="stat-label">Savings rate</div><div class="stat-value" id="sRate"></div><div class="stat-note" id="sRateNote"></div></div>
+    <div class="summary">
+      <div class="sum-item"><div class="sum-label">Income</div><div class="sum-value" id="sIncome"></div></div>
+      <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
+      <div class="sum-item"><div class="sum-label">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
     </div>
 
     <div class="card">
@@ -238,7 +249,9 @@ input, select { font-family:inherit; }
     </div>
     <div class="app-foot"><span id="userEmail"></span><button class="link-btn" onclick="signOut()">Sign out</button></div>
   </div>
-  <button class="fab" onclick="openAdd()" aria-label="Add transaction">+</button>
+  <div class="add-dock">
+    <button class="add-btn" onclick="openAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add transaction</button>
+  </div>
 </div>
 
 <!-- ══ ADD / EDIT SHEET ══ -->
@@ -454,10 +467,10 @@ function render(){
   document.getElementById('sSpent').textContent = moneyWhole(spent);
   const sv = document.getElementById('sSaved');
   sv.textContent = moneyWhole(saved);
-  sv.className = 'stat-value' + (saved > 0 ? ' pos' : saved < 0 ? ' neg' : '');
-  const rate = document.getElementById('sRate'), note = document.getElementById('sRateNote');
-  if (income > 0) { rate.textContent = Math.round(saved / income * 100) + '%'; note.textContent = ''; }
-  else { rate.textContent = '0%'; note.textContent = 'No income logged'; }
+  sv.className = 'sum-value' + (saved > 0 ? ' pos' : saved < 0 ? ' neg' : '');
+  document.getElementById('sRate').textContent = income > 0
+    ? Math.round(saved / income * 100) + '% of income'
+    : 'No income logged';
 
   renderBreakdown();
   renderTxList();
@@ -589,8 +602,11 @@ function chipCats(){
   const gOrder = id => (groupById(id) || { sort_order:0 }).sort_order;
   pool.sort((a,b) => (uses[b.id]||0) - (uses[a.id]||0) || starterRank(a) - starterRank(b) || gOrder(a.group_id) - gOrder(b.group_id) || a.sort_order - b.sort_order);
   const top = pool.slice(0, 8);
+  // A pick from the full list takes the last tile, so the grid stays even.
   const sel = catById(selCat);
-  if (sel && !top.some(c => c.id === sel.id)) top.push(sel);
+  if (sel && kindOfCat(sel) === want && !top.some(c => c.id === sel.id)) {
+    if (top.length === 8) top[7] = sel; else top.push(sel);
+  }
   return top;
 }
 
@@ -746,7 +762,7 @@ function renderManage(){
       const tgt = c.monthly_target != null ? new Intl.NumberFormat(VestlyCurrency.locale(), { maximumFractionDigits:2 }).format(Number(c.monthly_target)) : '';
       html += `<div class="m-row${c.hidden ? ' dim' : ''}">
         <input type="text" value="${escHtml(c.name)}" maxlength="60" onchange="renameCategory('${c.id}', this)">
-        ${g.kind === 'expense' ? `<input type="text" class="target" inputmode="decimal" placeholder="Target" value="${escHtml(tgt)}" onchange="setTarget('${c.id}', this)" aria-label="Monthly target">` : ''}
+        ${g.kind === 'expense' ? `<input type="text" class="target" inputmode="decimal" placeholder="Target" value="${escHtml(tgt)}" onchange="setTarget('${c.id}', this)" aria-label="Monthly target">` : '<span class="target-gap"></span>'}
         <button class="m-toggle" onclick="updateCategory('${c.id}', { hidden:${!c.hidden} })">${c.hidden ? 'Show' : 'Hide'}</button>
       </div>`;
     }
