@@ -9,15 +9,29 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&family=Schibsted+Grotesk:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<!-- Prototype font candidate from Fontshare (ITF Free Font License, free for commercial use). -->
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/currency.js"></script>
 <script>
 // Prototype theme switch, applied before paint so there is no flash.
-(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('vf_budget_theme')||'onyx';if(['onyx','graphite','evergreen'].indexOf(t)<0)t='onyx';document.documentElement.dataset.theme=t;if(q)localStorage.setItem('vf_budget_theme',t);}catch(e){document.documentElement.dataset.theme='onyx';}})();
+(function(){var d=document.documentElement;function pick(key,param,list,def){try{var q=new URLSearchParams(location.search).get(param);var v=q||localStorage.getItem(key)||def;if(list.indexOf(v)<0)v=def;if(q)localStorage.setItem(key,v);return v;}catch(e){return def;}}
+d.dataset.theme=pick('vf_budget_theme_v2','theme',['onyx','graphite','evergreen'],'graphite');
+d.dataset.font=pick('vf_budget_font','font',['outfit','schibsted','general','newsreader'],'outfit');})();
 </script>
 <style>
+/* Font candidates (Nov 2026 prototype). Switch with the Font row or
+   ?font=outfit|schibsted|general|newsreader. --font-display sets the big
+   figures: month, summary numbers and the amount. */
+:root, :root[data-font="outfit"] { --font-body:'Outfit',sans-serif; --font-display:'Outfit',sans-serif; --w-body:300; --w-display:500; }
+:root[data-font="schibsted"]  { --font-body:'Schibsted Grotesk',sans-serif; --font-display:'Schibsted Grotesk',sans-serif; --w-body:400; --w-display:600; }
+:root[data-font="general"]    { --font-body:'General Sans',sans-serif; --font-display:'General Sans',sans-serif; --w-body:400; --w-display:500; }
+:root[data-font="newsreader"] { --font-body:'Hanken Grotesk',sans-serif; --font-display:'Newsreader',serif; --w-body:400; --w-display:500; }
+.month-label, .sum-value, .amount-input, .amount-sym, .sheet-title, .grp-row, .auth-title { font-family:var(--font-display); }
+.sum-value, .amount-input { font-weight:var(--w-display); }
+
 /* Dark theme candidates (Nov 2026 prototype). Switch with the Theme row
    under the top bar or ?theme=onyx|graphite|evergreen. Whichever wins
    becomes the site-wide tokens; the other two get deleted. */
@@ -78,7 +92,7 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-text-size-adjust:100%; }
-body { background:var(--bg); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; overflow-x:hidden; }
+body { background:var(--bg); color:var(--cream); font-family:var(--font-body); font-weight:var(--w-body); min-height:100vh; overflow-x:hidden; }
 button { font-family:inherit; }
 input, select { font-family:inherit; }
 .hidden { display:none !important; }
@@ -140,7 +154,7 @@ input, select { font-family:inherit; }
 .sum-item:first-child { padding-left:0; }
 .sum-item + .sum-item { border-left:1px solid var(--line); }
 .sum-label { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
-.sum-value { font-size:1.6rem; font-weight:500; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-variant-numeric:tabular-nums; }
+.sum-value { font-size:1.6rem; font-weight:500; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .sum-value.pos { color:var(--green); }
 .sum-value.neg { color:var(--red); }
 .sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -206,7 +220,7 @@ input, select { font-family:inherit; }
 /* Amount: big centered figure like a display, no field box. */
 .amount-wrap { display:flex; align-items:baseline; justify-content:center; gap:4px; margin:4px 0 22px; }
 .amount-sym { font-size:1.9rem; font-weight:400; color:var(--muted); }
-.amount-input { width:2ch; max-width:85%; background:none; border:none; outline:none; color:var(--cream); caret-color:var(--accent); font-size:3.2rem; font-weight:500; letter-spacing:-0.02em; text-align:left; padding:0; font-variant-numeric:tabular-nums; }
+.amount-input { width:2ch; max-width:85%; background:none; border:none; outline:none; color:var(--cream); caret-color:var(--accent); font-size:3.2rem; font-weight:500; letter-spacing:-0.02em; text-align:left; padding:0; }
 .amount-input::placeholder { color:var(--muted); }
 
 /* Category picks: round icons with a label under each, four across. */
@@ -302,10 +316,11 @@ input, select { font-family:inherit; }
         <button class="link-btn" onclick="openManage('accounts')">Accounts</button>
       </div>
     </div>
-    <div class="proto" id="protoThemes">Theme
-      <button data-t="onyx" onclick="setTheme('onyx')">Onyx</button>
-      <button data-t="graphite" onclick="setTheme('graphite')">Graphite</button>
-      <button data-t="evergreen" onclick="setTheme('evergreen')">Evergreen</button>
+    <div class="proto" id="protoFonts">Font
+      <button data-f="outfit" onclick="setFont('outfit')">Outfit</button>
+      <button data-f="schibsted" onclick="setFont('schibsted')">Schibsted</button>
+      <button data-f="general" onclick="setFont('general')">General</button>
+      <button data-f="newsreader" onclick="setFont('newsreader')">Newsreader</button>
     </div>
 
     <div class="month-nav">
@@ -769,13 +784,18 @@ function catIcon(c){
   return `<span class="mono">${escHtml((c.name.trim()[0] || '?').toUpperCase())}</span>`;
 }
 
-/* Prototype theme switch. */
+/* Prototype switches. Theme is Graphite unless ?theme= says otherwise. */
 function setTheme(t){
   document.documentElement.dataset.theme = t;
-  try { localStorage.setItem('vf_budget_theme', t); } catch (e) {}
-  document.querySelectorAll('#protoThemes button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  try { localStorage.setItem('vf_budget_theme_v2', t); } catch (e) {}
 }
-setTheme(document.documentElement.dataset.theme || 'onyx');
+function setFont(f){
+  document.documentElement.dataset.font = f;
+  try { localStorage.setItem('vf_budget_font', f); } catch (e) {}
+  document.querySelectorAll('#protoFonts button').forEach(b => b.classList.toggle('on', b.dataset.f === f));
+  sizeAmount();
+}
+setFont(document.documentElement.dataset.font || 'outfit');
 
 function pickCat(id){
   selCat = (selCat === id) ? null : id;
