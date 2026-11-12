@@ -13,79 +13,36 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/currency.js"></script>
-<script>
-// Prototype theme switch, applied before paint so there is no flash.
-(function(){var d=document.documentElement;function pick(key,param,list,def){try{var q=new URLSearchParams(location.search).get(param);var v=q||localStorage.getItem(key)||def;if(list.indexOf(v)<0)v=def;if(q)localStorage.setItem(key,v);return v;}catch(e){return def;}}
-d.dataset.theme=pick('vf_budget_theme_v2','theme',['onyx','graphite','evergreen'],'graphite');})();
-</script>
 <style>
 /* Type: Outfit stays the site font (decided Nov 11 2026 after comparing
    Schibsted Grotesk, General Sans and Newsreader). */
-:root { --font-body:'Outfit',sans-serif; --font-display:'Outfit',sans-serif; --w-body:300; --w-display:500; }
+:root { --font-body:'Outfit',sans-serif; --font-display:'Outfit',sans-serif; --w-body:400; --w-display:500; }
 .month-label, .sum-value, .amount-input, .amount-sym, .sheet-title, .grp-row, .auth-title { font-family:var(--font-display); }
 .sum-value, .amount-input { font-weight:var(--w-display); }
 
-/* Dark theme candidates (Nov 2026 prototype). Switch with the Theme row
-   under the top bar or ?theme=onyx|graphite|evergreen. Whichever wins
-   becomes the site-wide tokens; the other two get deleted. */
-:root, :root[data-theme="onyx"] {
-  /* A. Onyx: true black, warm cream text, gold accent. */
+/* Graphite theme (chosen Nov 2026). Text colors are solid, not
+   transparent: semi-transparent text loses subpixel smoothing and looks soft. */
+:root {
   color-scheme: dark;
-  --bg:            #000000;
-  --raised:        #0c0c0c;   /* sheets */
-  --surface:       #161616;   /* icon circles, inputs */
-  --surface-2:     #222222;   /* hover */
-  --accent:        #c9a84c;
-  --accent-light:  #e8c97a;
-  --accent-dim:    rgba(201,168,76,0.14);
-  --on-accent:     #000000;
-  --cream:         #f5f0e8;
-  --cream-dim:     rgba(245,240,232,0.64);
-  --muted:         rgba(245,240,232,0.42);
-  --border:        rgba(201,168,76,0.28);
-  --line:          rgba(255,255,255,0.09);
-  --green:         #4caf7d;
-  --red:           #e05c5c;
-}
-:root[data-theme="graphite"] {
-  /* B. Graphite: soft charcoal, neutral white text, champagne accent. */
   --bg:            #131313;
-  --raised:        #1b1b1b;
-  --surface:       #262626;
-  --surface-2:     #303030;
+  --raised:        #1b1b1b;   /* sheets */
+  --surface:       #262626;   /* icon circles, inputs */
+  --surface-2:     #303030;   /* hover */
   --accent:        #dcc392;
   --accent-light:  #ecd9b2;
   --accent-dim:    rgba(220,195,146,0.14);
   --on-accent:     #161310;
   --cream:         #ededed;
-  --cream-dim:     rgba(237,237,237,0.64);
-  --muted:         rgba(237,237,237,0.42);
+  --cream-dim:     #b4b4b4;
+  --muted:         #8d8d8d;
   --border:        rgba(220,195,146,0.3);
   --line:          rgba(255,255,255,0.08);
   --green:         #5cc28e;
   --red:           #e8706a;
 }
-:root[data-theme="evergreen"] {
-  /* C. Evergreen: green-black, emerald accent, cool white text. */
-  --bg:            #060a08;
-  --raised:        #0d1411;
-  --surface:       #15201b;
-  --surface-2:     #1d2b24;
-  --accent:        #3fbf87;
-  --accent-light:  #74d9aa;
-  --accent-dim:    rgba(63,191,135,0.14);
-  --on-accent:     #04140c;
-  --cream:         #edf3ef;
-  --cream-dim:     rgba(237,243,239,0.64);
-  --muted:         rgba(237,243,239,0.42);
-  --border:        rgba(63,191,135,0.3);
-  --line:          rgba(220,255,235,0.08);
-  --green:         #74d9aa;
-  --red:           #ec6f6f;
-}
 * { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-text-size-adjust:100%; }
-body { background:var(--bg); color:var(--cream); font-family:var(--font-body); font-weight:var(--w-body); min-height:100vh; overflow-x:hidden; }
+body { background:var(--bg); color:var(--cream); font-family:var(--font-body); font-weight:var(--w-body); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; min-height:100vh; overflow-x:hidden; }
 button { font-family:inherit; }
 input, select { font-family:inherit; }
 .hidden { display:none !important; }
@@ -98,7 +55,7 @@ input, select { font-family:inherit; }
 .auth-sub { font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:22px; }
 .field { margin-bottom:14px; }
 .field label { display:block; font-size:0.68rem; color:var(--muted); margin-bottom:5px; letter-spacing:0.05em; text-transform:uppercase; }
-.field input, .field select { width:100%; padding:12px 16px; background:var(--surface); border:1px solid transparent; border-radius:12px; color:var(--cream); font-size:16px; font-weight:300; outline:none; transition:border-color .15s; }
+.field input, .field select { width:100%; padding:12px 16px; background:var(--surface); border:1px solid transparent; border-radius:12px; color:var(--cream); font-size:16px; font-weight:400; outline:none; transition:border-color .15s; }
 .field input:focus, .field select:focus { border-color:var(--accent); }
 .field select option, .field select optgroup { background:var(--raised); }
 .msg { font-size:0.8rem; min-height:20px; margin-top:8px; color:var(--cream-dim); }
@@ -132,14 +89,16 @@ input, select { font-family:inherit; }
 .month-nav { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px; }
 .month-label { font-size:1.35rem; font-weight:400; }
 .month-btns { display:flex; gap:6px; }
-.icon-btn { width:38px; height:38px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; border:none; background:var(--surface); color:var(--cream-dim); cursor:pointer; font-size:1.1rem; }
-.icon-btn:hover { background:var(--surface-2); color:var(--cream); }
+/* Bare icon buttons: no border or fill until hovered, SVG glyphs so they
+   sit dead center (text arrows ride on the font baseline). */
+.icon-btn { width:42px; height:42px; display:inline-flex; align-items:center; justify-content:center; padding:0; border-radius:12px; border:none; background:none; color:var(--cream); cursor:pointer; transition:background .15s, color .15s; }
+.icon-btn:hover { background:var(--surface); }
+.icon-btn:active { background:var(--surface-2); }
+.icon-btn svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; display:block; }
+.head-link { background:none; border:none; padding:0; color:var(--accent); font-size:0.78rem; font-weight:500; cursor:pointer; }
+.head-link:hover { color:var(--accent-light); }
 
-/* Prototype-only theme picker. */
-.proto { display:flex; align-items:center; gap:6px; margin:-6px 0 16px; font-size:0.7rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
-.proto button { background:none; border:none; color:var(--muted); font-size:0.78rem; letter-spacing:0; text-transform:none; padding:4px 8px; border-radius:999px; cursor:pointer; }
-.proto button.on { background:var(--accent-dim); color:var(--accent-light); }
-.icon-btn:disabled { opacity:.35; cursor:default; }
+.icon-btn:disabled { opacity:.22; cursor:default; background:none; }
 
 /* Month summary: plain figures between hairlines, no boxes. */
 .summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:18px; }
@@ -236,8 +195,11 @@ input, select { font-family:inherit; }
 .pick-val span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .chev { width:16px; height:16px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* "All categories" is a link in the accent color, so it never reads as one more tile. */
-.more-row { justify-content:center; min-height:44px; margin-bottom:12px; color:var(--accent); font-size:0.88rem; font-weight:500; gap:4px; }
-.more-row:hover { color:var(--accent-light); }
+.more-links { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:12px; }
+.more-row, .more-new { justify-content:center; min-height:44px; color:var(--accent); font-size:0.88rem; font-weight:500; gap:4px; }
+.more-row:hover, .more-new:hover { color:var(--accent-light); }
+.more-new { display:flex; align-items:center; background:none; border:none; padding:0; cursor:pointer; font-family:inherit; }
+.more-sep { width:1px; height:16px; background:var(--line); }
 
 /* Detail rows: label left, value right, hairlines between. */
 .list { border-top:1px solid var(--line); margin-bottom:6px; }
@@ -251,6 +213,7 @@ input, select { font-family:inherit; }
 .inline-form { display:flex; gap:8px; padding:12px 0; flex-wrap:wrap; border-bottom:1px solid var(--line); }
 .inline-form input, .inline-form select { flex:1; min-width:120px; padding:10px 14px; background:var(--surface); border:1px solid transparent; border-radius:999px; color:var(--cream); font-size:16px; outline:none; }
 .inline-form input:focus, .inline-form select:focus { border-color:var(--accent); }
+.inline-form.new-cat { border-top:1px solid var(--line); margin-bottom:14px; }
 .sheet-actions { display:flex; gap:8px; margin-top:10px; }
 .sheet-actions .btn { flex:1; height:52px; font-size:0.95rem; }
 .sheet-actions .btn-danger { flex:0 0 auto; padding:0 18px; }
@@ -305,16 +268,15 @@ input, select { font-family:inherit; }
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
       <div class="topbar-right">
-        <button class="link-btn" onclick="openManage('categories')">Categories</button>
-        <button class="link-btn" onclick="openManage('accounts')">Accounts</button>
+        <button class="icon-btn" onclick="openManage('categories')" aria-label="Categories and accounts" title="Categories and accounts"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2.2" fill="var(--bg)"/><circle cx="15" cy="12" r="2.2" fill="var(--bg)"/><circle cx="8" cy="18" r="2.2" fill="var(--bg)"/></svg></button>
       </div>
     </div>
 
     <div class="month-nav">
       <div class="month-label" id="monthLabel"></div>
       <div class="month-btns">
-        <button class="icon-btn" onclick="shiftMonth(-1)" aria-label="Previous month">&#8249;</button>
-        <button class="icon-btn" id="nextMonthBtn" onclick="shiftMonth(1)" aria-label="Next month">&#8250;</button>
+        <button class="icon-btn" onclick="shiftMonth(-1)" aria-label="Previous month"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+        <button class="icon-btn" id="nextMonthBtn" onclick="shiftMonth(1)" aria-label="Next month"><svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg></button>
       </div>
     </div>
 
@@ -325,7 +287,7 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="card-title">Spending by category</div></div>
+      <div class="card-head"><div class="card-title">Spending by category</div><button class="head-link" onclick="openManage('categories')">Edit categories</button></div>
       <div id="catBreakdown"></div>
     </div>
 
@@ -356,10 +318,19 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="tiles" id="catChips"></div>
-    <div class="pick-row more-row">
-      <span>All categories</span>
-      <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-      <select id="fCategory" aria-label="All categories"></select>
+    <div class="more-links">
+      <div class="pick-row more-row">
+        <span>All categories</span>
+        <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        <select id="fCategory" aria-label="All categories"></select>
+      </div>
+      <span class="more-sep"></span>
+      <button class="more-new" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New category</button>
+    </div>
+    <div class="inline-form new-cat hidden" id="newCatForm">
+      <input id="newCatName" type="text" placeholder="New category name" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
+      <select id="newCatGroup" aria-label="Group"></select>
+      <button class="btn btn-gold" onclick="createCategoryFromSheet()">Add</button>
     </div>
 
     <div class="list">
@@ -653,6 +624,7 @@ function openAdd(){
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
   mode = 'spent'; selCat = null; selAcct = defaultAccount();
   document.getElementById('newAcctForm').classList.add('hidden');
+  document.getElementById('newCatForm').classList.add('hidden');
   document.getElementById('addMsg').textContent = '';
   renderSheet();
   openSheet('addSheet');
@@ -673,6 +645,7 @@ function openEdit(id){
   document.getElementById('fDate').value = t.date;
   selCat = t.category_id; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
+  document.getElementById('newCatForm').classList.add('hidden');
   document.getElementById('addMsg').textContent = '';
   renderSheet();
   openSheet('addSheet');
@@ -715,6 +688,7 @@ function renderSheet(){
     if (!list.length) continue;
     opts += `<optgroup label="${escHtml(g.name)}">` + list.map(c => `<option value="${c.id}"${c.id === selCat ? ' selected' : ''}>${escHtml(c.name)}</option>`).join('') + '</optgroup>';
   }
+  opts += '<option value="__newcat__">+ New category</option>';
   sel.innerHTML = opts;
   sel.value = selCat || '';
 
@@ -771,12 +745,6 @@ function catIcon(c){
   return `<span class="mono">${escHtml((c.name.trim()[0] || '?').toUpperCase())}</span>`;
 }
 
-/* Prototype switches. Theme is Graphite unless ?theme= says otherwise. */
-function setTheme(t){
-  document.documentElement.dataset.theme = t;
-  try { localStorage.setItem('vf_budget_theme_v2', t); } catch (e) {}
-}
-
 
 function pickCat(id){
   selCat = (selCat === id) ? null : id;
@@ -785,7 +753,38 @@ function pickCat(id){
   else if (k === 'expense') mode = 'spent';
   renderSheet();
 }
-document.getElementById('fCategory').addEventListener('change', e => pickCat(e.target.value || null));
+document.getElementById('fCategory').addEventListener('change', e => {
+  if (e.target.value === '__newcat__') { e.target.value = selCat || ''; openNewCategory(); return; }
+  pickCat(e.target.value || null);
+});
+
+/* Adding a category from the add screen. It lands in the group that fits
+   the current mode, gets its initial as an icon, and is selected at once. */
+function openNewCategory(){
+  const want = mode === 'received' ? 'income' : 'expense';
+  const list = sortedGroups().filter(g => !g.hidden && g.kind !== 'transfer');
+  const def = list.find(g => g.kind === want && norm(g.name) === 'personal') || list.find(g => g.kind === want) || list[0];
+  document.getElementById('newCatGroup').innerHTML = list.map(g => `<option value="${g.id}"${def && g.id === def.id ? ' selected' : ''}>${escHtml(g.name)}</option>`).join('');
+  document.getElementById('newCatForm').classList.remove('hidden');
+  document.getElementById('newCatName').value = '';
+  document.getElementById('newCatName').focus();
+}
+async function createCategoryFromSheet(){
+  const name = document.getElementById('newCatName').value.trim();
+  const groupId = document.getElementById('newCatGroup').value;
+  const msg = document.getElementById('addMsg');
+  if (!name) { msg.textContent = 'Name the category.'; return; }
+  const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
+  const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
+  if (error) { msg.textContent = errText(error); return; }
+  cats.push(data);
+  msg.textContent = '';
+  document.getElementById('newCatForm').classList.add('hidden');
+  selCat = data.id;
+  const k = kindOfCat(data);
+  if (k === 'income') mode = 'received'; else if (k === 'expense') mode = 'spent';
+  renderSheet();
+}
 document.getElementById('fAccount').addEventListener('change', e => {
   if (e.target.value === '__new__') {
     e.target.value = selAcct || '';
