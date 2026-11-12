@@ -188,17 +188,15 @@ input, select { font-family:inherit; }
 .tile.on .tile-lbl { color:var(--accent-light); }
 
 /* Rows that open a native picker. The select sits invisibly over the row. */
-.pick-row { position:relative; display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; }
-.pick-row select { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:16px; }
-.pick-row select option, .pick-row select optgroup { background:var(--raised); color:var(--cream); }
+.pick-row { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:52px; padding:0 2px; background:none; border:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.pick-row:hover .pick-val { color:var(--accent-light); }
 .pick-val { display:flex; align-items:center; gap:6px; color:var(--cream); font-size:0.92rem; min-width:0; }
 .pick-val span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .chev { width:16px; height:16px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* "All categories" is a link in the accent color, so it never reads as one more tile. */
 .more-links { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:12px; }
-.more-row, .more-new { justify-content:center; min-height:44px; color:var(--accent); font-size:0.88rem; font-weight:500; gap:4px; }
-.more-row:hover, .more-new:hover { color:var(--accent-light); }
-.more-new { display:flex; align-items:center; background:none; border:none; padding:0; cursor:pointer; font-family:inherit; }
+.more-link { display:flex; align-items:center; gap:6px; min-height:44px; padding:0; background:none; border:none; color:var(--accent); font:inherit; font-size:0.88rem; font-weight:500; cursor:pointer; }
+.more-link:hover { color:var(--accent-light); }
 .more-sep { width:1px; height:16px; background:var(--line); }
 
 /* Detail rows: label left, value right, hairlines between. */
@@ -213,7 +211,30 @@ input, select { font-family:inherit; }
 .inline-form { display:flex; gap:8px; padding:12px 0; flex-wrap:wrap; border-bottom:1px solid var(--line); }
 .inline-form input, .inline-form select { flex:1; min-width:120px; padding:10px 14px; background:var(--surface); border:1px solid transparent; border-radius:999px; color:var(--cream); font-size:16px; outline:none; }
 .inline-form input:focus, .inline-form select:focus { border-color:var(--accent); }
-.inline-form.new-cat { border-top:1px solid var(--line); margin-bottom:14px; }
+/* Small forms that open in place (new category, new account). */
+.sub-form { display:flex; flex-direction:column; gap:10px; margin:2px 0 14px; padding:14px; background:var(--surface); border-radius:20px; }
+.list .sub-form { margin:10px 0; }
+.sub-form-title { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); padding:0 4px; }
+.pill-input { width:100%; padding:12px 16px; background:var(--raised); border:1px solid transparent; border-radius:999px; color:var(--cream); font-size:16px; outline:none; }
+.pill-input:focus { border-color:var(--accent); }
+.pill-input::placeholder { color:var(--muted); }
+.form-pick { min-height:44px; padding:0 6px; }
+.sub-form-hint { font-size:0.75rem; color:var(--muted); line-height:1.5; margin:-6px 6px 0; }
+.sub-form-actions { display:flex; gap:8px; }
+.sub-form-actions .btn { flex:1; height:44px; }
+
+/* Picker: a list sheet that stacks over the current one. */
+.picker-overlay { z-index:260; background:rgba(0,0,0,0.5); }
+.opt { display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:0 6px; background:none; border:none; border-bottom:1px solid var(--line); color:var(--cream); font:inherit; font-size:0.98rem; text-align:left; cursor:pointer; }
+.opt:last-child { border-bottom:none; }
+.opt:hover { background:rgba(255,255,255,0.03); }
+.opt-label { flex:1; }
+.opt.on { color:var(--accent-light); }
+.opt.add { color:var(--accent); }
+.check { width:20px; height:20px; fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+.browser-grp { margin-bottom:20px; }
+.browser-grp-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:2px 0 12px; }
+.tile.new .tile-ic { background:none; border:1.5px dashed var(--muted); color:var(--accent); }
 .sheet-actions { display:flex; gap:8px; margin-top:10px; }
 .sheet-actions .btn { flex:1; height:52px; font-size:0.95rem; }
 .sheet-actions .btn-danger { flex:0 0 auto; padding:0 18px; }
@@ -229,7 +250,9 @@ input, select { font-family:inherit; }
 .m-row input.target { text-align:right; }
 .m-row input:focus { box-shadow:inset 0 -2px 0 var(--accent); }
 .m-row input.target:focus { box-shadow:0 0 0 1px var(--accent); }
-.m-row select { flex:0 0 124px; padding:8px 10px; background:var(--surface); border:none; border-radius:999px; color:var(--cream); font-size:14px; }
+.m-pick { flex:0 0 124px; display:flex; align-items:center; justify-content:space-between; gap:4px; height:36px; padding:0 10px 0 14px; background:var(--surface); border:none; border-radius:999px; color:var(--cream); font:inherit; font-size:0.84rem; cursor:pointer; }
+.m-pick:hover { background:var(--surface-2); }
+.m-pick .chev { width:14px; height:14px; color:var(--muted); }
 .m-row.dim input[type=text] { opacity:.45; }
 .m-toggle { flex:0 0 68px; height:34px; background:none; border:none; color:var(--muted); border-radius:999px; font-size:0.78rem; cursor:pointer; }
 .m-toggle:hover { color:var(--cream); background:var(--surface); }
@@ -268,7 +291,7 @@ input, select { font-family:inherit; }
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
       <div class="topbar-right">
-        <button class="icon-btn" onclick="openManage('categories')" aria-label="Categories and accounts" title="Categories and accounts"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="6" r="2.2" fill="var(--bg)"/><circle cx="15" cy="12" r="2.2" fill="var(--bg)"/><circle cx="8" cy="18" r="2.2" fill="var(--bg)"/></svg></button>
+        <button class="icon-btn" onclick="openManage('categories')" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" style="stroke-width:1.9"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
     </div>
 
@@ -319,36 +342,28 @@ input, select { font-family:inherit; }
 
     <div class="tiles" id="catChips"></div>
     <div class="more-links">
-      <div class="pick-row more-row">
-        <span>All categories</span>
-        <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        <select id="fCategory" aria-label="All categories"></select>
-      </div>
+      <button class="more-link" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
       <span class="more-sep"></span>
-      <button class="more-new" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New category</button>
+      <button class="more-link" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New category</button>
     </div>
-    <div class="inline-form new-cat hidden" id="newCatForm">
-      <input id="newCatName" type="text" placeholder="New category name" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
-      <select id="newCatGroup" aria-label="Group"></select>
-      <button class="btn btn-gold" onclick="createCategoryFromSheet()">Add</button>
+    <div class="sub-form hidden" id="newCatForm">
+      <div class="sub-form-title">New category</div>
+      <input class="pill-input" id="newCatName" type="text" placeholder="Name, like Pet care" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
+      <button class="pick-row form-pick" onclick="pickNewCatGroup()"><span class="row-label">Group</span><span class="pick-val"><span id="newCatGroupLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+      <p class="sub-form-hint">The group is where it adds up on your spending list, like Food or Housing.</p>
+      <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newCatForm')">Cancel</button><button class="btn btn-gold" onclick="createCategoryFromSheet()">Add category</button></div>
     </div>
 
     <div class="list">
-      <div class="pick-row">
+      <button class="pick-row" onclick="openAccountPicker()">
         <span class="row-label">Account</span>
-        <span class="pick-val"><span id="acctLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
-        <select id="fAccount" aria-label="Account"></select>
-      </div>
-      <div class="inline-form hidden" id="newAcctForm">
-        <input id="newAcctName" type="text" placeholder="e.g. Chase card" maxlength="80">
-        <select id="newAcctKind">
-          <option value="credit_card">Credit card</option>
-          <option value="checking">Checking</option>
-          <option value="savings">Savings</option>
-          <option value="cash">Cash</option>
-          <option value="other">Other</option>
-        </select>
-        <button class="btn btn-ghost" onclick="createAccountFromSheet()">Add</button>
+        <span class="pick-val"><span id="acctLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
+      </button>
+      <div class="sub-form hidden" id="newAcctForm">
+        <div class="sub-form-title">New account</div>
+        <input class="pill-input" id="newAcctName" type="text" placeholder="Name, like Chase card" maxlength="80" onkeydown="if(event.key==='Enter')createAccountFromSheet()">
+        <button class="pick-row form-pick" onclick="pickNewAcctKind()"><span class="row-label">Type</span><span class="pick-val"><span id="newAcctKindLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+        <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newAcctForm')">Cancel</button><button class="btn btn-gold" onclick="createAccountFromSheet()">Add account</button></div>
       </div>
       <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <div class="list-row"><label class="row-label" for="fDesc">Notes</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
@@ -372,6 +387,14 @@ input, select { font-family:inherit; }
     </div>
     <div id="manageBody"></div>
     <div class="msg err" id="manageMsg"></div>
+  </div>
+</div>
+
+<!-- ══ PICKER (replaces native dropdowns) ══ -->
+<div class="sheet-overlay picker-overlay" id="pickerSheet" onclick="if(event.target===this)closePicker()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+    <div class="sheet-head"><div class="sheet-title" id="pickerTitle"></div><button class="close-x" onclick="closePicker()" aria-label="Close">&times;</button></div>
+    <div id="pickerBody"></div>
   </div>
 </div>
 
@@ -602,6 +625,7 @@ function openSheet(id){ document.getElementById(id).classList.add('open'); docum
 function closeSheet(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  if (document.getElementById('pickerSheet').classList.contains('open')) { closePicker(); return; }
   ['addSheet','manageSheet'].forEach(id => { if (document.getElementById(id).classList.contains('open')) closeSheet(id); });
 });
 
@@ -625,6 +649,7 @@ function openAdd(){
   mode = 'spent'; selCat = null; selAcct = defaultAccount();
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
+  closePicker();
   document.getElementById('addMsg').textContent = '';
   renderSheet();
   openSheet('addSheet');
@@ -646,6 +671,7 @@ function openEdit(id){
   selCat = t.category_id; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
+  closePicker();
   document.getElementById('addMsg').textContent = '';
   renderSheet();
   openSheet('addSheet');
@@ -668,7 +694,7 @@ function chipCats(){
   const top = pool.slice(0, 8);
   // A pick from the full list takes the last tile, so the grid stays even.
   const sel = catById(selCat);
-  if (sel && kindOfCat(sel) === want && !top.some(c => c.id === sel.id)) {
+  if (sel && !top.some(c => c.id === sel.id)) {
     if (top.length === 8) top[7] = sel; else top.push(sel);
   }
   return top;
@@ -677,34 +703,8 @@ function chipCats(){
 function renderSheet(){
   document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
 
-  document.getElementById('catChips').innerHTML = chipCats().map(c =>
-    `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`).join('');
-
-  const sel = document.getElementById('fCategory');
-  let opts = `<option value="">No category</option>`;
-  for (const g of sortedGroups()) {
-    if (g.hidden) continue;
-    const list = catsIn(g.id, false);
-    if (!list.length) continue;
-    opts += `<optgroup label="${escHtml(g.name)}">` + list.map(c => `<option value="${c.id}"${c.id === selCat ? ' selected' : ''}>${escHtml(c.name)}</option>`).join('') + '</optgroup>';
-  }
-  opts += '<option value="__newcat__">+ New category</option>';
-  sel.innerHTML = opts;
-  sel.value = selCat || '';
-
-  // Account is a single row that opens a picker; it rarely changes because
-  // the last one used is remembered.
-  const live = liveAccounts();
+  document.getElementById('catChips').innerHTML = chipCats().map(c => tileHtml(c, `pickCat('${c.id}')`)).join('');
   const cur = acctById(selAcct);
-  let aopts = '';
-  if (cur && cur.archived) aopts += `<option value="${cur.id}">${escHtml(cur.name)}</option>`;
-  aopts += live.map(a => `<option value="${a.id}">${escHtml(a.name)}</option>`).join('');
-  if (!live.some(a => norm(a.name) === 'cash')) aopts += `<option value="${CASH}">Cash</option>`;
-  if (!selAcct) aopts = `<option value="">No account</option>` + aopts;
-  aopts += `<option value="__new__">+ Add an account</option>`;
-  const asel = document.getElementById('fAccount');
-  asel.innerHTML = aopts;
-  asel.value = selAcct || '';
   document.getElementById('acctLabel').textContent = selAcct === CASH ? 'Cash' : cur ? cur.name : 'No account';
 
   sizeAmount();
@@ -753,49 +753,106 @@ function pickCat(id){
   else if (k === 'expense') mode = 'spent';
   renderSheet();
 }
-document.getElementById('fCategory').addEventListener('change', e => {
-  if (e.target.value === '__newcat__') { e.target.value = selCat || ''; openNewCategory(); return; }
-  pickCat(e.target.value || null);
-});
+function tileHtml(c, onclick){
+  return `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="${onclick}"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`;
+}
+function setCat(id){
+  selCat = id;
+  const k = kindOfCat(catById(id));
+  if (k === 'income') mode = 'received'; else if (k === 'expense') mode = 'spent';
+  renderSheet();
+}
 
-/* Adding a category from the add screen. It lands in the group that fits
-   the current mode, gets its initial as an icon, and is selected at once. */
+/* ── Picker: a list sheet that replaces native dropdowns ── */
+const CHECK = '<svg class="check" viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg>';
+let pickerOpts = [], pickerCb = null;
+function showPicker(title, html){
+  document.getElementById('pickerTitle').textContent = title;
+  document.getElementById('pickerBody').innerHTML = html;
+  document.getElementById('pickerSheet').classList.add('open');
+}
+function openPicker(title, options, value, cb){
+  pickerOpts = options; pickerCb = cb;
+  showPicker(title, options.map((o,i) =>
+    `<button class="opt${o.value === value ? ' on' : ''}${o.add ? ' add' : ''}" onclick="pickerChoose(${i})"><span class="opt-label">${escHtml(o.label)}</span>${o.value === value ? CHECK : ''}</button>`).join(''));
+}
+function closePicker(){ document.getElementById('pickerSheet').classList.remove('open'); }
+function pickerChoose(i){ const o = pickerOpts[i], cb = pickerCb; closePicker(); if (cb) cb(o.value); }
+function closeSubForm(id){ document.getElementById(id).classList.add('hidden'); document.getElementById('addMsg').textContent = ''; }
+
+/* Every category as a tile, by group. */
+function openCategoryBrowser(){
+  pickerOpts = []; pickerCb = null;
+  let html = '';
+  for (const g of sortedGroups()) {
+    if (g.hidden) continue;
+    const list = catsIn(g.id, false);
+    if (!list.length) continue;
+    html += `<div class="browser-grp"><div class="browser-grp-title">${escHtml(g.name)}</div><div class="tiles">` + list.map(c => tileHtml(c, `browserPick('${c.id}')`)).join('') + '</div></div>';
+  }
+  html += '<div class="tiles"><button class="tile new" onclick="openNewCategory()"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New category</span></button></div>';
+  showPicker('All categories', html);
+}
+function browserPick(id){ closePicker(); setCat(id); }
+
+/* New category, from the add screen. */
+let newCatGroupId = null;
+function newCatGroups(){ return sortedGroups().filter(g => !g.hidden); }
+function setNewCatGroup(id){ newCatGroupId = id; const g = groupById(id); document.getElementById('newCatGroupLabel').textContent = g ? g.name : 'Choose'; }
 function openNewCategory(){
+  closePicker();
   const want = mode === 'received' ? 'income' : 'expense';
-  const list = sortedGroups().filter(g => !g.hidden && g.kind !== 'transfer');
+  const list = newCatGroups();
   const def = list.find(g => g.kind === want && norm(g.name) === 'personal') || list.find(g => g.kind === want) || list[0];
-  document.getElementById('newCatGroup').innerHTML = list.map(g => `<option value="${g.id}"${def && g.id === def.id ? ' selected' : ''}>${escHtml(g.name)}</option>`).join('');
+  setNewCatGroup(def ? def.id : null);
+  document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.remove('hidden');
   document.getElementById('newCatName').value = '';
   document.getElementById('newCatName').focus();
 }
+function pickNewCatGroup(){
+  openPicker('Group', newCatGroups().map(g => ({ value:g.id, label:g.name })), newCatGroupId, setNewCatGroup);
+}
 async function createCategoryFromSheet(){
   const name = document.getElementById('newCatName').value.trim();
-  const groupId = document.getElementById('newCatGroup').value;
+  const groupId = newCatGroupId;
   const msg = document.getElementById('addMsg');
   if (!name) { msg.textContent = 'Name the category.'; return; }
+  if (!groupId) { msg.textContent = 'Pick a group.'; return; }
   const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
   const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
   if (error) { msg.textContent = errText(error); return; }
   cats.push(data);
   msg.textContent = '';
   document.getElementById('newCatForm').classList.add('hidden');
-  selCat = data.id;
-  const k = kindOfCat(data);
-  if (k === 'income') mode = 'received'; else if (k === 'expense') mode = 'spent';
-  renderSheet();
+  setCat(data.id);
 }
-document.getElementById('fAccount').addEventListener('change', e => {
-  if (e.target.value === '__new__') {
-    e.target.value = selAcct || '';
-    const f = document.getElementById('newAcctForm');
-    f.classList.remove('hidden');
-    document.getElementById('newAcctName').focus();
-    return;
-  }
-  selAcct = e.target.value || null;
-  renderSheet();
-});
+
+/* Account, from the add screen. */
+const KINDS = [['credit_card','Credit card'],['checking','Checking'],['savings','Savings'],['cash','Cash'],['other','Other']];
+const kindLabel = k => (KINDS.find(x => x[0] === k) || [null,'Other'])[1];
+const kindOptions = () => KINDS.map(([v,l]) => ({ value:v, label:l }));
+let newAcctKind = 'credit_card';
+function openAccountPicker(){
+  const live = liveAccounts(), cur = acctById(selAcct), o = [];
+  if (cur && cur.archived) o.push({ value:cur.id, label:cur.name });
+  live.forEach(a => o.push({ value:a.id, label:a.name }));
+  if (!live.some(a => norm(a.name) === 'cash')) o.push({ value:CASH, label:'Cash' });
+  o.push({ value:'__new__', label:'+ Add an account', add:true });
+  openPicker('Account', o, selAcct, v => {
+    if (v === '__new__') { openNewAccount(); return; }
+    selAcct = v; renderSheet();
+  });
+}
+function setNewAcctKind(k){ newAcctKind = k; document.getElementById('newAcctKindLabel').textContent = kindLabel(k); }
+function openNewAccount(){
+  setNewAcctKind('credit_card');
+  document.getElementById('newCatForm').classList.add('hidden');
+  document.getElementById('newAcctForm').classList.remove('hidden');
+  document.getElementById('newAcctName').value = '';
+  document.getElementById('newAcctName').focus();
+}
+function pickNewAcctKind(){ openPicker('Account type', kindOptions(), newAcctKind, setNewAcctKind); }
 
 async function insertAccount(name, kind){
   const sort = accounts.reduce((m,a) => Math.max(m, a.sort_order), 0) + 1;
@@ -807,7 +864,7 @@ async function insertAccount(name, kind){
 
 async function createAccountFromSheet(){
   const name = document.getElementById('newAcctName').value.trim();
-  const kind = document.getElementById('newAcctKind').value;
+  const kind = newAcctKind;
   const msg = document.getElementById('addMsg');
   if (!name) { msg.textContent = 'Name the account.'; return; }
   const { data, error } = await insertAccount(name, kind);
@@ -886,17 +943,16 @@ function renderManage(){
   const body = document.getElementById('manageBody');
   if (manageTab === 'accounts') {
     const list = accounts.slice().sort((a,b) => (a.archived - b.archived) || a.sort_order - b.sort_order);
-    const kinds = [['credit_card','Credit card'],['checking','Checking'],['savings','Savings'],['cash','Cash'],['other','Other']];
     let html = '<p class="m-hint">Accounts are where money moves: a card, checking, cash. They are only for the budget and are not linked to your net worth.</p>';
     if (!list.length) html += '<div class="empty">No accounts yet. Add one below, or pick Cash when adding a transaction.</div>';
     for (const a of list) {
       html += `<div class="m-row${a.archived ? ' dim' : ''}">
         <input type="text" value="${escHtml(a.name)}" maxlength="80" onchange="renameAccount('${a.id}', this)">
-        <select onchange="updateAccount('${a.id}', { kind:this.value })">${kinds.map(([v,l]) => `<option value="${v}"${a.kind === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+        <button class="m-pick" onclick="pickAccountKind('${a.id}')"><span>${kindLabel(a.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>
         <button class="m-toggle" onclick="updateAccount('${a.id}', { archived:${!a.archived} })">${a.archived ? 'Restore' : 'Archive'}</button>
       </div>`;
     }
-    html += `<div class="inline-form" style="margin-top:12px"><input id="mAcctName" type="text" placeholder="New account name" maxlength="80"><select id="mAcctKind">${kinds.map(([v,l]) => `<option value="${v}">${l}</option>`).join('')}</select><button class="btn btn-ghost" onclick="addAccountFromManage()">Add</button></div>`;
+    html += `<div class="inline-form" style="margin-top:12px"><input id="mAcctName" type="text" placeholder="New account name" maxlength="80"><button class="m-pick" onclick="pickManageKind()"><span id="mAcctKindLabel">${kindLabel(manageKind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button><button class="btn btn-ghost" onclick="addAccountFromManage()">Add</button></div>`;
     body.innerHTML = html;
     return;
   }
@@ -959,10 +1015,13 @@ function renameAccount(id, el){
   if (!name) { el.value = acctById(id).name; return; }
   updateAccount(id, { name });
 }
+let manageKind = 'credit_card';
+function pickManageKind(){ openPicker('Account type', kindOptions(), manageKind, k => { manageKind = k; document.getElementById('mAcctKindLabel').textContent = kindLabel(k); }); }
+function pickAccountKind(id){ const a = acctById(id); openPicker('Account type', kindOptions(), a.kind, k => updateAccount(id, { kind:k })); }
 async function addAccountFromManage(){
   const name = document.getElementById('mAcctName').value.trim();
   if (!name) return;
-  const { error } = await insertAccount(name, document.getElementById('mAcctKind').value);
+  const { error } = await insertAccount(name, manageKind);
   if (error) { manageErr(error); return; }
   document.getElementById('manageMsg').textContent = '';
   renderManage();
