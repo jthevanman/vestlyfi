@@ -240,23 +240,75 @@ input, select { font-family:inherit; }
 .sheet-actions .btn-danger { flex:0 0 auto; padding:0 18px; }
 
 /* Manage sheet */
-.m-grp { margin-bottom:16px; }
-.m-grp-title { font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
-.m-row { display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px solid var(--line); }
-.m-row input[type=text] { flex:1; min-width:0; padding:10px 2px; background:none; border:none; border-radius:0; color:var(--cream); font-size:16px; outline:none; }
-.m-row input.target { background:var(--surface); border-radius:999px; padding:8px 12px; }
-/* Fixed-width columns so every row lines up, whatever the group. */
-.m-row input.target, .m-row .target-gap { flex:0 0 96px; }
-.m-row input.target { text-align:right; }
-.m-row input:focus { box-shadow:inset 0 -2px 0 var(--accent); }
-.m-row input.target:focus { box-shadow:0 0 0 1px var(--accent); }
-.m-pick { flex:0 0 124px; display:flex; align-items:center; justify-content:space-between; gap:4px; height:36px; padding:0 10px 0 14px; background:var(--surface); border:none; border-radius:999px; color:var(--cream); font:inherit; font-size:0.84rem; cursor:pointer; }
-.m-pick:hover { background:var(--surface-2); }
-.m-pick .chev { width:14px; height:14px; color:var(--muted); }
-.m-row.dim input[type=text] { opacity:.45; }
-.m-toggle { flex:0 0 68px; height:34px; background:none; border:none; color:var(--muted); border-radius:999px; font-size:0.78rem; cursor:pointer; }
-.m-toggle:hover { color:var(--cream); background:var(--surface); }
-.m-hint { font-size:0.74rem; color:var(--muted); line-height:1.55; margin-bottom:12px; }
+.m-hint { font-size:0.8rem; color:var(--muted); line-height:1.55; margin-bottom:14px; }
+
+.top-pill { height:36px; padding:0 16px; border:none; border-radius:999px; background:var(--surface); color:var(--cream); font:inherit; font-size:0.82rem; font-weight:500; white-space:nowrap; cursor:pointer; transition:background .15s; }
+.top-pill:hover { background:var(--surface-2); }
+
+/* Categories tab: one block per category, a row per subcategory. */
+.c-block { padding:4px 0 12px; border-bottom:1px solid var(--line); margin-bottom:8px; }
+.c-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 4px; }
+.c-name { font-size:1rem; font-weight:500; }
+.c-note { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+.s-row { display:flex; align-items:center; gap:12px; min-height:52px; }
+.s-ic { flex:0 0 auto; width:36px; height:36px; border-radius:50%; background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--cream-dim); }
+.s-ic svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.s-ic .mono { font-size:0.9rem; font-weight:600; }
+.s-name { flex:1; min-width:0; font-size:0.92rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.s-tag { margin-left:8px; font-size:0.68rem; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:1px 8px; }
+.dim .s-ic, .dim > .s-name, .c-block.dim .c-name { opacity:.5; }
+.edit-btn { flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; height:34px; padding:0 14px; border:none; border-radius:999px; background:var(--surface); color:var(--cream); font:inherit; font-size:0.8rem; cursor:pointer; }
+.edit-btn:hover { background:var(--surface-2); }
+.edit-btn svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.edit-btn.sm { width:36px; height:36px; padding:0; justify-content:center; background:none; color:var(--muted); }
+.edit-btn.sm:hover { background:var(--surface); color:var(--cream); }
+.add-row { display:block; background:none; border:none; padding:6px 0 2px 48px; color:var(--accent); font:inherit; font-size:0.86rem; font-weight:500; cursor:pointer; }
+.add-row:hover { color:var(--accent-light); }
+.add-cat { width:100%; height:48px; margin-top:6px; }
+
+/* Targets tab */
+.t-field { flex:0 0 128px; min-width:0; display:flex; align-items:center; gap:2px; height:40px; padding:0 14px; background:var(--surface); border:1px solid transparent; border-radius:999px; }
+.t-field:focus-within { border-color:var(--accent); }
+.t-sym { color:var(--muted); font-size:0.9rem; }
+.t-input { flex:1; width:0; min-width:0; background:none; border:none; outline:none; color:var(--cream); font:inherit; font-size:16px; text-align:right; }
+.t-input::placeholder { color:var(--muted); }
+.manage-foot { position:sticky; bottom:calc(-18px - env(safe-area-inset-bottom)); margin:10px -16px calc(-18px - env(safe-area-inset-bottom)); padding:12px 16px calc(18px + env(safe-area-inset-bottom)); background:var(--raised); border-top:1px solid var(--line); }
+.manage-foot:empty { display:none; }
+@media (min-width:640px) { .manage-foot { bottom:-22px; margin:10px -22px -22px; padding:12px 22px 22px; } }
+.t-total { display:flex; justify-content:space-between; font-size:0.86rem; color:var(--cream-dim); margin-bottom:10px; }
+.t-total b { color:var(--cream); font-weight:500; }
+.btn-block { width:100%; height:50px; font-size:0.95rem; }
+
+/* Edit sheet */
+.edit-overlay { z-index:250; background:rgba(0,0,0,0.55); }
+.e-hero { display:flex; justify-content:center; margin:2px 0 16px; }
+.e-ic { width:72px; height:72px; border-radius:50%; background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center; }
+.e-ic svg { width:32px; height:32px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.e-ic .mono { font-size:1.6rem; font-weight:600; }
+.e-name { margin-bottom:12px; background:var(--surface); }
+.e-note { font-size:0.78rem; color:var(--muted); line-height:1.5; margin:10px 4px 0; }
+.e-section-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:20px 0 12px; }
+.icon-grid { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px; }
+.ig { aspect-ratio:1; display:flex; align-items:center; justify-content:center; padding:0; border:none; border-radius:50%; background:var(--surface); color:var(--cream-dim); cursor:pointer; transition:background .15s, color .15s; }
+.ig svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.ig .mono { font-weight:600; }
+.ig:hover { background:var(--surface-2); color:var(--cream); }
+.ig.on { background:var(--accent); color:var(--on-accent); }
+.switch { flex:0 0 auto; position:relative; width:48px; height:28px; border:none; border-radius:999px; background:var(--surface-2); cursor:pointer; transition:background .15s; }
+.switch::after { content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:var(--cream-dim); transition:transform .15s, background .15s; }
+.switch.on { background:var(--accent); }
+.switch.on::after { transform:translateX(20px); background:var(--on-accent); }
+
+/* Confirm */
+.confirm-overlay { display:none; position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:24px; }
+.confirm-overlay.open { display:flex; }
+.confirm { width:100%; max-width:340px; padding:24px 20px 18px; background:var(--raised); border:1px solid var(--line); border-radius:24px; text-align:center; }
+.cf-title { font-size:1.08rem; font-weight:500; margin-bottom:8px; }
+.cf-body { font-size:0.88rem; color:var(--cream-dim); line-height:1.5; margin-bottom:20px; }
+.cf-actions { display:flex; gap:8px; }
+.cf-actions .btn { flex:1; height:46px; }
+.btn-red { background:var(--red); color:#fff; }
+.btn-red:hover { background:#f08680; }
 
 .toast { position:fixed; left:50%; bottom:calc(104px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--surface-2); border:none; color:var(--cream); font-size:0.84rem; padding:10px 18px; border-radius:999px; z-index:300; opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 32px); }
 .toast.show { opacity:1; }
@@ -291,7 +343,7 @@ input, select { font-family:inherit; }
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
       <div class="topbar-right">
-        <button class="icon-btn" onclick="openManage('categories')" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" style="stroke-width:1.9"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="top-pill" onclick="openManage('categories')">Categories &amp; targets</button>
       </div>
     </div>
 
@@ -310,7 +362,7 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="card-title">Spending by category</div><button class="head-link" onclick="openManage('categories')">Edit categories</button></div>
+      <div class="card-head"><div class="card-title">Spending by category</div></div>
       <div id="catBreakdown"></div>
     </div>
 
@@ -344,14 +396,14 @@ input, select { font-family:inherit; }
     <div class="more-links">
       <button class="more-link" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
       <span class="more-sep"></span>
-      <button class="more-link" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New category</button>
+      <button class="more-link" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New subcategory</button>
     </div>
     <div class="sub-form hidden" id="newCatForm">
-      <div class="sub-form-title">New category</div>
+      <div class="sub-form-title">New subcategory</div>
       <input class="pill-input" id="newCatName" type="text" placeholder="Name, like Pet care" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
-      <button class="pick-row form-pick" onclick="pickNewCatGroup()"><span class="row-label">Group</span><span class="pick-val"><span id="newCatGroupLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-      <p class="sub-form-hint">The group is where it adds up on your spending list, like Food or Housing.</p>
-      <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newCatForm')">Cancel</button><button class="btn btn-gold" onclick="createCategoryFromSheet()">Add category</button></div>
+      <button class="pick-row form-pick" onclick="pickNewCatGroup()"><span class="row-label">Category</span><span class="pick-val"><span id="newCatGroupLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+      <p class="sub-form-hint">It adds up under this category on your spending list, the way Groceries adds up under Food.</p>
+      <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newCatForm')">Cancel</button><button class="btn btn-gold" onclick="createCategoryFromSheet()">Add subcategory</button></div>
     </div>
 
     <div class="list">
@@ -377,16 +429,43 @@ input, select { font-family:inherit; }
   </div>
 </div>
 
-<!-- ══ MANAGE SHEET ══ -->
-<div class="sheet-overlay" id="manageSheet" onclick="if(event.target===this)closeSheet('manageSheet')">
+<!-- ══ CATEGORIES & TARGETS SHEET ══ -->
+<div class="sheet-overlay" id="manageSheet" onclick="if(event.target===this)requestCloseManage()">
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="manageTitle">
-    <div class="sheet-head"><div class="sheet-title" id="manageTitle">Categories</div><button class="close-x" onclick="closeSheet('manageSheet')" aria-label="Close">&times;</button></div>
+    <div class="sheet-head"><div class="sheet-title" id="manageTitle">Categories</div><button class="close-x" onclick="requestCloseManage()" aria-label="Close">&times;</button></div>
     <div class="tabs">
       <button data-tab="categories" onclick="openManage('categories')">Categories</button>
+      <button data-tab="targets" onclick="openManage('targets')">Targets</button>
       <button data-tab="accounts" onclick="openManage('accounts')">Accounts</button>
     </div>
     <div id="manageBody"></div>
     <div class="msg err" id="manageMsg"></div>
+    <div class="manage-foot" id="manageFoot"></div>
+  </div>
+</div>
+
+<!-- ══ EDIT SHEET (subcategory, category or account) ══ -->
+<div class="sheet-overlay edit-overlay" id="editSheet" onclick="if(event.target===this)requestCloseEdit()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="sheet-head"><div class="sheet-title" id="editTitle"></div><button class="close-x" onclick="requestCloseEdit()" aria-label="Close">&times;</button></div>
+    <div id="editBody"></div>
+    <div class="msg err" id="editMsg"></div>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" onclick="requestCloseEdit()">Cancel</button>
+      <button class="btn btn-gold" id="editSaveBtn" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM (replaces the browser's confirm box) ══ -->
+<div class="confirm-overlay" id="confirmBox" onclick="if(event.target===this)answerConfirm(false)">
+  <div class="confirm" role="alertdialog" aria-modal="true" aria-labelledby="cfTitle" aria-describedby="cfBody">
+    <div class="cf-title" id="cfTitle"></div>
+    <div class="cf-body" id="cfBody"></div>
+    <div class="cf-actions">
+      <button class="btn btn-ghost" id="cfNo" onclick="answerConfirm(false)"></button>
+      <button class="btn btn-gold" id="cfYes" onclick="answerConfirm(true)"></button>
+    </div>
   </div>
 </div>
 
@@ -621,12 +700,16 @@ function renderTxList(){
 }
 
 /* ── add / edit sheet ── */
+function isOpen(id){ return document.getElementById(id).classList.contains('open'); }
 function openSheet(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeSheet(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
-  if (document.getElementById('pickerSheet').classList.contains('open')) { closePicker(); return; }
-  ['addSheet','manageSheet'].forEach(id => { if (document.getElementById(id).classList.contains('open')) closeSheet(id); });
+  if (isOpen('confirmBox')) { answerConfirm(false); return; }
+  if (isOpen('pickerSheet')) { closePicker(); return; }
+  if (isOpen('editSheet')) { requestCloseEdit(); return; }
+  if (isOpen('manageSheet')) { requestCloseManage(); return; }
+  if (isOpen('addSheet')) closeSheet('addSheet');
 });
 
 function defaultAccount(){
@@ -710,39 +793,87 @@ function renderSheet(){
   sizeAmount();
 }
 
-/* Amount field grows with its digits so the figure stays centered. */
+/* The amount field is sized to the measured width of its text, so the figure
+   sits dead center. Counting characters was off: commas and dots are much
+   narrower than digits, so "1,500.00" left the field too wide. */
+let measureCtx = null;
 function sizeAmount(){
   const el = document.getElementById('fAmount');
-  el.style.width = Math.max(1, (el.value || el.placeholder).length) + 0.6 + 'ch';
+  const cs = getComputedStyle(el);
+  measureCtx = measureCtx || document.createElement('canvas').getContext('2d');
+  measureCtx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  const text = el.value || el.placeholder || '0';
+  const spacing = parseFloat(cs.letterSpacing) || 0;
+  const w = measureCtx.measureText(text).width + spacing * text.length;
+  el.style.width = Math.ceil(w + 4) + 'px';
 }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeAmount);
 
-/* Line icons for the starter categories; anything else gets its initial. */
-const ICONS = {
-  'groceries':'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 11.4a1 1 0 0 0 1 .8h9.3a1 1 0 0 0 1-.8L21 7H6"/>',
-  'dining out':'<path d="M7 2v20"/><path d="M4 2v6a3 3 0 0 0 6 0V2"/><path d="M18 22V2c-2.6 1.2-4 3.6-4 7v4h4"/>',
-  'gas':'<path d="M4 22V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v18"/><path d="M3 22h13"/><path d="M4 10h11"/><path d="M15 8l3 3v7a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
-  'shopping':'<path d="M5 7h14l-1.2 14H6.2L5 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
-  'subscriptions':'<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
-  'entertainment':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 12h4M17 12h4"/>',
-  'health':'<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1z"/>',
-  'gifts':'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9"/><path d="M12 8v13"/><path d="M12 8C10.5 4 6 4 7 7c.5 1.2 2.5 1 5 1zM12 8c1.5-4 6-4 5-1-.5 1.2-2.5 1-5 1z"/>',
-  'rent or mortgage':'<path d="M3 11l9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/>',
-  'utilities':'<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>',
-  'internet and phone':'<path d="M2 9a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1"/>',
-  'home maintenance':'<path d="M15 4a4.5 4.5 0 0 0 5 5.9L10.6 19.3a2.1 2.1 0 0 1-3-3L17.1 7A4.5 4.5 0 0 0 15 4z"/>',
-  'car payment':'<path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><path d="M3 12h18"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/>',
-  'car insurance':'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/>',
-  'parking and transit':'<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16"/><circle cx="8" cy="14.5" r="1"/><circle cx="16" cy="14.5" r="1"/><path d="M7 18v3M17 18v3"/>',
-  'paycheck':'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
-  'other income':'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
-  'credit card payment':'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
-  'to savings or investing':'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
-  'between my accounts':'<path d="M4 7h16l-3-3"/><path d="M20 17H4l3 3"/>'
+/* Icon library. A subcategory shows the icon it was given (icon column),
+   else the built-in one for a starter name, else its first letter. */
+const LIB = {
+  'cart':'<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 11.4a1 1 0 0 0 1 .8h9.3a1 1 0 0 0 1-.8L21 7H6"/>',
+  'fork':'<path d="M7 2v20"/><path d="M4 2v6a3 3 0 0 0 6 0V2"/><path d="M18 22V2c-2.6 1.2-4 3.6-4 7v4h4"/>',
+  'coffee':'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2v3M12 2v3"/>',
+  'wine':'<path d="M8 3h8l-1 6a3 3 0 0 1-6 0z"/><path d="M12 12v8M8 21h8"/>',
+  'home':'<path d="M3 11l9-8 9 8"/><path d="M5 10v11h14V10"/><path d="M10 21v-6h4v6"/>',
+  'key':'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/>',
+  'bolt':'<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>',
+  'droplet':'<path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/>',
+  'wifi':'<path d="M2 9a15 15 0 0 1 20 0"/><path d="M5.5 12.5a10 10 0 0 1 13 0"/><path d="M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1"/>',
+  'phone':'<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',
+  'wrench':'<path d="M15 4a4.5 4.5 0 0 0 5 5.9L10.6 19.3a2.1 2.1 0 0 1-3-3L17.1 7A4.5 4.5 0 0 0 15 4z"/>',
+  'leaf':'<path d="M5 19c0-9 6-14 15-15-1 9-6 15-15 15z"/><path d="M5 19l8-8"/>',
+  'fuel':'<path d="M4 22V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v18"/><path d="M3 22h13"/><path d="M4 10h11"/><path d="M15 8l3 3v7a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+  'car':'<path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><path d="M3 12h18"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/>',
+  'bus':'<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16"/><circle cx="8" cy="14.5" r="1"/><circle cx="16" cy="14.5" r="1"/><path d="M7 18v3M17 18v3"/>',
+  'shield':'<path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5l8-3z"/>',
+  'suitcase':'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M8 7v13M16 7v13"/>',
+  'bag':'<path d="M5 7h14l-1.2 14H6.2L5 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+  'shirt':'<path d="M8 3L3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z"/>',
+  'scissors':'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1L20 20M8.1 15.9L20 4"/>',
+  'gift':'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9"/><path d="M12 8v13"/><path d="M12 8C10.5 4 6 4 7 7c.5 1.2 2.5 1 5 1zM12 8c1.5-4 6-4 5-1-.5 1.2-2.5 1-5 1z"/>',
+  'tag':'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/>',
+  'repeat':'<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+  'film':'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 12h4M17 12h4"/>',
+  'tv':'<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  'music':'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  'gamepad':'<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r="1"/><circle cx="17.5" cy="13.5" r="1"/>',
+  'book':'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>',
+  'heart':'<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1z"/>',
+  'pill':'<rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="M8.5 8.5l7 7"/>',
+  'dumbbell':'<path d="M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12"/>',
+  'paw':'<circle cx="5.5" cy="10" r="1.8"/><circle cx="9.5" cy="5.5" r="1.8"/><circle cx="14.5" cy="5.5" r="1.8"/><circle cx="18.5" cy="10" r="1.8"/><path d="M12 11c-3 0-6 4.5-6 7a2.5 2.5 0 0 0 3.5 2.3c1.6-.7 3.4-.7 5 0A2.5 2.5 0 0 0 18 18c0-2.5-3-7-6-7z"/>',
+  'person':'<circle cx="12" cy="8" r="4"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/>',
+  'umbrella':'<path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9z"/><path d="M12 12v7a2 2 0 0 0 4 0"/>',
+  'receipt':'<path d="M5 2h14v20l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h4"/>',
+  'briefcase':'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
+  'laptop':'<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+  'plus-circle':'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  'coins':'<ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v4c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M9 14v3c0 1.7 2.7 3 6 3s6-1.3 6-3v-4c0-1.7-2.7-3-6-3"/>',
+  'percent':'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  'bank':'<path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/>',
+  'card':'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',
+  'trend-up':'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  'arrows':'<path d="M4 7h16l-3-3"/><path d="M20 17H4l3 3"/>',
+  'star':'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>'
 };
+const NAME_ICON = {
+  'groceries':'cart', 'dining out':'fork', 'gas':'fuel', 'shopping':'bag', 'subscriptions':'repeat',
+  'entertainment':'film', 'health':'heart', 'gifts':'gift', 'rent or mortgage':'home', 'utilities':'bolt',
+  'internet and phone':'wifi', 'home maintenance':'wrench', 'car payment':'car', 'car insurance':'shield',
+  'parking and transit':'bus', 'paycheck':'briefcase', 'other income':'plus-circle',
+  'credit card payment':'card', 'to savings or investing':'trend-up', 'between my accounts':'arrows'
+};
+function iconKey(c){
+  if (c.icon === 'letter') return null;
+  if (c.icon && LIB[c.icon]) return c.icon;
+  return NAME_ICON[norm(c.name)] || null;
+}
+function monoOf(name){ return `<span class="mono">${escHtml((String(name || '').trim()[0] || '?').toUpperCase())}</span>`; }
 function catIcon(c){
-  const p = ICONS[norm(c.name)];
-  if (p) return `<svg viewBox="0 0 24 24">${p}</svg>`;
-  return `<span class="mono">${escHtml((c.name.trim()[0] || '?').toUpperCase())}</span>`;
+  const k = iconKey(c);
+  return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(c.name);
 }
 
 
@@ -790,7 +921,7 @@ function openCategoryBrowser(){
     if (!list.length) continue;
     html += `<div class="browser-grp"><div class="browser-grp-title">${escHtml(g.name)}</div><div class="tiles">` + list.map(c => tileHtml(c, `browserPick('${c.id}')`)).join('') + '</div></div>';
   }
-  html += '<div class="tiles"><button class="tile new" onclick="openNewCategory()"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New category</span></button></div>';
+  html += '<div class="tiles"><button class="tile new" onclick="openNewCategory()"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New subcategory</span></button></div>';
   showPicker('All categories', html);
 }
 function browserPick(id){ closePicker(); setCat(id); }
@@ -811,14 +942,14 @@ function openNewCategory(){
   document.getElementById('newCatName').focus();
 }
 function pickNewCatGroup(){
-  openPicker('Group', newCatGroups().map(g => ({ value:g.id, label:g.name })), newCatGroupId, setNewCatGroup);
+  openPicker('Category', newCatGroups().map(g => ({ value:g.id, label:g.name })), newCatGroupId, setNewCatGroup);
 }
 async function createCategoryFromSheet(){
   const name = document.getElementById('newCatName').value.trim();
   const groupId = newCatGroupId;
   const msg = document.getElementById('addMsg');
-  if (!name) { msg.textContent = 'Name the category.'; return; }
-  if (!groupId) { msg.textContent = 'Pick a group.'; return; }
+  if (!name) { msg.textContent = 'Name the subcategory.'; return; }
+  if (!groupId) { msg.textContent = 'Pick a category.'; return; }
   const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
   const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
   if (error) { msg.textContent = errText(error); return; }
@@ -921,7 +1052,7 @@ async function saveTx(){
 
 async function deleteTx(){
   if (!editing) return;
-  if (!confirm('Delete this transaction? This cannot be undone.')) return;
+  if (!await askConfirm({ title:'Delete this transaction?', body:'This cannot be undone.', yes:'Delete', no:'Keep it', danger:true })) return;
   const { error } = await sb.from('budget_transactions').delete().eq('id', editing.id);
   if (error) { document.getElementById('addMsg').textContent = errText(error); return; }
   closeSheet('addSheet');
@@ -929,102 +1060,265 @@ async function deleteTx(){
   await loadMonth();
 }
 
-/* ── manage sheet ── */
-function openManage(tab){
+/* ── Confirm dialog ── */
+let cfResolve = null;
+function askConfirm({ title, body, yes = 'Yes', no = 'No', danger = false }){
+  document.getElementById('cfTitle').textContent = title;
+  document.getElementById('cfBody').textContent = body || '';
+  const y = document.getElementById('cfYes');
+  y.textContent = yes;
+  y.className = 'btn ' + (danger ? 'btn-red' : 'btn-gold');
+  document.getElementById('cfNo').textContent = no;
+  document.getElementById('confirmBox').classList.add('open');
+  return new Promise(r => { cfResolve = r; });
+}
+function answerConfirm(v){
+  document.getElementById('confirmBox').classList.remove('open');
+  const r = cfResolve; cfResolve = null;
+  if (r) r(v);
+}
+const LEAVE = { title:'Leave without saving?', body:"Your changes haven't been saved.", yes:'Yes, leave', no:'No, keep editing' };
+
+/* ── Categories & targets sheet ──
+   Words, used the same way on every screen:
+     category    = a top-level bucket, like Food or Housing   (budget_groups)
+     subcategory = what a transaction is tagged with, like Groceries (budget_categories) */
+const PENCIL = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>';
+const MANAGE_TITLES = { categories:'Categories', targets:'Spending targets', accounts:'Accounts' };
+let targetDraft = {};   // subcategory id -> what the user typed, until Save
+
+function parseTarget(raw){
+  raw = String(raw == null ? '' : raw).trim();
+  if (!raw) return null;
+  const v = Math.round(VestlyCurrency.parseDec(raw) * 100) / 100;
+  return v > 0 ? v : null;
+}
+function storedTarget(c){ return c.monthly_target == null ? null : Number(c.monthly_target); }
+function changedTargets(){
+  return Object.keys(targetDraft).filter(id => { const c = catById(id); return c && parseTarget(targetDraft[id]) !== storedTarget(c); });
+}
+function targetsDirty(){ return manageTab === 'targets' && changedTargets().length > 0; }
+function plainAmount(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { maximumFractionDigits:2 }).format(Number(n)); }
+
+async function openManage(tab){
+  const open = isOpen('manageSheet');
+  if (open && tab !== manageTab && targetsDirty() && !await askConfirm(LEAVE)) return;
+  if (!open || tab !== manageTab) targetDraft = {};
   manageTab = tab;
-  document.getElementById('manageTitle').textContent = tab === 'accounts' ? 'Accounts' : 'Categories';
+  document.getElementById('manageTitle').textContent = MANAGE_TITLES[tab];
   document.querySelectorAll('#manageSheet .tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   document.getElementById('manageMsg').textContent = '';
   renderManage();
-  if (!document.getElementById('manageSheet').classList.contains('open')) openSheet('manageSheet');
+  if (!open) openSheet('manageSheet');
 }
+async function requestCloseManage(){
+  if (targetsDirty() && !await askConfirm(LEAVE)) return;
+  targetDraft = {};
+  closeSheet('manageSheet');
+}
+function manageErr(e){ document.getElementById('manageMsg').textContent = errText(e); }
 
 function renderManage(){
   const body = document.getElementById('manageBody');
-  if (manageTab === 'accounts') {
-    const list = accounts.slice().sort((a,b) => (a.archived - b.archived) || a.sort_order - b.sort_order);
-    let html = '<p class="m-hint">Accounts are where money moves: a card, checking, cash. They are only for the budget and are not linked to your net worth.</p>';
-    if (!list.length) html += '<div class="empty">No accounts yet. Add one below, or pick Cash when adding a transaction.</div>';
-    for (const a of list) {
-      html += `<div class="m-row${a.archived ? ' dim' : ''}">
-        <input type="text" value="${escHtml(a.name)}" maxlength="80" onchange="renameAccount('${a.id}', this)">
-        <button class="m-pick" onclick="pickAccountKind('${a.id}')"><span>${kindLabel(a.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>
-        <button class="m-toggle" onclick="updateAccount('${a.id}', { archived:${!a.archived} })">${a.archived ? 'Restore' : 'Archive'}</button>
-      </div>`;
+  const foot = document.getElementById('manageFoot');
+  foot.innerHTML = '';
+
+  if (manageTab === 'categories') {
+    let html = '<p class="m-hint">Categories, like Food, hold subcategories, like Groceries. You tag each transaction with a subcategory. Tap Edit to rename a category, or the pencil to rename a subcategory, change its icon or hide it.</p>';
+    for (const g of sortedGroups()) {
+      const note = g.kind === 'income' ? 'Money coming in' : g.kind === 'transfer' ? 'Moving money between accounts. Never counts as spending.' : '';
+      html += `<section class="c-block${g.hidden ? ' dim' : ''}">
+        <div class="c-head"><div><div class="c-name">${escHtml(g.name)}${g.hidden ? '<span class="s-tag">Hidden</span>' : ''}</div>${note ? `<div class="c-note">${note}</div>` : ''}</div>
+          <button class="edit-btn" onclick="openEditGroup('${g.id}')" aria-label="Edit category ${escHtml(g.name)}">${PENCIL}<span>Edit</span></button></div>`;
+      for (const c of catsIn(g.id, true)) {
+        html += `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic">${catIcon(c)}</span><span class="s-name">${escHtml(c.name)}${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
+      }
+      html += `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button></section>`;
     }
-    html += `<div class="inline-form" style="margin-top:12px"><input id="mAcctName" type="text" placeholder="New account name" maxlength="80"><button class="m-pick" onclick="pickManageKind()"><span id="mAcctKindLabel">${kindLabel(manageKind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button><button class="btn btn-ghost" onclick="addAccountFromManage()">Add</button></div>`;
+    html += '<button class="btn btn-ghost add-cat" onclick="openNewGroup()">+ New category</button>';
     body.innerHTML = html;
     return;
   }
-  let html = '<p class="m-hint">Rename, hide or add categories. A monthly target is optional; leave it blank for no target. Transfers (like paying a credit card) never count as spending.</p>';
-  for (const g of sortedGroups()) {
-    html += `<div class="m-grp"><div class="m-grp-title">${escHtml(g.name)}</div>`;
-    for (const c of catsIn(g.id, true)) {
-      const tgt = c.monthly_target != null ? new Intl.NumberFormat(VestlyCurrency.locale(), { maximumFractionDigits:2 }).format(Number(c.monthly_target)) : '';
-      html += `<div class="m-row${c.hidden ? ' dim' : ''}">
-        <input type="text" value="${escHtml(c.name)}" maxlength="60" onchange="renameCategory('${c.id}', this)">
-        ${g.kind === 'expense' ? `<input type="text" class="target" inputmode="decimal" placeholder="Target" value="${escHtml(tgt)}" onchange="setTarget('${c.id}', this)" aria-label="Monthly target">` : '<span class="target-gap"></span>'}
-        <button class="m-toggle" onclick="updateCategory('${c.id}', { hidden:${!c.hidden} })">${c.hidden ? 'Show' : 'Hide'}</button>
-      </div>`;
+
+  if (manageTab === 'targets') {
+    let html = '<p class="m-hint">Set a monthly limit for any subcategory you want to keep an eye on. Leave it blank for no target. Progress shows under Spending by category.</p>';
+    const sym = escHtml(VestlyCurrency.symbol());
+    for (const g of sortedGroups()) {
+      if (g.kind !== 'expense' || g.hidden) continue;
+      const list = catsIn(g.id, false);
+      if (!list.length) continue;
+      html += `<section class="c-block"><div class="c-head"><div class="c-name">${escHtml(g.name)}</div></div>`;
+      for (const c of list) {
+        const v = targetDraft[c.id] !== undefined ? targetDraft[c.id] : (c.monthly_target != null ? plainAmount(c.monthly_target) : '');
+        html += `<div class="s-row"><span class="s-ic">${catIcon(c)}</span><label class="s-name" for="tg_${c.id}">${escHtml(c.name)}</label><span class="t-field"><span class="t-sym">${sym}</span><input id="tg_${c.id}" class="t-input" type="text" inputmode="decimal" placeholder="None" value="${escHtml(v)}" oninput="onTargetInput('${c.id}', this)"></span></div>`;
+      }
+      html += '</section>';
     }
-    html += `<div class="inline-form" style="margin-top:4px"><input id="newCat_${g.id}" type="text" placeholder="Add to ${escHtml(g.name)}" maxlength="60" onkeydown="if(event.key==='Enter')addCategory('${g.id}')"><button class="btn btn-ghost" onclick="addCategory('${g.id}')">Add</button></div></div>`;
+    body.innerHTML = html;
+    foot.innerHTML = '<div class="t-total"><span>Monthly targets total</span><b id="tTotal"></b></div><button class="btn btn-gold btn-block" id="tSave" onclick="saveTargets()">Save targets</button>';
+    updateTargetFoot();
+    return;
   }
+
+  // accounts
+  const list = accounts.slice().sort((a,b) => (a.archived - b.archived) || a.sort_order - b.sort_order);
+  let html = '<p class="m-hint">Accounts are where money moves: a card, checking, cash. They only exist in the budget and are not linked to your net worth.</p>';
+  if (!list.length) html += '<div class="empty">No accounts yet. Add one below, or pick Cash when adding a transaction.</div>';
+  html += '<section class="c-block">';
+  for (const a of list) {
+    html += `<div class="s-row${a.archived ? ' dim' : ''}"><span class="s-ic">${catIcon({ name:a.name, icon: a.kind === 'credit_card' ? 'card' : a.kind === 'cash' ? 'coins' : 'bank' })}</span><span class="s-name">${escHtml(a.name)}<span class="s-tag">${a.archived ? 'Archived' : kindLabel(a.kind)}</span></span><button class="edit-btn sm" onclick="openEditAccount('${a.id}')" aria-label="Edit account ${escHtml(a.name)}">${PENCIL}</button></div>`;
+  }
+  html += '</section><button class="btn btn-ghost add-cat" onclick="openNewAccountSheet()">+ New account</button>';
   body.innerHTML = html;
 }
 
-function manageErr(e){ document.getElementById('manageMsg').textContent = errText(e); }
+function onTargetInput(id, el){
+  VestlyCurrency.groupDec(el);
+  targetDraft[id] = el.value;
+  updateTargetFoot();
+}
+function updateTargetFoot(){
+  let total = 0;
+  for (const c of visibleCats()) {
+    if (kindOfCat(c) !== 'expense') continue;
+    const v = targetDraft[c.id] !== undefined ? parseTarget(targetDraft[c.id]) : storedTarget(c);
+    if (v) total += v;
+  }
+  const t = document.getElementById('tTotal'); if (t) t.textContent = money(total);
+  const b = document.getElementById('tSave');
+  if (b) { const n = changedTargets().length; b.disabled = n === 0; b.textContent = n ? 'Save targets' : 'No changes to save'; }
+}
+async function saveTargets(){
+  const ids = changedTargets();
+  if (!ids.length) return;
+  const b = document.getElementById('tSave'); b.disabled = true; b.textContent = 'Saving…';
+  const results = await Promise.all(ids.map(id =>
+    sb.from('budget_categories').update({ monthly_target: parseTarget(targetDraft[id]) }).eq('id', id).select().single()));
+  const failed = results.find(r => r.error);
+  results.forEach(r => { if (r.data) { cats = cats.map(c => c.id === r.data.id ? r.data : c); delete targetDraft[r.data.id]; } });
+  if (failed) { manageErr(failed.error); updateTargetFoot(); return; }
+  targetDraft = {};
+  document.getElementById('manageMsg').textContent = '';
+  toast('Targets saved');
+  render(); renderManage();
+}
 
-async function updateCategory(id, patch){
-  const { data, error } = await sb.from('budget_categories').update(patch).eq('id', id).select().single();
-  if (error) { manageErr(error); renderManage(); return false; }
-  cats = cats.map(c => c.id === id ? data : c);
-  document.getElementById('manageMsg').textContent = '';
-  renderManage(); render();
-  return true;
+/* ── Edit sheet: one place to rename, re-icon or hide anything ── */
+let edit = null;   // { type:'sub'|'group'|'account', id (null = new), kind?, orig, draft }
+function startEdit(e){
+  edit = e; edit.draft = Object.assign({}, e.orig);
+  document.getElementById('editMsg').textContent = '';
+  renderEdit();
+  document.getElementById('editSheet').classList.add('open');
+  if (!e.id) setTimeout(() => { const n = document.getElementById('eName'); if (n) n.focus(); }, 30);
 }
-function renameCategory(id, el){
-  const name = el.value.trim();
-  if (!name) { el.value = catById(id).name; return; }
-  updateCategory(id, { name });
-}
-function setTarget(id, el){
-  const raw = el.value.trim();
-  updateCategory(id, { monthly_target: raw === '' ? null : Math.round(VestlyCurrency.parseDec(raw) * 100) / 100 });
-}
-async function addCategory(groupId){
-  const input = document.getElementById('newCat_' + groupId);
-  const name = input.value.trim();
-  if (!name) return;
-  const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
-  const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
-  if (error) { manageErr(error); return; }
-  cats.push(data);
-  document.getElementById('manageMsg').textContent = '';
-  renderManage();
+function openEditSub(id){ const c = catById(id); startEdit({ type:'sub', id, orig:{ name:c.name, icon:c.icon || null, group_id:c.group_id, hidden:!!c.hidden } }); }
+function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', icon:null, group_id:groupId, hidden:false } }); }
+function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden } }); }
+function openNewGroup(){ startEdit({ type:'group', id:null, kind:'expense', orig:{ name:'', hidden:false } }); }
+function openEditAccount(id){ const a = acctById(id); startEdit({ type:'account', id, orig:{ name:a.name, kind:a.kind, archived:!!a.archived } }); }
+function openNewAccountSheet(){ startEdit({ type:'account', id:null, orig:{ name:'', kind:'credit_card', archived:false } }); }
+function editDirty(){ return !!edit && JSON.stringify(edit.draft) !== JSON.stringify(edit.orig); }
+async function requestCloseEdit(){
+  if (editDirty() && !await askConfirm(LEAVE)) return;
+  document.getElementById('editSheet').classList.remove('open');
+  edit = null;
 }
 
-async function updateAccount(id, patch){
-  const { data, error } = await sb.from('budget_accounts').update(patch).eq('id', id).select().single();
-  if (error) { manageErr(error); renderManage(); return; }
-  accounts = accounts.map(a => a.id === id ? data : a);
-  document.getElementById('manageMsg').textContent = '';
-  renderManage(); render();
+const EDIT_TITLES = {
+  sub:['New subcategory','Edit subcategory'], group:['New category','Edit category'], account:['New account','Edit account']
+};
+function renderEdit(){
+  const d = edit.draft, t = edit.type;
+  document.getElementById('editTitle').textContent = EDIT_TITLES[t][edit.id ? 1 : 0];
+  document.getElementById('editSaveBtn').textContent = edit.id ? 'Save' : (t === 'sub' ? 'Add subcategory' : t === 'group' ? 'Add category' : 'Add account');
+  let html = '';
+  if (t === 'sub') {
+    const g = groupById(d.group_id);
+    html += `<div class="e-hero"><span class="e-ic" id="ePreview">${catIcon({ name:d.name || '?', icon:d.icon })}</span></div>
+      <input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Subcategory name, like Pet care" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+      <div class="list">
+        <button class="pick-row" onclick="pickEditGroup()"><span class="row-label">Category</span><span class="pick-val"><span>${escHtml(g ? g.name : 'Choose')}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+        <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div>
+      </div>
+      <div class="e-section-title">Icon</div>
+      <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
+  } else if (t === 'group') {
+    const note = edit.kind === 'income' ? 'An income category. Its subcategories count as money coming in.'
+      : edit.kind === 'transfer' ? 'A transfer category. Its subcategories never count as spending or income.'
+      : 'Its subcategories count as spending and add up under this name on your spending list.';
+    html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+      <div class="list"><div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div></div>
+      <p class="e-note">${note}</p>`;
+  } else {
+    html += `<input class="pill-input e-name" id="eName" type="text" maxlength="80" placeholder="Account name, like Chase card" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+      <div class="list">
+        <button class="pick-row" onclick="pickEditKind()"><span class="row-label">Type</span><span class="pick-val"><span>${kindLabel(d.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+        <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.archived ? '' : ' on'}" onclick="toggleEdit('archived')" aria-label="Show when adding"></button></div>
+      </div>
+      <p class="e-note">Turning this off archives the account. Its past transactions stay.</p>`;
+  }
+  document.getElementById('editBody').innerHTML = html;
 }
-function renameAccount(id, el){
-  const name = el.value.trim();
-  if (!name) { el.value = acctById(id).name; return; }
-  updateAccount(id, { name });
+function iconGridHtml(){
+  const d = edit.draft;
+  const current = d.icon === 'letter' ? 'letter' : (d.icon && LIB[d.icon] ? d.icon : (NAME_ICON[norm(d.name)] || 'letter'));
+  let html = `<button class="ig${current === 'letter' ? ' on' : ''}" onclick="pickEditIcon('letter')" aria-label="First letter">${monoOf(d.name || '?')}</button>`;
+  for (const k of Object.keys(LIB)) html += `<button class="ig${current === k ? ' on' : ''}" onclick="pickEditIcon('${k}')" aria-label="${k}"><svg viewBox="0 0 24 24">${LIB[k]}</svg></button>`;
+  return html;
 }
-let manageKind = 'credit_card';
-function pickManageKind(){ openPicker('Account type', kindOptions(), manageKind, k => { manageKind = k; document.getElementById('mAcctKindLabel').textContent = kindLabel(k); }); }
-function pickAccountKind(id){ const a = acctById(id); openPicker('Account type', kindOptions(), a.kind, k => updateAccount(id, { kind:k })); }
-async function addAccountFromManage(){
-  const name = document.getElementById('mAcctName').value.trim();
-  if (!name) return;
-  const { error } = await insertAccount(name, manageKind);
-  if (error) { manageErr(error); return; }
-  document.getElementById('manageMsg').textContent = '';
-  renderManage();
+function onEditName(v){
+  edit.draft.name = v;
+  if (edit.type !== 'sub') return;
+  document.getElementById('ePreview').innerHTML = catIcon({ name:v || '?', icon:edit.draft.icon });
+  document.getElementById('eIcons').innerHTML = iconGridHtml();
+}
+function pickEditIcon(k){
+  edit.draft.icon = k;
+  document.getElementById('ePreview').innerHTML = catIcon({ name:edit.draft.name || '?', icon:k });
+  document.getElementById('eIcons').innerHTML = iconGridHtml();
+}
+function toggleEdit(key){ edit.draft[key] = !edit.draft[key]; renderEdit(); }
+function pickEditGroup(){
+  openPicker('Category', sortedGroups().map(g => ({ value:g.id, label:g.name })), edit.draft.group_id, v => { edit.draft.group_id = v; renderEdit(); });
+}
+function pickEditKind(){ openPicker('Account type', kindOptions(), edit.draft.kind, v => { edit.draft.kind = v; renderEdit(); }); }
+
+async function saveEdit(){
+  const d = edit.draft, t = edit.type, msg = document.getElementById('editMsg');
+  const name = String(d.name || '').trim();
+  if (!name) { msg.textContent = t === 'sub' ? 'Name the subcategory.' : t === 'group' ? 'Name the category.' : 'Name the account.'; return; }
+  const btn = document.getElementById('editSaveBtn'); btn.disabled = true;
+  try {
+    let res;
+    if (t === 'sub') {
+      const row = { name, icon:d.icon, group_id:d.group_id, hidden:d.hidden };
+      if (edit.id) res = await sb.from('budget_categories').update(row).eq('id', edit.id).select().single();
+      else {
+        const sort = catsIn(d.group_id, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
+        res = await sb.from('budget_categories').insert({ ...row, user_id:user.id, sort_order:sort }).select().single();
+      }
+      if (res.error) { msg.textContent = errText(res.error); return; }
+      cats = edit.id ? cats.map(c => c.id === edit.id ? res.data : c) : cats.concat(res.data);
+    } else if (t === 'group') {
+      if (edit.id) res = await sb.from('budget_groups').update({ name, hidden:d.hidden }).eq('id', edit.id).select().single();
+      else {
+        const sort = groups.reduce((m,g) => Math.max(m, g.sort_order), 0) + 1;
+        res = await sb.from('budget_groups').insert({ user_id:user.id, name, kind:'expense', hidden:d.hidden, sort_order:sort }).select().single();
+      }
+      if (res.error) { msg.textContent = errText(res.error); return; }
+      groups = edit.id ? groups.map(g => g.id === edit.id ? res.data : g) : groups.concat(res.data);
+    } else {
+      if (edit.id) res = await sb.from('budget_accounts').update({ name, kind:d.kind, archived:d.archived }).eq('id', edit.id).select().single();
+      else res = await insertAccount(name, d.kind);
+      if (res.error) { msg.textContent = errText(res.error); return; }
+      if (edit.id) accounts = accounts.map(a => a.id === edit.id ? res.data : a);
+    }
+    document.getElementById('editSheet').classList.remove('open');
+    edit = null;
+    toast('Saved');
+    renderManage(); render();
+  } finally { btn.disabled = false; }
 }
 </script>
 </body>
