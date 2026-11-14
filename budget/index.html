@@ -156,6 +156,7 @@ input, select { font-family:inherit; }
 .big-left { font-size:1.2rem; font-weight:500; white-space:nowrap; }
 .big-left small { font-size:0.76rem; font-weight:400; color:var(--muted); }
 .big-left.ahead { color:var(--amber); }
+.big-left.in { color:var(--green); }
 .big-left.over, .big-left.over small { color:var(--red); }
 .big-bar, .seg-bar { position:relative; display:flex; height:12px; margin-top:12px; }
 .big-bar { border-radius:999px; background:var(--surface); }
@@ -441,7 +442,7 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="card-title">Spending by category</div></div>
+      <div class="card-head"><div class="card-title">By category</div></div>
       <div id="catBreakdown"></div>
     </div>
 
@@ -486,7 +487,7 @@ input, select { font-family:inherit; }
 
     <div class="list">
       <button class="pick-row" onclick="openAccountPicker()">
-        <span class="row-label">Account</span>
+        <span class="row-label" id="acctRowLabel">From account</span>
         <span class="pick-val"><span id="acctLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
       </button>
       <div class="sub-form hidden" id="newAcctForm">
@@ -731,12 +732,20 @@ function monthPace(){
 /* ok = on pace, ahead = spending faster than the month, over = past the target */
 function targetState(s, t){ if (!t) return ''; if (s > t) return 'over'; if (s > t * monthPace() + 0.005) return 'ahead'; return 'ok'; }
 function spendData(){
-  const spent = {}; let uncat = 0;
+  const spent = {}, received = {}; let uncat = 0, uncatIn = 0;
   for (const t of monthTx) {
     const c = catById(t.category_id), amt = Number(t.amount);
-    if (!c) { if (amt < 0) uncat -= amt; continue; }
-    if (kindOfCat(c) !== 'expense') continue;
-    spent[c.id] = (spent[c.id] || 0) - amt;
+    if (!c) { if (amt < 0) uncat -= amt; else uncatIn += amt; continue; }
+    const k = kindOfCat(c);
+    if (k === 'expense') spent[c.id] = (spent[c.id] || 0) - amt;
+    else if (k === 'income') received[c.id] = (received[c.id] || 0) + amt;
+  }
+  // Income: every income category with money in this month.
+  const income = [];
+  for (const g of sortedGroups()) {
+    if (g.kind !== 'income') continue;
+    const rows = catsIn(g.id, true).filter(c => received[c.id]).map(c => ({ c, r: received[c.id] }));
+    if (rows.length) income.push({ g, rows, total: rows.reduce((a,x) => a + x.r, 0) });
   }
   const groupsOut = [];
   for (const g of sortedGroups()) {
@@ -747,15 +756,24 @@ function spendData(){
     if (!rows.length) continue;
     groupsOut.push({ g, rows, total: rows.reduce((a,r) => a + r.s, 0), target: rows.reduce((a,r) => a + (r.t || 0), 0), targeted: rows.reduce((a,r) => a + (r.t ? r.s : 0), 0) });
   }
-  return { groups: groupsOut, uncat };
+  // Biggest target first; categories without a target follow, biggest spending first.
+  groupsOut.sort((a,b) => b.target - a.target || b.total - a.total);
+  return { groups: groupsOut, uncat, income, uncatIn };
 }
 
 function renderBreakdown(){
   const el = document.getElementById('catBreakdown');
   const d = spendData();
-  let html = SPEND_RENDER.meters(d);
+  let html = d.income.map(x => {
+    const open = openSpendIds.has(x.g.id);
+    return `<div class="sp-item${open ? ' open' : ''}"><button class="sp-head" onclick="toggleSpend('${x.g.id}')" aria-expanded="${open}">
+        <span class="sp-top"><span class="sp-name">${escHtml(x.g.name)}</span><span class="big-left in">${moneyWhole(x.total)}<small> received</small></span>${CHEV_DOWN}</span></button>` +
+      (open ? '<div class="sp-body">' + x.rows.map(r => `<div class="sub-line"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span><span class="sub-right"><span class="sub-left none">${moneyWhole(r.r)}</span></span></div>`).join('') + '</div>' : '') + '</div>';
+  }).join('');
+  if (d.uncatIn > 0) html += `<div class="sp-item"><div class="sp-head static"><span class="sp-top"><span class="sp-name">Uncategorized income</span><span class="big-left in">${moneyWhole(d.uncatIn)}<small> received</small></span></span></div></div>`;
+  html += SPEND_RENDER.meters(d);
   if (d.uncat > 0) html += `<div class="sp-item"><div class="sp-head static"><span class="sp-top"><span class="sp-name">Uncategorized</span><span class="big-left">${moneyWhole(d.uncat)}<small> spent</small></span></span></div></div>`;
-  el.innerHTML = d.groups.length || d.uncat ? html : '<div class="empty">No spending this month.</div>';
+  el.innerHTML = d.groups.length || d.uncat || d.income.length || d.uncatIn ? html : '<div class="empty">Nothing logged this month.</div>';
 }
 
 
@@ -926,6 +944,7 @@ function renderSheet(){
 
   document.getElementById('catChips').innerHTML = chipCats().map(c => tileHtml(c, `pickCat('${c.id}')`)).join('');
   const cur = acctById(selAcct);
+  document.getElementById('acctRowLabel').textContent = mode === 'received' ? 'To account' : 'From account';
   document.getElementById('acctLabel').textContent = selAcct === CASH ? 'Cash' : cur ? cur.name : 'No account';
 
   sizeAmount();
