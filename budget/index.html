@@ -211,7 +211,6 @@ input, select { font-family:inherit; }
 .pend-tag { display:inline-block; margin-left:8px; padding:1px 7px; border-radius:999px; background:rgba(227,168,87,0.14); color:var(--amber); font-size:0.64rem; font-weight:500; letter-spacing:0.04em; vertical-align:2px; }
 .pend-row { display:flex; align-items:center; gap:8px; width:100%; margin:4px 0 2px; padding:8px 2px; background:none; border:none; color:var(--amber); font:inherit; font-size:0.82rem; text-align:left; cursor:pointer; }
 .pend-row .chev { width:14px; height:14px; margin-left:auto; }
-.pend-dot { width:7px; height:7px; border-radius:50%; background:var(--amber); }
 .row-hint { display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
 .tx-amt.in { color:var(--green); }
 .tx-amt.xfer { color:var(--muted); }
@@ -268,13 +267,15 @@ input, select { font-family:inherit; }
 .pick-val span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .chev { width:16px; height:16px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* "All categories" is a link in the accent color, so it never reads as one more tile. */
-.more-links { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
-.pend-check { display:flex; align-items:center; gap:6px; min-height:44px; color:var(--cream-dim); font-size:0.82rem; cursor:pointer; white-space:nowrap; }
+.more-links { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0 20px; margin-bottom:12px; }
+.pend-check { position:relative; display:flex; align-items:center; gap:6px; min-height:44px; color:var(--cream-dim); font-size:0.82rem; cursor:pointer; white-space:nowrap; }
 .pend-check input { position:absolute; opacity:0; width:1px; height:1px; }
 .pend-check .box { width:16px; height:16px; border-radius:4px; border:1.5px solid var(--muted); display:flex; align-items:center; justify-content:center; }
 .pend-check .box svg { width:12px; height:12px; fill:none; stroke:var(--on-accent); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:0; }
 .pend-check input:checked + .box { background:var(--accent); border-color:var(--accent); }
 .pend-check input:checked + .box svg { opacity:1; }
+.pend-check::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 2px); right:-4px; transform:translateY(4px); width:220px; padding:10px 12px; border-radius:8px; background:var(--surface-2); color:var(--cream); font-size:0.76rem; line-height:1.45; white-space:normal; text-align:center; box-shadow:0 8px 16px -8px rgba(0,0,0,0.8); opacity:0; pointer-events:none; transition:opacity .15s, transform .15s; z-index:5; }
+.pend-check:hover::after, .pend-check:focus-within::after { opacity:1; transform:translateY(0); }
 .pend-check input:focus-visible + .box { outline:2px solid var(--accent); outline-offset:2px; }
 .more-link { display:flex; align-items:center; gap:6px; min-height:44px; padding:0; background:none; border:none; color:var(--accent); font:inherit; font-size:0.82rem; white-space:nowrap; font-weight:500; cursor:pointer; }
 .more-link:hover { color:var(--accent-light); }
@@ -497,7 +498,7 @@ input, select { font-family:inherit; }
     <div class="more-links">
       <button class="more-link" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
       <button class="more-link" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New subcategory</button>
-      <label class="pend-check" title="Pending: a reminder to adjust the amount later, like a tip"><input type="checkbox" id="fPending"><span class="box"><svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg></span>Adjust later</label>
+      <label class="pend-check" data-tip="Set a reminder to adjust this transaction in the future for items like a tip"><input type="checkbox" id="fPending"><span class="box"><svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg></span>This amount may change</label>
     </div>
     <div class="sub-form hidden" id="newCatForm">
       <div class="sub-form-title">New subcategory</div>
@@ -855,7 +856,7 @@ function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); els
 function renderPendingRow(){
   const el = document.getElementById('pendRow'), n = pendingTx.length;
   el.classList.toggle('hidden', !n);
-  if (n) el.innerHTML = `<span class="pend-dot"></span>${n} pending to confirm<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>`;
+  if (n) el.innerHTML = `${n} pending to confirm<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>`;
 }
 function openPendingList(){
   if (pendingTx.length === 1) { openEdit(pendingTx[0].id); return; }
