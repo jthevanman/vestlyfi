@@ -39,6 +39,7 @@
   --line:          rgba(255,255,255,0.08);
   --green:         #5cc28e;
   --red:           #e8706a;
+  --amber:         #e3a857;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-text-size-adjust:100%; }
@@ -128,6 +129,55 @@ input, select { font-family:inherit; }
 .bar { height:4px; border-radius:2px; background:var(--line); margin-top:6px; overflow:hidden; }
 .bar > span { display:block; height:100%; background:var(--accent); border-radius:2px; }
 .bar.over > span { background:var(--red); }
+.bar.ahead > span { background:var(--amber); }
+
+/* Pace marker: where spending would be today if it were even across the month. */
+.pace-key { display:inline-flex; align-items:center; gap:6px; letter-spacing:0.06em; }
+.pace-key i { width:2px; height:12px; background:var(--cream); border-radius:1px; }
+.fat-bar { position:relative; display:block; height:8px; border-radius:999px; background:var(--surface); margin-top:8px; }
+.fat-bar > span { display:block; height:100%; border-radius:999px; background:var(--accent); }
+.fat-bar > span.ahead { background:var(--amber); }
+.fat-bar > span.over { background:var(--red); }
+.fat-bar .pace { position:absolute; top:-3px; bottom:-3px; width:2px; margin-left:-1px; background:var(--cream); border-radius:1px; }
+
+/* B. Rings */
+.ring-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:18px 8px; padding:8px 0 6px; }
+.ring-tile { display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0; }
+.ring { position:relative; width:64px; height:64px; }
+.ring svg { width:64px; height:64px; display:block; }
+.ring-bg { fill:none; stroke:var(--surface); stroke-width:5; }
+.ring-fg { fill:none; stroke:var(--accent); stroke-width:5; stroke-linecap:round; }
+.ring-fg.ahead { stroke:var(--amber); }
+.ring-fg.over { stroke:var(--red); }
+.ring-ic { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--cream-dim); }
+.ring-ic svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.ring-ic .mono { font-weight:600; }
+.ring-name { font-size:0.78rem; color:var(--cream-dim); margin-top:8px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ring-amt { font-size:0.86rem; font-weight:500; margin-top:2px; }
+.ring-amt span { color:var(--muted); font-weight:400; font-size:0.74rem; }
+.ring-amt.over { color:var(--red); }
+
+/* C. Left to spend */
+.left-row { display:flex; gap:12px; padding:10px 0; }
+.left-row + .left-row { border-top:1px solid var(--line); }
+.left-main { flex:1; min-width:0; }
+.left-top { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+.left-name { font-size:0.92rem; }
+.left-val { font-size:1.05rem; font-weight:500; white-space:nowrap; }
+.left-val small { font-size:0.74rem; font-weight:400; color:var(--muted); }
+.left-val.over { color:var(--red); }
+.left-val.over small { color:var(--red); }
+.left-sub { font-size:0.74rem; color:var(--muted); margin-top:6px; }
+
+/* D. Collapse */
+.sp-item { border-bottom:1px solid var(--line); }
+.sp-head { display:block; width:100%; padding:14px 2px; background:none; border:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.sp-top { display:flex; align-items:center; gap:10px; }
+.sp-name { flex:1; font-size:0.95rem; font-weight:500; }
+.sp-val { font-size:0.92rem; font-weight:500; white-space:nowrap; }
+.sp-sub { display:block; font-size:0.74rem; color:var(--muted); margin-top:6px; }
+.sp-item.open .acc-chev { transform:rotate(180deg); }
+.sp-body { padding:0 0 12px; }
 
 /* Transactions */
 .day { padding-top:6px; }
@@ -281,22 +331,7 @@ input, select { font-family:inherit; }
 .acc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:8px; }
 .add-row.flush { padding-left:0; }
 
-/* C. Drill in */
-.drill-row { display:flex; align-items:center; gap:12px; width:100%; min-height:68px; padding:6px 2px; background:none; border:none; border-bottom:1px solid var(--line); color:inherit; font:inherit; text-align:left; cursor:pointer; }
-.drill-row:hover .c-name { color:var(--accent-light); }
-.drill-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
-.drill-row .chev { color:var(--muted); width:18px; height:18px; }
-.mini-stack { display:flex; }
-.mini-ic { width:28px; height:28px; margin-left:-6px; border-radius:50%; background:var(--surface); border:2px solid var(--raised); display:flex; align-items:center; justify-content:center; color:var(--cream-dim); }
-.mini-ic svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-.mini-ic .mono { font-size:0.72rem; font-weight:600; }
-.back-link { display:inline-flex; align-items:center; gap:4px; background:none; border:none; padding:4px 0 10px; color:var(--accent); font:inherit; font-size:0.86rem; font-weight:500; cursor:pointer; }
-.drill-head { padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:4px; }
-.c-name.big { font-size:1.25rem; }
 
-/* D. Icons */
-.tiles.mt { margin-top:12px; }
-.tile.faded { opacity:.45; }
 
 /* Targets tab */
 .t-field { flex:0 0 128px; min-width:0; display:flex; align-items:center; gap:2px; height:40px; padding:0 14px; background:var(--surface); border:1px solid transparent; border-radius:999px; }
@@ -395,7 +430,8 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="card">
-      <div class="card-head"><div class="card-title">Spending by category</div></div>
+      <div class="proto" id="spendProto"></div>
+      <div class="card-head"><div class="card-title">Spending by category</div><div class="card-title" id="spendNote"></div></div>
       <div id="catBreakdown"></div>
     </div>
 
@@ -672,36 +708,107 @@ function render(){
   renderTxList();
 }
 
-function renderBreakdown(){
-  const el = document.getElementById('catBreakdown');
-  const spentByCat = {}; let uncat = 0;
+/* ── Spending by category: four presentations to compare ──
+   Pace = how much of a monthly target you'd expect to have used by today.
+   Past months count as complete; this month counts days elapsed. */
+const SPEND_VIEWS = { list:'Bars', rings:'Rings', left:'Left to spend', collapse:'Collapse' };
+let spendView = (() => { try { const q = new URLSearchParams(location.search).get('spend'); return SPEND_VIEWS[q] ? q : 'list'; } catch (e) { return 'list'; } })();
+let openSpendIds = new Set();
+function setSpendView(v){ spendView = v; renderBreakdown(); }
+function monthPace(){
+  const now = new Date();
+  if (viewMonth > now) return 0;
+  if (!sameMonth(viewMonth, now)) return 1;
+  return now.getDate() / lastOfMonth(now).getDate();
+}
+/* ok = on pace, ahead = spending faster than the month, over = past the target */
+function targetState(s, t){ if (!t) return ''; if (s > t) return 'over'; if (s > t * monthPace() + 0.005) return 'ahead'; return 'ok'; }
+function spendData(){
+  const spent = {}; let uncat = 0;
   for (const t of monthTx) {
     const c = catById(t.category_id), amt = Number(t.amount);
     if (!c) { if (amt < 0) uncat -= amt; continue; }
     if (kindOfCat(c) !== 'expense') continue;
-    spentByCat[c.id] = (spentByCat[c.id] || 0) - amt;
+    spent[c.id] = (spent[c.id] || 0) - amt;
   }
-  let html = '';
+  const groupsOut = [];
   for (const g of sortedGroups()) {
     if (g.kind !== 'expense') continue;
-    const rows = catsIn(g.id, true).filter(c => (spentByCat[c.id] || 0) !== 0 || (!c.hidden && c.monthly_target != null));
+    const rows = catsIn(g.id, true)
+      .filter(c => (spent[c.id] || 0) !== 0 || (!c.hidden && c.monthly_target != null))
+      .map(c => ({ c, s: spent[c.id] || 0, t: c.monthly_target != null ? Number(c.monthly_target) : null }));
     if (!rows.length) continue;
-    const total = rows.reduce((s,c) => s + (spentByCat[c.id] || 0), 0);
-    html += `<div class="grp"><div class="grp-row"><span>${escHtml(g.name)}</span><span>${money(total)}</span></div>`;
-    for (const c of rows) {
-      const s = spentByCat[c.id] || 0, tgt = c.monthly_target != null ? Number(c.monthly_target) : null;
-      let bar = '';
-      if (tgt != null && tgt > 0) {
-        const pct = Math.max(0, Math.min(100, s / tgt * 100));
-        bar = `<div class="bar${s > tgt ? ' over' : ''}"><span style="width:${pct}%"></span></div>`;
-      }
-      html += `<div class="cat-row"><div class="cat-line"><span>${escHtml(c.name)}</span><span><span class="amt">${money(s)}</span>${tgt != null ? `<span class="of">of ${money(tgt)}</span>` : ''}</span></div>${bar}</div>`;
-    }
-    html += '</div>';
+    groupsOut.push({ g, rows, total: rows.reduce((a,r) => a + r.s, 0), target: rows.reduce((a,r) => a + (r.t || 0), 0), targeted: rows.reduce((a,r) => a + (r.t ? r.s : 0), 0) });
   }
-  if (uncat > 0) html += `<div class="grp"><div class="grp-row"><span>Uncategorized</span><span>${money(uncat)}</span></div></div>`;
-  el.innerHTML = html || '<div class="empty">No spending this month.</div>';
+  return { groups: groupsOut, uncat };
 }
+
+function renderBreakdown(){
+  const el = document.getElementById('catBreakdown');
+  document.getElementById('spendProto').innerHTML = 'View' + Object.keys(SPEND_VIEWS).map(k =>
+    `<button class="${k === spendView ? 'on' : ''}" onclick="setSpendView('${k}')">${SPEND_VIEWS[k]}</button>`).join('');
+  const d = spendData();
+  document.getElementById('spendNote').innerHTML = (spendView === 'left' || spendView === 'collapse') && d.groups.some(x => x.target)
+    ? '<span class="pace-key"><i></i>Today</span>' : '';
+  let html = SPEND_RENDER[spendView](d);
+  if (d.uncat > 0) html += `<div class="grp"><div class="grp-row"><span>Uncategorized</span><span>${money(d.uncat)}</span></div></div>`;
+  el.innerHTML = d.groups.length || d.uncat ? html : '<div class="empty">No spending this month.</div>';
+}
+
+function paceTick(){ const p = monthPace(); return p > 0 && p < 1 ? `<i class="pace" style="left:${(p * 100).toFixed(1)}%"></i>` : ''; }
+
+const SPEND_RENDER = {
+  /* A. Bars: what we have now. */
+  list(d){
+    return d.groups.map(({ g, rows, total }) => `<div class="grp"><div class="grp-row"><span>${escHtml(g.name)}</span><span>${money(total)}</span></div>` +
+      rows.map(({ c, s, t }) => {
+        const bar = t ? `<div class="bar${s > t ? ' over' : ''}"><span style="width:${Math.min(100, s / t * 100)}%"></span></div>` : '';
+        return `<div class="cat-row"><div class="cat-line"><span>${escHtml(c.name)}</span><span><span class="amt">${money(s)}</span>${t ? `<span class="of">of ${money(t)}</span>` : ''}</span></div>${bar}</div>`;
+      }).join('') + '</div>').join('');
+  },
+
+  /* B. Rings: each subcategory's icon, circled by how much of its target is used. */
+  rings(d){
+    const R = 28, C = 2 * Math.PI * R;
+    return d.groups.map(({ g, rows, total }) => `<div class="grp"><div class="grp-row"><span>${escHtml(g.name)}</span><span>${money(total)}</span></div><div class="ring-grid">` +
+      rows.map(({ c, s, t }) => {
+        const st = targetState(s, t), frac = t ? Math.min(1, s / t) : 0;
+        return `<div class="ring-tile"><div class="ring"><svg viewBox="0 0 64 64"><circle class="ring-bg" cx="32" cy="32" r="${R}"/>${t ? `<circle class="ring-fg ${st}" cx="32" cy="32" r="${R}" stroke-dasharray="${(C * frac).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/>` : ''}</svg><span class="ring-ic">${catIcon(c)}</span></div>
+          <div class="ring-name">${escHtml(c.name)}</div>
+          <div class="ring-amt ${st}">${moneyWhole(s)}${t ? `<span> of ${moneyWhole(t)}</span>` : ''}</div></div>`;
+      }).join('') + '</div></div>').join('');
+  },
+
+  /* C. Left to spend: leads with what's left, with a marker for today's pace. */
+  left(d){
+    return d.groups.map(({ g, rows, total }) => `<div class="grp"><div class="grp-row"><span>${escHtml(g.name)}</span><span>${money(total)}</span></div>` +
+      rows.map(({ c, s, t }) => {
+        const st = targetState(s, t);
+        const big = !t ? `${money(s)}<small> spent</small>` : s > t ? `${money(s - t)}<small> over</small>` : `${money(t - s)}<small> left</small>`;
+        return `<div class="left-row"><span class="s-ic">${catIcon(c)}</span><div class="left-main">
+          <div class="left-top"><span class="left-name">${escHtml(c.name)}</span><span class="left-val ${st}">${big}</span></div>
+          ${t ? `<div class="fat-bar"><span class="${st}" style="width:${Math.min(100, s / t * 100)}%"></span>${paceTick()}</div><div class="left-sub">${money(s)} of ${money(t)}</div>` : ''}
+        </div></div>`;
+      }).join('') + '</div>').join('');
+  },
+
+  /* D. Collapse: one line per category with a combined bar; tap for its subcategories. */
+  collapse(d){
+    return d.groups.map(({ g, rows, total, target, targeted }) => {
+      // The bar only compares spending that has a target; untargeted spending is not over anything.
+      const open = openSpendIds.has(g.id), st = targetState(targeted, target);
+      return `<div class="sp-item${open ? ' open' : ''}"><button class="sp-head" onclick="toggleSpend('${g.id}')" aria-expanded="${open}">
+          <span class="sp-top"><span class="sp-name">${escHtml(g.name)}</span><span class="sp-val">${money(total)}</span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          ${target ? `<span class="fat-bar"><span class="${st}" style="width:${Math.min(100, targeted / target * 100)}%"></span>${paceTick()}</span><span class="sp-sub">${money(targeted)} of ${money(target)} target</span>` : ''}
+        </button>` +
+        (open ? '<div class="sp-body">' + rows.map(({ c, s, t }) => {
+          const st2 = targetState(s, t);
+          return `<div class="cat-row"><div class="cat-line"><span>${escHtml(c.name)}</span><span><span class="amt">${money(s)}</span>${t ? `<span class="of">of ${money(t)}</span>` : ''}</span></div>${t ? `<div class="bar ${st2}"><span style="width:${Math.min(100, s / t * 100)}%"></span></div>` : ''}</div>`;
+        }).join('') + '</div>' : '') + '</div>';
+    }).join('');
+  }
+};
+function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); else openSpendIds.add(id); renderBreakdown(); }
 
 function renderTxList(){
   const el = document.getElementById('txList');
@@ -1156,7 +1263,7 @@ function renderManage(){
   foot.innerHTML = '';
 
   if (manageTab === 'categories') {
-    body.innerHTML = layoutSwitchHtml() + CAT_VIEWS[catView]();
+    body.innerHTML = categoriesHtml();
     return;
   }
 
@@ -1192,79 +1299,28 @@ function renderManage(){
   body.innerHTML = html;
 }
 
-/* ── Categories tab layouts (prototype: compare, then keep one) ── */
-const CAT_VIEW_NAMES = { list:'List', collapse:'Collapse', drill:'Drill in', icons:'Icons' };
-let catView = (() => { try { const q = new URLSearchParams(location.search).get('cats'); return CAT_VIEW_NAMES[q] ? q : 'list'; } catch (e) { return 'list'; } })();
-let openGroupIds = new Set();   // Collapse: which categories are expanded
-let drillGroupId = null;        // Drill in: which category is open
-function setCatView(v){ catView = v; drillGroupId = null; renderManage(); }
-function layoutSwitchHtml(){
-  return '<div class="proto">Layout' + Object.keys(CAT_VIEW_NAMES).map(k =>
-    `<button class="${k === catView ? 'on' : ''}" onclick="setCatView('${k}')">${CAT_VIEW_NAMES[k]}</button>`).join('') + '</div>';
-}
-const CAT_HINT = '<p class="m-hint">Each transaction is tagged with a subcategory.</p>';
+/* ── Categories tab: one line per category; tap to open it in place ── */
+let openGroupIds = new Set();
 function kindNote(g){ return g.kind === 'transfer' ? 'Not counted as spending' : ''; }
 function subCount(g){ const n = catsIn(g.id, true).length; return n + (n === 1 ? ' subcategory' : ' subcategories'); }
 function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · '); }
 function subRowHtml(c){
   return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic">${catIcon(c)}</span><span class="s-name">${escHtml(c.name)}${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
 }
-function editGroupBtn(g){ return `<button class="edit-btn" onclick="openEditGroup('${g.id}')" aria-label="Edit category ${escHtml(g.name)}">${PENCIL}<span>Edit</span></button>`; }
-const NEW_CAT_BTN = '<button class="btn btn-ghost add-cat" onclick="openNewGroup()">+ New category</button>';
-
-const CAT_VIEWS = {
-  /* A. List: every category open, subcategories underneath. */
-  list(){
-    let html = CAT_HINT;
-    for (const g of sortedGroups()) {
-      html += `<section class="c-block${g.hidden ? ' dim' : ''}"><div class="c-head"><div><div class="c-name">${escHtml(g.name)}</div>${kindNote(g) || g.hidden ? `<div class="c-note">${[kindNote(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · ')}</div>` : ''}</div>${editGroupBtn(g)}</div>`;
-      html += catsIn(g.id, true).map(subRowHtml).join('');
-      html += `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button></section>`;
+function categoriesHtml(){
+  let html = '<p class="m-hint">Each transaction is tagged with a subcategory.</p><div class="acc">';
+  for (const g of sortedGroups()) {
+    const open = openGroupIds.has(g.id);
+    html += `<section class="acc-item${open ? ' open' : ''}${g.hidden ? ' dim' : ''}">
+      <button class="acc-head" onclick="toggleGroupOpen('${g.id}')" aria-expanded="${open}"><span><span class="c-name">${escHtml(g.name)}</span><span class="c-note">${groupMeta(g)}</span></span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>`;
+    if (open) {
+      html += '<div class="acc-body">' + catsIn(g.id, true).map(subRowHtml).join('') +
+        `<div class="acc-foot"><button class="add-row flush" onclick="openNewSub('${g.id}')">+ Add subcategory</button><button class="edit-btn" onclick="openEditGroup('${g.id}')">${PENCIL}<span>Edit ${escHtml(g.name)}</span></button></div></div>`;
     }
-    return html + NEW_CAT_BTN;
-  },
-  /* B. Collapse: one line per category; tap to open it in place. */
-  collapse(){
-    let html = CAT_HINT + '<div class="acc">';
-    for (const g of sortedGroups()) {
-      const open = openGroupIds.has(g.id);
-      html += `<section class="acc-item${open ? ' open' : ''}${g.hidden ? ' dim' : ''}">
-        <button class="acc-head" onclick="toggleGroupOpen('${g.id}')" aria-expanded="${open}"><span><span class="c-name">${escHtml(g.name)}</span><span class="c-note">${groupMeta(g)}</span></span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>`;
-      if (open) {
-        html += '<div class="acc-body">' + catsIn(g.id, true).map(subRowHtml).join('') +
-          `<div class="acc-foot"><button class="add-row flush" onclick="openNewSub('${g.id}')">+ Add subcategory</button>${editGroupBtn(g)}</div></div>`;
-      }
-      html += '</section>';
-    }
-    return html + '</div>' + NEW_CAT_BTN;
-  },
-  /* C. Drill in: a list of categories; tap one to see its subcategories. */
-  drill(){
-    const g = drillGroupId && groupById(drillGroupId);
-    if (g) {
-      return `<button class="back-link" onclick="drillGroupId=null; renderManage()"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>All categories</button>
-        <div class="c-head drill-head"><div><div class="c-name big">${escHtml(g.name)}</div><div class="c-note">${groupMeta(g)}</div></div>${editGroupBtn(g)}</div>` +
-        catsIn(g.id, true).map(subRowHtml).join('') +
-        `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button>`;
-    }
-    let html = CAT_HINT + '<div class="drill-list">';
-    for (const g2 of sortedGroups()) {
-      const icons = catsIn(g2.id, false).slice(0, 4).map(c => `<span class="mini-ic">${catIcon(c)}</span>`).join('');
-      html += `<button class="drill-row${g2.hidden ? ' dim' : ''}" onclick="drillGroupId='${g2.id}'; renderManage()"><span class="drill-main"><span class="c-name">${escHtml(g2.name)}</span><span class="c-note">${groupMeta(g2)}</span></span><span class="mini-stack">${icons}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>`;
-    }
-    return html + '</div>' + NEW_CAT_BTN;
-  },
-  /* D. Icons: each category shows its subcategories as icon tiles, like the add screen. */
-  icons(){
-    let html = CAT_HINT;
-    for (const g of sortedGroups()) {
-      html += `<section class="c-block${g.hidden ? ' dim' : ''}"><div class="c-head"><div><div class="c-name">${escHtml(g.name)}</div>${kindNote(g) ? `<div class="c-note">${kindNote(g)}</div>` : ''}</div>${editGroupBtn(g)}</div><div class="tiles mt">` +
-        catsIn(g.id, true).map(c => `<button class="tile${c.hidden ? ' faded' : ''}" onclick="openEditSub('${c.id}')"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`).join('') +
-        `<button class="tile new" onclick="openNewSub('${g.id}')"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">Add</span></button></div></section>`;
-    }
-    return html + NEW_CAT_BTN;
+    html += '</section>';
   }
-};
+  return html + '</div><button class="btn btn-ghost add-cat" onclick="openNewGroup()">+ New category</button>';
+}
 function toggleGroupOpen(id){ if (openGroupIds.has(id)) openGroupIds.delete(id); else openGroupIds.add(id); renderManage(); }
 
 function onTargetInput(id, el){
