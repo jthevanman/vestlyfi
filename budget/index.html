@@ -772,13 +772,8 @@ function catHeadHtml(x, bar){
   const { g, total, target, targeted } = x;
   const open = openSpendIds.has(g.id);
   const L = target ? leftOf(targeted, target) : leftOf(total, null);
-  const untargeted = total - targeted;
-  const noTarget = x.rows.filter(r => !r.t && r.s);
-  const noTargetNote = noTarget.length === 1
-    ? `${moneyWhole(untargeted)} in ${escHtml(noTarget[0].c.name)} has no target`
-    : `${moneyWhole(untargeted)} in ${noTarget.length} subcategories with no target`;
   const sub = target
-    ? `${moneyWhole(targeted)} of ${moneyWhole(target)}${untargeted > 0.5 ? ` · ${noTargetNote}` : ''}`
+    ? `${moneyWhole(targeted)} of ${moneyWhole(target)}`
     : '';
   return `<button class="sp-head" onclick="toggleSpend('${g.id}')" aria-expanded="${open}">
       <span class="sp-top"><span class="sp-name">${escHtml(g.name)}</span><span class="big-left ${L.st}">${L.amt}<small> ${L.unit}</small></span>${CHEV_DOWN}</span>
