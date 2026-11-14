@@ -266,6 +266,38 @@ input, select { font-family:inherit; }
 .add-row:hover { color:var(--accent-light); }
 .add-cat { width:100%; height:48px; margin-top:6px; }
 
+/* Prototype-only layout switcher. */
+.proto { display:flex; align-items:center; gap:4px; margin:-4px 0 12px; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+.proto button { background:none; border:none; color:var(--muted); font:inherit; font-size:0.8rem; letter-spacing:0; text-transform:none; padding:5px 10px; border-radius:999px; cursor:pointer; }
+.proto button.on { background:var(--accent-dim); color:var(--accent-light); }
+
+/* B. Collapse */
+.acc-item { border-bottom:1px solid var(--line); }
+.acc-head { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:64px; padding:6px 2px; background:none; border:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.acc-head > span { display:flex; flex-direction:column; gap:3px; }
+.acc-chev { width:20px; height:20px; fill:none; stroke:var(--muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .2s; }
+.acc-item.open .acc-chev { transform:rotate(180deg); }
+.acc-body { padding:0 0 12px; }
+.acc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:8px; }
+.add-row.flush { padding-left:0; }
+
+/* C. Drill in */
+.drill-row { display:flex; align-items:center; gap:12px; width:100%; min-height:68px; padding:6px 2px; background:none; border:none; border-bottom:1px solid var(--line); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.drill-row:hover .c-name { color:var(--accent-light); }
+.drill-main { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.drill-row .chev { color:var(--muted); width:18px; height:18px; }
+.mini-stack { display:flex; }
+.mini-ic { width:28px; height:28px; margin-left:-6px; border-radius:50%; background:var(--surface); border:2px solid var(--raised); display:flex; align-items:center; justify-content:center; color:var(--cream-dim); }
+.mini-ic svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.mini-ic .mono { font-size:0.72rem; font-weight:600; }
+.back-link { display:inline-flex; align-items:center; gap:4px; background:none; border:none; padding:4px 0 10px; color:var(--accent); font:inherit; font-size:0.86rem; font-weight:500; cursor:pointer; }
+.drill-head { padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:4px; }
+.c-name.big { font-size:1.25rem; }
+
+/* D. Icons */
+.tiles.mt { margin-top:12px; }
+.tile.faded { opacity:.45; }
+
 /* Targets tab */
 .t-field { flex:0 0 128px; min-width:0; display:flex; align-items:center; gap:2px; height:40px; padding:0 14px; background:var(--surface); border:1px solid transparent; border-radius:999px; }
 .t-field:focus-within { border-color:var(--accent); }
@@ -305,7 +337,8 @@ input, select { font-family:inherit; }
 .confirm { width:100%; max-width:340px; padding:24px 20px 18px; background:var(--raised); border:1px solid var(--line); border-radius:24px; text-align:center; }
 .cf-title { font-size:1.08rem; font-weight:500; margin-bottom:8px; }
 .cf-body { font-size:0.88rem; color:var(--cream-dim); line-height:1.5; margin-bottom:20px; }
-.cf-actions { display:flex; gap:8px; }
+.cf-body:empty { display:none; }
+.cf-actions { display:flex; gap:8px; margin-top:16px; }
 .cf-actions .btn { flex:1; height:46px; }
 .btn-red { background:var(--red); color:#fff; }
 .btn-red:hover { background:#f08680; }
@@ -402,7 +435,6 @@ input, select { font-family:inherit; }
       <div class="sub-form-title">New subcategory</div>
       <input class="pill-input" id="newCatName" type="text" placeholder="Name, like Pet care" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
       <button class="pick-row form-pick" onclick="pickNewCatGroup()"><span class="row-label">Category</span><span class="pick-val"><span id="newCatGroupLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-      <p class="sub-form-hint">It adds up under this category on your spending list, the way Groceries adds up under Food.</p>
       <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newCatForm')">Cancel</button><button class="btn btn-gold" onclick="createCategoryFromSheet()">Add subcategory</button></div>
     </div>
 
@@ -668,14 +700,14 @@ function renderBreakdown(){
     html += '</div>';
   }
   if (uncat > 0) html += `<div class="grp"><div class="grp-row"><span>Uncategorized</span><span>${money(uncat)}</span></div></div>`;
-  el.innerHTML = html || '<div class="empty">No spending logged this month.</div>';
+  el.innerHTML = html || '<div class="empty">No spending this month.</div>';
 }
 
 function renderTxList(){
   const el = document.getElementById('txList');
   document.getElementById('txCount').textContent = monthTx.length ? monthTx.length + (monthTx.length === 1 ? ' entry' : ' entries') : '';
   if (!monthTx.length) {
-    el.innerHTML = '<div class="empty">Nothing logged for this month yet.<br>Tap + to add your first transaction.</div>';
+    el.innerHTML = '<div class="empty">No transactions this month.</div>';
     return;
   }
   const loc = VestlyCurrency.locale();
@@ -1077,7 +1109,7 @@ function answerConfirm(v){
   const r = cfResolve; cfResolve = null;
   if (r) r(v);
 }
-const LEAVE = { title:'Leave without saving?', body:"Your changes haven't been saved.", yes:'Yes, leave', no:'No, keep editing' };
+const LEAVE = { title:'Leave without saving?', body:'', yes:'Yes, leave', no:'No, keep editing' };
 
 /* ── Categories & targets sheet ──
    Words, used the same way on every screen:
@@ -1124,24 +1156,12 @@ function renderManage(){
   foot.innerHTML = '';
 
   if (manageTab === 'categories') {
-    let html = '<p class="m-hint">Categories, like Food, hold subcategories, like Groceries. You tag each transaction with a subcategory. Tap Edit to rename a category, or the pencil to rename a subcategory, change its icon or hide it.</p>';
-    for (const g of sortedGroups()) {
-      const note = g.kind === 'income' ? 'Money coming in' : g.kind === 'transfer' ? 'Moving money between accounts. Never counts as spending.' : '';
-      html += `<section class="c-block${g.hidden ? ' dim' : ''}">
-        <div class="c-head"><div><div class="c-name">${escHtml(g.name)}${g.hidden ? '<span class="s-tag">Hidden</span>' : ''}</div>${note ? `<div class="c-note">${note}</div>` : ''}</div>
-          <button class="edit-btn" onclick="openEditGroup('${g.id}')" aria-label="Edit category ${escHtml(g.name)}">${PENCIL}<span>Edit</span></button></div>`;
-      for (const c of catsIn(g.id, true)) {
-        html += `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic">${catIcon(c)}</span><span class="s-name">${escHtml(c.name)}${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
-      }
-      html += `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button></section>`;
-    }
-    html += '<button class="btn btn-ghost add-cat" onclick="openNewGroup()">+ New category</button>';
-    body.innerHTML = html;
+    body.innerHTML = layoutSwitchHtml() + CAT_VIEWS[catView]();
     return;
   }
 
   if (manageTab === 'targets') {
-    let html = '<p class="m-hint">Set a monthly limit for any subcategory you want to keep an eye on. Leave it blank for no target. Progress shows under Spending by category.</p>';
+    let html = '<p class="m-hint">Monthly limit per subcategory. Blank means none.</p>';
     const sym = escHtml(VestlyCurrency.symbol());
     for (const g of sortedGroups()) {
       if (g.kind !== 'expense' || g.hidden) continue;
@@ -1162,8 +1182,8 @@ function renderManage(){
 
   // accounts
   const list = accounts.slice().sort((a,b) => (a.archived - b.archived) || a.sort_order - b.sort_order);
-  let html = '<p class="m-hint">Accounts are where money moves: a card, checking, cash. They only exist in the budget and are not linked to your net worth.</p>';
-  if (!list.length) html += '<div class="empty">No accounts yet. Add one below, or pick Cash when adding a transaction.</div>';
+  let html = '<p class="m-hint">Where you pay from. Not linked to your net worth.</p>';
+  if (!list.length) html += '<div class="empty">No accounts yet.</div>';
   html += '<section class="c-block">';
   for (const a of list) {
     html += `<div class="s-row${a.archived ? ' dim' : ''}"><span class="s-ic">${catIcon({ name:a.name, icon: a.kind === 'credit_card' ? 'card' : a.kind === 'cash' ? 'coins' : 'bank' })}</span><span class="s-name">${escHtml(a.name)}<span class="s-tag">${a.archived ? 'Archived' : kindLabel(a.kind)}</span></span><button class="edit-btn sm" onclick="openEditAccount('${a.id}')" aria-label="Edit account ${escHtml(a.name)}">${PENCIL}</button></div>`;
@@ -1171,6 +1191,81 @@ function renderManage(){
   html += '</section><button class="btn btn-ghost add-cat" onclick="openNewAccountSheet()">+ New account</button>';
   body.innerHTML = html;
 }
+
+/* ── Categories tab layouts (prototype: compare, then keep one) ── */
+const CAT_VIEW_NAMES = { list:'List', collapse:'Collapse', drill:'Drill in', icons:'Icons' };
+let catView = (() => { try { const q = new URLSearchParams(location.search).get('cats'); return CAT_VIEW_NAMES[q] ? q : 'list'; } catch (e) { return 'list'; } })();
+let openGroupIds = new Set();   // Collapse: which categories are expanded
+let drillGroupId = null;        // Drill in: which category is open
+function setCatView(v){ catView = v; drillGroupId = null; renderManage(); }
+function layoutSwitchHtml(){
+  return '<div class="proto">Layout' + Object.keys(CAT_VIEW_NAMES).map(k =>
+    `<button class="${k === catView ? 'on' : ''}" onclick="setCatView('${k}')">${CAT_VIEW_NAMES[k]}</button>`).join('') + '</div>';
+}
+const CAT_HINT = '<p class="m-hint">Each transaction is tagged with a subcategory.</p>';
+function kindNote(g){ return g.kind === 'transfer' ? 'Not counted as spending' : ''; }
+function subCount(g){ const n = catsIn(g.id, true).length; return n + (n === 1 ? ' subcategory' : ' subcategories'); }
+function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · '); }
+function subRowHtml(c){
+  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic">${catIcon(c)}</span><span class="s-name">${escHtml(c.name)}${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
+}
+function editGroupBtn(g){ return `<button class="edit-btn" onclick="openEditGroup('${g.id}')" aria-label="Edit category ${escHtml(g.name)}">${PENCIL}<span>Edit</span></button>`; }
+const NEW_CAT_BTN = '<button class="btn btn-ghost add-cat" onclick="openNewGroup()">+ New category</button>';
+
+const CAT_VIEWS = {
+  /* A. List: every category open, subcategories underneath. */
+  list(){
+    let html = CAT_HINT;
+    for (const g of sortedGroups()) {
+      html += `<section class="c-block${g.hidden ? ' dim' : ''}"><div class="c-head"><div><div class="c-name">${escHtml(g.name)}</div>${kindNote(g) || g.hidden ? `<div class="c-note">${[kindNote(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · ')}</div>` : ''}</div>${editGroupBtn(g)}</div>`;
+      html += catsIn(g.id, true).map(subRowHtml).join('');
+      html += `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button></section>`;
+    }
+    return html + NEW_CAT_BTN;
+  },
+  /* B. Collapse: one line per category; tap to open it in place. */
+  collapse(){
+    let html = CAT_HINT + '<div class="acc">';
+    for (const g of sortedGroups()) {
+      const open = openGroupIds.has(g.id);
+      html += `<section class="acc-item${open ? ' open' : ''}${g.hidden ? ' dim' : ''}">
+        <button class="acc-head" onclick="toggleGroupOpen('${g.id}')" aria-expanded="${open}"><span><span class="c-name">${escHtml(g.name)}</span><span class="c-note">${groupMeta(g)}</span></span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>`;
+      if (open) {
+        html += '<div class="acc-body">' + catsIn(g.id, true).map(subRowHtml).join('') +
+          `<div class="acc-foot"><button class="add-row flush" onclick="openNewSub('${g.id}')">+ Add subcategory</button>${editGroupBtn(g)}</div></div>`;
+      }
+      html += '</section>';
+    }
+    return html + '</div>' + NEW_CAT_BTN;
+  },
+  /* C. Drill in: a list of categories; tap one to see its subcategories. */
+  drill(){
+    const g = drillGroupId && groupById(drillGroupId);
+    if (g) {
+      return `<button class="back-link" onclick="drillGroupId=null; renderManage()"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>All categories</button>
+        <div class="c-head drill-head"><div><div class="c-name big">${escHtml(g.name)}</div><div class="c-note">${groupMeta(g)}</div></div>${editGroupBtn(g)}</div>` +
+        catsIn(g.id, true).map(subRowHtml).join('') +
+        `<button class="add-row" onclick="openNewSub('${g.id}')">+ Add subcategory</button>`;
+    }
+    let html = CAT_HINT + '<div class="drill-list">';
+    for (const g2 of sortedGroups()) {
+      const icons = catsIn(g2.id, false).slice(0, 4).map(c => `<span class="mini-ic">${catIcon(c)}</span>`).join('');
+      html += `<button class="drill-row${g2.hidden ? ' dim' : ''}" onclick="drillGroupId='${g2.id}'; renderManage()"><span class="drill-main"><span class="c-name">${escHtml(g2.name)}</span><span class="c-note">${groupMeta(g2)}</span></span><span class="mini-stack">${icons}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></button>`;
+    }
+    return html + '</div>' + NEW_CAT_BTN;
+  },
+  /* D. Icons: each category shows its subcategories as icon tiles, like the add screen. */
+  icons(){
+    let html = CAT_HINT;
+    for (const g of sortedGroups()) {
+      html += `<section class="c-block${g.hidden ? ' dim' : ''}"><div class="c-head"><div><div class="c-name">${escHtml(g.name)}</div>${kindNote(g) ? `<div class="c-note">${kindNote(g)}</div>` : ''}</div>${editGroupBtn(g)}</div><div class="tiles mt">` +
+        catsIn(g.id, true).map(c => `<button class="tile${c.hidden ? ' faded' : ''}" onclick="openEditSub('${c.id}')"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`).join('') +
+        `<button class="tile new" onclick="openNewSub('${g.id}')"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">Add</span></button></div></section>`;
+    }
+    return html + NEW_CAT_BTN;
+  }
+};
+function toggleGroupOpen(id){ if (openGroupIds.has(id)) openGroupIds.delete(id); else openGroupIds.add(id); renderManage(); }
 
 function onTargetInput(id, el){
   VestlyCurrency.groupDec(el);
@@ -1244,9 +1339,7 @@ function renderEdit(){
       <div class="e-section-title">Icon</div>
       <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
   } else if (t === 'group') {
-    const note = edit.kind === 'income' ? 'An income category. Its subcategories count as money coming in.'
-      : edit.kind === 'transfer' ? 'A transfer category. Its subcategories never count as spending or income.'
-      : 'Its subcategories count as spending and add up under this name on your spending list.';
+    const note = edit.kind === 'income' ? 'Counts as income.' : edit.kind === 'transfer' ? 'Not counted as spending or income.' : 'Counts as spending.';
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list"><div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div></div>
       <p class="e-note">${note}</p>`;
@@ -1256,7 +1349,7 @@ function renderEdit(){
         <button class="pick-row" onclick="pickEditKind()"><span class="row-label">Type</span><span class="pick-val"><span>${kindLabel(d.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
         <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.archived ? '' : ' on'}" onclick="toggleEdit('archived')" aria-label="Show when adding"></button></div>
       </div>
-      <p class="e-note">Turning this off archives the account. Its past transactions stay.</p>`;
+      <p class="e-note">Off archives it. Past transactions stay.</p>`;
   }
   document.getElementById('editBody').innerHTML = html;
 }
