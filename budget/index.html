@@ -40,10 +40,11 @@
   --green:         #5cc28e;
   --red:           #e8706a;
   --amber:         #e3a857;
+  --page:          #0b0b0b;   /* page background behind the panels */
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-text-size-adjust:100%; }
-body { background:var(--bg); color:var(--cream); font-family:var(--font-body); font-weight:var(--w-body); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; min-height:100vh; overflow-x:hidden; }
+body { background:var(--page); color:var(--cream); font-family:var(--font-body); font-weight:var(--w-body); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; min-height:100vh; overflow-x:hidden; }
 button { font-family:inherit; }
 input, select { font-family:inherit; }
 .hidden { display:none !important; }
@@ -79,8 +80,8 @@ input, select { font-family:inherit; }
 .link-btn:hover { color:var(--cream); }
 
 /* ── App shell ── */
-.app { max-width:760px; margin:0 auto; padding:16px 16px calc(120px + env(safe-area-inset-bottom)); }
-.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 0 18px; }
+.app { max-width:760px; margin:0 auto; padding:16px 10px calc(120px + env(safe-area-inset-bottom)); }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 6px 18px; }
 .topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
 .link-btn, .pill { white-space:nowrap; }
 .app-foot { display:flex; align-items:center; justify-content:center; gap:10px; font-size:0.74rem; color:var(--muted); padding:8px 0; }
@@ -102,7 +103,7 @@ input, select { font-family:inherit; }
 .icon-btn:disabled { opacity:.22; cursor:default; background:none; }
 
 /* Month summary: plain figures between hairlines, no boxes. */
-.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:6px; }
+.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); }
 .sum-item { padding:16px 0 16px 16px; min-width:0; }
 .sum-item:first-child { padding-left:0; }
 .sum-item + .sum-item { border-left:1px solid var(--line); }
@@ -113,10 +114,10 @@ input, select { font-family:inherit; }
 .sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 /* Sections are open: a title over a hairline, no box. */
-.card { margin-bottom:8px; }
-/* Section break: a full-width band between the three parts of the page. */
-.sec-break { height:10px; margin:6px -16px 22px; background:#0c0c0c; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-@media (min-width:792px) { .sec-break { margin-left:0; margin-right:0; border-radius:999px; border:none; height:8px; } }
+.card { margin-bottom:0; }
+/* Panels: the three sections sit on a darker page, a step lighter than it. */
+.panel { background:var(--bg); border:1px solid rgba(255,255,255,0.05); border-radius:22px; padding:16px 16px 10px; margin-bottom:12px; }
+.panel .sum-item { padding-bottom:10px; }
 .card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:6px; }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 .empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
@@ -208,7 +209,7 @@ input, select { font-family:inherit; }
 .tx-amt.xfer { color:var(--muted); }
 
 /* Docked add button: full width, always in reach of a thumb. */
-.add-dock { position:fixed; left:0; right:0; bottom:0; z-index:50; padding:20px 16px calc(14px + env(safe-area-inset-bottom)); background:linear-gradient(to top, var(--bg) 62%, rgba(0,0,0,0)); pointer-events:none; }
+.add-dock { position:fixed; left:0; right:0; bottom:0; z-index:50; padding:20px 16px calc(14px + env(safe-area-inset-bottom)); background:linear-gradient(to top, var(--page) 62%, rgba(0,0,0,0)); pointer-events:none; }
 .add-btn { pointer-events:auto; display:flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:728px; height:58px; margin:0 auto; border:none; border-radius:999px; background:var(--accent); color:var(--on-accent); box-shadow:0 10px 30px rgba(0,0,0,0.5); font-size:1.05rem; font-weight:600; letter-spacing:0.01em; cursor:pointer; transition:background .15s, transform .1s; }
 .add-btn:hover { background:var(--accent-light); }
 .add-btn:active { transform:scale(0.99); }
@@ -430,6 +431,7 @@ input, select { font-family:inherit; }
       </div>
     </div>
 
+    <section class="panel">
     <div class="month-nav">
       <div class="month-label" id="monthLabel"></div>
       <div class="month-btns">
@@ -443,17 +445,14 @@ input, select { font-family:inherit; }
       <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
       <div class="sum-item"><div class="sum-label" id="sSavedLabel">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
     </div>
+    </section>
 
-    <div class="sec-break" aria-hidden="true"></div>
-
-    <div class="card">
+    <div class="card panel">
       <div class="card-head"><div class="card-title">By category</div></div>
       <div id="catBreakdown"></div>
     </div>
 
-    <div class="sec-break" aria-hidden="true"></div>
-
-    <div class="card">
+    <div class="card panel">
       <div class="card-head"><div class="card-title">Transactions</div><div class="card-title" id="txCount"></div></div>
       <div id="txList"></div>
     </div>
