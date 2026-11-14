@@ -118,6 +118,11 @@ input, select { font-family:inherit; }
 /* Panels: the three sections sit on a darker page, a step lighter than it. */
 .panel { background:var(--bg); border:1px solid rgba(255,255,255,0.05); border-radius:22px; padding:16px 16px 10px; margin-bottom:12px; }
 .panel .sum-item { padding-bottom:10px; }
+/* Prototype: panel edge options (switch with the Edge row or ?panel=). */
+html[data-panel="none"] .panel { border-color:transparent; }
+html[data-panel="lifted"] .panel { border-color:transparent; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px rgba(0,0,0,0.55); }
+html[data-panel="gold"] .panel { border-color:rgba(220,195,146,0.22); }
+.proto { display:flex; align-items:center; gap:4px; margin:-8px 6px 12px; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
 .card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:6px; }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 .empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
@@ -332,8 +337,7 @@ input, select { font-family:inherit; }
 .add-row:hover { color:var(--accent-light); }
 .add-cat { width:100%; height:48px; margin-top:6px; }
 
-/* Prototype-only layout switcher. */
-.proto { display:flex; align-items:center; gap:4px; margin:-4px 0 12px; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
+/* Prototype-only switcher buttons. */
 .proto button { background:none; border:none; color:var(--muted); font:inherit; font-size:0.8rem; letter-spacing:0; text-transform:none; padding:5px 10px; border-radius:999px; cursor:pointer; }
 .proto button.on { background:var(--accent-dim); color:var(--accent-light); }
 
@@ -431,6 +435,7 @@ input, select { font-family:inherit; }
       </div>
     </div>
 
+    <div class="proto" id="edgeProto"></div>
     <section class="panel">
     <div class="month-nav">
       <div class="month-label" id="monthLabel"></div>
@@ -833,6 +838,14 @@ const SPEND_RENDER = {
     });
   }
 };
+/* Prototype: panel edge switch. */
+const EDGES = { hairline:'Hairline', none:'None', lifted:'Lifted', gold:'Gold' };
+function setEdge(e){
+  document.documentElement.dataset.panel = e;
+  document.getElementById('edgeProto').innerHTML = 'Edge' + Object.keys(EDGES).map(k =>
+    `<button class="${k === e ? 'on' : ''}" onclick="setEdge('${k}')">${EDGES[k]}</button>`).join('');
+}
+setEdge((() => { try { const q = new URLSearchParams(location.search).get('panel'); return EDGES[q] ? q : 'hairline'; } catch (e) { return 'hairline'; } })());
 function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); else openSpendIds.add(id); renderBreakdown(); }
 
 function renderTxList(){
