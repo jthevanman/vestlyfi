@@ -102,7 +102,7 @@ input, select { font-family:inherit; }
 .icon-btn:disabled { opacity:.22; cursor:default; background:none; }
 
 /* Month summary: plain figures between hairlines, no boxes. */
-.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:18px; }
+.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); border-bottom:1px solid var(--line); margin-bottom:6px; }
 .sum-item { padding:16px 0 16px 16px; min-width:0; }
 .sum-item:first-child { padding-left:0; }
 .sum-item + .sum-item { border-left:1px solid var(--line); }
@@ -113,7 +113,10 @@ input, select { font-family:inherit; }
 .sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 /* Sections are open: a title over a hairline, no box. */
-.card { margin-bottom:28px; }
+.card { margin-bottom:8px; }
+/* Section break: a full-width band between the three parts of the page. */
+.sec-break { height:10px; margin:6px -16px 22px; background:#0c0c0c; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+@media (min-width:792px) { .sec-break { margin-left:0; margin-right:0; border-radius:999px; border:none; height:8px; } }
 .card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:6px; }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 .empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
@@ -438,13 +441,17 @@ input, select { font-family:inherit; }
     <div class="summary">
       <div class="sum-item"><div class="sum-label">Income</div><div class="sum-value" id="sIncome"></div></div>
       <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
-      <div class="sum-item"><div class="sum-label">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
+      <div class="sum-item"><div class="sum-label" id="sSavedLabel">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
     </div>
+
+    <div class="sec-break" aria-hidden="true"></div>
 
     <div class="card">
       <div class="card-head"><div class="card-title">By category</div></div>
       <div id="catBreakdown"></div>
     </div>
+
+    <div class="sec-break" aria-hidden="true"></div>
 
     <div class="card">
       <div class="card-head"><div class="card-title">Transactions</div><div class="card-title" id="txCount"></div></div>
@@ -709,11 +716,13 @@ function render(){
   document.getElementById('sIncome').textContent = moneyWhole(income);
   document.getElementById('sSpent').textContent = moneyWhole(spent);
   const sv = document.getElementById('sSaved');
-  sv.textContent = moneyWhole(saved);
-  sv.className = 'sum-value' + (saved > 0 ? ' pos' : saved < 0 ? ' neg' : '');
-  document.getElementById('sRate').textContent = income > 0
-    ? Math.round(saved / income * 100) + '% of income'
-    : 'No income logged';
+  const short = saved < 0;
+  document.getElementById('sSavedLabel').textContent = short ? 'Overspent' : 'Saved';
+  sv.textContent = moneyWhole(Math.abs(saved));
+  sv.className = 'sum-value' + (saved > 0 ? ' pos' : short ? ' neg' : '');
+  document.getElementById('sRate').textContent = income <= 0 ? 'No income logged'
+    : short ? Math.round(-saved / income * 100) + '% over income'
+    : Math.round(saved / income * 100) + '% of income';
 
   renderBreakdown();
   renderTxList();
