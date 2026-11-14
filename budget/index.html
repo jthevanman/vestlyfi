@@ -268,8 +268,15 @@ input, select { font-family:inherit; }
 .pick-val span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .chev { width:16px; height:16px; flex:0 0 auto; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 /* "All categories" is a link in the accent color, so it never reads as one more tile. */
-.more-links { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:12px; }
-.more-link { display:flex; align-items:center; gap:6px; min-height:44px; padding:0; background:none; border:none; color:var(--accent); font:inherit; font-size:0.88rem; font-weight:500; cursor:pointer; }
+.more-links { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.pend-check { display:flex; align-items:center; gap:6px; min-height:44px; color:var(--cream-dim); font-size:0.82rem; cursor:pointer; white-space:nowrap; }
+.pend-check input { position:absolute; opacity:0; width:1px; height:1px; }
+.pend-check .box { width:16px; height:16px; border-radius:4px; border:1.5px solid var(--muted); display:flex; align-items:center; justify-content:center; }
+.pend-check .box svg { width:12px; height:12px; fill:none; stroke:var(--on-accent); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:0; }
+.pend-check input:checked + .box { background:var(--accent); border-color:var(--accent); }
+.pend-check input:checked + .box svg { opacity:1; }
+.pend-check input:focus-visible + .box { outline:2px solid var(--accent); outline-offset:2px; }
+.more-link { display:flex; align-items:center; gap:6px; min-height:44px; padding:0; background:none; border:none; color:var(--accent); font:inherit; font-size:0.82rem; white-space:nowrap; font-weight:500; cursor:pointer; }
 .more-link:hover { color:var(--accent-light); }
 .more-sep { width:1px; height:16px; background:var(--line); }
 
@@ -489,8 +496,8 @@ input, select { font-family:inherit; }
     <div class="tiles" id="catChips"></div>
     <div class="more-links">
       <button class="more-link" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
-      <span class="more-sep"></span>
       <button class="more-link" onclick="openNewCategory()"><svg class="chev" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New subcategory</button>
+      <label class="pend-check" title="Pending: a reminder to adjust the amount later, like a tip"><input type="checkbox" id="fPending"><span class="box"><svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg></span>Adjust later</label>
     </div>
     <div class="sub-form hidden" id="newCatForm">
       <div class="sub-form-title">New subcategory</div>
@@ -512,7 +519,6 @@ input, select { font-family:inherit; }
       </div>
       <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <div class="list-row"><label class="row-label" for="fDesc">Notes</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
-      <div class="list-row"><span class="row-label">Pending<small class="row-hint">Amount may change, like a tip</small></span><button class="switch" id="fPending" onclick="this.classList.toggle('on')" aria-label="Pending"></button></div>
     </div>
 
     <div class="msg err" id="addMsg"></div>
@@ -916,7 +922,7 @@ function openAdd(){
   document.getElementById('deleteBtn').classList.add('hidden');
   document.getElementById('fAmount').value = '';
   document.getElementById('fDesc').value = '';
-  document.getElementById('fPending').classList.remove('on');
+  document.getElementById('fPending').checked = false;
   const today = new Date();
   // Adding while looking at a past month defaults to that month's last day.
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
@@ -942,7 +948,7 @@ function openEdit(id){
   document.getElementById('fAmount').value = new Intl.NumberFormat(VestlyCurrency.locale(), { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(amt));
   document.getElementById('fDesc').value = t.description || '';
   document.getElementById('fDate').value = t.date;
-  document.getElementById('fPending').classList.toggle('on', !!t.pending);
+  document.getElementById('fPending').checked = !!t.pending;
   selCat = t.category_id; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
@@ -1228,7 +1234,7 @@ async function saveTx(){
       date,
       amount: Math.round(amount * 100) / 100 * (mode === 'received' ? 1 : -1),
       description: document.getElementById('fDesc').value.trim(),
-      pending: document.getElementById('fPending').classList.contains('on')
+      pending: document.getElementById('fPending').checked
     };
     const res = editing
       ? await sb.from('budget_transactions').update(row).eq('id', editing.id)
