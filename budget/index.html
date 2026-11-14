@@ -116,7 +116,8 @@ input, select { font-family:inherit; }
 /* Sections are open: a title over a hairline, no box. */
 .card { margin-bottom:0; }
 /* Panels: the three sections sit on a darker page, a step lighter than it. */
-.panel { background:var(--bg); border:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px rgba(0,0,0,0.55); border-radius:var(--panel-r, 22px); padding:16px 16px 10px; margin-bottom:12px; }
+/* Section panels: 8px corners and a soft shadow, site-wide standard (Nov 2026). */
+.panel { background:var(--bg); border:none; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 28px rgba(0,0,0,0.55); border-radius:8px; padding:16px 16px 10px; margin-bottom:12px; }
 .panel .sum-item { padding-bottom:10px; }
 .proto { display:flex; align-items:center; gap:4px; margin:-8px 6px 12px; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
 .card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:6px; }
@@ -431,7 +432,6 @@ input, select { font-family:inherit; }
       </div>
     </div>
 
-    <div class="proto" id="edgeProto"></div>
     <section class="panel">
     <div class="month-nav">
       <div class="month-label" id="monthLabel"></div>
@@ -834,14 +834,6 @@ const SPEND_RENDER = {
     });
   }
 };
-/* Prototype: panel corner radius. */
-const CORNERS = ['0', '8', '14', '22', '32'];
-function setCorner(r){
-  document.documentElement.style.setProperty('--panel-r', r + 'px');
-  document.getElementById('edgeProto').innerHTML = 'Corners' + CORNERS.map(k =>
-    `<button class="${k === r ? 'on' : ''}" onclick="setCorner('${k}')">${k}px</button>`).join('');
-}
-setCorner((() => { try { const q = new URLSearchParams(location.search).get('r'); return CORNERS.includes(q) ? q : '22'; } catch (e) { return '22'; } })());
 function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); else openSpendIds.add(id); renderBreakdown(); }
 
 function renderTxList(){
