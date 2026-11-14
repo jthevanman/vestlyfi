@@ -132,8 +132,6 @@ input, select { font-family:inherit; }
 .bar.ahead > span { background:var(--amber); }
 
 /* Pace marker: where spending would be today if it were even across the month. */
-.pace-key { display:inline-flex; align-items:center; gap:6px; letter-spacing:0.06em; }
-.pace-key i { width:2px; height:12px; background:var(--cream); border-radius:1px; }
 .fat-bar { position:relative; display:block; height:8px; border-radius:999px; background:var(--surface); margin-top:8px; }
 .fat-bar > span { display:block; height:100%; border-radius:999px; background:var(--accent); }
 .fat-bar > span.ahead { background:var(--amber); }
@@ -170,8 +168,6 @@ input, select { font-family:inherit; }
 .seg .fill { display:block; height:100%; background:var(--green); }
 .big-bar .fill.ahead, .seg .fill.ahead, .mini-meter .fill.ahead { background:var(--amber); }
 .big-bar .fill.over, .seg .fill.over, .mini-meter .fill.over { background:var(--red); }
-.seg .pace { position:absolute; top:0; bottom:0; width:2px; margin-left:-1px; background:var(--cream); }
-.big-bar .pace { position:absolute; top:-4px; bottom:-4px; width:2px; margin-left:-1px; background:var(--cream); border-radius:1px; z-index:1; }
 
 /* Subcategory rows: text first; color only when something needs attention */
 .sub-line { display:flex; align-items:center; gap:12px; min-height:48px; padding-left:2px; }
@@ -187,6 +183,19 @@ input, select { font-family:inherit; }
 .sub-left.ahead { color:var(--amber); }
 .sub-left.over, .sub-left.over small { color:var(--red); }
 .sub-of { font-size:0.72rem; color:var(--muted); }
+.sub-line.dotsrow { display:grid; grid-template-columns:30px minmax(0,1fr) auto 92px; }
+.dot-meter { display:flex; gap:3px; }
+.dot-meter i { width:6px; height:6px; border-radius:50%; background:var(--surface-2); }
+.dot-meter i.on { background:var(--green); }
+.dot-meter i.on.ahead { background:var(--amber); }
+.dot-meter i.on.over { background:var(--red); }
+.sub-of.pct.ahead { color:var(--amber); }
+.sub-of.pct.over { color:var(--red); }
+.s-ic.liquid { position:relative; overflow:hidden; }
+.s-ic.liquid > svg, .s-ic.liquid > .mono { position:relative; z-index:1; }
+.liq { position:absolute; left:0; right:0; bottom:0; background:var(--green); opacity:.55; }
+.s-ic.liquid.ahead .liq { background:var(--amber); }
+.s-ic.liquid.over .liq { background:var(--red); }
 .mini-meter { display:block; height:6px; border-radius:999px; background:var(--surface); overflow:hidden; }
 .mini-meter .fill { display:block; height:100%; border-radius:999px; background:var(--green); }
 .dot { flex:0 0 auto; width:10px; height:10px; border-radius:50%; background:var(--green); margin:0 4px 0 6px; }
@@ -446,7 +455,7 @@ input, select { font-family:inherit; }
 
     <div class="card">
       <div class="proto" id="spendProto"></div>
-      <div class="card-head"><div class="card-title">Spending by category</div><div class="card-title" id="spendNote"></div></div>
+      <div class="card-head"><div class="card-title">Spending by category</div></div>
       <div id="catBreakdown"></div>
     </div>
 
@@ -726,8 +735,8 @@ function render(){
 /* ── Spending by category: four presentations to compare ──
    Pace = how much of a monthly target you'd expect to have used by today.
    Past months count as complete; this month counts days elapsed. */
-const SPEND_VIEWS = { headline:'Headline', meters:'Mini meters', segments:'Segments' };
-let spendView = (() => { try { const q = new URLSearchParams(location.search).get('spend'); return SPEND_VIEWS[q] ? q : 'headline'; } catch (e) { return 'headline'; } })();
+const SPEND_VIEWS = { meters:'Mini meters', dots:'Dots', percent:'Percent', fill:'Icon fill' };
+let spendView = (() => { try { const q = new URLSearchParams(location.search).get('spend'); return SPEND_VIEWS[q] ? q : 'meters'; } catch (e) { return 'meters'; } })();
 let openSpendIds = new Set();
 function setSpendView(v){ spendView = v; renderBreakdown(); }
 function monthPace(){
@@ -763,14 +772,11 @@ function renderBreakdown(){
   document.getElementById('spendProto').innerHTML = 'View' + Object.keys(SPEND_VIEWS).map(k =>
     `<button class="${k === spendView ? 'on' : ''}" onclick="setSpendView('${k}')">${SPEND_VIEWS[k]}</button>`).join('');
   const d = spendData();
-  document.getElementById('spendNote').innerHTML = d.groups.some(x => x.target)
-    ? '<span class="pace-key"><i></i>Today</span>' : '';
   let html = SPEND_RENDER[spendView](d);
   if (d.uncat > 0) html += `<div class="sp-item"><div class="sp-head static"><span class="sp-top"><span class="sp-name">Uncategorized</span><span class="big-left">${moneyWhole(d.uncat)}<small> spent</small></span></span></div></div>`;
   el.innerHTML = d.groups.length || d.uncat ? html : '<div class="empty">No spending this month.</div>';
 }
 
-function paceTick(){ const p = monthPace(); return p > 0 && p < 1 ? `<i class="pace" style="left:${(p * 100).toFixed(1)}%"></i>` : ''; }
 
 /* Left or over, in whole dollars. Problems get color; on-track stays plain. */
 function leftOf(s, t){
@@ -797,13 +803,7 @@ function catHeadHtml(x, bar){
 }
 function bigBar(x){
   const st = targetState(x.targeted, x.target);
-  return `<span class="big-bar"><span class="fill ${st}" style="width:${Math.min(100, x.targeted / x.target * 100)}%"></span>${paceTick()}</span>`;
-}
-/* One segment per subcategory with a target, sized by its share of the category target. */
-function segBar(x){
-  const segs = x.rows.filter(r => r.t).map(r =>
-    `<span class="seg" style="flex:${r.t}"><span class="fill ${targetState(r.s, r.t)}" style="width:${Math.min(100, r.s / r.t * 100)}%"></span>${paceTick()}</span>`).join('');
-  return `<span class="seg-bar">${segs}</span>`;
+  return `<span class="big-bar"><span class="fill ${st}" style="width:${Math.min(100, x.targeted / x.target * 100)}%"></span></span>`;
 }
 function subRightHtml(r){
   const L = leftOf(r.s, r.t);
@@ -817,24 +817,40 @@ function spendItems(d, bar, rowHtml){
   }).join('');
 }
 
+function usedPct(r){ return r.t ? Math.min(100, r.s / r.t * 100) : 0; }
 const SPEND_RENDER = {
-  /* A. Headline: the category bar is the only bar; subcategories are text. */
-  headline(d){
-    return spendItems(d, bigBar, r => `<div class="sub-line"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${subRightHtml(r)}</div>`);
-  },
-  /* B. Mini meters: subcategories get a short meter in one aligned column. */
+  /* A. Mini meters: a short meter per subcategory, in one aligned column. */
   meters(d){
     return spendItems(d, bigBar, r => {
-      const st = targetState(r.s, r.t);
-      const meter = r.t ? `<span class="mini-meter"><span class="fill ${st}" style="width:${Math.min(100, r.s / r.t * 100)}%"></span></span>` : '<span></span>';
+      const meter = r.t ? `<span class="mini-meter"><span class="fill ${targetState(r.s, r.t)}" style="width:${usedPct(r)}%"></span></span>` : '<span></span>';
       return `<div class="sub-line meters"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${subRightHtml(r)}</div>`;
     });
   },
-  /* C. Segments: the category bar is split by subcategory, so a problem shows even when closed. */
-  segments(d){
-    return spendItems(d, segBar, r => {
+  /* B. Dots: ten dots instead of a bar; each dot is 10% of the target. */
+  dots(d){
+    return spendItems(d, bigBar, r => {
+      let dots = '<span></span>';
+      if (r.t) {
+        const st = targetState(r.s, r.t), on = Math.min(10, Math.ceil(r.s / r.t * 10 - 0.001));
+        dots = '<span class="dot-meter">' + Array.from({ length:10 }, (_, i) => `<i class="${i < on ? 'on ' + st : ''}"></i>`).join('') + '</span>';
+      }
+      return `<div class="sub-line dotsrow"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${dots}${subRightHtml(r)}</div>`;
+    });
+  },
+  /* C. Percent: the meter plus "% used" in place of "of $600". */
+  percent(d){
+    return spendItems(d, bigBar, r => {
+      const st = targetState(r.s, r.t), L = leftOf(r.s, r.t);
+      const meter = r.t ? `<span class="mini-meter"><span class="fill ${st}" style="width:${usedPct(r)}%"></span></span>` : '<span></span>';
+      const right = `<span class="sub-right"><span class="sub-left ${L.st}">${L.amt}<small> ${L.unit}</small></span>${r.t ? `<span class="sub-of pct ${st}">${Math.round(r.s / r.t * 100)}% used</span>` : ''}</span>`;
+      return `<div class="sub-line meters"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${right}</div>`;
+    });
+  },
+  /* D. Icon fill: the icon circle fills up from the bottom; no separate meter. */
+  fill(d){
+    return spendItems(d, bigBar, r => {
       const st = r.t ? targetState(r.s, r.t) : 'none';
-      return `<div class="sub-line"><span class="dot ${st}"></span><span class="sub-name">${escHtml(r.c.name)}</span>${subRightHtml(r)}</div>`;
+      return `<div class="sub-line"><span class="s-ic sm liquid ${st}"><span class="liq" style="height:${usedPct(r)}%"></span>${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${subRightHtml(r)}</div>`;
     });
   }
 };
