@@ -208,6 +208,11 @@ input, select { font-family:inherit; }
 .tx-desc { font-size:0.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tx-meta { font-size:0.72rem; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tx-amt { font-size:0.9rem; font-weight:500; white-space:nowrap; }
+.pend-tag { display:inline-block; margin-left:8px; padding:1px 7px; border-radius:999px; background:rgba(227,168,87,0.14); color:var(--amber); font-size:0.64rem; font-weight:500; letter-spacing:0.04em; vertical-align:2px; }
+.pend-row { display:flex; align-items:center; gap:8px; width:100%; margin:4px 0 2px; padding:8px 2px; background:none; border:none; color:var(--amber); font:inherit; font-size:0.82rem; text-align:left; cursor:pointer; }
+.pend-row .chev { width:14px; height:14px; margin-left:auto; }
+.pend-dot { width:7px; height:7px; border-radius:50%; background:var(--amber); }
+.row-hint { display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
 .tx-amt.in { color:var(--green); }
 .tx-amt.xfer { color:var(--muted); }
 
@@ -456,6 +461,7 @@ input, select { font-family:inherit; }
 
     <div class="card panel">
       <div class="card-head"><div class="card-title">Transactions</div><div class="card-title" id="txCount"></div></div>
+      <button class="pend-row hidden" id="pendRow" onclick="openPendingList()"></button>
       <div id="txList"></div>
     </div>
     <div class="app-foot"><span id="userEmail"></span><button class="link-btn" onclick="signOut()">Sign out</button></div>
@@ -506,6 +512,7 @@ input, select { font-family:inherit; }
       </div>
       <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <div class="list-row"><label class="row-label" for="fDesc">Notes</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
+      <div class="list-row"><span class="row-label">Pending<small class="row-hint">Amount may change, like a tip</small></span><button class="switch" id="fPending" onclick="this.classList.toggle('on')" aria-label="Pending"></button></div>
     </div>
 
     <div class="msg err" id="addMsg"></div>
@@ -575,7 +582,7 @@ const CASH = '__cash__'; // A "Cash" chip that becomes a real account on first s
 
 let user = null;
 let groups = [], cats = [], accounts = [];
-let monthTx = [], recentTx = [];
+let monthTx = [], recentTx = [], pendingTx = [];
 let viewMonth = firstOfMonth(new Date());
 let editing = null;           // transaction being edited, or null when adding
 let mode = 'spent';           // 'spent' | 'received'
@@ -682,6 +689,8 @@ async function loadMonth(){
     .order('date', { ascending:false }).order('created_at', { ascending:false });
   if (error) { console.error(error); toast('Could not load transactions.', true); }
   monthTx = data || [];
+  const pend = await sb.from('budget_transactions').select('*').eq('pending', true).order('date', { ascending:true });
+  pendingTx = pend.error ? [] : (pend.data || []);
   render();
 }
 
@@ -837,7 +846,22 @@ const SPEND_RENDER = {
 };
 function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); else openSpendIds.add(id); renderBreakdown(); }
 
+function renderPendingRow(){
+  const el = document.getElementById('pendRow'), n = pendingTx.length;
+  el.classList.toggle('hidden', !n);
+  if (n) el.innerHTML = `<span class="pend-dot"></span>${n} pending to confirm<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>`;
+}
+function openPendingList(){
+  if (pendingTx.length === 1) { openEdit(pendingTx[0].id); return; }
+  const loc = VestlyCurrency.locale();
+  openPicker('Pending', pendingTx.map(t => {
+    const c = catById(t.category_id);
+    const day = parseYmd(t.date).toLocaleDateString(loc, { month:'short', day:'numeric' });
+    return { value:t.id, label:`${t.description || (c ? c.name : 'Uncategorized')} · ${money(Math.abs(Number(t.amount)))} · ${day}` };
+  }), null, id => openEdit(id));
+}
 function renderTxList(){
+  renderPendingRow();
   const el = document.getElementById('txList');
   document.getElementById('txCount').textContent = monthTx.length ? monthTx.length + (monthTx.length === 1 ? ' entry' : ' entries') : '';
   if (!monthTx.length) {
@@ -858,7 +882,7 @@ function renderTxList(){
       const meta = [t.description ? (c ? c.name : 'Uncategorized') : null, a ? a.name : null].filter(Boolean).join(' · ');
       const cls = k === 'transfer' ? 'xfer' : amt > 0 ? 'in' : '';
       const shown = amt > 0 ? '+' + money(amt) : money(-amt);
-      html += `<button class="tx" onclick="openEdit('${t.id}')"><div class="tx-main"><div class="tx-desc">${escHtml(title)}</div>${meta ? `<div class="tx-meta">${escHtml(meta)}</div>` : ''}</div><div class="tx-amt ${cls}">${escHtml(shown)}</div></button>`;
+      html += `<button class="tx" onclick="openEdit('${t.id}')"><div class="tx-main"><div class="tx-desc">${escHtml(title)}${t.pending ? '<span class="pend-tag">Pending</span>' : ''}</div>${meta ? `<div class="tx-meta">${escHtml(meta)}</div>` : ''}</div><div class="tx-amt ${cls}">${escHtml(shown)}</div></button>`;
     }
     html += '</div>';
   }
@@ -892,6 +916,7 @@ function openAdd(){
   document.getElementById('deleteBtn').classList.add('hidden');
   document.getElementById('fAmount').value = '';
   document.getElementById('fDesc').value = '';
+  document.getElementById('fPending').classList.remove('on');
   const today = new Date();
   // Adding while looking at a past month defaults to that month's last day.
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
@@ -908,7 +933,7 @@ function openAdd(){
 }
 
 function openEdit(id){
-  const t = monthTx.find(x => x.id === id); if (!t) return;
+  const t = monthTx.find(x => x.id === id) || pendingTx.find(x => x.id === id); if (!t) return;
   editing = t;
   document.getElementById('addTitle').textContent = 'Edit transaction';
   document.getElementById('deleteBtn').classList.remove('hidden');
@@ -917,6 +942,7 @@ function openEdit(id){
   document.getElementById('fAmount').value = new Intl.NumberFormat(VestlyCurrency.locale(), { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(amt));
   document.getElementById('fDesc').value = t.description || '';
   document.getElementById('fDate').value = t.date;
+  document.getElementById('fPending').classList.toggle('on', !!t.pending);
   selCat = t.category_id; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
@@ -1201,7 +1227,8 @@ async function saveTx(){
       category_id: selCat || null,
       date,
       amount: Math.round(amount * 100) / 100 * (mode === 'received' ? 1 : -1),
-      description: document.getElementById('fDesc').value.trim()
+      description: document.getElementById('fDesc').value.trim(),
+      pending: document.getElementById('fPending').classList.contains('on')
     };
     const res = editing
       ? await sb.from('budget_transactions').update(row).eq('id', editing.id)
