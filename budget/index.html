@@ -210,6 +210,8 @@ input, select { font-family:inherit; }
 .tx-amt { font-size:0.9rem; font-weight:500; white-space:nowrap; }
 .pend-tag { display:inline-block; margin-left:8px; padding:1px 7px; border-radius:999px; background:rgba(227,168,87,0.14); color:var(--amber); font-size:0.64rem; font-weight:500; letter-spacing:0.04em; vertical-align:2px; }
 .pend-row { display:flex; align-items:center; gap:8px; width:100%; margin:4px 0 2px; padding:8px 2px; background:none; border:none; color:var(--amber); font:inherit; font-size:0.82rem; text-align:left; cursor:pointer; }
+#recList .tx { gap:12px; }
+.stop-rec { display:block; margin:16px auto 0; background:none; border:none; color:var(--red); font:inherit; font-size:0.88rem; font-weight:500; cursor:pointer; }
 .pend-row .chev { width:14px; height:14px; margin-left:auto; }
 .row-hint { display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
 .tx-amt.in { color:var(--green); }
@@ -468,6 +470,11 @@ input, select { font-family:inherit; }
     </div>
 
     <div class="card panel">
+      <div class="card-head"><div class="card-title">Recurring</div></div>
+      <div id="recList"></div>
+    </div>
+
+    <div class="card panel">
       <div class="card-head"><div class="card-title">Transactions</div><div class="card-title" id="txCount"></div></div>
       <button class="pend-row hidden" id="pendRow" onclick="openPendingList()"></button>
       <div id="txList"></div>
@@ -518,6 +525,7 @@ input, select { font-family:inherit; }
         <button class="pick-row form-pick" onclick="pickNewAcctKind()"><span class="row-label">Type</span><span class="pick-val"><span id="newAcctKindLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
         <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newAcctForm')">Cancel</button><button class="btn btn-gold" onclick="createAccountFromSheet()">Add account</button></div>
       </div>
+      <button class="pick-row" id="repeatRow" onclick="pickRepeat()"><span class="row-label">Repeat</span><span class="pick-val"><span id="repeatLabel">Never</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
       <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <div class="list-row"><label class="row-label" for="fDesc">Notes</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
     </div>
@@ -589,7 +597,8 @@ const CASH = '__cash__'; // A "Cash" chip that becomes a real account on first s
 
 let user = null;
 let groups = [], cats = [], accounts = [];
-let monthTx = [], recentTx = [], pendingTx = [];
+let monthTx = [], recentTx = [], pendingTx = [], recurring = [];
+let repeatFreq = null;   // add screen: null = does not repeat
 let viewMonth = firstOfMonth(new Date());
 let editing = null;           // transaction being edited, or null when adding
 let mode = 'spent';           // 'spent' | 'received'
@@ -668,7 +677,16 @@ async function boot(session){
   const { error } = await sb.rpc('seed_budget_defaults');
   if (error) console.error(error);
   await loadMeta();
+  await postDueRecurring(true);
   await loadMonth();
+}
+/* Posts recurring transactions that have come due, then reloads the rules. */
+async function postDueRecurring(announce){
+  const { data, error } = await sb.rpc('budget_post_due_recurring');
+  if (error) console.error(error);
+  else if (announce && data > 0) toast(`Added ${data} recurring ${data === 1 ? 'transaction' : 'transactions'}`);
+  const r = await sb.from('budget_recurring').select('*').eq('active', true).order('next_date');
+  recurring = r.error ? [] : (r.data || []);
 }
 
 sb.auth.getSession().then(({ data }) => boot(data.session));
@@ -853,6 +871,33 @@ const SPEND_RENDER = {
 };
 function toggleSpend(id){ if (openSpendIds.has(id)) openSpendIds.delete(id); else openSpendIds.add(id); renderBreakdown(); }
 
+/* ── Recurring ── */
+const REPEATS = [[null,'Never'], ['weekly','Every week'], ['biweekly','Every 2 weeks'], ['monthly','Every month'], ['yearly','Every year']];
+function repeatName(f){ return (REPEATS.find(x => x[0] === f) || REPEATS[0])[1]; }
+function pickRepeat(){
+  openPicker('Repeat', REPEATS.map(([v,l]) => ({ value:v, label:l })), repeatFreq, v => { repeatFreq = v; renderSheet(); });
+}
+/* Mirrors budget_next_date() in the database. */
+function nextDateAfter(dateStr, freq, anchor){
+  const d = parseYmd(dateStr);
+  if (freq === 'weekly') { d.setDate(d.getDate() + 7); return ymd(d); }
+  if (freq === 'biweekly') { d.setDate(d.getDate() + 14); return ymd(d); }
+  if (freq === 'yearly') { const y = d.getFullYear() + 1, m = d.getMonth(); return ymd(new Date(y, m, Math.min(d.getDate(), new Date(y, m + 1, 0).getDate()))); }
+  const y = d.getFullYear(), m = d.getMonth() + 1;
+  return ymd(new Date(y, m, Math.min(anchor, new Date(y, m + 1, 0).getDate())));
+}
+function renderRecList(){
+  const el = document.getElementById('recList');
+  if (!recurring.length) { el.innerHTML = '<div class="empty">Nothing recurring. Pick Repeat when adding a transaction.</div>'; return; }
+  const loc = VestlyCurrency.locale();
+  el.innerHTML = recurring.map(r => {
+    const c = catById(r.category_id), amt = Number(r.amount);
+    const name = r.description || (c ? c.name : 'Uncategorized');
+    const next = parseYmd(r.next_date).toLocaleDateString(loc, { month:'short', day:'numeric' });
+    const shown = (r.amount_varies ? '~' : '') + (amt > 0 ? '+' : '') + money(Math.abs(amt));
+    return `<button class="tx" onclick="openEditRecurring('${r.id}')"><span class="s-ic sm">${c ? catIcon(c) : monoOf(name)}</span><div class="tx-main"><div class="tx-desc">${escHtml(name)}</div><div class="tx-meta">${escHtml(repeatName(r.frequency))} · Next ${escHtml(next)}${r.amount_varies ? ' · Amount may change' : ''}</div></div><div class="tx-amt${amt > 0 ? ' in' : ''}">${escHtml(shown)}</div></button>`;
+  }).join('');
+}
 function renderPendingRow(){
   const el = document.getElementById('pendRow'), n = pendingTx.length;
   el.classList.toggle('hidden', !n);
@@ -869,6 +914,7 @@ function openPendingList(){
 }
 function renderTxList(){
   renderPendingRow();
+  renderRecList();
   const el = document.getElementById('txList');
   document.getElementById('txCount').textContent = monthTx.length ? monthTx.length + (monthTx.length === 1 ? ' entry' : ' entries') : '';
   if (!monthTx.length) {
@@ -924,6 +970,8 @@ function openAdd(){
   document.getElementById('fAmount').value = '';
   document.getElementById('fDesc').value = '';
   document.getElementById('fPending').checked = false;
+  repeatFreq = null;
+  document.getElementById('repeatRow').classList.remove('hidden');
   const today = new Date();
   // Adding while looking at a past month defaults to that month's last day.
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
@@ -950,6 +998,8 @@ function openEdit(id){
   document.getElementById('fDesc').value = t.description || '';
   document.getElementById('fDate').value = t.date;
   document.getElementById('fPending').checked = !!t.pending;
+  repeatFreq = null;
+  document.getElementById('repeatRow').classList.add('hidden');
   selCat = t.category_id; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
@@ -987,6 +1037,7 @@ function renderSheet(){
 
   document.getElementById('catChips').innerHTML = chipCats().map(c => tileHtml(c, `pickCat('${c.id}')`)).join('');
   const cur = acctById(selAcct);
+  document.getElementById('repeatLabel').textContent = repeatName(repeatFreq);
   document.getElementById('acctRowLabel').textContent = mode === 'received' ? 'To account' : 'From account';
   document.getElementById('acctLabel').textContent = selAcct === CASH ? 'Cash' : cur ? cur.name : 'No account';
 
@@ -1237,10 +1288,22 @@ async function saveTx(){
       description: document.getElementById('fDesc').value.trim(),
       pending: document.getElementById('fPending').checked
     };
+    let rule = null;
+    if (!editing && repeatFreq) {
+      const anchor = parseYmd(date).getDate();
+      const rr = await sb.from('budget_recurring').insert({
+        user_id:user.id, account_id:row.account_id, category_id:row.category_id, amount:row.amount,
+        description:row.description, frequency:repeatFreq, next_date:nextDateAfter(date, repeatFreq, anchor),
+        anchor_day:anchor, amount_varies:row.pending
+      }).select().single();
+      if (rr.error) { msg.textContent = errText(rr.error); return; }
+      rule = rr.data; row.recurring_id = rule.id;
+    }
     const res = editing
       ? await sb.from('budget_transactions').update(row).eq('id', editing.id)
       : await sb.from('budget_transactions').insert({ ...row, user_id:user.id });
     if (res.error) { msg.textContent = errText(res.error); return; }
+    if (rule) await postDueRecurring(false);   // a backdated start can already have due dates
     try { if (acct.id) localStorage.setItem(LAST_ACCT_KEY, acct.id); } catch (e) {}
     if (!editing) recentTx.unshift({ category_id: row.category_id, account_id: row.account_id });
     closeSheet('addSheet');
@@ -1430,6 +1493,18 @@ function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', i
 function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden } }); }
 function openNewGroup(){ startEdit({ type:'group', id:null, kind:'expense', orig:{ name:'', hidden:false } }); }
 function openEditAccount(id){ const a = acctById(id); startEdit({ type:'account', id, orig:{ name:a.name, kind:a.kind, archived:!!a.archived } }); }
+function openEditRecurring(id){
+  const r = recurring.find(x => x.id === id); if (!r) return;
+  const amt = Number(r.amount);
+  startEdit({ type:'rec', id, sign: amt < 0 ? -1 : 1, orig:{ description:r.description || '', name:r.description || '', amount:new Intl.NumberFormat(VestlyCurrency.locale(), { minimumFractionDigits:2, maximumFractionDigits:2 }).format(Math.abs(amt)), frequency:r.frequency, next_date:r.next_date, amount_varies:!!r.amount_varies } });
+}
+async function stopRecurring(){
+  if (!await askConfirm({ title:'Stop repeating?', body:'Past transactions stay.', yes:'Stop', no:'Keep it', danger:true })) return;
+  const { error } = await sb.from('budget_recurring').update({ active:false }).eq('id', edit.id);
+  if (error) { document.getElementById('editMsg').textContent = errText(error); return; }
+  document.getElementById('editSheet').classList.remove('open'); edit = null;
+  await postDueRecurring(false); renderRecList(); toast('Stopped');
+}
 function openNewAccountSheet(){ startEdit({ type:'account', id:null, orig:{ name:'', kind:'credit_card', archived:false } }); }
 function editDirty(){ return !!edit && JSON.stringify(edit.draft) !== JSON.stringify(edit.orig); }
 async function requestCloseEdit(){
@@ -1439,7 +1514,7 @@ async function requestCloseEdit(){
 }
 
 const EDIT_TITLES = {
-  sub:['New subcategory','Edit subcategory'], group:['New category','Edit category'], account:['New account','Edit account']
+  sub:['New subcategory','Edit subcategory'], group:['New category','Edit category'], account:['New account','Edit account'], rec:['Recurring','Edit recurring']
 };
 function renderEdit(){
   const d = edit.draft, t = edit.type;
@@ -1456,6 +1531,15 @@ function renderEdit(){
       </div>
       <div class="e-section-title">Icon</div>
       <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
+  } else if (t === 'rec') {
+    html += `<input class="pill-input e-name" id="eName" type="text" maxlength="200" placeholder="Name, like Rent" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+      <input class="pill-input e-name" id="eAmount" type="text" inputmode="decimal" placeholder="Amount" value="${escHtml(d.amount)}" oninput="VestlyCurrency.groupDec(this); edit.draft.amount=this.value">
+      <div class="list">
+        <button class="pick-row" onclick="pickEditRepeat()"><span class="row-label">Repeat</span><span class="pick-val"><span>${escHtml(repeatName(d.frequency))}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
+        <div class="list-row"><label class="row-label" for="eNext">Next date</label><input id="eNext" type="date" value="${escHtml(d.next_date)}" onchange="edit.draft.next_date=this.value"></div>
+        <div class="list-row"><span class="row-label">This amount may change</span><button class="switch${d.amount_varies ? ' on' : ''}" onclick="toggleEdit('amount_varies')" aria-label="This amount may change"></button></div>
+      </div>
+      <button class="stop-rec" onclick="stopRecurring()">Stop repeating</button>`;
   } else if (t === 'group') {
     const note = edit.kind === 'income' ? 'Counts as income.' : edit.kind === 'transfer' ? 'Not counted as spending or income.' : 'Counts as spending.';
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
@@ -1493,12 +1577,26 @@ function toggleEdit(key){ edit.draft[key] = !edit.draft[key]; renderEdit(); }
 function pickEditGroup(){
   openPicker('Category', sortedGroups().map(g => ({ value:g.id, label:g.name })), edit.draft.group_id, v => { edit.draft.group_id = v; renderEdit(); });
 }
+function pickEditRepeat(){ openPicker('Repeat', REPEATS.filter(x => x[0]).map(([v,l]) => ({ value:v, label:l })), edit.draft.frequency, v => { edit.draft.frequency = v; renderEdit(); }); }
 function pickEditKind(){ openPicker('Account type', kindOptions(), edit.draft.kind, v => { edit.draft.kind = v; renderEdit(); }); }
 
 async function saveEdit(){
   const d = edit.draft, t = edit.type, msg = document.getElementById('editMsg');
   const name = String(d.name || '').trim();
-  if (!name) { msg.textContent = t === 'sub' ? 'Name the subcategory.' : t === 'group' ? 'Name the category.' : 'Name the account.'; return; }
+  if (!name && t !== 'rec') { msg.textContent = t === 'sub' ? 'Name the subcategory.' : t === 'group' ? 'Name the category.' : 'Name the account.'; return; }
+  if (t === 'rec') {
+    const amt = VestlyCurrency.parseDec(d.amount);
+    if (!(amt > 0)) { msg.textContent = 'Enter an amount.'; return; }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(d.next_date)) { msg.textContent = 'Pick a date.'; return; }
+    const res = await sb.from('budget_recurring').update({
+      description:name, amount:Math.round(amt * 100) / 100 * edit.sign, frequency:d.frequency,
+      next_date:d.next_date, anchor_day:parseYmd(d.next_date).getDate(), amount_varies:d.amount_varies
+    }).eq('id', edit.id);
+    if (res.error) { msg.textContent = errText(res.error); return; }
+    document.getElementById('editSheet').classList.remove('open'); edit = null;
+    await postDueRecurring(false); await loadMonth(); toast('Saved');
+    return;
+  }
   const btn = document.getElementById('editSaveBtn'); btn.disabled = true;
   try {
     let res;
