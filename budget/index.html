@@ -472,8 +472,8 @@ input, select { font-family:inherit; }
     <div class="summary">
       <div class="sum-item"><div class="sum-label">Income</div><div class="sum-value" id="sIncome"></div></div>
       <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
-      <div class="sum-item"><div class="sum-label" id="sSavedLabel">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
-      <div class="sum-item"><div class="sum-label">Money out</div><div class="sum-value" id="sOut"></div><div class="sum-note saving" id="sToSave"></div></div>
+      <div class="sum-item"><div class="sum-label">Saved &amp; invested</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
+      <div class="sum-item"><div class="sum-label">Money out</div><div class="sum-value" id="sOut"></div></div>
     </div>
     </section>
 
@@ -778,17 +778,13 @@ function render(){
   const { income, spent, saved, toSaving } = monthTotals();
   document.getElementById('sIncome').textContent = moneyWhole(income);
   document.getElementById('sSpent').textContent = moneyWhole(spent);
-  // Money out = everything that left: spending plus money moved to savings/investing.
-  document.getElementById('sOut').textContent = moneyWhole(spent + toSaving);
-  document.getElementById('sToSave').textContent = toSaving > 0.5 ? moneyWhole(toSaving) + ' to savings' : '';
+  // Saved & invested = what was sent to savings or investment accounts.
   const sv = document.getElementById('sSaved');
-  const short = saved < 0;
-  document.getElementById('sSavedLabel').textContent = short ? 'Overspent' : 'Saved';
-  sv.textContent = moneyWhole(Math.abs(saved));
-  sv.className = 'sum-value' + (saved > 0 ? ' pos' : short ? ' neg' : '');
-  document.getElementById('sRate').textContent = income <= 0 ? 'No income logged'
-    : short ? Math.round(-saved / income * 100) + '% over income'
-    : Math.round(saved / income * 100) + '% of income';
+  sv.textContent = moneyWhole(toSaving);
+  sv.className = 'sum-value' + (toSaving > 0.5 ? ' pos' : '');
+  document.getElementById('sRate').textContent = income > 0 && toSaving > 0.5 ? Math.round(toSaving / income * 100) + '% of income' : '';
+  // Money out = everything that left: spending plus money sent to savings/investing.
+  document.getElementById('sOut').textContent = moneyWhole(spent + toSaving);
 
   renderBreakdown();
   renderTxList();
