@@ -111,6 +111,7 @@ input, select { font-family:inherit; }
 .sum-value { font-size:1.6rem; font-weight:500; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .sum-value.pos { color:var(--green); }
 .sum-note.saving { color:var(--green); }
+.sum-note.neg { color:var(--red); }
 .sum-value.neg { color:var(--red); }
 .sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
@@ -779,8 +780,14 @@ function render(){
   document.getElementById('sSavedLabel').textContent = short ? 'Overspent' : 'Saved';
   sv.textContent = moneyWhole(Math.abs(saved));
   sv.className = 'sum-value' + (saved > 0 ? ' pos' : short ? ' neg' : '');
-  document.getElementById('sRate').textContent = income <= 0 ? 'No income logged'
+  // Cash flow: what's left after spending AND moving money to savings.
+  // Saved can be positive while checking still drains (big auto-investing).
+  const cashFlow = saved - toSaving;
+  const rate = document.getElementById('sRate');
+  rate.classList.toggle('neg', !short && toSaving > 0.5 && cashFlow < -0.5);
+  rate.textContent = income <= 0 ? 'No income logged'
     : short ? Math.round(-saved / income * 100) + '% over income'
+    : (toSaving > 0.5 && cashFlow < -0.5) ? '-' + moneyWhole(-cashFlow) + ' cash flow'
     : Math.round(saved / income * 100) + '% of income';
 
   renderBreakdown();
