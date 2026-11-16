@@ -110,6 +110,7 @@ input, select { font-family:inherit; }
 .sum-label { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
 .sum-value { font-size:1.6rem; font-weight:500; letter-spacing:-0.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .sum-value.pos { color:var(--green); }
+.sum-note.saving { color:var(--green); }
 .sum-value.neg { color:var(--red); }
 .sum-note { font-size:0.72rem; color:var(--muted); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
@@ -466,7 +467,7 @@ input, select { font-family:inherit; }
 
     <div class="summary">
       <div class="sum-item"><div class="sum-label">Income</div><div class="sum-value" id="sIncome"></div></div>
-      <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
+      <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div><div class="sum-note saving" id="sToSave"></div></div>
       <div class="sum-item"><div class="sum-label" id="sSavedLabel">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
     </div>
     </section>
@@ -751,16 +752,16 @@ function shiftMonth(delta){
    spent   : expense categories, plus uncategorized money out (refunds lower it)
    transfer: counted as neither */
 function monthTotals(){
-  let income = 0, spent = 0;
+  let income = 0, spent = 0, toSaving = 0;
   for (const t of monthTx) {
-    const k = kindOfCat(catById(t.category_id));
+    const c = catById(t.category_id), k = kindOfCat(c);
     const amt = Number(t.amount);
-    if (k === 'transfer') continue;
+    if (k === 'transfer') { if (c.counts_as_saving) toSaving -= amt; continue; }
     if (k === 'income') income += amt;
     else if (k === 'expense') spent -= amt;
     else if (amt > 0) income += amt; else spent -= amt;
   }
-  return { income, spent, saved: income - spent };
+  return { income, spent, saved: income - spent, toSaving };
 }
 
 /* ── render ── */
@@ -769,9 +770,10 @@ function render(){
   document.getElementById('monthLabel').textContent = viewMonth.toLocaleDateString(loc, { month:'long', year:'numeric' });
   document.getElementById('nextMonthBtn').disabled = sameMonth(viewMonth, new Date());
 
-  const { income, spent, saved } = monthTotals();
+  const { income, spent, saved, toSaving } = monthTotals();
   document.getElementById('sIncome').textContent = moneyWhole(income);
   document.getElementById('sSpent').textContent = moneyWhole(spent);
+  document.getElementById('sToSave').textContent = toSaving > 0.5 ? moneyWhole(toSaving) + ' to savings' : '';
   const sv = document.getElementById('sSaved');
   const short = saved < 0;
   document.getElementById('sSavedLabel').textContent = short ? 'Overspent' : 'Saved';
@@ -1510,8 +1512,8 @@ function startEdit(e){
   document.getElementById('editSheet').classList.add('open');
   if (!e.id) setTimeout(() => { const n = document.getElementById('eName'); if (n) n.focus(); }, 30);
 }
-function openEditSub(id){ const c = catById(id); startEdit({ type:'sub', id, orig:{ name:c.name, icon:c.icon || null, group_id:c.group_id, hidden:!!c.hidden } }); }
-function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', icon:null, group_id:groupId, hidden:false } }); }
+function openEditSub(id){ const c = catById(id); startEdit({ type:'sub', id, orig:{ name:c.name, icon:c.icon || null, group_id:c.group_id, hidden:!!c.hidden, counts_as_saving:!!c.counts_as_saving } }); }
+function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', icon:null, group_id:groupId, hidden:false, counts_as_saving:false } }); }
 function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden } }); }
 function openNewGroup(){ startEdit({ type:'group', id:null, kind:'expense', orig:{ name:'', hidden:false } }); }
 function openEditAccount(id){ const a = acctById(id); startEdit({ type:'account', id, orig:{ name:a.name, kind:a.kind, archived:!!a.archived } }); }
@@ -1550,6 +1552,7 @@ function renderEdit(){
       <div class="list">
         <button class="pick-row" onclick="pickEditGroup()"><span class="row-label">Category</span><span class="pick-val"><span>${escHtml(g ? g.name : 'Choose')}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
         <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div>
+        ${g && g.kind === 'transfer' ? `<div class="list-row"><span class="row-label">Counts as saving<small class="row-hint">Shows under Spent as money saved</small></span><button class="switch${d.counts_as_saving ? ' on' : ''}" onclick="toggleEdit('counts_as_saving')" aria-label="Counts as saving"></button></div>` : ''}
       </div>
       <div class="e-section-title">Icon</div>
       <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
@@ -1623,7 +1626,7 @@ async function saveEdit(){
   try {
     let res;
     if (t === 'sub') {
-      const row = { name, icon:d.icon, group_id:d.group_id, hidden:d.hidden };
+      const row = { name, icon:d.icon, group_id:d.group_id, hidden:d.hidden, counts_as_saving:(groupById(d.group_id) || {}).kind === 'transfer' && !!d.counts_as_saving };
       if (edit.id) res = await sb.from('budget_categories').update(row).eq('id', edit.id).select().single();
       else {
         const sort = catsIn(d.group_id, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
