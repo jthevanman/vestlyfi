@@ -678,20 +678,33 @@ async function boot(session){
   user = session.user; booted = true;
   document.getElementById('userEmail').textContent = user.email || '';
   showApp();
-  try { await VestlyCurrency.load(sb, user.id); } catch (e) { console.error(e); }
+  // Startup runs in two parallel rounds instead of seven requests in a row.
+  // Round 1: settings, categories/accounts, and posting any recurring items due.
+  const [, , posted] = await Promise.all([
+    VestlyCurrency.load(sb, user.id).catch(e => console.error(e)),
+    loadMeta(),
+    sb.rpc('budget_post_due_recurring')
+  ]);
   document.getElementById('amountSym').textContent = VestlyCurrency.symbol();
-  // Creates the starter categories the first time this user opens the page.
-  const { error } = await sb.rpc('seed_budget_defaults');
-  if (error) console.error(error);
-  await loadMeta();
-  await postDueRecurring(true);
-  await loadMonth();
+  if (posted.error) console.error(posted.error);
+  else if (posted.data > 0) toast(`Added ${posted.data} recurring ${posted.data === 1 ? 'transaction' : 'transactions'}`);
+  // First visit only: create the starter categories.
+  if (!groups.length) {
+    const { error } = await sb.rpc('seed_budget_defaults');
+    if (error) console.error(error);
+    await loadMeta();
+  }
+  // Round 2: this month's transactions, pending items and recurring rules.
+  await Promise.all([loadMonth(), loadRecurring()]);
 }
 /* Posts recurring transactions that have come due, then reloads the rules. */
 async function postDueRecurring(announce){
   const { data, error } = await sb.rpc('budget_post_due_recurring');
   if (error) console.error(error);
   else if (announce && data > 0) toast(`Added ${data} recurring ${data === 1 ? 'transaction' : 'transactions'}`);
+  await loadRecurring();
+}
+async function loadRecurring(){
   const r = await sb.from('budget_recurring').select('*').eq('active', true).order('next_date');
   recurring = r.error ? [] : (r.data || []);
 }
@@ -716,12 +729,14 @@ async function loadMeta(){
 
 async function loadMonth(){
   const start = ymd(viewMonth), end = ymd(lastOfMonth(viewMonth));
-  const { data, error } = await sb.from('budget_transactions').select('*')
-    .gte('date', start).lte('date', end)
-    .order('date', { ascending:false }).order('created_at', { ascending:false });
+  const [{ data, error }, pend] = await Promise.all([
+    sb.from('budget_transactions').select('*')
+      .gte('date', start).lte('date', end)
+      .order('date', { ascending:false }).order('created_at', { ascending:false }),
+    sb.from('budget_transactions').select('*').eq('pending', true).order('date', { ascending:true })
+  ]);
   if (error) { console.error(error); toast('Could not load transactions.', true); }
   monthTx = data || [];
-  const pend = await sb.from('budget_transactions').select('*').eq('pending', true).order('date', { ascending:true });
   pendingTx = pend.error ? [] : (pend.data || []);
   render();
 }
