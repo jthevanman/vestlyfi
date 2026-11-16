@@ -5,7 +5,7 @@
   "type": "module",
   "description": "VestlyFi static site + programmatic page generator (no runtime dependencies).",
   "scripts": {
-    "test": "node --test tools/test/",
+    "test": "node --test \"tools/test/**/*.test.mjs\"",
     "seed": "node tools/seed-states.mjs",
     "generate": "node tools/generate.mjs",
     "build": "npm test && node tools/generate.mjs"
