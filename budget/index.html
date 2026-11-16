@@ -103,7 +103,7 @@ input, select { font-family:inherit; }
 .icon-btn:disabled { opacity:.22; cursor:default; background:none; }
 
 /* Month summary: plain figures between hairlines, no boxes. */
-.summary { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); border-top:1px solid var(--line); }
+.summary { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); border-top:1px solid var(--line); }
 .sum-item { padding:16px 0 16px 16px; min-width:0; }
 .sum-item:first-child { padding-left:0; }
 .sum-item + .sum-item { border-left:1px solid var(--line); }
@@ -428,6 +428,10 @@ input, select { font-family:inherit; }
   .month-label { font-size:1.15rem; }
   .sum-item { padding-left:12px; }
   .sum-value { font-size:1.25rem; }
+  /* Four figures go two by two on phones. */
+  .summary { grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .sum-item:nth-child(3) { border-left:none; padding-left:0; }
+  .sum-item:nth-child(n+3) { border-top:1px solid var(--line); }
 }
 </style>
 </head>
@@ -467,8 +471,9 @@ input, select { font-family:inherit; }
 
     <div class="summary">
       <div class="sum-item"><div class="sum-label">Income</div><div class="sum-value" id="sIncome"></div></div>
-      <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div><div class="sum-note saving" id="sToSave"></div></div>
+      <div class="sum-item"><div class="sum-label">Spent</div><div class="sum-value" id="sSpent"></div></div>
       <div class="sum-item"><div class="sum-label" id="sSavedLabel">Saved</div><div class="sum-value" id="sSaved"></div><div class="sum-note" id="sRate"></div></div>
+      <div class="sum-item"><div class="sum-label">Money out</div><div class="sum-value" id="sOut"></div><div class="sum-note saving" id="sToSave"></div></div>
     </div>
     </section>
 
@@ -773,6 +778,8 @@ function render(){
   const { income, spent, saved, toSaving } = monthTotals();
   document.getElementById('sIncome').textContent = moneyWhole(income);
   document.getElementById('sSpent').textContent = moneyWhole(spent);
+  // Money out = everything that left: spending plus money moved to savings/investing.
+  document.getElementById('sOut').textContent = moneyWhole(spent + toSaving);
   document.getElementById('sToSave').textContent = toSaving > 0.5 ? moneyWhole(toSaving) + ' to savings' : '';
   const sv = document.getElementById('sSaved');
   const short = saved < 0;
