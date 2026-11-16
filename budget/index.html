@@ -330,6 +330,10 @@ input, select { font-family:inherit; }
 
 .top-pill { height:36px; padding:0 16px; border:none; border-radius:999px; background:var(--surface); color:var(--cream); font:inherit; font-size:0.82rem; font-weight:500; white-space:nowrap; cursor:pointer; transition:background .15s; }
 .top-pill:hover { background:var(--surface-2); }
+/* Settings for the Budget section: categories, targets, accounts. */
+.head-cog { width:34px; height:34px; margin:-8px -6px -8px 0; display:inline-flex; align-items:center; justify-content:center; padding:0; border:none; border-radius:8px; background:none; color:var(--cream-dim); cursor:pointer; }
+.head-cog:hover { background:var(--surface); color:var(--cream); }
+.head-cog svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 
 /* Categories tab: one block per category, a row per subcategory. */
 .c-block { padding:4px 0 12px; border-bottom:1px solid var(--line); margin-bottom:8px; }
@@ -448,7 +452,6 @@ input, select { font-family:inherit; }
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
       <div class="topbar-right">
-        <button class="top-pill" onclick="openManage('categories')">Categories &amp; targets</button>
       </div>
     </div>
 
@@ -469,7 +472,7 @@ input, select { font-family:inherit; }
     </section>
 
     <div class="card panel">
-      <div class="card-head"><div class="card-title">By category</div></div>
+      <div class="card-head"><div class="card-title">Budget</div><button class="head-cog" onclick="openManage('categories')" aria-label="Budget settings" title="Categories, targets and accounts"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
       <div id="catBreakdown"></div>
     </div>
 
