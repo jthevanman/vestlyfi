@@ -346,8 +346,22 @@ input, select { font-family:inherit; }
 .cat-row:hover { background:var(--hover); }
 .cat-main { flex:1; min-width:0; }
 .cat-name { font-size:1rem; font-weight:500; }
-.cat-sub { margin-top:2px; font-size:0.8rem; color:var(--cream-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.cat-sub.picked { color:var(--accent-light); }
+/* Under each category: two subcategory names and a count of the rest.
+   The count sits beside the names, never inside the clipped text. */
+.cat-sub { display:flex; align-items:center; gap:6px; margin-top:3px; font-size:0.78rem; color:var(--muted); min-width:0; }
+.cat-sub-names { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cat-sub-names i { font-style:normal; padding:0 5px; opacity:0.6; }
+.cat-more { flex:0 0 auto; padding:1px 7px; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.7rem; font-weight:500; }
+.cat-sub.picked { color:var(--accent-light); font-weight:500; }
+/* "+ New ..." row at the end of each list. */
+.cat-add { color:var(--accent); }
+.cat-add .s-ic { background:none; border:1.5px dashed var(--muted); color:var(--accent); }
+.cat-add .cat-name { font-size:0.95rem; color:var(--accent); }
+.cat-add:hover .cat-name { color:var(--accent-light); }
+.grp-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.grp-rename { flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; margin:-6px 0 4px; padding:7px 14px; border:none; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.8rem; font-weight:500; cursor:pointer; }
+.grp-rename:hover { background:var(--surface-2); color:var(--cream); }
+.grp-rename svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .cat-row > .chev { color:var(--muted); }
 .cat-row.on .cat-name { color:var(--accent-light); }
 .cat-row.on .s-ic { background:var(--accent); color:var(--on-accent); }
@@ -604,12 +618,6 @@ input, select { font-family:inherit; }
     <div class="cat-pick" id="catChips"></div>
     <div class="more-links">
       <button class="btn btn-ghost all-cats" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
-    </div>
-    <div class="sub-form hidden" id="newCatForm">
-      <div class="sub-form-title">New category</div>
-      <input class="pill-input" id="newCatName" type="text" placeholder="Name, like Pet care" maxlength="60" onkeydown="if(event.key==='Enter')createCategoryFromSheet()">
-      <button class="pick-row form-pick" onclick="pickNewCatGroup()"><span class="row-label">Category</span><span class="pick-val"><span id="newCatGroupLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-      <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newCatForm')">Cancel</button><button class="btn btn-gold" onclick="createCategoryFromSheet()">Add category</button></div>
     </div>
 
     <div class="list">
@@ -1120,7 +1128,6 @@ function openAdd(){
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
   mode = 'spent'; selCat = null; navGroup = null; selAcct = defaultAccount();
   document.getElementById('newAcctForm').classList.add('hidden');
-  document.getElementById('newCatForm').classList.add('hidden');
   closePicker();
   document.getElementById('addMsg').textContent = '';
   renderSheet();
@@ -1146,7 +1153,6 @@ function openEdit(id){
   toggleDetails(false);
   selCat = t.category_id; navGroup = (catById(selCat) || {}).group_id || null; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
-  document.getElementById('newCatForm').classList.add('hidden');
   closePicker();
   document.getElementById('addMsg').textContent = '';
   renderSheet();
@@ -1198,7 +1204,7 @@ function toggleDetails(open){
 let navGroup = null;          // category (group) whose subcategories are showing
 function sheetGroups(){
   const kinds = mode === 'received' ? ['income'] : ['expense','transfer'];
-  return sortedGroups().filter(g => !g.hidden && kinds.includes(g.kind) && catsIn(g.id, false).length);
+  return sortedGroups().filter(g => !g.hidden && kinds.includes(g.kind) && (catsIn(g.id, false).length || !catsIn(g.id, true).length));
 }
 /* Categories have no icon of their own; the starter ones get a fitting one. */
 const GROUP_ICON = { housing:'home', food:'fork', transportation:'car', personal:'bag', transfers:'arrows', income:'coins' };
@@ -1214,6 +1220,13 @@ function groupHue(g){
 function catHue(c){ return groupHue(groupById(c.group_id)); }
 function groupIcon(g){ const k = GROUP_ICON[norm(g.name)]; return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(g.name); }
 const CHEV_R = '<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
+const PLUS_IC = '<span class="s-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>';
+function subPreview(g){
+  const names = catsIn(g.id, false).map(c => c.name);
+  if (!names.length) return '<div class="cat-sub"><span class="cat-sub-names">No subcategories yet</span></div>';
+  const shown = names.slice(0, 2).map(escHtml).join('<i>·</i>'), rest = names.length - 2;
+  return `<div class="cat-sub"><span class="cat-sub-names">${shown}</span>${rest > 0 ? `<span class="cat-more">+${rest}</span>` : ''}</div>`;
+}
 function renderCatPicker(){
   const el = document.getElementById('catChips'), list = sheetGroups();
   const only = list.length === 1 ? list[0] : null;
@@ -1221,17 +1234,41 @@ function renderCatPicker(){
   if (!g) {
     el.innerHTML = '<div class="cat-list">' + list.map(x => {
       const picked = sel && sel.group_id === x.id;
-      const sub = picked ? `<div class="cat-sub picked">${escHtml(sel.name)}</div>` : `<div class="cat-sub">${escHtml(catsIn(x.id, false).map(c => c.name).join(', '))}</div>`;
+      const sub = picked ? `<div class="cat-sub picked">${escHtml(sel.name)}</div>` : subPreview(x);
       return `<button class="cat-row${picked ? ' on' : ''}" onclick="openGroup('${x.id}')"><span class="s-ic tint" style="--h:${groupHue(x)}">${groupIcon(x)}</span><span class="cat-main"><div class="cat-name">${escHtml(x.name)}</div>${sub}</span>${CHEV_R}</button>`;
-    }).join('') + '</div>';
+    }).join('') + `<button class="cat-row cat-add" onclick="addNewGroup()">${PLUS_IC}<span class="cat-main"><div class="cat-name">New category</div></span></button></div>`;
     return;
   }
   const subs = catsIn(g.id, false);
   if (sel && sel.group_id === g.id && !subs.some(c => c.id === sel.id)) subs.push(sel);
-  const back = g === only ? '' : `<button class="grp-back" onclick="openGroup(null)"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>${escHtml(g.name)}</button>`;
-  el.innerHTML = back + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('') + '</div>';
+  const back = g === only ? '<span></span>' : `<button class="grp-back" onclick="openGroup(null)"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>${escHtml(g.name)}</button>`;
+  el.innerHTML = `<div class="grp-head">${back}<button class="grp-rename" onclick="renameGroup('${g.id}')">${PENCIL}Rename</button></div>`
+    + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('')
+    + `<button class="cat-row cat-add" onclick="addNewSub('${g.id}')">${PLUS_IC}<span class="cat-main"><div class="cat-name">New subcategory in ${escHtml(g.name)}</div></span></button></div>`;
 }
 function openGroup(id){ navGroup = id; renderCatPicker(); }
+
+/* Adding and renaming from the add screen. Uses the same edit sheet as
+   Categories & targets, then comes back here with the result picked. */
+function addNewSub(groupId){
+  closePicker();
+  if (!groupId) {   // from All categories: the open category, else Personal
+    const want = mode === 'received' ? 'income' : 'expense';
+    const vis = sortedGroups().filter(g => !g.hidden);
+    const def = groupById(navGroup) || vis.find(g => g.kind === want && norm(g.name) === 'personal') || vis.find(g => g.kind === want) || vis[0];
+    groupId = def ? def.id : null;
+  }
+  openNewSub(groupId);
+  edit.onSaved = c => setCat(c.id);
+}
+function addNewGroup(){
+  openNewGroup(mode === 'received' ? 'income' : 'expense');
+  edit.onSaved = g => { navGroup = g.id; renderCatPicker(); };
+}
+function renameGroup(id){
+  openEditGroup(id);
+  edit.onSaved = () => renderCatPicker();
+}
 
 function renderSheet(){
   document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
@@ -1374,43 +1411,11 @@ function openCategoryBrowser(){
     if (!list.length) continue;
     html += `<div class="browser-grp"><div class="browser-grp-title">${escHtml(g.name)}</div><div class="tiles">` + list.map(c => tileHtml(c, `browserPick('${c.id}')`)).join('') + '</div></div>';
   }
-  html += '<div class="tiles"><button class="tile new" onclick="openNewCategory()"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New category</span></button></div>';
+  html += '<div class="tiles"><button class="tile new" onclick="addNewSub(null)"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New subcategory</span></button></div>';
   showPicker('All categories', html);
 }
 function browserPick(id){ closePicker(); setCat(id); }
 
-/* New category, from the add screen. */
-let newCatGroupId = null;
-function newCatGroups(){ return sortedGroups().filter(g => !g.hidden); }
-function setNewCatGroup(id){ newCatGroupId = id; const g = groupById(id); document.getElementById('newCatGroupLabel').textContent = g ? g.name : 'Choose'; }
-function openNewCategory(){
-  closePicker();
-  const want = mode === 'received' ? 'income' : 'expense';
-  const list = newCatGroups();
-  const def = list.find(g => g.kind === want && norm(g.name) === 'personal') || list.find(g => g.kind === want) || list[0];
-  setNewCatGroup(def ? def.id : null);
-  document.getElementById('newAcctForm').classList.add('hidden');
-  document.getElementById('newCatForm').classList.remove('hidden');
-  document.getElementById('newCatName').value = '';
-  document.getElementById('newCatName').focus();
-}
-function pickNewCatGroup(){
-  openPicker('Category', newCatGroups().map(g => ({ value:g.id, label:g.name })), newCatGroupId, setNewCatGroup);
-}
-async function createCategoryFromSheet(){
-  const name = document.getElementById('newCatName').value.trim();
-  const groupId = newCatGroupId;
-  const msg = document.getElementById('addMsg');
-  if (!name) { msg.textContent = 'Name the subcategory.'; return; }
-  if (!groupId) { msg.textContent = 'Pick a category.'; return; }
-  const sort = catsIn(groupId, true).reduce((m,c) => Math.max(m, c.sort_order), 0) + 1;
-  const { data, error } = await sb.from('budget_categories').insert({ user_id:user.id, group_id:groupId, name, sort_order:sort }).select().single();
-  if (error) { msg.textContent = errText(error); return; }
-  cats.push(data);
-  msg.textContent = '';
-  document.getElementById('newCatForm').classList.add('hidden');
-  setCat(data.id);
-}
 
 /* Account, from the add screen. */
 const KINDS = [['credit_card','Credit card'],['checking','Checking'],['savings','Savings'],['cash','Cash'],['other','Other']];
@@ -1431,7 +1436,6 @@ function openAccountPicker(){
 function setNewAcctKind(k){ newAcctKind = k; document.getElementById('newAcctKindLabel').textContent = kindLabel(k); }
 function openNewAccount(){
   setNewAcctKind('credit_card');
-  document.getElementById('newCatForm').classList.add('hidden');
   document.getElementById('newAcctForm').classList.remove('hidden');
   document.getElementById('newAcctName').value = '';
   document.getElementById('newAcctName').focus();
@@ -1731,7 +1735,7 @@ function startEdit(e){
 function openEditSub(id){ const c = catById(id); startEdit({ type:'sub', id, orig:{ name:c.name, icon:c.icon || null, group_id:c.group_id, hidden:!!c.hidden, counts_as_saving:!!c.counts_as_saving } }); }
 function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', icon:null, group_id:groupId, hidden:false, counts_as_saving:false } }); }
 function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden } }); }
-function openNewGroup(){ startEdit({ type:'group', id:null, kind:'expense', orig:{ name:'', hidden:false } }); }
+function openNewGroup(kind){ startEdit({ type:'group', id:null, kind:kind || 'expense', orig:{ name:'', hidden:false } }); }
 function openEditAccount(id){ const a = acctById(id); startEdit({ type:'account', id, orig:{ name:a.name, kind:a.kind, archived:!!a.archived } }); }
 function openEditRecurring(id){
   const r = recurring.find(x => x.id === id); if (!r) return;
@@ -1854,7 +1858,7 @@ async function saveEdit(){
       if (edit.id) res = await sb.from('budget_groups').update({ name, hidden:d.hidden }).eq('id', edit.id).select().single();
       else {
         const sort = groups.reduce((m,g) => Math.max(m, g.sort_order), 0) + 1;
-        res = await sb.from('budget_groups').insert({ user_id:user.id, name, kind:'expense', hidden:d.hidden, sort_order:sort }).select().single();
+        res = await sb.from('budget_groups').insert({ user_id:user.id, name, kind:edit.kind || 'expense', hidden:d.hidden, sort_order:sort }).select().single();
       }
       if (res.error) { msg.textContent = errText(res.error); return; }
       groups = edit.id ? groups.map(g => g.id === edit.id ? res.data : g) : groups.concat(res.data);
@@ -1864,10 +1868,12 @@ async function saveEdit(){
       if (res.error) { msg.textContent = errText(res.error); return; }
       if (edit.id) accounts = accounts.map(a => a.id === edit.id ? res.data : a);
     }
+    const done = edit.onSaved;
     document.getElementById('editSheet').classList.remove('open');
     edit = null;
     toast('Saved');
     renderManage(); render();
+    if (done) done(res.data);
   } finally { btn.disabled = false; }
 }
 </script>
