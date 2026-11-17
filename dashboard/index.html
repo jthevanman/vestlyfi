@@ -109,8 +109,20 @@ a { color:inherit; }
 .grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
 .w { grid-column:span 1; min-width:0; background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:16px; }
 .w.full { grid-column:1 / -1; }
-@media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } .w, .w.full { grid-column:1 / -1; } .t-size { display:none; } }
+@media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } .w, .w.full { grid-column:1 / -1; } }
 .editing .w { outline:1.5px dashed var(--line); outline-offset:-1px; }
+@media (pointer:fine) { .editing .w { cursor:grab; } }
+/* Dragging: the widget lifts and follows the pointer; a dashed slot shows where it lands. */
+.w.dragging { box-shadow:0 28px 56px -16px rgba(0,0,0,0.75); transform:scale(1.015); cursor:grabbing; outline-color:var(--accent); }
+.w.ph { background:transparent; box-shadow:none; outline:2px dashed var(--accent); outline-offset:-2px; opacity:.5; }
+body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
+/* Two columns inside an expanded widget; one on phones. */
+.cols { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 28px; }
+.cols > .cb { border-top:1px solid var(--line); }
+.cols > .cb:nth-child(-n+2) { border-top:none; }
+@media (max-width:720px) { .cols { grid-template-columns:minmax(0,1fr); } .cols > .cb:nth-child(2) { border-top:1px solid var(--line); } .cols > .col2 { margin-top:18px; } }
+.sub { display:flex; justify-content:space-between; gap:10px; padding:4px 0 4px 17px; font-size:0.8rem; color:var(--cream-dim); }
+.sub span:first-child { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .w-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:12px; min-height:30px; }
 .w-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .w-link { flex:0 0 auto; display:inline-flex; align-items:center; gap:2px; font-size:0.78rem; color:var(--cream-dim); text-decoration:none; }
@@ -129,6 +141,9 @@ a { color:inherit; }
 .t-btn.danger { color:var(--red); margin-left:auto; }
 .t-pill { height:32px; padding:0 12px; border:none; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.78rem; font-weight:500; cursor:pointer; white-space:nowrap; }
 .t-pill:hover { background:var(--surface-2); color:var(--cream); }
+.t-btn.grip { cursor:grab; touch-action:none; }
+.t-btn.grip svg { fill:currentColor; stroke:none; }
+.t-hint { font-size:0.74rem; color:var(--muted); margin:-6px 0 12px; }
 
 /* Figures */
 .big { font-size:2.1rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; }
@@ -209,6 +224,8 @@ a { color:inherit; }
 .sheet-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:16px; }
 .sheet-overlay.open { display:flex; }
 .sheet { width:100%; max-width:400px; max-height:86vh; overflow-y:auto; background:var(--raised); border:1px solid var(--line); border-radius:24px; padding:20px 18px; box-shadow:0 24px 48px -16px rgba(0,0,0,0.7); }
+/* Keep the scroll bar on the straight part of the edge, clear of the rounded corners. */
+.sheet::-webkit-scrollbar-track { margin:22px 0; }
 .sheet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
 .sheet-title { font-size:1rem; font-weight:500; }
 .close-x { background:none; border:none; color:var(--muted); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px; }
@@ -368,6 +385,12 @@ function holdings(){
   for (const e of sortedEntries()) last[e.type + '\u0000' + e.category] = { type:e.type, category:e.category, value:Number(e.value) || 0, date:e.date };
   return Object.values(last);
 }
+/* Value of each asset and liability as of the end of a month ("2026-05"). */
+function holdingsAt(k){
+  const out = {};
+  for (const e of sortedEntries()) { if (String(e.date).slice(0, 7) > k) break; out[e.type + '\u0000' + e.category] = { type:e.type, category:e.category, value:Number(e.value) || 0 }; }
+  return out;
+}
 const monthLabel = k => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString(VestlyCurrency.locale(), { month:'short', year:'2-digit' }); };
 
 /* ── Budget math (same as /budget/) ── */
@@ -422,29 +445,33 @@ const START = {
   debts: { href:'/debt-tracker/', name:'debt tracker', line:'No debts logged.' },
 };
 
-/* ── Widgets ── */
+/* ── Widgets ──
+   Only widgets with something more to show can expand, and expanding
+   changes what they show, not just how big it is. `wide` and `narrow`
+   say what each size shows. */
 const WIDGETS = {
   'nw-total':      { src:'nw', name:'Net worth', desc:'What you own minus what you owe, and the change since last month.', size:'half', link:['/net-worth/', 'Net worth'] },
-  'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', link:['/net-worth/', 'Net worth'] },
-  'nw-sheet':      { src:'nw', name:'Balance sheet', desc:'Your biggest assets and liabilities, adding up to net worth.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', wide:'Adds what moved it: the biggest changes behind the total.', narrow:'Net worth line only.', link:['/net-worth/', 'Net worth'] },
+  'nw-sheet':      { src:'nw', name:'Balance sheet', desc:'Your assets and liabilities, adding up to net worth.', size:'half', wide:'Assets and liabilities side by side, up to 8 each.', narrow:'Your top 4 of each.', link:['/net-worth/', 'Net worth'] },
   'nw-watch':      { src:'nw', name:'One asset or liability', desc:'Pick one and see its value over time.', size:'half', multi:true, config:true, link:['/net-worth/', 'Net worth'] },
   'bd-month':      { src:'budget', name:'This month', desc:'Income, spent, saved & invested, and money out.', size:'half', link:['/budget/', 'Budget'] },
-  'bd-categories': { src:'budget', name:'Spending by category', desc:'Where this month’s money went, against your targets.', size:'half', link:['/budget/', 'Budget'] },
-  'bd-trend':      { src:'budget', name:'Income and spending', desc:'The last six months side by side.', size:'full', link:['/budget/', 'Budget'] },
-  'bd-targets':    { src:'budget', name:'Targets', desc:'Subcategories with a monthly target and how close you are.', size:'half', link:['/budget/', 'Budget'] },
+  'bd-categories': { src:'budget', name:'Spending by category', desc:'Where this month’s money went, against your targets.', size:'half', wide:'Adds the subcategories under each category.', narrow:'Categories only.', link:['/budget/', 'Budget'] },
+  'bd-trend':      { src:'budget', name:'Income and spending', desc:'Money in and out, month by month.', size:'full', wide:'Shows 12 months.', narrow:'Shows 6 months.', link:['/budget/', 'Budget'] },
+  'bd-targets':    { src:'budget', name:'Targets', desc:'Subcategories with a monthly target and how close you are.', size:'half', wide:'Shows every target, in two columns.', narrow:'The 6 closest to their limit.', link:['/budget/', 'Budget'] },
   'bd-watch':      { src:'budget', name:'One category', desc:'Pick a category or subcategory and follow it month to month.', size:'half', multi:true, config:true, link:['/budget/', 'Budget'] },
   'bd-recent':     { src:'budget', name:'Recent transactions', desc:'The latest money in and out.', size:'half', link:['/budget/', 'Budget'] },
   'bd-upcoming':   { src:'budget', name:'Coming up', desc:'Recurring transactions due next.', size:'half', link:['/budget/', 'Budget'] },
   'debts':         { src:'debts', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/debt-tracker/', 'Debts'] },
 };
+const canExpand = def => !!def.wide;
 const SOURCES = [['nw', 'Net worth'], ['budget', 'Budget'], ['debts', 'Debts']];
 
 /* Starting layouts. The default picks itself from the data you have, and
    stays automatic until you customize. */
 const PRESETS = {
-  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['nw-trend','full'], ['bd-categories','half'], ['bd-upcoming','half'], ['nw-sheet','half'], ['bd-recent','half'], ['debts','full']] },
-  networth:   { name:'Net worth', desc:'What you own, what you owe, and the trend.', items:[['nw-total','half'], ['nw-sheet','half'], ['nw-trend','full'], ['debts','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['bd-categories','half'], ['bd-trend','full'], ['bd-targets','half'], ['bd-upcoming','half'], ['bd-recent','full']] },
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['nw-trend','full'], ['bd-categories','half'], ['bd-upcoming','half'], ['nw-sheet','half'], ['bd-recent','half'], ['debts','half'], ['bd-targets','half']] },
+  networth:   { name:'Net worth', desc:'What you own, what you owe, and the trend.', items:[['nw-total','half'], ['debts','half'], ['nw-trend','full'], ['nw-sheet','full']] },
+  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['bd-upcoming','half'], ['bd-trend','full'], ['bd-categories','full'], ['bd-targets','half'], ['bd-recent','half']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
@@ -455,7 +482,13 @@ function currentItems(){ return layout ? layout.items : itemsFor(autoPreset()); 
 
 /* Layout lives in this browser for now, per account. */
 const layoutKey = () => 'vf_dash_v1_' + (sample ? 'sample' : user.id);
-function loadLayout(){ try { const v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); layout = v && Array.isArray(v.items) ? v : null; } catch (e) { layout = null; } }
+function loadLayout(){
+  try { const v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); layout = v && Array.isArray(v.items) ? v : null; } catch (e) { layout = null; }
+  if (!layout) return;
+  // Drop unknown widgets; widgets that can't expand are always half width.
+  layout.items = layout.items.filter(it => WIDGETS[it.type]);
+  for (const it of layout.items) if (!canExpand(WIDGETS[it.type])) it.size = 'half';
+}
 function saveLayout(){ try { localStorage.setItem(layoutKey(), JSON.stringify(layout)); } catch (e) {} }
 function ensureLayout(){ if (!layout) layout = { preset:autoPreset(), items:itemsFor(autoPreset()) }; }
 
@@ -494,29 +527,35 @@ function widgetHtml(it, i, n){
   try { body = HAS[def.src]() ? RENDER[it.type](it) : emptyFor(def.src); }
   catch (e) { console.error(e); body = '<div class="w-empty">This widget could not load.</div>'; }
   const title = (RENDER_TITLE[it.type] && RENDER_TITLE[it.type](it)) || def.name;
+  const wide = it.size === 'full' && canExpand(def);
   const tools = editing ? `<div class="w-tools">
-      <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move up"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
-      <button class="t-btn" onclick="moveItem('${it.id}',1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move down"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
-      <button class="t-pill t-size" onclick="toggleSize('${it.id}')">${it.size === 'full' ? 'Half width' : 'Full width'}</button>
+      <button class="t-btn grip" onpointerdown="armDrag(event,'${it.id}',true)" onkeydown="gripKey(event,'${it.id}')" aria-label="Move ${escHtml(def.name)}. Drag, or use the arrow keys." title="Drag to move"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+      ${canExpand(def) ? `<button class="t-pill" onclick="toggleSize('${it.id}')">${wide ? 'Compact' : 'Expand'}</button>` : ''}
       ${def.config ? `<button class="t-pill" onclick="configure('${it.id}')">Change</button>` : ''}
       <button class="t-btn danger" onclick="removeItem('${it.id}')" aria-label="Remove ${escHtml(def.name)}"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
-    </div>` : '';
+    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}` : '';
   const link = !editing && def.link ? `<a class="w-link" href="${def.link[0]}">${def.link[1]}${CHEV}</a>` : '';
-  return `<section class="w${it.size === 'full' ? ' full' : ''}" id="w_${it.id}">${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div>${body}</section>`;
+  const grab = editing ? ` onpointerdown="armDrag(event,'${it.id}',false)"` : '';
+  return `<section class="w${wide ? ' full' : ''}" id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div>${body}</section>`;
 }
 function emptyFor(src){ const s = START[src]; return `<div class="w-empty">${s.line} <a href="${s.href}">Open the ${s.name}</a></div>`; }
 
 /* Line chart: vector-effect keeps the stroke even while the SVG stretches. */
+/* vals: one series of numbers, or a list of { vals, color } sharing one scale.
+   The first series gets the soft fill. */
 function lineChart(vals, cls){
-  const W = 600, H = 170, P = 8;
-  let min = Math.min(...vals), max = Math.max(...vals);
+  const series = typeof vals[0] === 'number' ? [{ vals }] : vals;
+  const W = 600, H = 170, P = 8, all = series.flatMap(s => s.vals), len = series[0].vals.length;
+  let min = Math.min(...all), max = Math.max(...all);
   if (min === max) { min -= 1; max += 1; }
-  const x = i => vals.length === 1 ? W / 2 : P + i * (W - 2 * P) / (vals.length - 1);
+  const x = i => len === 1 ? W / 2 : P + i * (W - 2 * P) / (len - 1);
   const y = v => P + (H - 2 * P) * (1 - (v - min) / (max - min));
-  const pts = vals.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1));
-  const area = `M${x(0).toFixed(1)},${H} L${pts.join(' L')} L${x(vals.length - 1).toFixed(1)},${H} Z`;
+  const pts = s => s.vals.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1));
+  const first = pts(series[0]);
+  const area = `M${x(0).toFixed(1)},${H} L${first.join(' L')} L${x(len - 1).toFixed(1)},${H} Z`;
   const zero = min < 0 && max > 0 ? `<line class="lc-zero" x1="0" x2="${W}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" vector-effect="non-scaling-stroke"/>` : '';
-  return `<div class="lc ${cls || ''}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}<polyline class="lc-line" points="${pts.join(' ')}" vector-effect="non-scaling-stroke"/></svg></div>`;
+  const lines = series.map(s => `<polyline class="lc-line" points="${pts(s).join(' ')}" vector-effect="non-scaling-stroke"${s.color ? ` style="stroke:${s.color}"` : ''}/>`).join('');
+  return `<div class="lc ${cls || ''}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}${lines}</svg></div>`;
 }
 function lastMonths(n){ const now = new Date(), out = []; for (let i = n - 1; i >= 0; i--) out.push(new Date(now.getFullYear(), now.getMonth() - i, 1)); return out; }
 
@@ -531,28 +570,42 @@ const RENDER = {
     return `<div class="big${last.net < 0 ? ' neg' : ''}">${money(last.net)}</div>${delta}
       <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v">${money(last.liabilities)}</div></div></div>`;
   },
-  'nw-trend'(){
+  'nw-trend'(it){
     const s = snapshots().slice(-12);
     if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
     const first = s[0], last = s[s.length - 1], ch = last.net - first.net;
+    const axis = `<div class="lc-x"><span>${monthLabel(first.month)}</span><span>${monthLabel(last.month)}</span></div>`;
+    if (it.size === 'full') {
+      // Expanded: the chart plus what moved it, the biggest changes over the same months.
+      // A liability going down is good for net worth, so it shows green.
+      const then = holdingsAt(first.month), nowH = holdingsAt(last.month);
+      const moves = [...new Set([...Object.keys(then), ...Object.keys(nowH)])].map(k => {
+        const a = then[k], b = nowH[k], h = b || a, d = (b ? b.value : 0) - (a ? a.value : 0);
+        return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
+      }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
+      const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
+      return `<div class="cols"><div>${lineChart(s.map(x => x.net))}${axis}
+          <div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div></div>
+        <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved it</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
+    }
     const hi = Math.max(...s.map(x => x.net)), lo = Math.min(...s.map(x => x.net));
-    return lineChart(s.map(x => x.net)) +
-      `<div class="lc-x"><span>${monthLabel(first.month)}</span><span>${monthLabel(last.month)}</span></div>
-       <div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>High <b>${money(hi)}</b></span><span>Low <b>${money(lo)}</b></span></div>`;
+    return lineChart(s.map(x => x.net)) + axis +
+      `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>High <b>${money(hi)}</b></span><span>Low <b>${money(lo)}</b></span></div>`;
   },
-  'nw-sheet'(){
-    const h = holdings().filter(x => x.value !== 0);
+  'nw-sheet'(it){
+    const h = holdings().filter(x => x.value !== 0), wide = it.size === 'full', show = wide ? 8 : 4;
     const block = (type, label) => {
       const rows = h.filter(x => x.type === type).sort((a, b) => b.value - a.value);
       const total = rows.reduce((a, x) => a + x.value, 0);
-      const top = rows.slice(0, 4), rest = rows.slice(4);
+      const top = rows.slice(0, show), rest = rows.slice(show);
       let html = `<div class="row sec"><span class="k">${label}</span><span class="v">${money(total)}</span></div>`;
       html += top.map(x => `<div class="row"><span class="k">${escHtml(x.category)}</span><span class="v">${money(x.value)}</span></div>`).join('');
       if (rest.length) html += `<div class="row"><span class="k">${rest.length} more</span><span class="v">${money(rest.reduce((a, x) => a + x.value, 0))}</span></div>`;
       return { html, total };
     };
     const a = block('asset', 'Assets'), l = block('liability', 'Liabilities');
-    return `<div>${a.html}${l.html}<div class="row total"><span class="k">Net worth</span><span class="v">${money(a.total - l.total)}</span></div></div>`;
+    const total = `<div class="row total"><span class="k">Net worth${wide ? ` <small style="color:var(--muted);font-weight:400">= ${money(a.total)} − ${money(l.total)}</small>` : ''}</span><span class="v">${money(a.total - l.total)}</span></div>`;
+    return wide ? `<div class="cols"><div>${a.html}</div><div>${l.html}</div></div>${total}` : `<div>${a.html}${l.html}${total}</div>`;
   },
   'nw-watch'(it){
     if (!it.opts) return `<div class="w-empty">Pick an asset or liability to follow.<br><button class="btn btn-ghost" onclick="configure('${it.id}')">Pick one</button></div>`;
@@ -575,28 +628,33 @@ const RENDER = {
       <div class="stat"><div class="stat-k">Money out</div><div class="stat-v">${money(t.spent + t.toSaving)}</div></div>
     </div>`;
   },
-  'bd-categories'(){
-    const { byGroup } = spendBy(new Date());
+  'bd-categories'(it){
+    const { byGroup, byCat } = spendBy(new Date()), wide = it.size === 'full';
     const rows = D.groups.filter(g => g.kind === 'expense').map(g => ({ g, s:byGroup[g.id] || 0, t:groupTarget(g) })).filter(r => r.s > 0 || r.t > 0).sort((a, b) => b.s - a.s);
     if (!rows.length) return '<div class="w-empty">Nothing spent yet this month.</div>';
     const max = Math.max(...rows.map(r => Math.max(r.s, r.t)));
-    return rows.slice(0, 7).map(r => {
+    const html = rows.slice(0, wide ? 12 : 7).map(r => {
       const st = targetState(r.s, r.t), pct = Math.max(0, Math.min(100, (r.t ? r.s / r.t : r.s / max) * 100));
-      return `<div class="cb" style="--h:${groupHue(r.g)}"><div class="cb-top"><span class="cb-name"><span class="dot"></span><span>${escHtml(r.g.name)}</span></span><span class="cb-v">${money(r.s)}${r.t ? `<small> of ${money(r.t)}</small>` : ''}</span></div><div class="track"><span class="fill ${st}" style="width:${pct.toFixed(1)}%"></span></div></div>`;
-    }).join('');
+      // Expanded: the subcategories that make up each category's total.
+      const subs = wide ? D.cats.filter(c => c.group_id === r.g.id && (byCat[c.id] || 0) > 0).sort((a, b) => byCat[b.id] - byCat[a.id])
+        .map(c => `<div class="sub"><span>${escHtml(c.name)}</span><span>${money(byCat[c.id])}${c.monthly_target != null ? ` of ${money(c.monthly_target)}` : ''}</span></div>`).join('') : '';
+      return `<div class="cb" style="--h:${groupHue(r.g)}"><div class="cb-top"><span class="cb-name"><span class="dot"></span><span>${escHtml(r.g.name)}</span></span><span class="cb-v">${money(r.s)}${r.t ? `<small> of ${money(r.t)}</small>` : ''}</span></div><div class="track"><span class="fill ${st}" style="width:${pct.toFixed(1)}%"></span></div>${subs ? `<div style="margin-top:6px">${subs}</div>` : ''}</div>`;
+    });
+    return wide ? `<div class="cols">${html.join('')}</div>` : html.join('');
   },
-  'bd-trend'(){
-    const months = lastMonths(6), t = months.map(m => totals(txIn(m)));
+  'bd-trend'(it){
+    const months = lastMonths(it.size === 'full' ? 12 : 6), t = months.map(m => totals(txIn(m)));
     const max = Math.max(1, ...t.map(x => Math.max(x.income, x.spent)));
     const avg = t.reduce((a, x) => a + x.spent, 0) / t.length;
     return `<div class="tb">${months.map((m, i) => `<div class="tb-col"><div class="tb-bars"><span class="tb-bar in" style="height:${(t[i].income / max * 100).toFixed(1)}%" title="Income ${money(t[i].income)}"></span><span class="tb-bar out" style="height:${(Math.max(0, t[i].spent) / max * 100).toFixed(1)}%" title="Spent ${money(t[i].spent)}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>
       <div class="legend"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--accent)"></i>Spent</span><span>Average spent <b>${money(avg)}</b></span></div>`;
   },
-  'bd-targets'(){
-    const { byCat } = spendBy(new Date());
-    const rows = D.cats.filter(c => !c.hidden && c.monthly_target != null && kindOfCat(c) === 'expense').map(c => ({ c, s:byCat[c.id] || 0, t:Number(c.monthly_target) })).sort((a, b) => (b.s / b.t) - (a.s / a.t));
+  'bd-targets'(it){
+    const { byCat } = spendBy(new Date()), wide = it.size === 'full';
+    const rows = D.cats.filter(c => !c.hidden && c.monthly_target != null && Number(c.monthly_target) > 0 && kindOfCat(c) === 'expense').map(c => ({ c, s:byCat[c.id] || 0, t:Number(c.monthly_target) })).sort((a, b) => (b.s / b.t) - (a.s / a.t));
     if (!rows.length) return `<div class="w-empty">No targets set. <a href="/budget/">Set them in the budget tracker</a></div>`;
-    return rows.slice(0, 6).map(r => `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.c.name)}</span></span><span class="cb-v">${money(r.s)}<small> of ${money(r.t)}</small></span></div><div class="track"><span class="fill ${targetState(r.s, r.t)}" style="width:${Math.min(100, r.s / r.t * 100).toFixed(1)}%"></span></div></div>`).join('');
+    const html = (wide ? rows : rows.slice(0, 6)).map(r => `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.c.name)}</span></span><span class="cb-v">${money(r.s)}<small> of ${money(r.t)}</small></span></div><div class="track"><span class="fill ${targetState(r.s, r.t)}" style="width:${Math.min(100, r.s / r.t * 100).toFixed(1)}%"></span></div></div>`).join('');
+    return wide ? `<div class="cols">${html}</div>` : html;
   },
   'bd-watch'(it){
     if (!it.opts) return `<div class="w-empty">Pick a category or subcategory to follow.<br><button class="btn btn-ghost" onclick="configure('${it.id}')">Pick one</button></div>`;
@@ -649,16 +707,106 @@ function setEditing(on){
   editing = on;
   if (on) ensureLayout();
   closeSheet(); render();
-  if (on) toast('Move, resize or remove widgets, or add new ones.');
+  if (on) toast('Drag widgets to move them.');
 }
 function findItem(id){ return layout.items.find(x => x.id === id); }
+/* Keyboard moving, from the drag handle: arrow keys step one place. */
 function moveItem(id, dir){
   const a = layout.items, i = a.findIndex(x => x.id === id), j = i + dir;
   if (i < 0 || j < 0 || j >= a.length) return;
   [a[i], a[j]] = [a[j], a[i]]; saveLayout(); render();
   const el = document.getElementById('w_' + id); if (el) el.scrollIntoView({ block:'nearest', behavior:'smooth' });
 }
+function gripKey(e, id){
+  const dir = { ArrowUp:-1, ArrowLeft:-1, ArrowDown:1, ArrowRight:1 }[e.key];
+  if (!dir) return;
+  e.preventDefault(); moveItem(id, dir);
+  const g = document.querySelector('#w_' + id + ' .grip'); if (g) g.focus();
+}
 function toggleSize(id){ const it = findItem(id); it.size = it.size === 'full' ? 'half' : 'full'; saveLayout(); render(); }
+
+/* ── Drag to rearrange ──
+   Mouse: grab anywhere on a widget (not its buttons). Touch: grab the handle,
+   so the rest of the widget still scrolls the page. The widget follows the
+   pointer and a dashed slot shows where it will land. */
+let drag = null, armed = null;
+function armDrag(e, id, fromHandle){
+  if (!editing || drag || (e.button !== undefined && e.button !== 0)) return;
+  if (!fromHandle && (e.pointerType !== 'mouse' || e.target.closest('button, a'))) return;
+  if (fromHandle) { e.stopPropagation(); e.preventDefault(); startDrag(id, e.clientX, e.clientY); return; }
+  // From the body: wait for a few pixels of movement so a plain click stays a click.
+  armed = { id, x:e.clientX, y:e.clientY };
+  document.addEventListener('pointermove', armedMove);
+  document.addEventListener('pointerup', disarm, { once:true });
+}
+function armedMove(e){
+  if (!armed) return;
+  if (Math.hypot(e.clientX - armed.x, e.clientY - armed.y) < 5) return;
+  const { id, x, y } = armed; disarm();
+  startDrag(id, x, y); onDragMove(e);
+}
+function disarm(){ armed = null; document.removeEventListener('pointermove', armedMove); }
+function startDrag(id, px, py){
+  const el = document.getElementById('w_' + id); if (!el) return;
+  const r = el.getBoundingClientRect();
+  const ph = document.createElement('div');
+  ph.className = 'w ph' + (el.classList.contains('full') ? ' full' : '');
+  ph.style.height = r.height + 'px';
+  el.after(ph);
+  Object.assign(el.style, { position:'fixed', left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px', zIndex:100, pointerEvents:'none', margin:0 });
+  el.classList.add('dragging'); document.body.classList.add('drag-on');
+  drag = { id, el, ph, dx:px - r.left, dy:py - r.top, x:px, y:py, raf:0 };
+  document.addEventListener('pointermove', onDragMove);
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+  drag.raf = requestAnimationFrame(autoScroll);
+}
+function onDragMove(e){
+  if (!drag) return;
+  e.preventDefault();
+  drag.x = e.clientX; drag.y = e.clientY;
+  drag.el.style.left = (e.clientX - drag.dx) + 'px';
+  drag.el.style.top = (e.clientY - drag.dy) + 'px';
+  placeSlot();
+}
+function placeSlot(){
+  const grid = document.getElementById('grid');
+  const sib = (n, dir) => { let s = dir < 0 ? n.previousElementSibling : n.nextElementSibling; while (s === drag.el) s = dir < 0 ? s.previousElementSibling : s.nextElementSibling; return s; };
+  const hit = document.elementFromPoint(drag.x, drag.y);
+  const target = hit && hit.closest('#grid > .w');
+  if (!target) {
+    // Below the last widget: drop at the end.
+    const last = [...grid.children].filter(n => n !== drag.el).pop();
+    if (last && last !== drag.ph && drag.y > last.getBoundingClientRect().bottom) grid.appendChild(drag.ph);
+    return;
+  }
+  if (target === drag.ph) return;
+  const r = target.getBoundingClientRect();
+  const sideBySide = r.width < grid.clientWidth * 0.75;   // half-width neighbours compare left/right
+  const before = sideBySide ? drag.x < r.left + r.width / 2 : drag.y < r.top + r.height / 2;
+  if (before ? sib(target, -1) === drag.ph : sib(target, 1) === drag.ph) return;
+  grid.insertBefore(drag.ph, before ? target : target.nextElementSibling);
+}
+function autoScroll(){
+  if (!drag) return;
+  const edge = 80, y = drag.y;
+  const dy = y < edge ? -Math.ceil((edge - y) / 6) : y > innerHeight - edge ? Math.ceil((y - innerHeight + edge) / 6) : 0;
+  if (dy) { window.scrollBy(0, dy); placeSlot(); }
+  drag.raf = requestAnimationFrame(autoScroll);
+}
+function endDrag(){
+  if (!drag) return;
+  cancelAnimationFrame(drag.raf);
+  document.removeEventListener('pointermove', onDragMove);
+  document.removeEventListener('pointerup', endDrag);
+  document.removeEventListener('pointercancel', endDrag);
+  const { el, ph } = drag;
+  ph.replaceWith(el);
+  el.removeAttribute('style'); el.classList.remove('dragging'); document.body.classList.remove('drag-on');
+  const order = [...document.querySelectorAll('#grid > .w[data-id]')].map(n => n.dataset.id);
+  layout.items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  drag = null; saveLayout(); render();
+}
 async function removeItem(id){
   const it = findItem(id), def = WIDGETS[it.type];
   if (!await askConfirm({ title:`Remove ${(RENDER_TITLE[it.type] && RENDER_TITLE[it.type](it)) || def.name}?`, body:'You can add it back anytime.', yes:'Remove', no:'Cancel' })) return;
@@ -762,7 +910,7 @@ async function signIn(){
 async function signOut(){ closeAcctMenu(); if (sample) return exitSample(); await sb.auth.signOut(); }
 
 async function loadAll(){
-  const since = ymd(new Date(new Date().getFullYear(), new Date().getMonth() - 5, 1));
+  const since = ymd(new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1));   // 12 months, for the expanded trend
   const q = (p) => p.then(r => r.error ? (console.error(r.error), []) : (r.data || [])).catch(e => (console.error(e), []));
   const [entries, groups, cats, accts, tx, rec, debts] = await Promise.all([
     q(sb.from('net_worth_entries').select('type,category,value,date,paid_off').order('date', { ascending:true })),
@@ -826,7 +974,7 @@ function sampleData(){
   const accts = [{ id:'a1', name:'Chase card' }, { id:'a2', name:'Checking' }];
   const tx = []; let n = 0;
   const T = (d, cat, amt, desc, acct) => { if (d <= now) tx.push({ id:'t' + (n++), date:ymd(d), amount:Math.round(amt * 100) / 100, category_id:cat, account_id:acct || 'a1', description:desc || '', created_at:d.toISOString() }); };
-  for (let i = 5; i >= 0; i--) {
+  for (let i = 11; i >= 0; i--) {
     const y = now.getFullYear(), m = now.getMonth() - i, D_ = day => new Date(y, m, day);
     T(D_(1), 'c11', 3250, 'Paycheck', 'a2'); T(D_(15), 'c11', 3250, 'Paycheck', 'a2');
     T(D_(1), 'c1', -1850, 'Rent', 'a2'); T(D_(9), 'c2', -(120 + rnd() * 60), 'Electric');
