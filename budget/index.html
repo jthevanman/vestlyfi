@@ -329,6 +329,11 @@ input, select { font-family:inherit; }
 .cat-row > .chev { color:var(--muted); }
 .cat-row.on .cat-name { color:var(--accent-light); }
 .cat-row.on .s-ic { background:var(--accent); color:var(--on-accent); }
+/* Category colors: a soft tint behind, the color itself on the glyph. */
+.tint { --h-bg:color-mix(in srgb, var(--h) 20%, var(--bg)); --h-ink:var(--h); }
+:root[data-theme="light"] .tint { --h-bg:color-mix(in srgb, var(--h) 18%, #ffffff); --h-ink:color-mix(in srgb, var(--h) 68%, #000000); }
+.s-ic.tint, .tile .tile-ic.tint, .tile:hover .tile-ic.tint { background:var(--h-bg); color:var(--h-ink); }
+.cat-row.on .s-ic.tint, .tile.on .tile-ic.tint, .tile.on:hover .tile-ic.tint { background:var(--h); color:#131313; }
 .grp-back { display:flex; align-items:center; gap:4px; min-height:44px; margin:-6px 0 4px -4px; padding:0 8px 0 4px; background:none; border:none; color:var(--cream); font:inherit; font-size:1rem; font-weight:600; cursor:pointer; }
 .grp-back .chev { width:18px; height:18px; }
 .grp-back:hover { color:var(--accent-light); }
@@ -896,7 +901,7 @@ function renderBreakdown(){
     const open = openSpendIds.has(x.g.id);
     return `<div class="sp-item${open ? ' open' : ''}"><button class="sp-head" onclick="toggleSpend('${x.g.id}')" aria-expanded="${open}">
         <span class="sp-top"><span class="sp-name">${escHtml(x.g.name)}</span><span class="big-left in">${moneyWhole(x.total)}<small> received</small></span>${CHEV_DOWN}</span></button>` +
-      (open ? '<div class="sp-body">' + x.rows.map(r => `<div class="sub-line"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span><span class="sub-right"><span class="sub-left none">${moneyWhole(r.r)}</span></span></div>`).join('') + '</div>' : '') + '</div>';
+      (open ? '<div class="sp-body">' + x.rows.map(r => `<div class="sub-line"><span class="s-ic sm tint" style="--h:${catHue(r.c)}">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span><span class="sub-right"><span class="sub-left none">${moneyWhole(r.r)}</span></span></div>`).join('') + '</div>' : '') + '</div>';
   }).join('');
   if (d.uncatIn > 0) html += `<div class="sp-item"><div class="sp-head static"><span class="sp-top"><span class="sp-name">Uncategorized income</span><span class="big-left in">${moneyWhole(d.uncatIn)}<small> received</small></span></span></div></div>`;
   html += SPEND_RENDER.meters(d);
@@ -949,7 +954,7 @@ const SPEND_RENDER = {
   meters(d){
     return spendItems(d, bigBar, r => {
       const meter = r.t ? `<span class="mini-meter"><span class="fill ${targetState(r.s, r.t)}" style="width:${usedPct(r)}%"></span></span>` : '<span></span>';
-      return `<div class="sub-line meters"><span class="s-ic sm">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${subRightHtml(r)}</div>`;
+      return `<div class="sub-line meters"><span class="s-ic sm tint" style="--h:${catHue(r.c)}">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${subRightHtml(r)}</div>`;
     });
   }
 };
@@ -979,7 +984,7 @@ function renderRecList(){
     const name = r.description || (c ? c.name : 'Uncategorized');
     const next = parseYmd(r.next_date).toLocaleDateString(loc, { month:'short', day:'numeric' });
     const shown = (r.amount_varies ? '~' : '') + (amt > 0 ? '+' : '') + money(Math.abs(amt));
-    return `<button class="tx" onclick="openEditRecurring('${r.id}')"><span class="s-ic sm">${c ? catIcon(c) : monoOf(name)}</span><div class="tx-main"><div class="tx-desc">${escHtml(name)}</div><div class="tx-meta">${escHtml(repeatName(r.frequency))} · Next ${escHtml(next)}${r.amount_varies ? ' · Amount may change' : ''}</div></div><div class="tx-amt${amt > 0 ? ' in' : ''}">${escHtml(shown)}</div></button>`;
+    return `<button class="tx" onclick="openEditRecurring('${r.id}')"><span class="s-ic sm${c ? ` tint" style="--h:${catHue(c)}` : ''}">${c ? catIcon(c) : monoOf(name)}</span><div class="tx-main"><div class="tx-desc">${escHtml(name)}</div><div class="tx-meta">${escHtml(repeatName(r.frequency))} · Next ${escHtml(next)}${r.amount_varies ? ' · Amount may change' : ''}</div></div><div class="tx-amt${amt > 0 ? ' in' : ''}">${escHtml(shown)}</div></button>`;
   }).join('');
 }
 function renderPendingRow(){
@@ -1144,6 +1149,16 @@ function sheetGroups(){
 }
 /* Categories have no icon of their own; the starter ones get a fitting one. */
 const GROUP_ICON = { housing:'home', food:'fork', transportation:'car', personal:'bag', transfers:'arrows', income:'coins' };
+/* Each category has a color; its subcategory icons wear it everywhere. */
+const HUES = { housing:'#7aa7ff', food:'#f0a35e', transportation:'#4cc3b5', personal:'#d08cf0', transfers:'#e8c15a', income:'#5cc28e' };
+const SPARE_HUES = ['#ff8f8f', '#8fd16a', '#6fc8ff', '#f78fc0', '#b3a1ff', '#e8c15a'];
+function groupHue(g){
+  if (!g) return '#b4b4b4';
+  const k = HUES[norm(g.name)]; if (k) return k;
+  let h = 0; for (const ch of String(g.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return SPARE_HUES[h % SPARE_HUES.length];
+}
+function catHue(c){ return groupHue(groupById(c.group_id)); }
 function groupIcon(g){ const k = GROUP_ICON[norm(g.name)]; return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(g.name); }
 const CHEV_R = '<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
 function renderCatPicker(){
@@ -1154,14 +1169,14 @@ function renderCatPicker(){
     el.innerHTML = '<div class="cat-list">' + list.map(x => {
       const picked = sel && sel.group_id === x.id;
       const sub = picked ? `<div class="cat-sub picked">${escHtml(sel.name)}</div>` : `<div class="cat-sub">${escHtml(catsIn(x.id, false).map(c => c.name).join(', '))}</div>`;
-      return `<button class="cat-row${picked ? ' on' : ''}" onclick="openGroup('${x.id}')"><span class="s-ic">${groupIcon(x)}</span><span class="cat-main"><div class="cat-name">${escHtml(x.name)}</div>${sub}</span>${CHEV_R}</button>`;
+      return `<button class="cat-row${picked ? ' on' : ''}" onclick="openGroup('${x.id}')"><span class="s-ic tint" style="--h:${groupHue(x)}">${groupIcon(x)}</span><span class="cat-main"><div class="cat-name">${escHtml(x.name)}</div>${sub}</span>${CHEV_R}</button>`;
     }).join('') + '</div>';
     return;
   }
   const subs = catsIn(g.id, false);
   if (sel && sel.group_id === g.id && !subs.some(c => c.id === sel.id)) subs.push(sel);
   const back = g === only ? '' : `<button class="grp-back" onclick="openGroup(null)"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>${escHtml(g.name)}</button>`;
-  el.innerHTML = back + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="s-ic">${catIcon(c)}</span><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('') + '</div>';
+  el.innerHTML = back + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('') + '</div>';
 }
 function openGroup(id){ navGroup = id; renderCatPicker(); }
 
@@ -1270,7 +1285,7 @@ function pickCat(id){
   renderSheet();
 }
 function tileHtml(c, onclick){
-  return `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="${onclick}"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`;
+  return `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="${onclick}"><span class="tile-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`;
 }
 function setCat(id){
   selCat = id; navGroup = (catById(id) || {}).group_id || null;
@@ -1538,7 +1553,7 @@ function renderManage(){
       html += `<section class="c-block"><div class="c-head"><div class="c-name">${escHtml(g.name)}</div></div>`;
       for (const c of list) {
         const v = targetDraft[c.id] !== undefined ? targetDraft[c.id] : (c.monthly_target != null ? plainAmount(c.monthly_target) : '');
-        html += `<div class="s-row"><span class="s-ic">${catIcon(c)}</span><label class="s-name" for="tg_${c.id}"><span class="s-label">${escHtml(c.name)}</span></label><span class="t-field"><span class="t-sym">${sym}</span><input id="tg_${c.id}" class="t-input" type="text" inputmode="decimal" placeholder="None" value="${escHtml(v)}" oninput="onTargetInput('${c.id}', this)"></span></div>`;
+        html += `<div class="s-row"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><label class="s-name" for="tg_${c.id}"><span class="s-label">${escHtml(c.name)}</span></label><span class="t-field"><span class="t-sym">${sym}</span><input id="tg_${c.id}" class="t-input" type="text" inputmode="decimal" placeholder="None" value="${escHtml(v)}" oninput="onTargetInput('${c.id}', this)"></span></div>`;
       }
       html += '</section>';
     }
@@ -1566,7 +1581,7 @@ function kindNote(g){ return g.kind === 'transfer' ? 'Not counted as spending' :
 function subCount(g){ const n = catsIn(g.id, true).length; return n + (n === 1 ? ' subcategory' : ' subcategories'); }
 function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · '); }
 function subRowHtml(c){
-  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic">${catIcon(c)}</span><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
+  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
 }
 function categoriesHtml(){
   let html = '<p class="m-hint">Each transaction is tagged with a subcategory.</p><div class="acc">';
