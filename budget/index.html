@@ -11,9 +11,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
+<!-- Installable app: icon opens straight to Add transaction. -->
+<link rel="manifest" href="/budget/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/budget/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Budget">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0b0b" id="themeColor">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/currency.js"></script>
-<script>try { if (localStorage.getItem('vf-theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}</script>
+<script>try { if (localStorage.getItem('vf-theme') === 'light') { document.documentElement.dataset.theme = 'light'; document.getElementById('themeColor').content = '#f3f2ef'; } } catch (e) {}</script>
 <style>
 /* Type: Outfit stays the site font (decided Nov 11 2026 after comparing
    Schibsted Grotesk, General Sans and Newsreader). */
@@ -83,7 +91,7 @@ input, select { font-family:inherit; }
 .hidden { display:none !important; }
 
 /* ── Auth ── */
-#authScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+#authScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:calc(24px + env(safe-area-inset-top)) 16px 24px; }
 .auth-panel { width:100%; max-width:380px; }
 .brand { font-family:'Exo 2',sans-serif; font-size:1.15rem; color:var(--accent); text-decoration:none; }
 .auth-title { font-size:1.4rem; font-weight:400; margin:18px 0 6px; }
@@ -113,7 +121,20 @@ input, select { font-family:inherit; }
 .link-btn:hover { color:var(--cream); }
 
 /* ── App shell ── */
-.app { max-width:760px; margin:0 auto; padding:16px 10px calc(120px + env(safe-area-inset-bottom)); }
+.app { max-width:760px; margin:0 auto; padding:calc(16px + env(safe-area-inset-top)) 10px calc(120px + env(safe-area-inset-bottom)); }
+/* Install card: shown on phones after the first transaction, until installed or closed. */
+.install-card { display:grid; grid-template-columns:44px minmax(0,1fr) auto; gap:0 12px; align-items:center; padding:14px 10px 14px 14px; margin-bottom:16px; background:var(--bg); border-radius:8px; box-shadow:var(--shadow); }
+.ic-icon { width:44px; height:44px; border-radius:11px; display:block; }
+.ic-title { font-size:0.95rem; font-weight:500; }
+.ic-sub { font-size:0.8rem; color:var(--cream-dim); margin-top:2px; }
+.ic-actions { grid-column:1 / -1; margin-top:12px; }
+.ic-actions .btn { width:100%; height:44px; }
+.ic-steps { list-style:none; display:flex; flex-direction:column; gap:10px; padding-top:12px; border-top:1px solid var(--line); font-size:0.86rem; color:var(--cream-dim); }
+.ic-steps li { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.ic-steps b { color:var(--cream); font-weight:500; }
+.ic-steps small { flex-basis:100%; padding-left:32px; color:var(--muted); font-size:0.76rem; margin-top:-4px; }
+.ic-num { flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--surface); color:var(--cream); display:inline-flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:600; }
+.ic-glyph { width:20px; height:20px; fill:none; stroke:var(--accent); stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; vertical-align:-4px; }
 .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 6px 18px; }
 .topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
 .link-btn, .pill { white-space:nowrap; }
@@ -584,10 +605,18 @@ input, select { font-family:inherit; }
           <div class="acct-menu" id="acctMenu" role="menu" hidden>
             <div class="acct-who"><div class="acct-who-label">Signed in as</div><div class="acct-email" id="userEmail"></div></div>
             <a class="acct-item" role="menuitem" href="/account/"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>Account settings</a>
+            <button class="acct-item hidden" role="menuitem" id="installMenuItem" onclick="closeAcctMenu(); installApp()"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6"/><polyline points="9.5 11.5 12 14 14.5 11.5"/></svg>Install app</button>
             <button class="acct-item" role="menuitem" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="install-card hidden" id="installCard" role="region" aria-label="Install the app">
+      <img class="ic-icon" src="/budget/icon-192.png" alt="">
+      <div><div class="ic-title">Add Budget to your home screen</div><div class="ic-sub">One tap opens a new transaction.</div></div>
+      <button class="close-x" onclick="dismissInstall()" aria-label="Not now">&times;</button>
+      <div class="ic-actions" id="installActions"></div>
     </div>
 
     <section class="panel">
@@ -825,6 +854,44 @@ function openAcctMenu(){ document.getElementById('acctMenu').hidden = false; doc
 function closeAcctMenu(){ document.getElementById('acctMenu').hidden = true; document.getElementById('acctBtn').setAttribute('aria-expanded', 'false'); }
 document.addEventListener('click', e => { if (!e.target.closest('.acct-wrap')) closeAcctMenu(); });
 
+/* ── Install as an app ──
+   Android/Chrome hands us an install prompt we can trigger from a button.
+   iPhone has no prompt, so we show the two Share-menu steps instead.
+   Nothing shows once the app is open from the home screen. */
+const INSTALL_DISMISSED = 'vf_budget_install_dismissed';
+let installPrompt = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const canInstall = () => !isStandalone() && (!!installPrompt || isIOS());
+const SHARE_GLYPH = '<svg class="ic-glyph" viewBox="0 0 24 24"><path d="M12 3v12"/><polyline points="8 7 12 3 16 7"/><path d="M8.5 10H6.5a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5v-8a1.5 1.5 0 0 0-1.5-1.5h-2"/></svg>';
+const ADD_GLYPH = '<svg class="ic-glyph" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><line x1="12" y1="8.5" x2="12" y2="15.5"/><line x1="8.5" y1="12" x2="15.5" y2="12"/></svg>';
+function installDismissed(){ try { return localStorage.getItem(INSTALL_DISMISSED) === '1'; } catch (e) { return false; } }
+function syncInstallUI(force){
+  document.getElementById('installMenuItem').classList.toggle('hidden', !canInstall());
+  const card = document.getElementById('installCard');
+  const hasTx = recentTx.length > 0 || monthTx.length > 0;
+  const onPhone = matchMedia('(pointer:coarse)').matches;
+  const show = canInstall() && (force || (onPhone && hasTx && !installDismissed()));
+  if (show) document.getElementById('installActions').innerHTML = installPrompt
+    ? '<button class="btn btn-gold" onclick="installApp()">Install</button>'
+    : `<ol class="ic-steps"><li><span class="ic-num">1</span>Tap <b>Share</b> ${SHARE_GLYPH}<small>On newer iPhones it\u2019s under the \u2022\u2022\u2022 button.</small></li><li><span class="ic-num">2</span>Tap <b>Add to Home Screen</b> ${ADD_GLYPH}</li></ol>`;
+  card.classList.toggle('hidden', !show);
+}
+async function installApp(){
+  if (!installPrompt) { syncInstallUI(true); window.scrollTo({ top:0, behavior:'smooth' }); return; }
+  const p = installPrompt; installPrompt = null;
+  p.prompt();
+  try { await p.userChoice; } catch (e) {}
+  syncInstallUI();
+}
+function dismissInstall(){
+  try { localStorage.setItem(INSTALL_DISMISSED, '1'); } catch (e) {}
+  document.getElementById('installCard').classList.add('hidden');
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; if (user) syncInstallUI(); });
+window.addEventListener('appinstalled', () => { installPrompt = null; syncInstallUI(); toast('Installed. Open Budget from your home screen.'); });
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/budget/sw.js', { scope:'/budget/' }).catch(e => console.error(e));
+
 function showAuth(){ document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
 function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
 
@@ -850,6 +917,9 @@ async function boot(session){
     if (error) console.error(error);
     await loadMeta();
   }
+  // The app icon (and its shortcuts) open straight to Add transaction, as soon
+  // as categories are in; the month finishes loading underneath.
+  openFromLaunch();
   // Round 2: this month's transactions, pending items and recurring rules.
   await Promise.all([loadMonth(), loadRecurring()]);
 }
@@ -938,6 +1008,7 @@ function render(){
 
   renderBreakdown();
   renderTxList();
+  syncInstallUI();
 }
 
 /* ── Spending by category: four presentations to compare ──
@@ -1188,9 +1259,18 @@ function openEdit(id){
   openSheet('addSheet');
 }
 
+/* ?add=1 / ?add=spent / ?add=received: from the home screen icon or its shortcuts. */
+function openFromLaunch(){
+  const a = new URLSearchParams(location.search).get('add');
+  if (!a) return;
+  history.replaceState(null, '', location.pathname);
+  openAdd();
+  if (a === 'received') setMode('received');
+}
 function toggleTheme(){
   const light = document.documentElement.dataset.theme !== 'light';
   if (light) document.documentElement.dataset.theme = 'light'; else delete document.documentElement.dataset.theme;
+  document.getElementById('themeColor').content = light ? '#f3f2ef' : '#0b0b0b';
   try { localStorage.setItem('vf-theme', light ? 'light' : 'dark'); } catch (e) {}
   syncThemeBtn();
 }
