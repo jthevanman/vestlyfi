@@ -90,12 +90,24 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .sb-trackers{margin:2px 4px 0;border:1px solid rgba(201,168,76,0.15);border-radius:10px;background:rgba(201,168,76,0.03);padding:3px;display:flex;flex-direction:column;gap:2px;}
 .sb-trackers .sb-cap{padding:6px 8px 3px;}
 .sb-div{height:1px;background:var(--border-soft);margin:8px 14px;}
-.sb-bottom{padding:14px 10px;border-top:1px solid var(--border-soft);}
-.user-chip{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border-soft);margin-bottom:8px;}
-.user-avatar{width:26px;height:26px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:600;color:var(--gold);flex-shrink:0;}
-.user-email{font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
-.btn-signout{width:100%;padding:7px;background:none;border:1px solid var(--border-soft);color:var(--muted);border-radius:8px;font-family:'Outfit',sans-serif;font-size:0.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.btn-signout:hover{border-color:var(--border);color:var(--cream);}
+/* Account menu: person icon at the top right of the page header. */
+.page-header { position:relative; }
+.page-header > :first-child { flex:1; min-width:0; }
+.acct-wrap { position:relative; flex-shrink:0; }
+.acct-btn { width:36px; height:36px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--border); color:var(--gold); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s, border-color .15s; }
+.acct-btn:hover, .acct-btn[aria-expanded="true"] { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.4); }
+.acct-menu { position:absolute; top:calc(100% + 8px); right:0; z-index:150; width:240px; padding:6px 0; background:var(--navy-mid); border:1px solid var(--border); border-radius:12px; box-shadow:0 16px 40px rgba(0,0,0,0.5); }
+.acct-menu[hidden] { display:none; }
+.acct-who { padding:10px 14px 12px; border-bottom:1px solid var(--border-soft); }
+.acct-who-label { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+.acct-email { font-size:0.84rem; color:var(--cream); overflow-wrap:anywhere; }
+.acct-item { display:flex; align-items:center; gap:10px; width:100%; padding:11px 14px; background:none; border:none; color:var(--cream-dim); font-family:'Outfit',sans-serif; font-size:0.84rem; font-weight:400; text-align:left; text-decoration:none; cursor:pointer; transition:background .15s, color .15s; }
+.acct-item:hover { background:rgba(255,255,255,0.04); color:var(--cream); }
+/* Narrow screens: the header stacks, so pin the icon to its top right corner. */
+@media(max-width:760px) {
+  .page-header .acct-wrap { position:absolute; top:0; right:0; }
+  .page-header > :first-child { padding-right:48px; }
+}
 
 .main-outer{flex:1;display:flex;flex-direction:column;min-width:0;align-items:center;overflow-x:hidden;}
 .main-content{width:100%;min-width:0;padding:24px 36px 64px;display:flex;flex-direction:column;gap:16px;max-width:1060px;margin:0 auto;}
@@ -378,10 +390,6 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
         <a href="/retirement/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Retirement</a>
         <a href="/debt-payoff/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Debt Payoff</a>
       </div>
-      <div class="sb-bottom">
-        <div class="user-chip"><div class="user-avatar" id="userAvatar">–</div><div class="user-email" id="userEmail">–</div></div>
-        <button class="btn-signout" onclick="signOut()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
-      </div>
     </aside>
 
     <!-- MAIN -->
@@ -396,6 +404,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
             <button class="btn-secondary" onclick="openImportModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Import from Net Worth</button>
             <button class="btn-secondary" onclick="openShareModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share progress</button>
             <button class="btn-primary" onclick="openDebtModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add debt</button>
+          </div>
+          <div class="acct-wrap">
+            <button class="acct-btn" id="acctBtn" onclick="toggleAcctMenu()" aria-label="Account" title="Account" aria-haspopup="menu" aria-expanded="false" aria-controls="acctMenu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg></button>
+            <div class="acct-menu" id="acctMenu" role="menu" hidden>
+              <div class="acct-who"><div class="acct-who-label">Signed in as</div><div class="acct-email" id="userEmail">–</div></div>
+              <a class="acct-item" role="menuitem" href="/account/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>Account settings</a>
+              <button class="acct-item" role="menuitem" onclick="closeAcctMenu();signOut()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+            </div>
           </div>
         </div>
 
@@ -745,7 +761,14 @@ async function signUp(){
 async function signOut(){await sb.auth.signOut();}
 function showDashLocked(){document.getElementById('dashLocked').style.display='block';document.getElementById('dashApp').style.display='none';}
 function showDashApp(){document.getElementById('dashLocked').style.display='none';document.getElementById('dashApp').style.display='block';}
-function setUserChip(){if(!currentUser)return;const e=currentUser.email||'';document.getElementById('userEmail').textContent=e;document.getElementById('userAvatar').textContent=e.charAt(0).toUpperCase();}
+function setUserChip(){if(!currentUser)return;document.getElementById('userEmail').textContent=currentUser.email||'';}
+/* Account menu */
+function toggleAcctMenu(){document.getElementById('acctMenu').hidden?openAcctMenu():closeAcctMenu();}
+function openAcctMenu(){document.getElementById('acctMenu').hidden=false;document.getElementById('acctBtn').setAttribute('aria-expanded','true');}
+function closeAcctMenu(){document.getElementById('acctMenu').hidden=true;document.getElementById('acctBtn').setAttribute('aria-expanded','false');}
+document.addEventListener('click',e=>{if(!e.target.closest('.acct-wrap'))closeAcctMenu();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('acctMenu').hidden)closeAcctMenu();});
+
 
 async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();}
 
