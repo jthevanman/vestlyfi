@@ -1279,7 +1279,7 @@ function addNewGroup(){
 }
 function renameGroup(id){
   openEditGroup(id);
-  edit.onSaved = () => renderCatPicker();
+  edit.onSaved = g => { if (g.hidden) navGroup = null; renderCatPicker(); };
 }
 
 function renderSheet(){
@@ -1781,7 +1781,6 @@ function renderEdit(){
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Subcategory name, like Pet care" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list">
         <button class="pick-row" onclick="pickEditGroup()"><span class="row-label">Category</span><span class="pick-val"><span>${escHtml(g ? g.name : 'Choose')}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-        <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div>
         ${g && g.kind === 'transfer' ? `<div class="list-row"><span class="row-label">Counts as saving<small class="row-hint">Shows under Spent as money saved</small></span><button class="switch${d.counts_as_saving ? ' on' : ''}" onclick="toggleEdit('counts_as_saving')" aria-label="Counts as saving"></button></div>` : ''}
       </div>`;
   } else if (t === 'rec') {
@@ -1796,7 +1795,6 @@ function renderEdit(){
   } else if (t === 'group') {
     html += `<div class="e-hero"><span class="e-ic" id="ePreview">${editPreviewIcon()}</span></div>
       <input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
-      <div class="list"><div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div></div>
       ${edit.kind === 'transfer' ? '<p class="e-note">Not counted as spending or income.</p>' : ''}
       <div class="e-section-title">Icon</div>
       <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
@@ -1804,11 +1802,20 @@ function renderEdit(){
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="80" placeholder="Account name, like Chase card" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list">
         <button class="pick-row" onclick="pickEditKind()"><span class="row-label">Type</span><span class="pick-val"><span>${kindLabel(d.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-        <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.archived ? '' : ' on'}" onclick="toggleEdit('archived')" aria-label="Show when adding"></button></div>
-      </div>
-      <p class="e-note">Off archives it. Past transactions stay.</p>`;
+      </div>`;
   }
+  // Retire or bring back an existing subcategory, category or account.
+  // Removed ones stop showing when adding; past transactions keep them.
+  const flag = REMOVE_FLAG[t];
+  if (flag && edit.id) html += `<button class="stop-rec" onclick="setRemoved(${!edit.orig[flag]})">${edit.orig[flag] ? 'Restore' : 'Remove'}</button>`;
   document.getElementById('editBody').innerHTML = html;
+}
+const REMOVE_FLAG = { sub:'hidden', group:'hidden', account:'archived' };
+async function setRemoved(on){
+  const name = String(edit.orig.name || '').trim();
+  if (on && !await askConfirm({ title:`Remove ${name}?`, body:'Past transactions keep it.', yes:'Remove', no:'Keep it', danger:true })) return;
+  edit.draft[REMOVE_FLAG[edit.type]] = on;
+  await saveEdit();
 }
 function iconGridHtml(){
   const d = edit.draft;
