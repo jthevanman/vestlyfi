@@ -285,12 +285,24 @@ input, select { font-family:inherit; }
 .more-link.all { color:var(--cream); }
 .more-link.all:hover { color:#fff; }
 .more-sep { width:1px; height:16px; background:var(--line); }
+.more-links { margin-top:18px; margin-bottom:18px; }
+.all-cats { padding:12px 24px; font-size:0.92rem; color:var(--cream); }
+.all-cats .chev { width:17px; height:17px; }
+/* Add screen: categories first, then that category's subcategories. */
+.grp-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+.grp-pill { flex:0 0 calc(50% - 5px); height:50px; padding:0 14px; border-radius:999px; border:none; background:var(--surface); color:var(--cream); font:inherit; font-size:0.95rem; font-weight:500; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:background .15s, color .15s; }
+.grp-pill:hover { background:var(--surface-2); }
+.grp-pill.on { box-shadow:inset 0 0 0 1.5px var(--accent); color:var(--accent-light); }
+.grp-back { display:flex; align-items:center; gap:4px; min-height:44px; margin:-6px 0 10px -4px; padding:0 8px 0 4px; background:none; border:none; color:var(--cream); font:inherit; font-size:1rem; font-weight:600; cursor:pointer; }
+.grp-back .chev { width:18px; height:18px; }
+.grp-back:hover { color:var(--accent-light); }
+.cat-pick .tiles { display:flex; flex-wrap:wrap; justify-content:center; gap:16px 6px; }
+.cat-pick .tile { flex:0 0 calc((100% - 18px) / 4); }
 
 /* Detail rows: label left, value right, hairlines between. */
 .list { border-top:1px solid var(--line); margin-bottom:6px; }
 .list > .pick-row, .more-details > .pick-row, .list-row { border-bottom:1px solid var(--line); padding:0 2px; }
 #detailsSum { color:var(--cream-dim); }
-.chev.down { transition:transform .15s; }
 #detailsRow[aria-expanded="true"] .chev.down { transform:rotate(180deg); }
 .list-row.pend-check { white-space:normal; }
 .list-row { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:52px; }
@@ -518,9 +530,9 @@ input, select { font-family:inherit; }
       <input class="amount-input" id="fAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="0" aria-label="Amount">
     </div>
 
-    <div class="tiles" id="catChips"></div>
+    <div class="cat-pick" id="catChips"></div>
     <div class="more-links">
-      <button class="more-link all" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
+      <button class="btn btn-ghost all-cats" onclick="openCategoryBrowser()"><svg class="chev" viewBox="0 0 24 24"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>All categories</button>
     </div>
     <div class="sub-form hidden" id="newCatForm">
       <div class="sub-form-title">New category</div>
@@ -535,6 +547,7 @@ input, select { font-family:inherit; }
         <span class="pick-val"><span id="detailsSum"></span><svg class="chev down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
       </button>
       <div class="more-details hidden" id="moreDetails">
+      <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <button class="pick-row" onclick="openAccountPicker()">
         <span class="row-label" id="acctRowLabel">From account</span>
         <span class="pick-val"><span id="acctLabel"></span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
@@ -546,7 +559,6 @@ input, select { font-family:inherit; }
         <div class="sub-form-actions"><button class="btn btn-ghost" onclick="closeSubForm('newAcctForm')">Cancel</button><button class="btn btn-gold" onclick="createAccountFromSheet()">Add account</button></div>
       </div>
       <button class="pick-row" id="repeatRow" onclick="pickRepeat()"><span class="row-label">Repeat</span><span class="pick-val"><span id="repeatLabel">Never</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
-      <div class="list-row"><label class="row-label" for="fDate">Date</label><input id="fDate" type="date"></div>
       <div class="list-row"><label class="row-label" for="fDesc">Notes</label><input id="fDesc" type="text" maxlength="200" placeholder="Optional"></div>
       <label class="list-row pend-check" data-tip="Adds a reminder to update it later, like when a tip posts"><span class="row-label">Amount may change</span><input type="checkbox" id="fPending"><span class="box"><svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg></span></label>
       </div>
@@ -1012,7 +1024,7 @@ function openAdd(){
   const today = new Date();
   // Adding while looking at a past month defaults to that month's last day.
   document.getElementById('fDate').value = sameMonth(viewMonth, today) ? ymd(today) : ymd(lastOfMonth(viewMonth));
-  mode = 'spent'; selCat = null; selAcct = defaultAccount();
+  mode = 'spent'; selCat = null; navGroup = null; selAcct = defaultAccount();
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
   closePicker();
@@ -1038,7 +1050,7 @@ function openEdit(id){
   repeatFreq = null;
   document.getElementById('repeatRow').classList.add('hidden');
   toggleDetails(false);
-  selCat = t.category_id; selAcct = t.account_id || null;
+  selCat = t.category_id; navGroup = (catById(selCat) || {}).group_id || null; selAcct = t.account_id || null;
   document.getElementById('newAcctForm').classList.add('hidden');
   document.getElementById('newCatForm').classList.add('hidden');
   closePicker();
@@ -1047,7 +1059,12 @@ function openEdit(id){
   openSheet('addSheet');
 }
 
-function setMode(m){ mode = m; renderSheet(); }
+function setMode(m){
+  mode = m;
+  const c = catById(selCat);
+  navGroup = c && sheetGroups().some(g => g.id === c.group_id) ? c.group_id : null;
+  renderSheet();
+}
 
 /* One line that says what Details holds, so nothing is hidden by surprise. */
 function renderDetails(){
@@ -1056,11 +1073,12 @@ function renderDetails(){
     const d = parseYmd(v), t = new Date(), y = new Date(); y.setDate(t.getDate() - 1);
     parts.push(ymd(d) === ymd(t) ? 'Today' : ymd(d) === ymd(y) ? 'Yesterday' : d.toLocaleDateString(VestlyCurrency.locale(), { month:'short', day:'numeric' }));
   }
-  parts.push(document.getElementById('acctLabel').textContent);
-  if (repeatFreq) parts.push(repeatName(repeatFreq));
-  if (document.getElementById('fPending').checked) parts.push('May change');
+  const acct = (mode === 'received' ? 'to ' : 'from ') + document.getElementById('acctLabel').textContent;
+  if (parts.length) parts[0] += ' ' + acct; else parts.push(acct);
+  if (repeatFreq) parts.push(repeatName(repeatFreq).toLowerCase());
+  if (document.getElementById('fPending').checked) parts.push('may change');
   const open = document.getElementById('detailsRow').getAttribute('aria-expanded') === 'true';
-  document.getElementById('detailsSum').textContent = open ? '' : parts.join(' · ');
+  document.getElementById('detailsSum').textContent = open ? '' : parts.join(', ');
 }
 function toggleDetails(open){
   const row = document.getElementById('detailsRow');
@@ -1070,31 +1088,32 @@ function toggleDetails(open){
   renderDetails();
 }
 
-// Everyday purchases first for a new user; bills like rent are logged rarely.
-const STARTER_PRIORITY = ['groceries','dining out','gas','shopping','subscriptions','entertainment','health','gifts','paycheck','other income'];
-function starterRank(c){ const i = STARTER_PRIORITY.indexOf(norm(c.name)); return i === -1 ? 99 : i; }
-
-// Most-used categories first (from recent entries), then everyday ones.
-function chipCats(){
-  const want = mode === 'received' ? 'income' : 'expense';
-  const pool = visibleCats().filter(c => kindOfCat(c) === want);
-  const uses = {};
-  for (const t of recentTx) if (t.category_id) uses[t.category_id] = (uses[t.category_id] || 0) + 1;
-  const gOrder = id => (groupById(id) || { sort_order:0 }).sort_order;
-  pool.sort((a,b) => (uses[b.id]||0) - (uses[a.id]||0) || starterRank(a) - starterRank(b) || gOrder(a.group_id) - gOrder(b.group_id) || a.sort_order - b.sort_order);
-  const top = pool.slice(0, 8);
-  // A pick from the full list takes the last tile, so the grid stays even.
-  const sel = catById(selCat);
-  if (sel && !top.some(c => c.id === sel.id)) {
-    if (top.length === 8) top[7] = sel; else top.push(sel);
-  }
-  return top;
+/* Category picker on the add screen: categories, then subcategories. */
+let navGroup = null;          // category (group) whose subcategories are showing
+function sheetGroups(){
+  const kinds = mode === 'received' ? ['income'] : ['expense','transfer'];
+  return sortedGroups().filter(g => !g.hidden && kinds.includes(g.kind) && catsIn(g.id, false).length);
 }
+function renderCatPicker(){
+  const el = document.getElementById('catChips'), list = sheetGroups();
+  const only = list.length === 1 ? list[0] : null;
+  const g = groupById(navGroup) || only;
+  if (!g) {
+    const selG = (catById(selCat) || {}).group_id;
+    el.innerHTML = '<div class="grp-pills">' + list.map(x => `<button class="grp-pill${x.id === selG ? ' on' : ''}" onclick="openGroup('${x.id}')">${escHtml(x.name)}</button>`).join('') + '</div>';
+    return;
+  }
+  const subs = catsIn(g.id, false), sel = catById(selCat);
+  if (sel && sel.group_id === g.id && !subs.some(c => c.id === sel.id)) subs.push(sel);
+  const back = g === only ? '' : `<button class="grp-back" onclick="openGroup(null)"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>${escHtml(g.name)}</button>`;
+  el.innerHTML = back + '<div class="tiles">' + subs.map(c => tileHtml(c, `pickCat('${c.id}')`)).join('') + '</div>';
+}
+function openGroup(id){ navGroup = id; renderCatPicker(); }
 
 function renderSheet(){
   document.querySelectorAll('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
 
-  document.getElementById('catChips').innerHTML = chipCats().map(c => tileHtml(c, `pickCat('${c.id}')`)).join('');
+  renderCatPicker();
   const cur = acctById(selAcct);
   document.getElementById('repeatLabel').textContent = repeatName(repeatFreq);
   document.getElementById('acctRowLabel').textContent = mode === 'received' ? 'To account' : 'From account';
@@ -1199,7 +1218,7 @@ function tileHtml(c, onclick){
   return `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="${onclick}"><span class="tile-ic">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`;
 }
 function setCat(id){
-  selCat = id;
+  selCat = id; navGroup = (catById(id) || {}).group_id || null;
   const k = kindOfCat(catById(id));
   if (k === 'income') mode = 'received'; else if (k === 'expense') mode = 'spent';
   renderSheet();
