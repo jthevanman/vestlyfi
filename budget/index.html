@@ -267,6 +267,9 @@ input, select { font-family:inherit; }
 .stop-rec { display:block; margin:16px auto 0; background:none; border:none; color:var(--red); font:inherit; font-size:0.88rem; font-weight:500; cursor:pointer; }
 .pend-row .chev { width:14px; height:14px; margin-left:auto; }
 .row-hint { display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
+.archive-row { display:block; width:100%; margin-top:14px; padding:12px 2px; background:none; border:none; border-top:1px solid var(--line); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+.archive-label { font-size:0.92rem; font-weight:500; color:var(--cream); }
+.archive-row:hover .archive-label { color:var(--accent-light); }
 .tx-amt.in { color:var(--green); }
 .tx-amt.xfer { color:var(--muted); }
 
@@ -1279,7 +1282,8 @@ function addNewGroup(){
 }
 function renameGroup(id){
   openEditGroup(id);
-  edit.onSaved = g => { if (g.hidden) navGroup = null; renderCatPicker(); };
+  edit.fromAdd = true; renderEdit();   // archiving lives in Categories & targets, not here
+  edit.onSaved = () => renderCatPicker();
 }
 
 function renderSheet(){
@@ -1683,9 +1687,9 @@ function renderManage(){
 let openGroupIds = new Set();
 function kindNote(g){ return g.kind === 'transfer' ? 'Not counted as spending' : ''; }
 function subCount(g){ const n = catsIn(g.id, true).length; return n + (n === 1 ? ' subcategory' : ' subcategories'); }
-function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · '); }
+function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Archived' : ''].filter(Boolean).join(' · '); }
 function subRowHtml(c){
-  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
+  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Archived</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
 }
 function categoriesHtml(){
   let html = '<p class="m-hint">Each transaction is tagged with a subcategory.</p><div class="acc">';
@@ -1804,17 +1808,21 @@ function renderEdit(){
         <button class="pick-row" onclick="pickEditKind()"><span class="row-label">Type</span><span class="pick-val"><span>${kindLabel(d.kind)}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
       </div>`;
   }
-  // Retire or bring back an existing subcategory, category or account.
-  // Removed ones stop showing when adding; past transactions keep them.
-  const flag = REMOVE_FLAG[t];
-  if (flag && edit.id) html += `<button class="stop-rec" onclick="setRemoved(${!edit.orig[flag]})">${edit.orig[flag] ? 'Restore' : 'Remove'}</button>`;
+  // Archive: only when managing an existing item, never from the add screen.
+  // Archived items are hidden when adding; past transactions keep them.
+  const flag = ARCHIVE_FLAG[t];
+  if (flag && edit.id && !edit.fromAdd) {
+    const on = !!edit.orig[flag], noun = ARCHIVE_NOUN[t];
+    html += `<button class="archive-row" onclick="setArchived(${!on})"><span class="archive-label">${on ? 'Unarchive' : 'Archive'} ${noun}</span><span class="row-hint">${on ? 'Shows when adding again.' : 'Hidden when adding. Past transactions keep it.'}</span></button>`;
+  }
   document.getElementById('editBody').innerHTML = html;
 }
-const REMOVE_FLAG = { sub:'hidden', group:'hidden', account:'archived' };
-async function setRemoved(on){
+const ARCHIVE_FLAG = { sub:'hidden', group:'hidden', account:'archived' };
+const ARCHIVE_NOUN = { sub:'subcategory', group:'category', account:'account' };
+async function setArchived(on){
   const name = String(edit.orig.name || '').trim();
-  if (on && !await askConfirm({ title:`Remove ${name}?`, body:'Past transactions keep it.', yes:'Remove', no:'Keep it', danger:true })) return;
-  edit.draft[REMOVE_FLAG[edit.type]] = on;
+  if (on && !await askConfirm({ title:`Archive ${name}?`, body:'Hidden when adding. Past transactions keep it.', yes:'Archive', no:'Cancel' })) return;
+  edit.draft[ARCHIVE_FLAG[edit.type]] = on;
   await saveEdit();
 }
 function iconGridHtml(){
