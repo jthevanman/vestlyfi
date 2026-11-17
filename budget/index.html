@@ -232,7 +232,7 @@ input, select { font-family:inherit; }
 
 /* Subcategory rows: text first; color only when something needs attention */
 .sub-line { display:flex; align-items:center; gap:12px; min-height:48px; padding-left:2px; }
-.sub-line.meters { display:grid; grid-template-columns:30px minmax(0,1fr) 56px 92px; }
+.sub-line.meters { display:grid; grid-template-columns:minmax(0,1fr) 56px 92px; }
 .s-ic.sm { width:30px; height:30px; }
 .s-ic.sm svg { width:15px; height:15px; }
 .s-ic.sm .mono { font-size:0.78rem; }
@@ -350,7 +350,6 @@ input, select { font-family:inherit; }
    The count sits beside the names, never inside the clipped text. */
 .cat-sub { display:flex; align-items:center; gap:6px; margin-top:3px; font-size:0.78rem; color:var(--muted); min-width:0; }
 .cat-sub-names { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.cat-sub-names i { font-style:normal; padding:0 5px; opacity:0.6; }
 .cat-more { flex:0 0 auto; padding:1px 7px; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.7rem; font-weight:500; }
 .cat-sub.picked { color:var(--accent-light); font-weight:500; }
 /* "+ New ..." row at the end of each list. */
@@ -412,7 +411,7 @@ input, select { font-family:inherit; }
 .opt.add { color:var(--accent); }
 .check { width:20px; height:20px; fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
 .browser-grp { margin-bottom:20px; }
-.browser-grp-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:2px 0 12px; }
+.browser-grp-title { display:flex; align-items:center; gap:10px; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:2px 0 4px; }
 .tile.new .tile-ic { background:none; border:1.5px dashed var(--muted); color:var(--accent); }
 .sheet-actions { display:flex; gap:8px; margin-top:10px; }
 .sheet-actions .btn { flex:1; height:52px; font-size:0.95rem; }
@@ -459,6 +458,8 @@ input, select { font-family:inherit; }
 .acc-item { border-bottom:1px solid var(--line); }
 .acc-head { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; min-height:64px; padding:6px 2px; background:none; border:none; color:inherit; font:inherit; text-align:left; cursor:pointer; }
 .acc-head > span { display:flex; flex-direction:column; gap:3px; }
+.acc-head > .acc-left { flex-direction:row; align-items:center; gap:12px; min-width:0; }
+.acc-text { display:flex; flex-direction:column; gap:3px; min-width:0; }
 .acc-chev { width:20px; height:20px; fill:none; stroke:var(--muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:transform .2s; }
 .acc-item.open .acc-chev { transform:rotate(180deg); }
 .acc-body { padding:0 0 12px; }
@@ -482,16 +483,20 @@ input, select { font-family:inherit; }
 
 /* Edit sheet */
 .edit-overlay { z-index:250; background:rgba(0,0,0,0.55); }
-.e-hero { display:flex; justify-content:center; margin:2px 0 16px; }
-.e-ic { width:72px; height:72px; border-radius:50%; background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center; }
-.e-ic svg { width:32px; height:32px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+/* Boxes that open over the add screen (edit, pick a value) are compact
+   floating cards, narrower than the sheet under them, on every screen size. */
+.edit-overlay, .picker-overlay { align-items:center; padding:16px; }
+.edit-overlay .sheet, .picker-overlay .sheet { max-width:380px; max-height:86vh; border:1px solid var(--line); border-radius:24px; padding:20px 18px; box-shadow:0 24px 48px -16px rgba(0,0,0,0.7); }
+.e-hero { display:flex; justify-content:center; margin:0 0 14px; }
+.e-ic { width:60px; height:60px; border-radius:50%; background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center; }
+.e-ic svg { width:27px; height:27px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .e-ic .mono { font-size:1.6rem; font-weight:600; }
 .e-name { margin-bottom:12px; background:var(--surface); }
 .e-note { font-size:0.78rem; color:var(--muted); line-height:1.5; margin:10px 4px 0; }
 .e-section-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:20px 0 12px; }
-.icon-grid { display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:10px; }
+.icon-grid { display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:6px; }
 .ig { aspect-ratio:1; display:flex; align-items:center; justify-content:center; padding:0; border:none; border-radius:50%; background:var(--surface); color:var(--cream-dim); cursor:pointer; transition:background .15s, color .15s; }
-.ig svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.ig svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 .ig .mono { font-weight:600; }
 .ig:hover { background:var(--surface-2); color:var(--cream); }
 .ig.on { background:var(--accent); color:var(--on-accent); }
@@ -960,7 +965,7 @@ function renderBreakdown(){
     const open = openSpendIds.has(x.g.id);
     return `<div class="sp-item${open ? ' open' : ''}"><button class="sp-head" onclick="toggleSpend('${x.g.id}')" aria-expanded="${open}">
         <span class="sp-top"><span class="sp-name">${escHtml(x.g.name)}</span><span class="big-left in">${moneyWhole(x.total)}<small> received</small></span>${CHEV_DOWN}</span></button>` +
-      (open ? '<div class="sp-body">' + x.rows.map(r => `<div class="sub-line"><span class="s-ic sm tint" style="--h:${catHue(r.c)}">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span><span class="sub-right"><span class="sub-left none">${moneyWhole(r.r)}</span></span></div>`).join('') + '</div>' : '') + '</div>';
+      (open ? '<div class="sp-body">' + x.rows.map(r => `<div class="sub-line"><span class="sub-name">${escHtml(r.c.name)}</span><span class="sub-right"><span class="sub-left none">${moneyWhole(r.r)}</span></span></div>`).join('') + '</div>' : '') + '</div>';
   }).join('');
   if (d.uncatIn > 0) html += `<div class="sp-item"><div class="sp-head static"><span class="sp-top"><span class="sp-name">Uncategorized income</span><span class="big-left in">${moneyWhole(d.uncatIn)}<small> received</small></span></span></div></div>`;
   html += SPEND_RENDER.meters(d);
@@ -1013,7 +1018,7 @@ const SPEND_RENDER = {
   meters(d){
     return spendItems(d, bigBar, r => {
       const meter = r.t ? `<span class="mini-meter"><span class="fill ${targetState(r.s, r.t)}" style="width:${usedPct(r)}%"></span></span>` : '<span></span>';
-      return `<div class="sub-line meters"><span class="s-ic sm tint" style="--h:${catHue(r.c)}">${catIcon(r.c)}</span><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${subRightHtml(r)}</div>`;
+      return `<div class="sub-line meters"><span class="sub-name">${escHtml(r.c.name)}</span>${meter}${subRightHtml(r)}</div>`;
     });
   }
 };
@@ -1083,7 +1088,7 @@ function renderTxList(){
       const meta = [t.description ? (c ? c.name : 'Uncategorized') : null, a ? a.name : null].filter(Boolean).join(' · ');
       const cls = k === 'transfer' ? 'xfer' : amt > 0 ? 'in' : '';
       const shown = amt > 0 ? '+' + money(amt) : money(-amt);
-      html += `<button class="tx" onclick="openEdit('${t.id}')"><div class="tx-main"><div class="tx-desc">${escHtml(title)}${t.pending ? '<span class="pend-tag">Pending</span>' : ''}</div>${meta ? `<div class="tx-meta">${escHtml(meta)}</div>` : ''}</div><div class="tx-amt ${cls}">${escHtml(shown)}</div></button>`;
+      html += `<button class="tx" onclick="openEdit('${t.id}')"><span class="s-ic sm${c ? ` tint" style="--h:${catHue(c)}` : ''}">${c ? catIcon(c) : monoOf(title)}</span><div class="tx-main"><div class="tx-desc">${escHtml(title)}${t.pending ? '<span class="pend-tag">Pending</span>' : ''}</div>${meta ? `<div class="tx-meta">${escHtml(meta)}</div>` : ''}</div><div class="tx-amt ${cls}">${escHtml(shown)}</div></button>`;
     }
     html += '</div>';
   }
@@ -1218,13 +1223,20 @@ function groupHue(g){
   return SPARE_HUES[h % SPARE_HUES.length];
 }
 function catHue(c){ return groupHue(groupById(c.group_id)); }
-function groupIcon(g){ const k = GROUP_ICON[norm(g.name)]; return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(g.name); }
+/* Categories own the icon (picked, else the starter default, else the first
+   letter). Subcategories have none of their own: they wear their category's. */
+function groupIconKey(g){
+  if (!g || g.icon === 'letter') return null;
+  if (g.icon && LIB[g.icon]) return g.icon;
+  return GROUP_ICON[norm(g.name)] || null;
+}
+function groupIcon(g){ const k = groupIconKey(g); return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(g ? g.name : '?'); }
 const CHEV_R = '<svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
 const PLUS_IC = '<span class="s-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>';
 function subPreview(g){
   const names = catsIn(g.id, false).map(c => c.name);
   if (!names.length) return '<div class="cat-sub"><span class="cat-sub-names">No subcategories yet</span></div>';
-  const shown = names.slice(0, 2).map(escHtml).join('<i>·</i>'), rest = names.length - 2;
+  const shown = names.slice(0, 2).map(escHtml).join(', '), rest = names.length - 2;
   return `<div class="cat-sub"><span class="cat-sub-names">${shown}</span>${rest > 0 ? `<span class="cat-more">+${rest}</span>` : ''}</div>`;
 }
 function renderCatPicker(){
@@ -1243,7 +1255,7 @@ function renderCatPicker(){
   if (sel && sel.group_id === g.id && !subs.some(c => c.id === sel.id)) subs.push(sel);
   const back = g === only ? '<span></span>' : `<button class="grp-back" onclick="openGroup(null)"><svg class="chev" viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>${escHtml(g.name)}</button>`;
   el.innerHTML = `<div class="grp-head">${back}<button class="grp-rename" onclick="renameGroup('${g.id}')">${PENCIL}Rename</button></div>`
-    + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('')
+    + '<div class="cat-list">' + subs.map(c => `<button class="cat-row${c.id === selCat ? ' on' : ''}" onclick="pickCat('${c.id}')"><span class="cat-main"><div class="cat-name">${escHtml(c.name)}</div></span>${c.id === selCat ? CHECK : ''}</button>`).join('')
     + `<button class="cat-row cat-add" onclick="addNewSub('${g.id}')">${PLUS_IC}<span class="cat-main"><div class="cat-name">New subcategory in ${escHtml(g.name)}</div></span></button></div>`;
 }
 function openGroup(id){ navGroup = id; renderCatPicker(); }
@@ -1362,6 +1374,7 @@ function iconKey(c){
 }
 function monoOf(name){ return `<span class="mono">${escHtml((String(name || '').trim()[0] || '?').toUpperCase())}</span>`; }
 function catIcon(c){
+  if (c && c.group_id) return groupIcon(groupById(c.group_id));
   const k = iconKey(c);
   return k ? `<svg viewBox="0 0 24 24">${LIB[k]}</svg>` : monoOf(c.name);
 }
@@ -1373,9 +1386,6 @@ function pickCat(id){
   if (k === 'income') mode = 'received';
   else if (k === 'expense') mode = 'spent';
   renderSheet();
-}
-function tileHtml(c, onclick){
-  return `<button class="tile${c.id === selCat ? ' on' : ''}" onclick="${onclick}"><span class="tile-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="tile-lbl">${escHtml(c.name)}</span></button>`;
 }
 function setCat(id){
   selCat = id; navGroup = (catById(id) || {}).group_id || null;
@@ -1409,9 +1419,10 @@ function openCategoryBrowser(){
     if (g.hidden) continue;
     const list = catsIn(g.id, false);
     if (!list.length) continue;
-    html += `<div class="browser-grp"><div class="browser-grp-title">${escHtml(g.name)}</div><div class="tiles">` + list.map(c => tileHtml(c, `browserPick('${c.id}')`)).join('') + '</div></div>';
+    html += `<div class="browser-grp"><div class="browser-grp-title"><span class="s-ic sm tint" style="--h:${groupHue(g)}">${groupIcon(g)}</span>${escHtml(g.name)}</div>` +
+      list.map(c => `<button class="opt${c.id === selCat ? ' on' : ''}" onclick="browserPick('${c.id}')"><span class="opt-label">${escHtml(c.name)}</span>${c.id === selCat ? CHECK : ''}</button>`).join('') + '</div>';
   }
-  html += '<div class="tiles"><button class="tile new" onclick="addNewSub(null)"><span class="tile-ic"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="tile-lbl">New subcategory</span></button></div>';
+  html += '<button class="opt add" onclick="addNewSub(null)"><span class="opt-label">+ New subcategory</span></button>';
   showPicker('All categories', html);
 }
 function browserPick(id){ closePicker(); setCat(id); }
@@ -1646,7 +1657,7 @@ function renderManage(){
       html += `<section class="c-block"><div class="c-head"><div class="c-name">${escHtml(g.name)}</div></div>`;
       for (const c of list) {
         const v = targetDraft[c.id] !== undefined ? targetDraft[c.id] : (c.monthly_target != null ? plainAmount(c.monthly_target) : '');
-        html += `<div class="s-row"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><label class="s-name" for="tg_${c.id}"><span class="s-label">${escHtml(c.name)}</span></label><span class="t-field"><span class="t-sym">${sym}</span><input id="tg_${c.id}" class="t-input" type="text" inputmode="decimal" placeholder="None" value="${escHtml(v)}" oninput="onTargetInput('${c.id}', this)"></span></div>`;
+        html += `<div class="s-row"><label class="s-name" for="tg_${c.id}"><span class="s-label">${escHtml(c.name)}</span></label><span class="t-field"><span class="t-sym">${sym}</span><input id="tg_${c.id}" class="t-input" type="text" inputmode="decimal" placeholder="None" value="${escHtml(v)}" oninput="onTargetInput('${c.id}', this)"></span></div>`;
       }
       html += '</section>';
     }
@@ -1674,14 +1685,14 @@ function kindNote(g){ return g.kind === 'transfer' ? 'Not counted as spending' :
 function subCount(g){ const n = catsIn(g.id, true).length; return n + (n === 1 ? ' subcategory' : ' subcategories'); }
 function groupMeta(g){ return [kindNote(g), subCount(g), g.hidden ? 'Hidden' : ''].filter(Boolean).join(' · '); }
 function subRowHtml(c){
-  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-ic tint" style="--h:${catHue(c)}">${catIcon(c)}</span><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
+  return `<div class="s-row${c.hidden ? ' dim' : ''}"><span class="s-name"><span class="s-label">${escHtml(c.name)}</span>${c.hidden ? '<span class="s-tag">Hidden</span>' : ''}</span><button class="edit-btn sm" onclick="openEditSub('${c.id}')" aria-label="Edit subcategory ${escHtml(c.name)}">${PENCIL}</button></div>`;
 }
 function categoriesHtml(){
   let html = '<p class="m-hint">Each transaction is tagged with a subcategory.</p><div class="acc">';
   for (const g of sortedGroups()) {
     const open = openGroupIds.has(g.id);
     html += `<section class="acc-item${open ? ' open' : ''}${g.hidden ? ' dim' : ''}">
-      <button class="acc-head" onclick="toggleGroupOpen('${g.id}')" aria-expanded="${open}"><span><span class="c-name">${escHtml(g.name)}</span><span class="c-note">${groupMeta(g)}</span></span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>`;
+      <button class="acc-head" onclick="toggleGroupOpen('${g.id}')" aria-expanded="${open}"><span class="acc-left"><span class="s-ic tint" style="--h:${groupHue(g)}">${groupIcon(g)}</span><span class="acc-text"><span class="c-name">${escHtml(g.name)}</span><span class="c-note">${groupMeta(g)}</span></span></span><svg class="acc-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>`;
     if (open) {
       html += '<div class="acc-body">' + catsIn(g.id, true).map(subRowHtml).join('') +
         `<div class="acc-foot"><button class="add-row flush" onclick="openNewSub('${g.id}')">+ Add subcategory</button><button class="edit-btn" onclick="openEditGroup('${g.id}')">${PENCIL}<span>Edit ${escHtml(g.name)}</span></button></div></div>`;
@@ -1734,8 +1745,8 @@ function startEdit(e){
 }
 function openEditSub(id){ const c = catById(id); startEdit({ type:'sub', id, orig:{ name:c.name, icon:c.icon || null, group_id:c.group_id, hidden:!!c.hidden, counts_as_saving:!!c.counts_as_saving } }); }
 function openNewSub(groupId){ startEdit({ type:'sub', id:null, orig:{ name:'', icon:null, group_id:groupId, hidden:false, counts_as_saving:false } }); }
-function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden } }); }
-function openNewGroup(kind){ startEdit({ type:'group', id:null, kind:kind || 'expense', orig:{ name:'', hidden:false } }); }
+function openEditGroup(id){ const g = groupById(id); startEdit({ type:'group', id, kind:g.kind, orig:{ name:g.name, hidden:!!g.hidden, icon:g.icon || null } }); }
+function openNewGroup(kind){ startEdit({ type:'group', id:null, kind:kind || 'expense', orig:{ name:'', hidden:false, icon:null } }); }
 function openEditAccount(id){ const a = acctById(id); startEdit({ type:'account', id, orig:{ name:a.name, kind:a.kind, archived:!!a.archived } }); }
 function openEditRecurring(id){
   const r = recurring.find(x => x.id === id); if (!r) return;
@@ -1763,19 +1774,16 @@ const EDIT_TITLES = {
 function renderEdit(){
   const d = edit.draft, t = edit.type;
   document.getElementById('editTitle').textContent = EDIT_TITLES[t][edit.id ? 1 : 0];
-  document.getElementById('editSaveBtn').textContent = edit.id ? 'Save' : (t === 'sub' ? 'Add subcategory' : t === 'group' ? 'Add category' : 'Add account');
+  document.getElementById('editSaveBtn').textContent = edit.id ? 'Save' : 'Add';
   let html = '';
   if (t === 'sub') {
     const g = groupById(d.group_id);
-    html += `<div class="e-hero"><span class="e-ic" id="ePreview">${catIcon({ name:d.name || '?', icon:d.icon })}</span></div>
-      <input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Subcategory name, like Pet care" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+    html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Subcategory name, like Pet care" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list">
         <button class="pick-row" onclick="pickEditGroup()"><span class="row-label">Category</span><span class="pick-val"><span>${escHtml(g ? g.name : 'Choose')}</span><svg class="chev" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span></button>
         <div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div>
         ${g && g.kind === 'transfer' ? `<div class="list-row"><span class="row-label">Counts as saving<small class="row-hint">Shows under Spent as money saved</small></span><button class="switch${d.counts_as_saving ? ' on' : ''}" onclick="toggleEdit('counts_as_saving')" aria-label="Counts as saving"></button></div>` : ''}
-      </div>
-      <div class="e-section-title">Icon</div>
-      <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
+      </div>`;
   } else if (t === 'rec') {
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="200" placeholder="Name, like Rent" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <input class="pill-input e-name" id="eAmount" type="text" inputmode="decimal" placeholder="Amount" value="${escHtml(d.amount)}" oninput="VestlyCurrency.groupDec(this); edit.draft.amount=this.value">
@@ -1786,10 +1794,12 @@ function renderEdit(){
       </div>
       <button class="stop-rec" onclick="stopRecurring()">Stop repeating</button>`;
   } else if (t === 'group') {
-    const note = edit.kind === 'income' ? 'Counts as income.' : edit.kind === 'transfer' ? 'Not counted as spending or income.' : 'Counts as spending.';
-    html += `<input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
+    html += `<div class="e-hero"><span class="e-ic" id="ePreview">${editPreviewIcon()}</span></div>
+      <input class="pill-input e-name" id="eName" type="text" maxlength="60" placeholder="Category name, like Kids" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list"><div class="list-row"><span class="row-label">Show when adding</span><button class="switch${d.hidden ? '' : ' on'}" onclick="toggleEdit('hidden')" aria-label="Show when adding"></button></div></div>
-      <p class="e-note">${note}</p>`;
+      ${edit.kind === 'transfer' ? '<p class="e-note">Not counted as spending or income.</p>' : ''}
+      <div class="e-section-title">Icon</div>
+      <div class="icon-grid" id="eIcons">${iconGridHtml()}</div>`;
   } else {
     html += `<input class="pill-input e-name" id="eName" type="text" maxlength="80" placeholder="Account name, like Chase card" value="${escHtml(d.name)}" oninput="onEditName(this.value)">
       <div class="list">
@@ -1802,20 +1812,21 @@ function renderEdit(){
 }
 function iconGridHtml(){
   const d = edit.draft;
-  const current = d.icon === 'letter' ? 'letter' : (d.icon && LIB[d.icon] ? d.icon : (NAME_ICON[norm(d.name)] || 'letter'));
+  const current = d.icon === 'letter' ? 'letter' : (d.icon && LIB[d.icon] ? d.icon : (GROUP_ICON[norm(d.name)] || 'letter'));
   let html = `<button class="ig${current === 'letter' ? ' on' : ''}" onclick="pickEditIcon('letter')" aria-label="First letter">${monoOf(d.name || '?')}</button>`;
   for (const k of Object.keys(LIB)) html += `<button class="ig${current === k ? ' on' : ''}" onclick="pickEditIcon('${k}')" aria-label="${k}"><svg viewBox="0 0 24 24">${LIB[k]}</svg></button>`;
   return html;
 }
+function editPreviewIcon(){ return groupIcon({ name:edit.draft.name || '?', icon:edit.draft.icon }); }
 function onEditName(v){
   edit.draft.name = v;
-  if (edit.type !== 'sub') return;
-  document.getElementById('ePreview').innerHTML = catIcon({ name:v || '?', icon:edit.draft.icon });
+  if (edit.type !== 'group') return;
+  document.getElementById('ePreview').innerHTML = editPreviewIcon();
   document.getElementById('eIcons').innerHTML = iconGridHtml();
 }
 function pickEditIcon(k){
   edit.draft.icon = k;
-  document.getElementById('ePreview').innerHTML = catIcon({ name:edit.draft.name || '?', icon:k });
+  document.getElementById('ePreview').innerHTML = editPreviewIcon();
   document.getElementById('eIcons').innerHTML = iconGridHtml();
 }
 function toggleEdit(key){ edit.draft[key] = !edit.draft[key]; renderEdit(); }
@@ -1855,10 +1866,10 @@ async function saveEdit(){
       if (res.error) { msg.textContent = errText(res.error); return; }
       cats = edit.id ? cats.map(c => c.id === edit.id ? res.data : c) : cats.concat(res.data);
     } else if (t === 'group') {
-      if (edit.id) res = await sb.from('budget_groups').update({ name, hidden:d.hidden }).eq('id', edit.id).select().single();
+      if (edit.id) res = await sb.from('budget_groups').update({ name, hidden:d.hidden, icon:d.icon }).eq('id', edit.id).select().single();
       else {
         const sort = groups.reduce((m,g) => Math.max(m, g.sort_order), 0) + 1;
-        res = await sb.from('budget_groups').insert({ user_id:user.id, name, kind:edit.kind || 'expense', hidden:d.hidden, sort_order:sort }).select().single();
+        res = await sb.from('budget_groups').insert({ user_id:user.id, name, kind:edit.kind || 'expense', hidden:d.hidden, icon:d.icon, sort_order:sort }).select().single();
       }
       if (res.error) { msg.textContent = errText(res.error); return; }
       groups = edit.id ? groups.map(g => g.id === edit.id ? res.data : g) : groups.concat(res.data);
