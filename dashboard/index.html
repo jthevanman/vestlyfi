@@ -133,7 +133,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .w-empty .btn { margin-top:10px; }
 
 /* Widget tools (customize mode) */
-.w-tools { display:flex; align-items:center; gap:6px; margin:-4px 0 12px; }
+.w-tools { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin:-4px 0 12px; }
 .t-btn { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--surface); color:var(--cream-dim); cursor:pointer; }
 .t-btn:hover:not(:disabled) { background:var(--surface-2); color:var(--cream); }
 .t-btn:disabled { opacity:.3; cursor:default; }
@@ -530,6 +530,8 @@ function widgetHtml(it, i, n){
   const wide = it.size === 'full' && canExpand(def);
   const tools = editing ? `<div class="w-tools">
       <button class="t-btn grip" onpointerdown="armDrag(event,'${it.id}',true)" onkeydown="gripKey(event,'${it.id}')" aria-label="Move ${escHtml(def.name)}. Drag, or use the arrow keys." title="Drag to move"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+      <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move earlier" title="Move earlier"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
+      <button class="t-btn" onclick="moveItem('${it.id}',1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move later" title="Move later"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       ${canExpand(def) ? `<button class="t-pill" onclick="toggleSize('${it.id}')">${wide ? 'Compact' : 'Expand'}</button>` : ''}
       ${def.config ? `<button class="t-pill" onclick="configure('${it.id}')">Change</button>` : ''}
       <button class="t-btn danger" onclick="removeItem('${it.id}')" aria-label="Remove ${escHtml(def.name)}"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
@@ -707,7 +709,7 @@ function setEditing(on){
   editing = on;
   if (on) ensureLayout();
   closeSheet(); render();
-  if (on) toast('Drag widgets to move them.');
+  if (on) toast('Drag widgets, or use the arrows, to move them.');
 }
 function findItem(id){ return layout.items.find(x => x.id === id); }
 /* Keyboard moving, from the drag handle: arrow keys step one place. */
