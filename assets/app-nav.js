@@ -3,7 +3,7 @@
    signed-in screen:
      <aside data-vf-nav data-active="budget"></aside>
      <script src="/assets/app-nav.js"></script>
-   data-active: dashboard | networth | budget | debts | calculators | coast | retirement | debtpayoff | diagrams
+   data-active: dashboard (shown as Home) | networth | budget | debts
    data-theme="navy" on pages that are still in the old navy theme.
    Hidden at 768px and below, where each page keeps its own phone layout. */
 (function () {
@@ -43,16 +43,10 @@
     networth:'<polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/>',
     budget:'<path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/>',
     debts:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><line x1="2.5" y1="10" x2="21.5" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/>',
-    calculators:'<rect x="5" y="2.5" width="14" height="19" rx="2.5"/><rect x="8" y="5.5" width="8" height="4" rx="1"/><path d="M9 13.5h.01M12 13.5h.01M15 13.5h.01M9 17.5h.01M12 17.5h.01M15 17.5h.01"/>',
-    coast:'<path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/><path d="M12 3.5v10.5"/><path d="M12 4.5l5.5 8.5H12"/>',
-    retirement:'<path d="M3.5 18h17"/><path d="M7 18a5 5 0 0 1 10 0"/><path d="M12 6.5v2M5.8 10l1.4 1.4M18.2 10l-1.4 1.4"/>',
-    debtpayoff:'<polyline points="3 7 9 13 13 9 21 17"/><polyline points="15 17 21 17 21 11"/>',
-    diagrams:'<circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12c5 0 5-6 10-6M7 12c5 0 5 6 10 6"/>',
   };
   const NAV = [
-    { items:[['dashboard', 'Dashboard', '/dashboard/', 'Beta']] },
+    { items:[['dashboard', 'Home', '/dashboard/', 'Beta']] },
     { cap:'Trackers', items:[['networth', 'Net worth', '/net-worth/'], ['budget', 'Budget', '/budget/', 'Beta'], ['debts', 'Debts', '/debt-tracker/']] },
-    { cap:'Calculators', items:[['calculators', 'All calculators', '/calculators/'], ['coast', 'Coast FIRE', '/coast-fire/'], ['retirement', 'Retirement', '/retirement/'], ['debtpayoff', 'Debt payoff', '/debt-payoff/'], ['diagrams', 'Diagrams', '/create-a-diagram/']] },
   ];
 
   if (!document.getElementById('vf-nav-css')) {
@@ -64,7 +58,7 @@
     el.classList.add('vf-nav');
     if (el.dataset.theme === 'navy') el.classList.add('navy');
     el.setAttribute('aria-label', 'VestlyFi tools');
-    el.innerHTML = '<a class="vf-brand" href="/">VestlyFi</a>' + NAV.map(g =>
+    el.innerHTML = '<a class="vf-brand" href="/dashboard/">VestlyFi</a>' + NAV.map(g =>
       (g.cap ? `<div class="vf-cap">${g.cap}</div>` : '') +
       g.items.map(([key, label, href, badge]) =>
         `<a class="vf-item" href="${href}"${key === active ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${I[key]}</svg><span>${label}</span>${badge ? `<span class="vf-badge">${badge}</span>` : ''}</a>`
