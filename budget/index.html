@@ -201,7 +201,9 @@ input, select { font-family:inherit; }
 .panel { background:var(--bg); border:none; box-shadow:var(--shadow); border-radius:8px; padding:16px 16px 10px; margin-bottom:16px; }
 .panel .sum-item { padding-bottom:10px; }
 .proto { display:flex; align-items:center; gap:4px; margin:-8px 6px 12px; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
-.card-head { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+/* Card headings end in a short accent bar, not a full line, so they never read as one more row. */
+.card-head { position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; margin-bottom:6px; }
+.card-head::after { content:""; position:absolute; left:0; bottom:0; width:22px; height:2px; border-radius:2px; background:var(--accent); }
 .card-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; }
 .empty { color:var(--muted); font-size:0.84rem; text-align:center; padding:18px 6px; line-height:1.6; }
 
