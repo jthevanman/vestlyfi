@@ -1232,12 +1232,16 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 // ?update=1 (the monthly reminder email links here) opens Update Values as soon
 // as the entries are in, so logging this month is one click from the inbox.
 // The param survives a sign-in round trip and is dropped once used.
+// Links that open an action: ?update=1 (reminder emails, left menu), ?add=1, ?share=1.
+// The left menu runs these in place when you're already on this page.
+window.VF_ACTIONS={update:()=>allEntries.length?openUpdateModal():openLogModal(),add:()=>openLogModal(),share:()=>{if(allEntries.length)openShareModal();}};
 function openUpdateFromLink(){
   const q=new URLSearchParams(location.search);
-  if(!q.has('update')||!allEntries.length)return;
-  q.delete('update');
+  const act=['update','add','share'].find(k=>q.has(k));
+  if(!act)return;
+  q.delete(act);
   if(history.replaceState)history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));
-  openUpdateModal();
+  window.VF_ACTIONS[act]();
 }
 
 // ══ SAMPLE DASHBOARD ══

@@ -1270,12 +1270,18 @@ function openEdit(id){
 }
 
 /* ?add=1 / ?add=spent / ?add=received: from the home screen icon or its shortcuts. */
+/* The left menu's quick actions; it calls these directly when you're already here. */
+window.VF_ACTIONS = {
+  spent: () => openAdd(),
+  received: () => { openAdd(); setMode('received'); },
+  manage: () => openManage('categories'),
+};
 function openFromLaunch(){
-  const a = new URLSearchParams(location.search).get('add');
-  if (!a) return;
+  const q = new URLSearchParams(location.search), a = q.get('add');
+  if (!a && !q.has('manage')) return;
   history.replaceState(null, '', location.pathname);
-  openAdd();
-  if (a === 'received') setMode('received');
+  if (q.has('manage')) return window.VF_ACTIONS.manage();
+  window.VF_ACTIONS[a === 'received' ? 'received' : 'spent']();
 }
 function toggleTheme(){
   const light = document.documentElement.dataset.theme !== 'light';

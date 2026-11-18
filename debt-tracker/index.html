@@ -739,7 +739,10 @@ document.addEventListener('click',e=>{if(!e.target.closest('.acct-wrap'))closeAc
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('acctMenu').hidden)closeAcctMenu();});
 
 
-async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();}
+async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();openFromLink();}
+// Links that open an action: ?add=1, ?share=1 (left menu). Run in place when already here.
+window.VF_ACTIONS={add:()=>openDebtModal(),share:()=>{if(myDebts.length)openShareModal();}};
+function openFromLink(){const q=new URLSearchParams(location.search);const act=['add','share'].find(k=>q.has(k));if(!act)return;q.delete(act);if(history.replaceState)history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));window.VF_ACTIONS[act]();}
 
 let initDone=false,recoveryMode=false;
 if(window.location.hash.includes('type=recovery'))recoveryMode=true;
