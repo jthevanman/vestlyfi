@@ -9,3 +9,4 @@ data/
 *.md
 .github/
 supabase/
+ops/
