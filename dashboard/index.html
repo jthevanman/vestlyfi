@@ -631,7 +631,7 @@ function widgetHtml(it, i, n){
     </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}` : '';
   const link = !editing && def.link ? `<a class="w-link" href="${def.link[0]}">${def.link[1]}${CHEV}</a>` : '';
   const grab = editing ? ` onpointerdown="armDrag(event,'${it.id}',false)"` : '';
-  return `<section class="w${wide ? ' full' : ''}" id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div>${body}</section>`;
+  return `<section class="w${wide ? ' full' : ''}" id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div><div class="w-body">${body}</div></section>`;
 }
 function emptyFor(src){ if (src === 'both' || src === 'any') src = HAS.nw() ? 'budget' : 'nw'; const s = START[src]; return `<div class="w-empty">${s.line} <a href="${s.href}">Open the ${s.name}</a></div>`; }
 
