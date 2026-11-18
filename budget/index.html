@@ -575,6 +575,14 @@ input, select { font-family:inherit; }
   .sum-item:nth-child(3) { border-left:none; padding-left:0; }
   .sum-item:nth-child(n+3) { border-top:1px solid var(--line); }
 }
+
+/* Desktop: the shared left menu (assets/app-nav.js) carries the logo. */
+@media (min-width:769px) {
+  .topbar-left { display:none; }
+  .topbar { justify-content:flex-end; }
+  .toast { left:calc(50% + var(--vf-nav-w) / 2); }
+  .add-dock { left:var(--vf-nav-w); }
+}
 </style>
 </head>
 <body>
@@ -595,6 +603,7 @@ input, select { font-family:inherit; }
 
 <!-- ══ APP ══ -->
 <div id="appScreen" class="hidden">
+  <div class="vf-shell"><aside data-vf-nav data-active="budget"></aside><script src="/assets/app-nav.js"></script><div class="vf-main">
   <div class="app">
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
@@ -653,6 +662,7 @@ input, select { font-family:inherit; }
     </div>
     <div class="app-foot"><button class="bug-btn" onclick="openBug()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 8h-2.81a5.985 5.985 0 0 0-1.82-1.96L17 4.41 15.59 3l-2.17 2.17a6.002 6.002 0 0 0-2.84 0L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.33 7.22 6.81 8H4v2h2.09c-.05.33-.09.66-.09 1v1H4v2h2v1c0 .34.04.67.09 1H4v2h2.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H20v-2h-2.09c.05-.33.09-.66.09-1v-1h2v-2h-2v-1c0-.34-.04-.67-.09-1H20V8zm-6 8h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg>Report a bug</button></div>
   </div>
+  </div></div>
   <div class="add-dock">
     <button class="add-btn" onclick="openAdd()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add transaction</button>
   </div>

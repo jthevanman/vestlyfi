@@ -136,25 +136,6 @@ body {
 #appScreen { display:none; min-height:100vh; }
 .app-shell { display:flex; min-height:100vh; position:relative; z-index:1; }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width:var(--sidebar-w); flex-shrink:0;
-  position:sticky; top:0; height:100vh;
-  display:flex; flex-direction:column;
-  border-right:1px solid var(--border-soft);
-  background:#0a0f1e;
-  z-index:40;
-}
-.sidebar-logo { padding:22px 20px 18px; border-bottom:1px solid var(--border-soft); }
-.sidebar-logo a { font-family:'Exo 2',sans-serif; font-size:1.1rem; color:var(--gold); text-decoration:none; }
-.sb-section { padding:18px 16px 4px; font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(245,240,232,0.2); }
-.sb-nav { flex:1; padding:6px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; }
-.sb-link { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:8px; text-decoration:none; font-size:0.82rem; color:var(--muted); transition:all .15s; font-weight:300; }
-.sb-link:hover { background:rgba(255,255,255,0.04); color:var(--cream); }
-.sb-link.active { background:rgba(201,168,76,0.09); color:var(--gold); }
-.sb-link svg { flex-shrink:0; opacity:0.7; }
-.sb-link.active svg { opacity:1; }
-.sb-div { height:1px; background:var(--border-soft); margin:6px 14px; }
 /* Account menu: person icon at the top right of the page header. */
 .page-header { position:relative; }
 .page-header > :first-child { flex:1; min-width:0; }
@@ -691,23 +672,8 @@ footer span { color:var(--muted); font-size:0.72rem; }
 <div id="appScreen">
   <div class="app-shell">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo"><a href="/">VestlyFi</a></div>
-      <div class="sb-nav" style="padding-top:8px">
-        <div style="padding:12px 10px 4px;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,240,232,0.2)">Main</div>
-        <a href="/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a>
-        <a href="/net-worth/" class="sb-link active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Net Worth</a>
-        <a href="/debt-tracker/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Debt Tracker</a>
-        <a href="/calculators/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg>Calculators</a>
-        <a href="/create-a-diagram/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><line x1="12" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="19" y2="17"/></svg>Diagrams</a>
-        <div class="sb-div"></div>
-        <div style="padding:10px 10px 4px;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,240,232,0.2)">Tools</div>
-        <a href="/coast-fire/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Coast FIRE</a>
-        <a href="/retirement/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Retirement</a>
-        <a href="/debt-payoff/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Debt Payoff</a>
-      </div>
-    </aside>
+    <!-- LEFT MENU (shared, assets/app-nav.js) -->
+    <aside data-vf-nav data-active="networth" data-theme="navy"></aside><script src="/assets/app-nav.js"></script>
 
     <!-- MAIN -->
     <div style="flex:1;display:flex;flex-direction:column;min-width:0;align-items:center;overflow-x:hidden;">
