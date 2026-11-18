@@ -211,8 +211,14 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .yc .lc { margin-top:0; }
 .lc-grid { stroke:var(--line); stroke-width:1; }
 .lc-zero-strong { stroke:var(--cream-dim); stroke-width:1.2; }
-.lc-tip .t-row { display:flex; justify-content:space-between; gap:12px; text-align:left; }
-.lc-tip .t-row b { display:inline; font-size:0.8rem; }
+.t-row { display:flex; justify-content:space-between; align-items:center; gap:14px; text-align:left; line-height:1.55; }
+.t-row b { display:inline; font-size:0.8rem; color:var(--cream); font-weight:500; }
+.t-row > span { display:inline-flex; align-items:center; gap:6px; }
+.t-row i { width:7px; height:7px; border-radius:2px; display:inline-block; }
+.t-head { display:block; color:var(--cream); font-weight:500; margin-bottom:2px; }
+.t-row b.up { color:var(--green); } .t-row b.down { color:var(--red); }
+.t-row.t-sum { border-top:1px solid var(--line); margin-top:3px; padding-top:3px; }
+.lc-tip.cols { transform:translate(-50%, 0); }
 /* Breakdown key: one compact line per side */
 .bk-key { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px; font-size:0.76rem; color:var(--cream-dim); }
 .bk-key span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
@@ -231,7 +237,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lc.show .lc-guide, .lc.show .lc-dot, .lc.show .lc-tip { display:block; }
 /* Bar chart hover */
 .tb-col { position:relative; cursor:default; }
-.tb-tip { position:absolute; left:50%; top:0; transform:translate(-50%, -100%); padding:6px 10px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; z-index:2; }
+.tb-tip { position:absolute; left:50%; top:0; transform:translate(-50%, -100%); padding:8px 11px; min-width:150px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; z-index:2; }
 .tb-tip b { color:var(--cream); font-weight:500; }
 .tb-col:hover .tb-tip { display:block; }
 .tb:hover .tb-col:not(:hover) .tb-bar { opacity:.45; }
@@ -264,6 +270,11 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .tb { display:flex; align-items:stretch; gap:8px; height:170px; margin-top:4px; }
 .tb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
 .tb-bar { transition:opacity .15s; }
+/* Spending bar, split by category (bottom up, biggest category first) */
+.tb-stack { display:flex; flex-direction:column-reverse; width:34%; max-width:20px; min-height:2px; border-radius:4px 4px 2px 2px; overflow:hidden; transition:opacity .15s; }
+.tb-stack span { display:block; width:100%; flex:0 0 auto; }
+.tb-stack span + span { box-shadow:0 -1px 0 var(--bg); }
+.tb:hover .tb-col:not(:hover) .tb-stack { opacity:.45; }
 .tb-bars { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
 .tb-bar { width:34%; max-width:20px; min-height:2px; border-radius:4px 4px 2px 2px; }
 .tb-bar.in { background:var(--green); } .tb-bar.out { background:var(--accent); }
@@ -755,13 +766,16 @@ function lcMove(e, id){
   const el = document.getElementById(id), d = LCS[id]; if (!el || !d) return;
   const r = el.getBoundingClientRect(), n = d.vals.length;
   const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-  const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((fx * d.W - d.P) / ((d.W - 2 * d.P) / (n - 1)))));
-  const xp = (n === 1 ? 0.5 : (d.P + i * (d.W - 2 * d.P) / (n - 1)) / d.W) * 100;
+  const i = d.cols ? Math.max(0, Math.min(n - 1, Math.floor((fx * d.W - d.P) / d.cols)))
+    : n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((fx * d.W - d.P) / ((d.W - 2 * d.P) / (n - 1)))));
+  const xp = (d.cols ? (d.P + (i + 0.5) * d.cols) / d.W : n === 1 ? 0.5 : (d.P + i * (d.W - 2 * d.P) / (n - 1)) / d.W) * 100;
   const yp = (d.fy ? d.fy[i] : (d.P + (d.H - 2 * d.P) * (1 - (d.vals[i] - d.min) / (d.max - d.min))) / d.H) * r.height;
   el.classList.add('show');
   el.querySelector('.lc-guide').style.left = xp + '%';
   const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
-  const tip = el.querySelector('.lc-tip'); tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px';
+  const tip = el.querySelector('.lc-tip');
+  if (d.cols) { tip.classList.add('cols'); tip.style.top = '0px'; tip.style.left = (xp < 50 ? xp + 4 : xp - 4) + '%'; tip.style.transform = xp < 50 ? 'translate(0,0)' : 'translate(-100%,0)'; }
+  else { tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px'; tip.style.transform = ''; }
   tip.innerHTML = d.tips ? d.tips[i] : `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
 }
 /* Shared y scale with round tick values, and short money labels for the axis. */
@@ -769,7 +783,7 @@ function niceTicks(lo, hi, n){
   if (lo === hi) { lo -= 1; hi += 1; }
   const raw = (hi - lo) / (n || 4), mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
   const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
-  const out = []; for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) out.push(Math.round(v / step) * step);
+  const out = []; for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) out.push(Math.round(v / step) * step || 0);   // || 0 turns -0 into 0
   return out;
 }
 function moneyShort(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { style:'currency', currency:VestlyCurrency.code(), notation:'compact', maximumFractionDigits:1 }).format(n); }
@@ -807,23 +821,32 @@ function nwChart(s, view){
   const ticks = niceTicks(lo, hi, 4), t0 = ticks[0], t1 = ticks[ticks.length - 1];
   const y = v => (t1 - v) / (t1 - t0) * H;
   const grid = ticks.map(t => `<line class="${t === 0 && view === 'stack' ? 'lc-zero-strong' : 'lc-grid'}" x1="0" x2="${W}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" vector-effect="non-scaling-stroke"/>`).join('');
+  // Breakdown: one column per month. Assets stack up from zero, liabilities
+  // down from it; the net worth line joins the column centers.
+  const colW = (W - 2 * P) / n, cx = i => P + (i + 0.5) * colW, bw = Math.min(colW * 0.62, 46);
   let areas = '';
-  for (const side of layers) {
-    const base = s.map(() => 0);
-    for (const l of side) {
-      const top = base.map((b, i) => b + l.vals[i]);
-      const up = top.map((v, i) => `${x(i).toFixed(1)},${y(l.sign * v).toFixed(1)}`), down = base.map((v, i) => `${x(i).toFixed(1)},${y(l.sign * v).toFixed(1)}`).reverse();
-      areas += `<path d="M${up.join(' L')} L${down.join(' L')} Z" fill="${l.color}" fill-opacity="0.8" stroke="var(--bg)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
-      top.forEach((v, i) => base[i] = v);
+  if (view === 'stack') {
+    for (const side of layers) {
+      const base = s.map(() => 0);
+      for (const l of side) s.forEach((_, i) => {
+        const v = l.vals[i]; if (!(v > 0)) return;
+        const a = y(l.sign * base[i]), b = y(l.sign * (base[i] + v));
+        areas += `<rect x="${(cx(i) - bw / 2).toFixed(2)}" y="${Math.min(a, b).toFixed(2)}" width="${bw.toFixed(2)}" height="${Math.max(0.6, Math.abs(b - a)).toFixed(2)}" fill="${l.color}" stroke="var(--bg)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+        base[i] += v;
+      });
     }
   }
-  const linePts = s.map((m, i) => `${x(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
+  const px = view === 'stack' ? cx : x;
+  const linePts = s.map((m, i) => `${px(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
   const fill = view === 'stack' ? '' : `<path class="lc-area" d="M${x(0).toFixed(1)},${H} L${linePts.split(' ').join(' L')} L${x(n - 1).toFixed(1)},${H} Z"/>`;
   const id = 'lc_' + uid();
+  // Breakdown hover: every layer for that month, then the totals.
+  const row = (c, name, v, cls) => `<span class="t-row${cls !== undefined && !c ? ' t-sum' : ''}"><span>${c ? `<i style="background:${c}"></i>` : ''}${escHtml(name)}</span><b${cls ? ` class="${cls}"` : ''}>${money(v)}</b></span>`;
   const tips = s.map((m, i) => view === 'stack'
-    ? `<b>${labels[i]}</b><span class="t-row">Assets <b class="up">${money(m.assets)}</b></span><span class="t-row">Liabilities <b class="down">${money(m.liabilities)}</b></span><span class="t-row">Net worth <b>${money(m.net)}</b></span>`
+    ? `<span class="t-head">${labels[i]}</span>` + layers[0].filter(l => l.vals[i] > 0).map(l => row(l.color, l.name, l.vals[i])).join('') + row('', 'Assets', m.assets, 'up')
+      + layers[1].filter(l => l.vals[i] > 0).map(l => row(l.color, l.name, l.vals[i])).join('') + row('', 'Liabilities', m.liabilities, 'down') + row('', 'Net worth', m.net, '')
     : `<b>${money(m.net)}</b>${labels[i]}`);
-  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H), tips };
+  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H), tips, cols:view === 'stack' ? colW : 0 };
   return `<div class="yc"><div class="y-labels" style="height:${H}px">${ticks.map(t => `<span style="top:${(y(t) / H * 100).toFixed(1)}%">${moneyShort(t)}</span>`).join('')}</div>
     <div class="lc hover" id="${id}" style="height:${H}px" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${grid}${areas}${fill}<polyline class="lc-line" points="${linePts}" vector-effect="non-scaling-stroke"/></svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>
     <span></span><div class="lc-x"><span>${labels[0]}</span><span>${labels[n - 1]}</span></div></div>` + (key ? `<div class="bk-key">${key}</div>` : '');
@@ -953,11 +976,24 @@ const RENDER = {
     return wide ? `<div class="cols">${html.join('')}</div>` : html.join('');
   },
   'bd-trend'(it){
-    const months = lastMonths(it.size === 'full' ? 12 : 6), t = months.map(m => totals(txIn(m)));
-    const max = Math.max(1, ...t.map(x => Math.max(x.income, x.spent)));
-    const avg = t.reduce((a, x) => a + x.spent, 0) / t.length;
-    return `<div class="tb">${months.map((m, i) => `<div class="tb-col"><span class="tb-tip">${monthName(m, true)}: in <b>${money(t[i].income)}</b>, out <b>${money(t[i].spent)}</b></span><div class="tb-bars"><span class="tb-bar in" style="height:${(t[i].income / max * 100).toFixed(1)}%" title="Income ${money(t[i].income)}"></span><span class="tb-bar out" style="height:${(Math.max(0, t[i].spent) / max * 100).toFixed(1)}%" title="Spent ${money(t[i].spent)}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>
-      <div class="legend"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--accent)"></i>Spent</span><span>Average spent <b>${money(avg)}</b></span></div>`;
+    const months = lastMonths(it.size === 'full' ? 12 : 6);
+    const data = months.map(m => ({ m, t:totals(txIn(m)), by:spendBy(m).byGroup }));
+    // Same category order in every month: biggest over the whole period at the bottom.
+    const sum = {}; data.forEach(d => { for (const [g, v] of Object.entries(d.by)) if (v > 0) sum[g] = (sum[g] || 0) + v; });
+    const cats = Object.keys(sum).sort((a, b) => sum[b] - sum[a]).slice(0, 6).map(id => { const g = groupById(id); return { id, name:g ? g.name : 'Other', color:groupHue(g) }; });
+    const max = Math.max(1, ...data.map(d => Math.max(d.t.income, d.t.spent)));
+    const avg = data.reduce((a, d) => a + d.t.spent, 0) / data.length;
+    const cols = data.map(d => {
+      const segs = cats.map(c => ({ c, v:Math.max(0, d.by[c.id] || 0) })).filter(x => x.v > 0);
+      const other = Math.max(0, d.t.spent - segs.reduce((a, x) => a + x.v, 0));
+      if (other > 0.5) segs.push({ c:{ name:'Other', color:'#8d8d8d' }, v:other });
+      const tot = segs.reduce((a, x) => a + x.v, 0) || 1;
+      const tip = `<span class="t-head">${monthName(d.m, true)}</span><span class="t-row"><span><i style="background:var(--green)"></i>Income</span><b class="up">${money(d.t.income)}</b></span><span class="t-row"><span>Spent</span><b>${money(d.t.spent)}</b></span>`
+        + segs.map(x => `<span class="t-row"><span><i style="background:${x.c.color}"></i>${escHtml(x.c.name)}</span><b>${money(x.v)}</b></span>`).join('');
+      return `<div class="tb-col"><span class="tb-tip">${tip}</span><div class="tb-bars"><span class="tb-bar in" style="height:${(d.t.income / max * 100).toFixed(1)}%"></span><span class="tb-stack" style="height:${(Math.max(0, d.t.spent) / max * 100).toFixed(1)}%">${segs.map(x => `<span style="height:${(x.v / tot * 100).toFixed(2)}%;background:${x.c.color}"></span>`).join('')}</span></div><span class="tb-lbl">${monthName(d.m)}</span></div>`;
+    }).join('');
+    return `<div class="tb">${cols}</div>
+      <div class="legend"><span><i style="background:var(--green)"></i>Income</span>${cats.map(c => `<span><i style="background:${c.color}"></i>${escHtml(c.name)}</span>`).join('')}<span>Average spent <b>${money(avg)}</b></span></div>`;
   },
   'bd-targets'(it){
     const { byCat } = spendBy(new Date()), wide = it.size === 'full';
@@ -1226,7 +1262,7 @@ const THUMBS_LAUNCH = {
   'nw-trend': tsvg(['6M', '1Y', '3Y', 'All'].map((l, i) => (i === 1 ? bar(3 + i * 13, 2, 12, 7, T_S, 3.5) : '') + tx(9 + i * 13, 7.3, l, 4.2, i === 1 ? T_C : T_M, 500, 'middle')).join('') + `<path d="M4 54 L20 46 L34 48 L50 34 L66 30 L82 20 L96 13 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 54 20 46 34 48 50 34 66 30 82 20 96 13" stroke="${T_A}" stroke-width="2.4"/><circle cx="66" cy="30" r="2.6" fill="${T_A}"/>` + bar(52, 15, 28, 9, T_S, 3) + tx(66, 21.5, '$229,400', 4.4, T_C, 500, 'middle')),
   'bd-month': tsvg([['Income', '$6,500', T_G, 4, 12], ['Spent', '$2,618', T_C, 54, 12], ['Saved', '$800', T_G, 4, 40], ['Money out', '$3,418', T_C, 54, 40]].map(([k, v, c, x, y]) => tx(x, y, k, 4.6, T_M, 400) + tx(x, y + 11, v, 9, c)).join('') + bar(49, 4, 0.8, 52, T_S, 0.4) + bar(4, 30, 92, 0.8, T_S, 0.4)),
   'bd-pie': tsvg(`<g transform="rotate(-90 30 30)"><circle cx="30" cy="30" r="21" stroke="#7aa7ff" stroke-width="9" stroke-dasharray="72 132"/><circle cx="30" cy="30" r="21" stroke="#f0a35e" stroke-width="9" stroke-dasharray="30 132" stroke-dashoffset="-73"/><circle cx="30" cy="30" r="21" stroke="#4cc3b5" stroke-width="9" stroke-dasharray="17 132" stroke-dashoffset="-104"/><circle cx="30" cy="30" r="21" stroke="#d08cf0" stroke-width="9" stroke-dasharray="9 132" stroke-dashoffset="-122"/></g>` + tx(30, 31, '$2,618', 6, T_C, 500, 'middle') + tx(30, 37, 'spent', 3.8, T_M, 400, 'middle') + [['#7aa7ff', 'Housing'], ['#f0a35e', 'Food'], ['#4cc3b5', 'Transport'], ['#d08cf0', 'Personal']].map(([c, l], i) => `<circle cx="62" cy="${14 + i * 10}" r="2.4" fill="${c}"/>` + tx(67, 15.8 + i * 10, l, 5, T_C, 400)).join('')),
-  'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b, T_A, 1.5) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
+  'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b * 0.55, '#7aa7ff', 0) + bar(x + 6, 50 - b * 0.55 - b * 0.3, 5, b * 0.3, '#f0a35e', 0) + bar(x + 6, 50 - b, 5, b * 0.15, '#d08cf0', 0) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
   'bd-upcoming': tsvg([['Dec 1', 'Rent', '$1,850', T_C, '#7aa7ff'], ['Dec 9', 'Electric', '~$150', T_C, '#7aa7ff'], ['Dec 15', 'Paycheck', '+$3,250', T_G, '#5cc28e']].map(([d, n, v, c, h], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, d, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
   'bd-recent': tsvg([['Trader Joe\u2019s', 'Groceries · Today', '$84.12', '#f0a35e', T_C], ['Paycheck', 'Income · Nov 15', '+$3,250', '#5cc28e', T_G], ['Netflix', 'Subscriptions · Nov 11', '$15.49', '#d08cf0', T_C]].map(([n, m, v, h, c], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, m, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
   'last-updated': tsvg([['NET WORTH', 'Updated Nov 1', '16 days ago', 'Update'], ['LAST TRANSACTION', 'Trader Joe\u2019s $84', 'Logged today', 'Add']].map(([k, v, n, b], i) => { const y = 4 + i * 28; return tx(4, y + 4, k, 4, T_M, 500) + tx(4, y + 13, v, 6.4, T_C) + tx(4, y + 20, n, 4.4, T_M, 400) + bar(74, y + 6, 22, 10, T_S, 5) + tx(85, y + 12.6, b, 4.6, T_C, 500, 'middle'); }).join('')),
