@@ -123,10 +123,9 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 @media (max-width:720px) { .cols { grid-template-columns:minmax(0,1fr); } .cols > .cb:nth-child(2) { border-top:1px solid var(--line); } .cols > .col2 { margin-top:18px; } }
 .sub { display:flex; justify-content:space-between; gap:10px; padding:4px 0 4px 17px; font-size:0.8rem; color:var(--cream-dim); }
 .sub span:first-child { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-/* Card headings end in a short accent bar, not a full line, so they never read as one more row. */
-.w-head { position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:10px; margin-bottom:12px; min-height:30px; }
-.w-head::after { content:""; position:absolute; left:0; bottom:0; width:22px; height:2px; border-radius:2px; background:var(--accent); }
-.w-title { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Widget titles stand out on their own: bold, in the accent color, no line under them. */
+.w-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; min-height:28px; }
+.w-title { font-size:0.74rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .w-link { flex:0 0 auto; display:inline-flex; align-items:center; gap:2px; font-size:0.78rem; color:var(--cream-dim); text-decoration:none; }
 .w-link:hover { color:var(--accent-light); }
 .w-link svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
@@ -190,16 +189,32 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .rng button:hover { color:var(--cream); }
 .rng button.on { background:var(--surface); color:var(--cream); }
 /* Spending pie */
-.pie { display:flex; align-items:center; gap:20px; }
-.pie-chart { position:relative; flex:0 0 auto; width:156px; height:156px; }
-.pie-chart svg { width:100%; height:100%; transform:rotate(-90deg); }
-.pie-mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
-.pie-mid b { font-size:1.15rem; font-weight:500; }
-.pie-mid span { font-size:0.72rem; color:var(--muted); }
-.pie-legend { flex:1; min-width:0; }
-.pie-legend .row { padding:6px 0; font-size:0.84rem; }
-.pie-legend .k { display:flex; align-items:center; gap:8px; }
-.pie-pct { color:var(--muted); font-weight:400; margin-right:8px; }
+.pie { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.pie-chart { position:relative; width:min(100%, 250px); aspect-ratio:1; }
+.pie-chart svg { width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
+.pie-seg { cursor:pointer; transition:opacity .15s, stroke-width .15s; }
+.pie.focus .pie-seg:not(.on) { opacity:.3; }
+.pie-seg.on { stroke-width:20; }
+.pie-mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none; padding:0 22%; }
+.pie-mid b { font-size:1.35rem; font-weight:500; }
+.pie-mid span { font-size:0.76rem; color:var(--cream-dim); margin-top:2px; line-height:1.3; }
+.pie-keys { display:flex; flex-wrap:wrap; justify-content:center; gap:2px 12px; font-size:0.74rem; color:var(--cream-dim); }
+.pie-key { display:inline-flex; align-items:center; gap:5px; padding:2px 4px; border:none; border-radius:999px; background:none; color:inherit; font:inherit; cursor:pointer; }
+.pie-key:hover, .pie-key.on { color:var(--cream); }
+.pie-key .dot { width:7px; height:7px; }
+/* Line chart hover: a dot and a small label for the month under the pointer */
+.lc.hover { cursor:crosshair; touch-action:pan-y; }
+.lc-guide { position:absolute; top:0; bottom:0; width:1px; background:var(--line); pointer-events:none; display:none; }
+.lc-dot { position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--bg); pointer-events:none; display:none; }
+.lc-tip { position:absolute; transform:translate(-50%, calc(-100% - 12px)); padding:6px 10px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; text-align:center; }
+.lc-tip b { display:block; font-size:0.9rem; color:var(--cream); font-weight:500; }
+.lc.show .lc-guide, .lc.show .lc-dot, .lc.show .lc-tip { display:block; }
+/* Bar chart hover */
+.tb-col { position:relative; cursor:default; }
+.tb-tip { position:absolute; left:50%; top:0; transform:translate(-50%, -100%); padding:6px 10px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; z-index:2; }
+.tb-tip b { color:var(--cream); font-weight:500; }
+.tb-col:hover .tb-tip { display:block; }
+.tb:hover .tb-col:not(:hover) .tb-bar { opacity:.45; }
 @media (max-width:420px) { .pie { flex-direction:column; align-items:stretch; } .pie-chart { align-self:center; } }
 /* Last updated */
 .lu { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
@@ -228,6 +243,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .fill.ok { background:var(--green); } .fill.ahead { background:var(--amber); } .fill.over { background:var(--red); }
 .tb { display:flex; align-items:stretch; gap:8px; height:170px; margin-top:4px; }
 .tb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
+.tb-bar { transition:opacity .15s; }
 .tb-bars { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
 .tb-bar { width:34%; max-width:20px; min-height:2px; border-radius:4px 4px 2px 2px; }
 .tb-bar.in { background:var(--green); } .tb-bar.out { background:var(--accent); }
@@ -262,13 +278,15 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .sheet::-webkit-scrollbar-track { margin:22px 0; }
 /* Add a widget: picture tiles */
 .sheet.wide { max-width:580px; }
-.wg-grid { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px 8px; }
-@media (max-width:400px) { .wg-grid { grid-template-columns:repeat(2, minmax(0,1fr)); } }
-.wg { display:flex; flex-direction:column; align-items:stretch; gap:7px; padding:6px; border:none; border-radius:16px; background:none; color:var(--cream); font:inherit; text-align:center; cursor:pointer; }
+.wg-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px 12px; }
+@media (max-width:420px) { .wg-grid { grid-template-columns:minmax(0,1fr); } }
+.wg { display:flex; flex-direction:column; align-items:stretch; gap:4px; padding:6px; border:none; border-radius:16px; background:none; color:var(--cream); font:inherit; text-align:left; cursor:pointer; }
 .wg-thumb { position:relative; aspect-ratio:5 / 3; border-radius:12px; background:var(--surface); padding:10px 12px; transition:background .15s; }
 .wg:hover:not(:disabled) .wg-thumb { background:var(--surface-2); }
 .wg-thumb svg { display:block; width:100%; height:100%; }
-.wg-name { font-size:0.78rem; line-height:1.25; }
+.wg-name { font-size:0.88rem; font-weight:500; line-height:1.25; margin-top:4px; }
+.wg-desc { font-size:0.74rem; color:var(--muted); line-height:1.35; }
+.wg:disabled .wg-desc { opacity:.5; }
 .wg:disabled { cursor:default; }
 .wg:disabled .wg-thumb svg, .wg:disabled .wg-name { opacity:.35; }
 .wg-tag { position:absolute; top:6px; right:6px; padding:1px 7px; border-radius:20px; background:var(--raised); color:var(--cream-dim); font-size:0.62rem; font-weight:500; }
@@ -570,14 +588,28 @@ const WIDGETS = {
   'debts':         { src:'debts', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/debt-tracker/', 'Debts'] },
 };
 const canExpand = def => !!def.wide;
+/* Launch set: the widgets that ship. The others stay in the code, switched
+   off, until each one is worth bringing back. */
+const LAUNCH = ['nw-total', 'nw-trend', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent', 'last-updated'];
+const NAMES = {
+  'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
+  'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
+  'bd-month':     ['This month', 'Income, spending and what you saved so far this month.'],
+  'bd-pie':       ['Spending by category', 'A pie of this month\u2019s spending. Hover a slice to see the category.'],
+  'bd-trend':     ['Income vs spending', 'Money in next to money out, month by month. Hover a month for the numbers.'],
+  'bd-upcoming':  ['Upcoming recurring', 'Your next repeating bills and paychecks, with their dates.'],
+  'bd-recent':    ['Recent transactions', 'The last few transactions you logged.'],
+  'last-updated': ['Last updated', 'When you last updated net worth and logged a transaction, with buttons to do it now.'],
+};
+for (const [k, [name, desc]] of Object.entries(NAMES)) Object.assign(WIDGETS[k], { name, desc });
 const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['nw', 'Net worth'], ['budget', 'Budget'], ['debts', 'Debts']];
 
 /* Starting layouts. The default picks itself from the data you have, and
    stays automatic until you customize. */
 const PRESETS = {
-  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['milestone','half'], ['bd-pie','half'], ['calendar','half'], ['flow','full'], ['nw-trend','full'], ['kept','half'], ['bd-categories','half'], ['bd-upcoming','half'], ['nw-sheet','half'], ['bd-recent','half'], ['debts','half']] },
-  networth:   { name:'Net worth', desc:'What you own, what you owe, and the trend.', items:[['nw-total','half'], ['last-updated','half'], ['nw-trend','full'], ['milestone','half'], ['debts','half'], ['nw-sheet','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['calendar','half'], ['flow','full'], ['bd-categories','half'], ['bd-upcoming','half'], ['bd-trend','full'], ['bd-targets','half'], ['bd-recent','half']] },
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-recent','half'], ['bd-trend','full']] },
+  networth:   { name:'Net worth', desc:'Your total and how it has changed.', items:[['nw-total','half'], ['last-updated','half'], ['nw-trend','full']] },
+  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-upcoming','half'], ['bd-trend','full'], ['bd-recent','half']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
@@ -592,7 +624,7 @@ function loadLayout(){
   try { const v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); layout = v && Array.isArray(v.items) ? v : null; } catch (e) { layout = null; }
   if (!layout) return;
   // Drop unknown widgets; widgets that can't expand are always half width.
-  layout.items = layout.items.filter(it => WIDGETS[it.type]);
+  layout.items = layout.items.filter(it => WIDGETS[it.type] && LAUNCH.includes(it.type));
   for (const it of layout.items) if (!canExpand(WIDGETS[it.type])) it.size = WIDGETS[it.type].fixed || 'half';
 }
 function saveLayout(){ try { localStorage.setItem(layoutKey(), JSON.stringify(layout)); } catch (e) {} }
@@ -652,7 +684,7 @@ function emptyFor(src){ if (src === 'both' || src === 'any') src = HAS.nw() ? 'b
 /* Line chart: vector-effect keeps the stroke even while the SVG stretches. */
 /* vals: one series of numbers, or a list of { vals, color } sharing one scale.
    The first series gets the soft fill. */
-function lineChart(vals, cls){
+function lineChart(vals, cls, labels){
   const series = typeof vals[0] === 'number' ? [{ vals }] : vals;
   const W = 600, H = 170, P = 8, all = series.flatMap(s => s.vals), len = series[0].vals.length;
   let min = Math.min(...all), max = Math.max(...all);
@@ -664,6 +696,11 @@ function lineChart(vals, cls){
   const area = `M${x(0).toFixed(1)},${H} L${first.join(' L')} L${x(len - 1).toFixed(1)},${H} Z`;
   const zero = min < 0 && max > 0 ? `<line class="lc-zero" x1="0" x2="${W}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" vector-effect="non-scaling-stroke"/>` : '';
   const lines = series.map(s => `<polyline class="lc-line" points="${pts(s).join(' ')}" vector-effect="non-scaling-stroke"${s.color ? ` style="stroke:${s.color}"` : ''}/>`).join('');
+  if (labels && series.length === 1) {
+    const id = 'lc_' + uid();
+    LCS[id] = { vals:series[0].vals, labels, min, max, W, H, P };
+    return `<div class="lc hover ${cls || ''}" id="${id}" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}${lines}</svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>`;
+  }
   return `<div class="lc ${cls || ''}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}${lines}</svg></div>`;
 }
 function lastMonths(n){ const now = new Date(), out = []; for (let i = n - 1; i >= 0; i--) out.push(new Date(now.getFullYear(), now.getMonth() - i, 1)); return out; }
@@ -676,6 +713,38 @@ function setNwRange(k){ try { localStorage.setItem(RANGE_KEY, k); } catch (e) {}
 function nwTrendBody(it, s){ return RENDER['nw-trend-body'](it, s); }
 function daysAgo(d){ const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(d); b.setHours(0, 0, 0, 0); return Math.max(0, Math.round((a - b) / 864e5)); }
 function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' days ago'; }
+/* Pie hover: the middle shows the category under the pointer. */
+const PIES = {};
+function pieOver(e, id, tap){
+  const t = e.target.closest('[data-i]');
+  if (!t) { if (tap) pieFocus(id, -1); return; }
+  const i = Number(t.dataset.i), el = document.getElementById(id);
+  pieFocus(id, tap && el.dataset.focus === String(i) ? -1 : i);
+}
+function pieFocus(id, i){
+  const el = document.getElementById(id), p = PIES[id]; if (!el || !p) return;
+  el.dataset.focus = String(i);
+  el.classList.toggle('focus', i >= 0);
+  el.querySelectorAll('[data-i]').forEach(n => n.classList.toggle('on', Number(n.dataset.i) === i));
+  const mid = el.querySelector('.pie-mid'), x = p.top[i];
+  mid.innerHTML = x ? `<b>${money(x.v)}</b><span>${escHtml(x.name)} · ${Math.round(x.v / p.total * 100)}%</span>` : `<b>${money(p.total)}</b><span>spent in ${p.month}</span>`;
+}
+/* Line chart hover: the month and value under the pointer. */
+const LCS = {};
+function lcMove(e, id){
+  const el = document.getElementById(id), d = LCS[id]; if (!el || !d) return;
+  const r = el.getBoundingClientRect(), n = d.vals.length;
+  const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((fx * d.W - d.P) / ((d.W - 2 * d.P) / (n - 1)))));
+  const xp = (n === 1 ? 0.5 : (d.P + i * (d.W - 2 * d.P) / (n - 1)) / d.W) * 100;
+  const yp = (d.P + (d.H - 2 * d.P) * (1 - (d.vals[i] - d.min) / (d.max - d.min))) / d.H * r.height;
+  el.classList.add('show');
+  el.querySelector('.lc-guide').style.left = xp + '%';
+  const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
+  const tip = el.querySelector('.lc-tip'); tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px';
+  tip.innerHTML = `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
+}
+function lcLeave(id){ const el = document.getElementById(id); if (el) el.classList.remove('show'); }
 const RENDER_TITLE = {
   'nw-watch': it => it.opts ? it.opts.category : null,
   'bd-watch': it => { if (!it.opts) return null; const x = it.opts.kind === 'group' ? groupById(it.opts.id) : catById(it.opts.id); return x ? x.name : null; },
@@ -692,18 +761,21 @@ const RENDER = {
     const pills = '<div class="rng" role="group" aria-label="Time range">' + RANGES.map(x => `<button class="${x.key === r.key ? 'on' : ''}" onclick="setNwRange('${x.key}')" aria-pressed="${x.key === r.key}">${x.label}</button>`).join('') + '</div>';
     return pills + nwTrendBody(it, s);
   },
-  'bd-pie'(){
+  'bd-pie'(it){
     const { byGroup } = spendBy(new Date());
     const rows = D.groups.filter(g => g.kind === 'expense' && (byGroup[g.id] || 0) > 0.5).map(g => ({ name:g.name, v:byGroup[g.id], color:groupHue(g) })).sort((a, b) => b.v - a.v);
     const top = rows.slice(0, 6), rest = rows.slice(6).reduce((a, x) => a + x.v, 0);
     if (rest > 0.5) top.push({ name:'Other', v:rest, color:'#8d8d8d' });
     const total = top.reduce((a, x) => a + x.v, 0);
     if (!total) return '<div class="w-empty">Nothing spent yet this month.</div>';
-    const R = 42, C = 2 * Math.PI * R;
+    const id = 'pie_' + it.id, R = 44, C = 2 * Math.PI * R;
+    PIES[id] = { top, total, month:monthName(new Date(), true) };
     let off = 0;
-    const arcs = top.map(x => { const len = x.v / total * C, a = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${x.color}" stroke-width="14" stroke-dasharray="${Math.max(0, len - 1.2).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"><title>${escHtml(x.name)}: ${money(x.v)}</title></circle>`; off += len; return a; }).join('');
-    return `<div class="pie"><div class="pie-chart"><svg viewBox="0 0 120 120" aria-hidden="true">${arcs}</svg><div class="pie-mid"><b>${money(total)}</b><span>spent</span></div></div>
-      <div class="pie-legend">${top.map(x => `<div class="row"><span class="k"><span class="dot" style="--h:${x.color}"></span>${escHtml(x.name)}</span><span class="v"><span class="pie-pct">${Math.round(x.v / total * 100)}%</span>${money(x.v)}</span></div>`).join('')}</div></div>`;
+    const arcs = top.map((x, i) => { const len = x.v / total * C, a = `<circle class="pie-seg" data-i="${i}" cx="60" cy="60" r="${R}" fill="none" stroke="${x.color}" stroke-width="15" stroke-dasharray="${Math.max(0.5, len - 1.4).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`; off += len; return a; }).join('');
+    // Hover (or tap) a slice or a key to see that category in the middle.
+    return `<div class="pie" id="${id}" onpointerover="pieOver(event,'${id}')" onpointerleave="pieFocus('${id}',-1)" onclick="pieOver(event,'${id}',true)">
+      <div class="pie-chart"><svg viewBox="0 0 120 120" role="img" aria-label="Spending by category">${arcs}</svg><div class="pie-mid"><b>${money(total)}</b><span>spent in ${PIES[id].month}</span></div></div>
+      <div class="pie-keys">${top.map((x, i) => `<button class="pie-key" data-i="${i}" type="button"><span class="dot" style="--h:${x.color}"></span>${escHtml(x.name)} ${Math.round(x.v / total * 100)}%</button>`).join('')}</div></div>`;
   },
   'last-updated'(){
     const now = new Date(), rows = [];
@@ -734,12 +806,12 @@ const RENDER = {
         return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
       }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
       const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
-      return `<div class="cols"><div>${lineChart(s.map(x => x.net))}${axis}
+      return `<div class="cols"><div>${lineChart(s.map(x => x.net), '', s.map(x => monthLabel(x.month)))}${axis}
           <div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div></div>
         <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved it</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
     }
     const hi = Math.max(...s.map(x => x.net)), lo = Math.min(...s.map(x => x.net));
-    return lineChart(s.map(x => x.net)) + axis +
+    return lineChart(s.map(x => x.net), '', s.map(x => monthLabel(x.month))) + axis +
       `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>High <b>${money(hi)}</b></span><span>Low <b>${money(lo)}</b></span></div>`;
   },
   'nw-sheet'(it){
@@ -796,7 +868,7 @@ const RENDER = {
     const months = lastMonths(it.size === 'full' ? 12 : 6), t = months.map(m => totals(txIn(m)));
     const max = Math.max(1, ...t.map(x => Math.max(x.income, x.spent)));
     const avg = t.reduce((a, x) => a + x.spent, 0) / t.length;
-    return `<div class="tb">${months.map((m, i) => `<div class="tb-col"><div class="tb-bars"><span class="tb-bar in" style="height:${(t[i].income / max * 100).toFixed(1)}%" title="Income ${money(t[i].income)}"></span><span class="tb-bar out" style="height:${(Math.max(0, t[i].spent) / max * 100).toFixed(1)}%" title="Spent ${money(t[i].spent)}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>
+    return `<div class="tb">${months.map((m, i) => `<div class="tb-col"><span class="tb-tip">${monthName(m, true)}: in <b>${money(t[i].income)}</b>, out <b>${money(t[i].spent)}</b></span><div class="tb-bars"><span class="tb-bar in" style="height:${(t[i].income / max * 100).toFixed(1)}%" title="Income ${money(t[i].income)}"></span><span class="tb-bar out" style="height:${(Math.max(0, t[i].spent) / max * 100).toFixed(1)}%" title="Spent ${money(t[i].spent)}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>
       <div class="legend"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--accent)"></i>Spent</span><span>Average spent <b>${money(avg)}</b></span></div>`;
   },
   'bd-targets'(it){
@@ -1046,11 +1118,11 @@ function openAddSheet(){
   const onDash = new Set(layout.items.map(x => x.type));
   let html = '';
   for (const [label, srcs] of ADD_GROUPS) {
-    const list = Object.entries(WIDGETS).filter(([, d]) => srcs.includes(d.src));
+    const list = Object.entries(WIDGETS).filter(([t, d]) => LAUNCH.includes(t) && srcs.includes(d.src));
     if (!list.length) continue;
     html += `<div class="sheet-sec">${label}</div><div class="wg-grid">` + list.map(([type, def]) => {
       const added = onDash.has(type) && !def.multi;
-      return `<button class="wg" onclick="addWidget('${type}')" ${added ? 'disabled' : ''} title="${escHtml(def.desc)}" aria-label="${escHtml(def.name)}. ${escHtml(def.desc)}${added ? ' Already added.' : ''}"><span class="wg-thumb">${THUMBS[type] || ''}${added ? '<span class="wg-tag">Added</span>' : ''}</span><span class="wg-name">${escHtml(def.name)}</span></button>`;
+      return `<button class="wg" onclick="addWidget('${type}')" ${added ? 'disabled' : ''} title="${escHtml(def.desc)}" aria-label="${escHtml(def.name)}. ${escHtml(def.desc)}${added ? ' Already added.' : ''}"><span class="wg-thumb">${THUMBS_LAUNCH[type] || THUMBS[type] || ''}${added ? '<span class="wg-tag">Added</span>' : ''}</span><span class="wg-name">${escHtml(def.name)}</span><span class="wg-desc">${escHtml(def.desc)}</span></button>`;
     }).join('') + '</div>';
   }
   showSheet('Add a widget', html, true);
@@ -1059,6 +1131,18 @@ function openAddSheet(){
 const T_A = 'var(--accent)', T_G = 'var(--green)', T_R = 'var(--red)', T_M = 'var(--muted)', T_S = 'var(--surface-2)';
 const tsvg = inner => `<svg viewBox="0 0 100 60" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
 const bar = (x, y, w, h, c, r = 2) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${c}"/>`;
+const tx = (x, y, t, size, fill, weight, anchor) => `<text x="${x}" y="${y}" font-family="Outfit,sans-serif" font-size="${size}" font-weight="${weight || 500}" fill="${fill}"${anchor ? ` text-anchor="${anchor}"` : ''}>${t}</text>`;
+const T_C = 'var(--cream)';
+const THUMBS_LAUNCH = {
+  'nw-total': tsvg(tx(4, 9, 'NET WORTH', 5, T_A, 600) + tx(4, 26, '$237,361', 14, T_C) + tx(4, 35, '+$6,281 since last month', 4.6, T_G, 400) + tx(4, 47, 'Assets', 4.4, T_M, 400) + tx(4, 55, '$563,669', 6.5, T_G) + tx(52, 47, 'Liabilities', 4.4, T_M, 400) + tx(52, 55, '$326,308', 6.5, T_R)),
+  'nw-trend': tsvg(['6M', '1Y', '3Y', 'All'].map((l, i) => (i === 1 ? bar(3 + i * 13, 2, 12, 7, T_S, 3.5) : '') + tx(9 + i * 13, 7.3, l, 4.2, i === 1 ? T_C : T_M, 500, 'middle')).join('') + `<path d="M4 54 L20 46 L34 48 L50 34 L66 30 L82 20 L96 13 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 54 20 46 34 48 50 34 66 30 82 20 96 13" stroke="${T_A}" stroke-width="2.4"/><circle cx="66" cy="30" r="2.6" fill="${T_A}"/>` + bar(52, 15, 28, 9, T_S, 3) + tx(66, 21.5, '$229,400', 4.4, T_C, 500, 'middle')),
+  'bd-month': tsvg([['Income', '$6,500', T_G, 4, 12], ['Spent', '$2,618', T_C, 54, 12], ['Saved', '$800', T_G, 4, 40], ['Money out', '$3,418', T_C, 54, 40]].map(([k, v, c, x, y]) => tx(x, y, k, 4.6, T_M, 400) + tx(x, y + 11, v, 9, c)).join('') + bar(49, 4, 0.8, 52, T_S, 0.4) + bar(4, 30, 92, 0.8, T_S, 0.4)),
+  'bd-pie': tsvg(`<g transform="rotate(-90 30 30)"><circle cx="30" cy="30" r="21" stroke="#7aa7ff" stroke-width="9" stroke-dasharray="72 132"/><circle cx="30" cy="30" r="21" stroke="#f0a35e" stroke-width="9" stroke-dasharray="30 132" stroke-dashoffset="-73"/><circle cx="30" cy="30" r="21" stroke="#4cc3b5" stroke-width="9" stroke-dasharray="17 132" stroke-dashoffset="-104"/><circle cx="30" cy="30" r="21" stroke="#d08cf0" stroke-width="9" stroke-dasharray="9 132" stroke-dashoffset="-122"/></g>` + tx(30, 31, '$2,618', 6, T_C, 500, 'middle') + tx(30, 37, 'spent', 3.8, T_M, 400, 'middle') + [['#7aa7ff', 'Housing'], ['#f0a35e', 'Food'], ['#4cc3b5', 'Transport'], ['#d08cf0', 'Personal']].map(([c, l], i) => `<circle cx="62" cy="${14 + i * 10}" r="2.4" fill="${c}"/>` + tx(67, 15.8 + i * 10, l, 5, T_C, 400)).join('')),
+  'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b, T_A, 1.5) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
+  'bd-upcoming': tsvg([['Dec 1', 'Rent', '$1,850', T_C, '#7aa7ff'], ['Dec 9', 'Electric', '~$150', T_C, '#7aa7ff'], ['Dec 15', 'Paycheck', '+$3,250', T_G, '#5cc28e']].map(([d, n, v, c, h], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, d, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
+  'bd-recent': tsvg([['Trader Joe\u2019s', 'Groceries · Today', '$84.12', '#f0a35e', T_C], ['Paycheck', 'Income · Nov 15', '+$3,250', '#5cc28e', T_G], ['Netflix', 'Subscriptions · Nov 11', '$15.49', '#d08cf0', T_C]].map(([n, m, v, h, c], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, m, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
+  'last-updated': tsvg([['NET WORTH', 'Updated Nov 1', '16 days ago', 'Update'], ['LAST TRANSACTION', 'Trader Joe\u2019s $84', 'Logged today', 'Add']].map(([k, v, n, b], i) => { const y = 4 + i * 28; return tx(4, y + 4, k, 4, T_M, 500) + tx(4, y + 13, v, 6.4, T_C) + tx(4, y + 20, n, 4.4, T_M, 400) + bar(74, y + 6, 22, 10, T_S, 5) + tx(85, y + 12.6, b, 4.6, T_C, 500, 'middle'); }).join('')),
+};
 const THUMBS = {
   'nw-total': tsvg(bar(4, 6, 40, 4, T_M) + bar(4, 16, 62, 12, 'var(--cream)', 3) + bar(4, 33, 30, 4, T_G) + bar(4, 46, 34, 7, T_G) + bar(54, 46, 34, 7, T_R)),
   'nw-trend': tsvg(`<path d="M4 52 L20 44 L34 46 L50 32 L66 28 L82 16 L96 8 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 52 20 44 34 46 50 32 66 28 82 16 96 8" stroke="${T_A}" stroke-width="3"/>`),
