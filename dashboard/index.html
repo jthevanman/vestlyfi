@@ -202,6 +202,26 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .pie-key { display:inline-flex; align-items:center; gap:5px; padding:2px 4px; border:none; border-radius:999px; background:none; color:inherit; font:inherit; cursor:pointer; }
 .pie-key:hover, .pie-key.on { color:var(--cream); }
 .pie-key .dot { width:7px; height:7px; }
+/* Net worth chart: y-axis values on the left, months below. */
+.nw-tools { display:flex; justify-content:space-between; align-items:center; gap:6px 12px; flex-wrap:wrap; margin:-4px 0 10px; }
+.nw-tools .rng { margin:0; }
+.yc { display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:10px; }
+.y-labels { position:relative; min-width:40px; }
+.y-labels span { position:absolute; right:0; transform:translateY(-50%); font-size:0.68rem; color:var(--muted); white-space:nowrap; }
+.yc .lc { margin-top:0; }
+.lc-grid { stroke:var(--line); stroke-width:1; }
+.lc-zero-strong { stroke:var(--cream-dim); stroke-width:1.2; }
+.lc-tip .t-row { display:flex; justify-content:space-between; gap:12px; text-align:left; }
+.lc-tip .t-row b { display:inline; font-size:0.8rem; }
+/* Breakdown key: one compact line per side */
+.bk-key { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px; font-size:0.76rem; color:var(--cream-dim); }
+.bk-key span { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.bk-key b { color:var(--cream); font-weight:500; }
+.bk-key i { width:8px; height:8px; border-radius:2px; display:inline-block; }
+.bk-key i.line { width:12px; height:2px; border-radius:1px; }
+/* What moved it: a narrow column, so names and values sit close together */
+.cols.nwt { grid-template-columns:minmax(0,1fr) minmax(220px,300px); gap:0 32px; }
+@media (max-width:720px) { .cols.nwt { grid-template-columns:minmax(0,1fr); } }
 /* Line chart hover: a dot and a small label for the month under the pointer */
 .lc.hover { cursor:crosshair; touch-action:pan-y; }
 .lc-guide { position:absolute; top:0; bottom:0; width:1px; background:var(--line); pointer-events:none; display:none; }
@@ -710,7 +730,7 @@ const RANGES = [{ key:'6m', label:'6M', months:6 }, { key:'1y', label:'1Y', mont
 const RANGE_KEY = 'vf_dash_nw_range';
 function nwRange(){ let k = '1y'; try { k = localStorage.getItem(RANGE_KEY) || k; } catch (e) {} return RANGES.find(x => x.key === k) || RANGES[1]; }
 function setNwRange(k){ try { localStorage.setItem(RANGE_KEY, k); } catch (e) {} render(); }
-function nwTrendBody(it, s){ return RENDER['nw-trend-body'](it, s); }
+function nwTrendBody(it, s, view){ return RENDER['nw-trend-body'](it, s, view); }
 function daysAgo(d){ const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(d); b.setHours(0, 0, 0, 0); return Math.max(0, Math.round((a - b) / 864e5)); }
 function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' days ago'; }
 /* Pie hover: the middle shows the category under the pointer. */
@@ -737,13 +757,80 @@ function lcMove(e, id){
   const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
   const i = n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((fx * d.W - d.P) / ((d.W - 2 * d.P) / (n - 1)))));
   const xp = (n === 1 ? 0.5 : (d.P + i * (d.W - 2 * d.P) / (n - 1)) / d.W) * 100;
-  const yp = (d.P + (d.H - 2 * d.P) * (1 - (d.vals[i] - d.min) / (d.max - d.min))) / d.H * r.height;
+  const yp = (d.fy ? d.fy[i] : (d.P + (d.H - 2 * d.P) * (1 - (d.vals[i] - d.min) / (d.max - d.min))) / d.H) * r.height;
   el.classList.add('show');
   el.querySelector('.lc-guide').style.left = xp + '%';
   const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
   const tip = el.querySelector('.lc-tip'); tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px';
-  tip.innerHTML = `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
+  tip.innerHTML = d.tips ? d.tips[i] : `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
 }
+/* Shared y scale with round tick values, and short money labels for the axis. */
+function niceTicks(lo, hi, n){
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const raw = (hi - lo) / (n || 4), mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+  const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
+  const out = []; for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) out.push(Math.round(v / step) * step);
+  return out;
+}
+function moneyShort(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { style:'currency', currency:VestlyCurrency.code(), notation:'compact', maximumFractionDigits:1 }).format(n); }
+const ASSET_COLORS = ['#5cc28e', '#4cc3b5', '#7aa7ff', '#8fd16a', '#b3a1ff'];
+const LIAB_COLORS = ['#e8706a', '#f0a35e', '#f78fc0', '#ff8f8f'];
+/* Net worth chart. view 'line': the net worth line. view 'stack': each asset
+   stacked above zero and each liability below it, with the net worth line on
+   top, so the two sides always net to the line. */
+function nwChart(s, view){
+  const W = 600, H = view === 'stack' ? 240 : 200, P = 6, n = s.length, labels = s.map(x => monthLabel(x.month));
+  const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
+  let layers = [], key = '', lo, hi;
+  if (view === 'stack') {
+    // Biggest few on each side by today's value; the rest grouped as Other.
+    const nowH = Object.values(holdingsAt(s[n - 1].month));
+    const pick = (type, max) => nowH.filter(h => h.type === type && h.value > 0).sort((a, b) => b.value - a.value).slice(0, max).map(h => h.category);
+    const topA = pick('asset', 4), topL = pick('liability', 3);
+    const series = (type, top) => {
+      const names = [...top, 'Other'], vals = names.map(() => []);
+      s.forEach((m, i) => {
+        const h = holdingsAt(m.month);
+        names.forEach((_, j) => vals[j][i] = 0);
+        for (const v of Object.values(h)) if (v.type === type && v.value > 0) { const j = top.indexOf(v.category); vals[j < 0 ? names.length - 1 : j][i] += v.value; }
+      });
+      return names.map((name, j) => ({ name:name === 'Other' ? (type === 'asset' ? 'Other assets' : 'Other liabilities') : name, vals:vals[j] })).filter(x => x.vals.some(v => v > 0));
+    };
+    const A = series('asset', topA).map((x, j) => Object.assign(x, { color:ASSET_COLORS[j % ASSET_COLORS.length], sign:1 }));
+    const L = series('liability', topL).map((x, j) => Object.assign(x, { color:LIAB_COLORS[j % LIAB_COLORS.length], sign:-1 }));
+    hi = Math.max(...s.map(m => m.assets), ...s.map(m => m.net)); lo = Math.min(-Math.max(...s.map(m => m.liabilities)), ...s.map(m => m.net));
+    layers = [A, L];
+    key = [...A, ...L].map(l => `<span><i style="background:${l.color}"></i>${escHtml(l.name)} <b>${money(l.vals[n - 1])}</b></span>`).join('') + `<span><i class="line" style="background:var(--accent)"></i>Net worth <b>${money(s[n - 1].net)}</b></span>`;
+  } else {
+    hi = Math.max(...s.map(m => m.net)); lo = Math.min(...s.map(m => m.net));
+  }
+  const ticks = niceTicks(lo, hi, 4), t0 = ticks[0], t1 = ticks[ticks.length - 1];
+  const y = v => (t1 - v) / (t1 - t0) * H;
+  const grid = ticks.map(t => `<line class="${t === 0 && view === 'stack' ? 'lc-zero-strong' : 'lc-grid'}" x1="0" x2="${W}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" vector-effect="non-scaling-stroke"/>`).join('');
+  let areas = '';
+  for (const side of layers) {
+    const base = s.map(() => 0);
+    for (const l of side) {
+      const top = base.map((b, i) => b + l.vals[i]);
+      const up = top.map((v, i) => `${x(i).toFixed(1)},${y(l.sign * v).toFixed(1)}`), down = base.map((v, i) => `${x(i).toFixed(1)},${y(l.sign * v).toFixed(1)}`).reverse();
+      areas += `<path d="M${up.join(' L')} L${down.join(' L')} Z" fill="${l.color}" fill-opacity="0.8" stroke="var(--bg)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+      top.forEach((v, i) => base[i] = v);
+    }
+  }
+  const linePts = s.map((m, i) => `${x(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
+  const fill = view === 'stack' ? '' : `<path class="lc-area" d="M${x(0).toFixed(1)},${H} L${linePts.split(' ').join(' L')} L${x(n - 1).toFixed(1)},${H} Z"/>`;
+  const id = 'lc_' + uid();
+  const tips = s.map((m, i) => view === 'stack'
+    ? `<b>${labels[i]}</b><span class="t-row">Assets <b class="up">${money(m.assets)}</b></span><span class="t-row">Liabilities <b class="down">${money(m.liabilities)}</b></span><span class="t-row">Net worth <b>${money(m.net)}</b></span>`
+    : `<b>${money(m.net)}</b>${labels[i]}`);
+  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H), tips };
+  return `<div class="yc"><div class="y-labels" style="height:${H}px">${ticks.map(t => `<span style="top:${(y(t) / H * 100).toFixed(1)}%">${moneyShort(t)}</span>`).join('')}</div>
+    <div class="lc hover" id="${id}" style="height:${H}px" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${grid}${areas}${fill}<polyline class="lc-line" points="${linePts}" vector-effect="non-scaling-stroke"/></svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>
+    <span></span><div class="lc-x"><span>${labels[0]}</span><span>${labels[n - 1]}</span></div></div>` + (key ? `<div class="bk-key">${key}</div>` : '');
+}
+const VIEW_KEY = 'vf_dash_nw_view';
+function nwView(){ try { return localStorage.getItem(VIEW_KEY) === 'stack' ? 'stack' : 'line'; } catch (e) { return 'line'; } }
+function setNwView(v){ try { localStorage.setItem(VIEW_KEY, v); } catch (e) {} render(); }
 function lcLeave(id){ const el = document.getElementById(id); if (el) el.classList.remove('show'); }
 const RENDER_TITLE = {
   'nw-watch': it => it.opts ? it.opts.category : null,
@@ -759,7 +846,9 @@ const RENDER = {
   'nw-trend'(it){
     const r = nwRange(), all = snapshots(), s = r.months ? all.slice(-r.months) : all;
     const pills = '<div class="rng" role="group" aria-label="Time range">' + RANGES.map(x => `<button class="${x.key === r.key ? 'on' : ''}" onclick="setNwRange('${x.key}')" aria-pressed="${x.key === r.key}">${x.label}</button>`).join('') + '</div>';
-    return pills + nwTrendBody(it, s);
+    const v = nwView();
+    const views = '<div class="rng" role="group" aria-label="Chart type">' + [['line', 'Line'], ['stack', 'Breakdown']].map(([k, l]) => `<button class="${k === v ? 'on' : ''}" onclick="setNwView('${k}')" aria-pressed="${k === v}">${l}</button>`).join('') + '</div>';
+    return `<div class="nw-tools">${pills}${views}</div>` + nwTrendBody(it, s, v);
   },
   'bd-pie'(it){
     const { byGroup } = spendBy(new Date());
@@ -793,10 +882,13 @@ const RENDER = {
     }
     return rows.join('') || '<div class="w-empty">Nothing logged yet.</div>';
   },
-  'nw-trend-body'(it, s){
+  'nw-trend-body'(it, s, view){
     if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
     const first = s[0], last = s[s.length - 1], ch = last.net - first.net;
-    const axis = `<div class="lc-x"><span>${monthLabel(first.month)}</span><span>${monthLabel(last.month)}</span></div>`;
+    // Breakdown: the chart is the whole story; its key lists each layer.
+    if (view === 'stack') return nwChart(s, 'stack');
+    const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
+    const meta = `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div>`;
     if (it.size === 'full') {
       // Expanded: the chart plus what moved it, the biggest changes over the same months.
       // A liability going down is good for net worth, so it shows green.
@@ -805,14 +897,10 @@ const RENDER = {
         const a = then[k], b = nowH[k], h = b || a, d = (b ? b.value : 0) - (a ? a.value : 0);
         return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
       }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
-      const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
-      return `<div class="cols"><div>${lineChart(s.map(x => x.net), '', s.map(x => monthLabel(x.month)))}${axis}
-          <div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div></div>
+      return `<div class="cols nwt"><div>${nwChart(s, 'line')}${meta}</div>
         <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved it</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
     }
-    const hi = Math.max(...s.map(x => x.net)), lo = Math.min(...s.map(x => x.net));
-    return lineChart(s.map(x => x.net), '', s.map(x => monthLabel(x.month))) + axis +
-      `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>High <b>${money(hi)}</b></span><span>Low <b>${money(lo)}</b></span></div>`;
+    return nwChart(s, 'line') + meta;
   },
   'nw-sheet'(it){
     const h = holdings().filter(x => x.value !== 0), wide = it.size === 'full', show = wide ? 8 : 4;
