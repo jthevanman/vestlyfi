@@ -774,7 +774,7 @@ function lcMove(e, id){
   el.querySelector('.lc-guide').style.left = xp + '%';
   const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
   const tip = el.querySelector('.lc-tip');
-  if (d.cols) { tip.classList.add('cols'); tip.style.top = '0px'; tip.style.left = (xp < 50 ? xp + 4 : xp - 4) + '%'; tip.style.transform = xp < 50 ? 'translate(0,0)' : 'translate(-100%,0)'; }
+  if (d.pin) { tip.classList.add('cols'); tip.style.top = '0px'; tip.style.left = (xp < 50 ? xp + 4 : xp - 4) + '%'; tip.style.transform = xp < 50 ? 'translate(0,0)' : 'translate(-100%,0)'; }
   else { tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px'; tip.style.transform = ''; }
   tip.innerHTML = d.tips ? d.tips[i] : `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
 }
@@ -793,7 +793,7 @@ const LIAB_COLORS = ['#e8706a', '#f0a35e', '#f78fc0', '#ff8f8f'];
    stacked above zero and each liability below it, with the net worth line on
    top, so the two sides always net to the line. */
 function nwChart(s, view){
-  const W = 600, H = view === 'stack' ? 240 : 200, P = 6, n = s.length, labels = s.map(x => monthLabel(x.month));
+  const W = 600, H = view === 'stack' ? 260 : 200, P = 6, n = s.length, labels = s.map(x => monthLabel(x.month));
   const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
   let layers = [], key = '', lo, hi;
   if (view === 'stack') {
@@ -821,24 +821,25 @@ function nwChart(s, view){
   const ticks = niceTicks(lo, hi, 4), t0 = ticks[0], t1 = ticks[ticks.length - 1];
   const y = v => (t1 - v) / (t1 - t0) * H;
   const grid = ticks.map(t => `<line class="${t === 0 && view === 'stack' ? 'lc-zero-strong' : 'lc-grid'}" x1="0" x2="${W}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" vector-effect="non-scaling-stroke"/>`).join('');
-  // Breakdown: one column per month. Assets stack up from zero, liabilities
-  // down from it; the net worth line joins the column centers.
-  const colW = (W - 2 * P) / n, cx = i => P + (i + 0.5) * colW, bw = Math.min(colW * 0.62, 46);
+  // Breakdown (the iceberg): each asset is a layer stacked up from zero, each
+  // liability a layer stacked down from it. Assets minus liabilities is the
+  // net worth line, drawn on top with a dark outline so it reads over the layers.
   let areas = '';
   if (view === 'stack') {
     for (const side of layers) {
       const base = s.map(() => 0);
-      for (const l of side) s.forEach((_, i) => {
-        const v = l.vals[i]; if (!(v > 0)) return;
-        const a = y(l.sign * base[i]), b = y(l.sign * (base[i] + v));
-        areas += `<rect x="${(cx(i) - bw / 2).toFixed(2)}" y="${Math.min(a, b).toFixed(2)}" width="${bw.toFixed(2)}" height="${Math.max(0.6, Math.abs(b - a)).toFixed(2)}" fill="${l.color}" stroke="var(--bg)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
-        base[i] += v;
-      });
+      for (const l of side) {
+        const top = base.map((b, i) => b + Math.max(0, l.vals[i]));
+        const up = top.map((v, i) => `${x(i).toFixed(2)},${y(l.sign * v).toFixed(2)}`);
+        const down = base.map((v, i) => `${x(i).toFixed(2)},${y(l.sign * v).toFixed(2)}`).reverse();
+        areas += `<path d="M${up.join(' L')} L${down.join(' L')} Z" fill="${l.color}" fill-opacity="0.9" stroke="var(--bg)" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+        top.forEach((v, i) => base[i] = v);
+      }
     }
   }
-  const px = view === 'stack' ? cx : x;
-  const linePts = s.map((m, i) => `${px(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
+  const linePts = s.map((m, i) => `${x(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
   const fill = view === 'stack' ? '' : `<path class="lc-area" d="M${x(0).toFixed(1)},${H} L${linePts.split(' ').join(' L')} L${x(n - 1).toFixed(1)},${H} Z"/>`;
+  const halo = view === 'stack' ? `<polyline points="${linePts}" fill="none" stroke="var(--bg)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>` : '';
   const id = 'lc_' + uid();
   // Breakdown hover: every layer for that month, then the totals.
   const row = (c, name, v, cls) => `<span class="t-row${cls !== undefined && !c ? ' t-sum' : ''}"><span>${c ? `<i style="background:${c}"></i>` : ''}${escHtml(name)}</span><b${cls ? ` class="${cls}"` : ''}>${money(v)}</b></span>`;
@@ -846,9 +847,9 @@ function nwChart(s, view){
     ? `<span class="t-head">${labels[i]}</span>` + layers[0].filter(l => l.vals[i] > 0).map(l => row(l.color, l.name, l.vals[i])).join('') + row('', 'Assets', m.assets, 'up')
       + layers[1].filter(l => l.vals[i] > 0).map(l => row(l.color, l.name, l.vals[i])).join('') + row('', 'Liabilities', m.liabilities, 'down') + row('', 'Net worth', m.net, '')
     : `<b>${money(m.net)}</b>${labels[i]}`);
-  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H), tips, cols:view === 'stack' ? colW : 0 };
+  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H), tips, pin:view === 'stack' };
   return `<div class="yc"><div class="y-labels" style="height:${H}px">${ticks.map(t => `<span style="top:${(y(t) / H * 100).toFixed(1)}%">${moneyShort(t)}</span>`).join('')}</div>
-    <div class="lc hover" id="${id}" style="height:${H}px" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${grid}${areas}${fill}<polyline class="lc-line" points="${linePts}" vector-effect="non-scaling-stroke"/></svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>
+    <div class="lc hover" id="${id}" style="height:${H}px" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${grid}${areas}${fill}${halo}<polyline class="lc-line" points="${linePts}" vector-effect="non-scaling-stroke"/></svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>
     <span></span><div class="lc-x"><span>${labels[0]}</span><span>${labels[n - 1]}</span></div></div>` + (key ? `<div class="bk-key">${key}</div>` : '');
 }
 const VIEW_KEY = 'vf_dash_nw_view';
