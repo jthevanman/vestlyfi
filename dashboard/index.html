@@ -255,11 +255,6 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lu-n.stale { color:var(--amber); }
 .lu .btn { flex:0 0 auto; padding:8px 14px; font-size:0.8rem; }
 .spark svg { height:70px; }
-/* Net worth total: a small 12-month line at the bottom */
-.nw-spark { margin-top:auto; padding-top:14px; }
-.nw-spark .lc { margin-top:0; }
-.nw-spark svg { height:48px; }
-.nw-spark-k { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--muted); margin-top:4px; }
 /* Last updated: rows share the card's height */
 .lu-list { flex:1; display:flex; flex-direction:column; justify-content:space-around; }
 /* Upcoming recurring: totals pinned to the bottom */
@@ -850,8 +845,7 @@ const RENDER = {
     const s = snapshots(), last = s[s.length - 1], prev = s.length > 1 ? s[s.length - 2] : null;
     const delta = prev ? `<div class="delta ${last.net - prev.net >= 0 ? 'up' : 'down'}">${signed(last.net - prev.net)} since ${monthLabel(prev.month)}</div>` : '<div class="delta">First month logged</div>';
     return `<div class="big${last.net < 0 ? ' neg' : ''}">${money(last.net)}</div>${delta}
-      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>` +
-      (s.length > 2 ? `<div class="nw-spark">${lineChart(s.slice(-12).map(x => x.net))}<div class="nw-spark-k"><span>${monthLabel(s.slice(-12)[0].month)}</span><span>Last 12 months</span><span>${monthLabel(last.month)}</span></div></div>` : '');
+      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>`;
   },
   'nw-trend'(it){
     const r = nwRange(), all = snapshots(), s = r.months ? all.slice(-r.months) : all;
