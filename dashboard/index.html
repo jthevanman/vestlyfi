@@ -182,7 +182,8 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .own-mine { background:var(--green); }
 .own-owed { background:var(--red); opacity:.85; }
 .own-k { display:flex; justify-content:space-between; gap:6px 14px; flex-wrap:wrap; margin-top:8px; font-size:0.78rem; color:var(--cream-dim); }
-.own-k b { font-weight:600; color:var(--cream); }
+.own-k span { font-weight:600; }
+.own-k .up { color:var(--green); } .own-k .down { color:var(--red); }
 .own-k b.up { color:var(--green); } .own-k b.down { color:var(--red); }
 .mo-chip { margin-left:auto; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--green) 14%, transparent); color:var(--green); font-size:0.72rem; font-weight:500; white-space:nowrap; }
 .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
@@ -388,7 +389,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
    full-width widgets are filled by the next ones that fit. */
 @media (min-width:1400px) {
   .app { max-width:1600px; }
-  .grid { grid-template-columns:repeat(3, minmax(0,1fr)); grid-auto-flow:row dense; }
+  .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
 }
 
 /* ── Dashboard-only visuals ── */
@@ -665,9 +666,9 @@ const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['n
 /* Starting layouts. The default picks itself from the data you have, and
    stays automatic until you customize. */
 const PRESETS = {
-  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['bd-upcoming','half'], ['nw-trend','full'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
   networth:   { name:'Net worth', desc:'Your total and how it has changed.', items:[['nw-total','half'], ['last-updated','half'], ['nw-trend','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full'], ['bd-upcoming','half']] },
+  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-trend','full'], ['bd-upcoming','half'], ['bd-recent','half']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
@@ -706,6 +707,7 @@ function render(){
     document.getElementById('customizeBtn').classList.add('hidden');
     return;
   }
+  fillGapsSoon();
   grid.innerHTML = items.map((it, i) => widgetHtml(it, i, items.length)).join('') ||
     '<div class="w full"><div class="w-empty">Your dashboard is empty. Add a widget to start.</div></div>';
   // Someone using only one tracker sees the other as an option, once, at the bottom.
@@ -771,17 +773,37 @@ function setNwRange(k){ try { localStorage.setItem(RANGE_KEY, k); } catch (e) {}
 function nwTrendBody(it, s){ return RENDER['nw-trend-body'](it, s); }
 function daysAgo(d){ const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(d); b.setHours(0, 0, 0, 0); return Math.max(0, Math.round((a - b) / 864e5)); }
 function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' days ago'; }
-/* Net worth total footer: a bar splitting assets into what's yours and
-   what's owed against them, plus the change over the last 12 months. */
+/* No gaps: widgets keep their order; when a row would end with an empty
+   space (the next widget is full width, or the list ends), the last widget
+   in that row stretches across it. Re-checked when the column count changes. */
+function fillGaps(){
+  const grid = document.getElementById('grid'); if (!grid) return;
+  const C = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
+  const items = [...grid.children].filter(n => n.classList.contains('w') && !n.classList.contains('dragging'));
+  items.forEach(n => { n.style.gridColumn = ''; });
+  if (C < 2) return;
+  let col = 0, last = null;
+  const close = () => { if (last && col > 0 && col < C) last.style.gridColumn = 'span ' + (1 + C - col); col = 0; last = null; };
+  for (const n of items) {
+    const span = n.classList.contains('full') ? C : 1;
+    if (col + span > C) close();
+    col += span; last = n;
+    if (col >= C) { col = 0; last = null; }
+  }
+  close();
+}
+function fillGapsSoon(){ requestAnimationFrame(fillGaps); }
+let gapCols = 0;
+window.addEventListener('resize', () => { const g = document.getElementById('grid'); if (!g) return; const c = getComputedStyle(g).gridTemplateColumns.split(' ').length; if (c !== gapCols) { gapCols = c; fillGaps(); } });
+/* Net worth total footer: one bar split into assets (green) and liabilities
+   (red) by their share of the two together, with that share under each side. */
 function nwOwnBar(s, last){
-  if (!(last.assets > 0)) return '';
-  const owed = Math.min(1, last.liabilities / last.assets), mine = 1 - owed;
-  // Same window as the Net worth chart's 1Y view, so the two numbers match.
-  const yr = s.length > 1 ? s[Math.max(0, s.length - 12)] : null, ch = yr ? last.net - yr.net : null;
-  const line = mine > 0 ? `You own <b>${Math.round(mine * 100)}%</b> of your assets outright` : 'You owe more than you own';
+  const tot = last.assets + last.liabilities;
+  if (!(tot > 0)) return '';
+  const a = last.assets / tot, l = 1 - a;
   return `<div class="own">
-    <div class="own-bar" aria-hidden="true"><span class="own-mine" style="width:${(mine * 100).toFixed(1)}%"></span><span class="own-owed" style="width:${(owed * 100).toFixed(1)}%"></span></div>
-    <div class="own-k"><span>${line}</span>${ch != null && yr !== last ? `<span>${s.length >= 12 ? 'Past year' : 'Since ' + monthLabel(yr.month)} <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span>` : ''}</div>
+    <div class="own-bar" aria-hidden="true">${a > 0 ? `<span class="own-mine" style="width:${(a * 100).toFixed(1)}%"></span>` : ''}${l > 0 ? `<span class="own-owed" style="width:${(l * 100).toFixed(1)}%"></span>` : ''}</div>
+    <div class="own-k"><span class="up">${Math.round(a * 100)}% assets</span><span class="down">${Math.round(l * 100)}% liabilities</span></div>
   </div>`;
 }
 /* Pie hover: the middle shows the category under the pointer. */
@@ -1217,7 +1239,7 @@ function placeSlot(){
   if (!target) {
     // Below the last widget: drop at the end.
     const last = [...grid.children].filter(n => n !== drag.el).pop();
-    if (last && last !== drag.ph && drag.y > last.getBoundingClientRect().bottom) grid.appendChild(drag.ph);
+    if (last && last !== drag.ph && drag.y > last.getBoundingClientRect().bottom) { grid.appendChild(drag.ph); fillGaps(); }
     return;
   }
   if (target === drag.ph) return;
@@ -1226,6 +1248,7 @@ function placeSlot(){
   const before = sideBySide ? drag.x < r.left + r.width / 2 : drag.y < r.top + r.height / 2;
   if (before ? sib(target, -1) === drag.ph : sib(target, 1) === drag.ph) return;
   grid.insertBefore(drag.ph, before ? target : target.nextElementSibling);
+  fillGaps();
 }
 function autoScroll(){
   if (!drag) return;
