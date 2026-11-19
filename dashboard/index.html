@@ -167,14 +167,24 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 /* This month: income, then spent + saved = total outflow, then the net */
 .mo { flex:1; display:flex; flex-direction:column; gap:14px; }
 .mo-big { font-size:2rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:4px; }
-.mo-eq { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); align-items:end; gap:8px; padding-top:12px; border-top:1px solid var(--line); }
-.mo-v { font-size:1.15rem; font-weight:500; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.mo-op { color:var(--muted); font-size:1.05rem; padding-bottom:2px; }
+.mo-eq { display:grid; grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr); align-items:center; gap:3px 6px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-v { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mo-op { color:var(--muted); font-size:1.1rem; text-align:center; line-height:1; }
 .mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
-.mo-net { margin-top:auto; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-net { margin-top:auto; display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-net .stat-k { line-height:1; }
 .mo-net-v { font-size:1.35rem; font-weight:600; }
 .mo-net-v.up { color:var(--green); } .mo-net-v.down { color:var(--red); }
-.mo-note { font-size:0.78rem; color:var(--cream-dim); }
+/* Saved note: a small chip, set apart from the figure */
+.own { margin-top:auto; padding-top:16px; }
+.own-bar { display:flex; gap:2px; height:8px; }
+.own-bar span { display:block; height:100%; border-radius:999px; }
+.own-mine { background:var(--green); }
+.own-owed { background:var(--red); opacity:.85; }
+.own-k { display:flex; justify-content:space-between; gap:6px 14px; flex-wrap:wrap; margin-top:8px; font-size:0.78rem; color:var(--cream-dim); }
+.own-k b { font-weight:600; color:var(--cream); }
+.own-k b.up { color:var(--green); } .own-k b.down { color:var(--red); }
+.mo-chip { margin-left:auto; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--green) 14%, transparent); color:var(--green); font-size:0.72rem; font-weight:500; white-space:nowrap; }
 .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
 .row:first-child { border-top:none; }
 .row .k { color:var(--cream-dim); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -761,6 +771,19 @@ function setNwRange(k){ try { localStorage.setItem(RANGE_KEY, k); } catch (e) {}
 function nwTrendBody(it, s){ return RENDER['nw-trend-body'](it, s); }
 function daysAgo(d){ const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(d); b.setHours(0, 0, 0, 0); return Math.max(0, Math.round((a - b) / 864e5)); }
 function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' days ago'; }
+/* Net worth total footer: a bar splitting assets into what's yours and
+   what's owed against them, plus the change over the last 12 months. */
+function nwOwnBar(s, last){
+  if (!(last.assets > 0)) return '';
+  const owed = Math.min(1, last.liabilities / last.assets), mine = 1 - owed;
+  // Same window as the Net worth chart's 1Y view, so the two numbers match.
+  const yr = s.length > 1 ? s[Math.max(0, s.length - 12)] : null, ch = yr ? last.net - yr.net : null;
+  const line = mine > 0 ? `You own <b>${Math.round(mine * 100)}%</b> of your assets outright` : 'You owe more than you own';
+  return `<div class="own">
+    <div class="own-bar" aria-hidden="true"><span class="own-mine" style="width:${(mine * 100).toFixed(1)}%"></span><span class="own-owed" style="width:${(owed * 100).toFixed(1)}%"></span></div>
+    <div class="own-k"><span>${line}</span>${ch != null && yr !== last ? `<span>${s.length >= 12 ? 'Past year' : 'Since ' + monthLabel(yr.month)} <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span>` : ''}</div>
+  </div>`;
+}
 /* Pie hover: the middle shows the category under the pointer. */
 const PIES = {};
 function pieOver(e, id, tap){
@@ -856,7 +879,7 @@ const RENDER = {
     const s = snapshots(), last = s[s.length - 1], prev = s.length > 1 ? s[s.length - 2] : null;
     const delta = prev ? `<div class="delta ${last.net - prev.net >= 0 ? 'up' : 'down'}">${signed(last.net - prev.net)} since ${monthLabel(prev.month)}</div>` : '<div class="delta">First month logged</div>';
     return `<div class="big${last.net < 0 ? ' neg' : ''}">${money(last.net)}</div>${delta}
-      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>`;
+      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>` + nwOwnBar(s, last);
   },
   'nw-trend'(it){
     const r = nwRange(), all = snapshots(), s = r.months ? all.slice(-r.months) : all;
@@ -944,13 +967,10 @@ const RENDER = {
     return `<div class="mo">
       <div class="mo-in"><div class="stat-k">Income</div><div class="mo-big up">${money(t.income)}</div></div>
       <div class="mo-eq">
-        <div><div class="stat-k">Spent</div><div class="mo-v">${money(t.spent)}</div></div>
-        <span class="mo-op">+</span>
-        <div><div class="stat-k">Saved</div><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div></div>
-        <span class="mo-op">=</span>
-        <div><div class="stat-k">Total outflow</div><div class="mo-v">${money(out)}</div></div>
+        <div class="stat-k">Spent</div><span></span><div class="stat-k">Saved</div><span></span><div class="stat-k">Total outflow</div>
+        <div class="mo-v">${money(t.spent)}</div><span class="mo-op">+</span><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><span class="mo-op">=</span><div class="mo-v">${money(out)}</div>
       </div>
-      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-note">including ${money(t.toSaving)} saved</span>` : ''}</div>
+      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-chip">Includes ${money(t.toSaving)} saved</span>` : ''}</div>
     </div>`;
   },
   'bd-categories'(it){
