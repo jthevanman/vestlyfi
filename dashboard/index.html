@@ -390,6 +390,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 @media (min-width:1400px) {
   .app { max-width:1600px; }
   .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .grid.pack-dense { grid-auto-flow:row dense; }   /* layouts saved before Nov 18 2026 */
 }
 
 /* ── Dashboard-only visuals ── */
@@ -679,15 +680,26 @@ function currentItems(){ return layout ? layout.items : itemsFor(autoPreset()); 
 
 /* Layout lives in this browser for now, per account. */
 const layoutKey = () => 'vf_dash_v1_' + (sample ? 'sample' : user.id);
+/* A saved layout belongs to the user. Rules:
+   1. Never rewrite it on load. Widgets this version doesn't show are parked
+      exactly as they were and saved back untouched; they return if re-enabled.
+      Sizes are kept as saved; what a widget can show is decided when drawing.
+   2. Each layout keeps the placement rule it was arranged under (pack):
+      'dense' = layouts saved before Nov 18 2026 (later cards slide up into
+      holes on three-column screens); 'fill' = keep order and stretch the last
+      card in a short row. Changing defaults or placement must not change how
+      an existing saved layout looks; new behavior goes in a new pack value. */
+const showable = it => !!(it && WIDGETS[it.type] && LAUNCH.includes(it.type));
 function loadLayout(){
-  try { const v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); layout = v && Array.isArray(v.items) ? v : null; } catch (e) { layout = null; }
-  if (!layout) return;
-  // Drop unknown widgets; widgets that can't expand are always half width.
-  layout.items = layout.items.filter(it => WIDGETS[it.type] && LAUNCH.includes(it.type));
-  for (const it of layout.items) if (!canExpand(WIDGETS[it.type])) it.size = WIDGETS[it.type].fixed || 'half';
+  let v = null;
+  try { v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); } catch (e) {}
+  if (!v || !Array.isArray(v.items)) { layout = null; return; }
+  const all = v.items.concat(Array.isArray(v.parked) ? v.parked : []);
+  layout = Object.assign({}, v, { items:all.filter(showable), parked:all.filter(it => !showable(it)), pack:v.pack || 'dense' });
 }
 function saveLayout(){ try { localStorage.setItem(layoutKey(), JSON.stringify(layout)); } catch (e) {} }
-function ensureLayout(){ if (!layout) layout = { preset:autoPreset(), items:itemsFor(autoPreset()) }; }
+function ensureLayout(){ if (!layout) layout = { preset:autoPreset(), pack:'fill', items:itemsFor(autoPreset()), parked:[] }; }
+const packOf = () => layout ? layout.pack || 'dense' : 'fill';
 
 /* ── Rendering ── */
 function render(){
@@ -707,6 +719,7 @@ function render(){
     document.getElementById('customizeBtn').classList.add('hidden');
     return;
   }
+  grid.classList.toggle('pack-dense', packOf() === 'dense');
   fillGapsSoon();
   grid.innerHTML = items.map((it, i) => widgetHtml(it, i, items.length)).join('') ||
     '<div class="w full"><div class="w-empty">Your dashboard is empty. Add a widget to start.</div></div>';
@@ -781,7 +794,7 @@ function fillGaps(){
   const C = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length;
   const items = [...grid.children].filter(n => n.classList.contains('w') && !n.classList.contains('dragging'));
   items.forEach(n => { n.style.gridColumn = ''; });
-  if (C < 2) return;
+  if (C < 2 || packOf() !== 'fill') return;
   let col = 0, last = null;
   const close = () => { if (last && col > 0 && col < C) last.style.gridColumn = 'span ' + (1 + C - col); col = 0; last = null; };
   for (const n of items) {
@@ -1364,7 +1377,7 @@ function openLayouts(){
 async function choosePreset(k){
   closeSheet();
   if (!await askConfirm({ title:`Use the ${PRESETS[k].name} layout?`, body:'This replaces your current widgets.', yes:'Use it', no:'Cancel' })) return;
-  layout = { preset:k, items:itemsFor(k) }; saveLayout(); render();
+  layout = { preset:k, pack:'fill', items:itemsFor(k), parked:layout ? layout.parked || [] : [] }; saveLayout(); render();
 }
 
 /* ── Sheet, confirm ── */
