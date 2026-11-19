@@ -164,6 +164,17 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .stat-v { font-size:1.85rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .stat-n { font-size:0.74rem; color:var(--cream-dim); margin-top:4px; }
 .stat-n:empty { display:none; }
+/* This month: income, then spent + saved = total outflow, then the net */
+.mo { flex:1; display:flex; flex-direction:column; gap:14px; }
+.mo-big { font-size:2rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:4px; }
+.mo-eq { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); align-items:end; gap:8px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-v { font-size:1.15rem; font-weight:500; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mo-op { color:var(--muted); font-size:1.05rem; padding-bottom:2px; }
+.mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
+.mo-net { margin-top:auto; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-net-v { font-size:1.35rem; font-weight:600; }
+.mo-net-v.up { color:var(--green); } .mo-net-v.down { color:var(--red); }
+.mo-note { font-size:0.78rem; color:var(--cream-dim); }
 .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
 .row:first-child { border-top:none; }
 .row .k { color:var(--cream-dim); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -631,7 +642,7 @@ const LAUNCH = ['nw-total', 'nw-trend', 'bd-month', 'bd-pie', 'bd-trend', 'bd-up
 const NAMES = {
   'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
   'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
-  'bd-month':     ['This month', 'Income, spending and what you saved so far this month.'],
+  'bd-month':     ['This month', 'Income, then what went out (spent plus saved), and what\u2019s left this month.'],
   'bd-pie':       ['Spending by category', 'A pie of this month\u2019s spending. Hover a slice to see the category.'],
   'bd-trend':     ['Income vs spending', 'Money in next to money out, month by month. Hover a month for the numbers.'],
   'bd-upcoming':  ['Upcoming recurring', 'Your next repeating bills and paychecks, with their dates.'],
@@ -929,13 +940,17 @@ const RENDER = {
       (vals.length > 1 ? lineChart(vals, 'spark') : '');
   },
   'bd-month'(){
-    const now = new Date(), t = totals(txIn(now));
-    const pct = v => t.income > 0 && v > 0.5 ? Math.round(v / t.income * 100) + '% of income' : '';
-    return `<div class="stats">
-      <div class="stat"><div class="stat-k">Income</div><div class="stat-v up">${money(t.income)}</div><div class="stat-n"></div></div>
-      <div class="stat"><div class="stat-k">Spent</div><div class="stat-v">${money(t.spent)}</div><div class="stat-n">${pct(t.spent)}</div></div>
-      <div class="stat"><div class="stat-k">Saved & invested</div><div class="stat-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><div class="stat-n">${pct(t.toSaving)}</div></div>
-      <div class="stat"><div class="stat-k">Money out</div><div class="stat-v">${money(t.spent + t.toSaving)}</div><div class="stat-n">${pct(t.spent + t.toSaving)}</div></div>
+    const t = totals(txIn(new Date())), out = t.spent + t.toSaving, net = t.income - t.spent;
+    return `<div class="mo">
+      <div class="mo-in"><div class="stat-k">Income</div><div class="mo-big up">${money(t.income)}</div></div>
+      <div class="mo-eq">
+        <div><div class="stat-k">Spent</div><div class="mo-v">${money(t.spent)}</div></div>
+        <span class="mo-op">+</span>
+        <div><div class="stat-k">Saved</div><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div></div>
+        <span class="mo-op">=</span>
+        <div><div class="stat-k">Total outflow</div><div class="mo-v">${money(out)}</div></div>
+      </div>
+      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-note">including ${money(t.toSaving)} saved</span>` : ''}</div>
     </div>`;
   },
   'bd-categories'(it){
@@ -973,8 +988,7 @@ const RENDER = {
       const outBar = d.t.spent > 0.5 ? `<span class="tb-stack" style="height:${(d.t.spent / max * 100).toFixed(1)}%">${segs.map(x => `<span style="flex-grow:${x.v.toFixed(2)};background:${x.c.color}" ${tipAttr(`<span class="t-head"><i style="background:${x.c.color}"></i>${escHtml(x.c.name)} in ${mn}</span><b>${money(x.v)}</b> · ${Math.round(x.v / d.t.spent * 100)}% of ${money(d.t.spent)} spent`)}></span>`).join('')}</span>` : '';
       return `<div class="tb-col"><div class="tb-bars">${inBar}${outBar}</div><span class="tb-lbl">${monthName(d.m)}</span></div>`;
     }).join('');
-    return `<div class="tb-wrap" onpointerover="tbMove(event)" onpointermove="tbMove(event)" onpointerdown="tbMove(event)" onpointerleave="tbLeave(this)"><div class="tb">${cols}</div><span class="tb-float"></span></div>
-      <div class="legend"><span><i style="background:var(--green)"></i>Income</span>${cats.map(c => `<span><i style="background:${c.color}"></i>${escHtml(c.name)}</span>`).join('')}<span>Average spent <b>${money(avg)}</b></span></div>`;
+    return `<div class="tb-wrap" onpointerover="tbMove(event)" onpointermove="tbMove(event)" onpointerdown="tbMove(event)" onpointerleave="tbLeave(this)"><div class="tb">${cols}</div><span class="tb-float"></span></div>`;
   },
   'bd-targets'(it){
     const { byCat } = spendBy(new Date()), wide = it.size === 'full';
@@ -1243,7 +1257,7 @@ const T_C = 'var(--cream)';
 const THUMBS_LAUNCH = {
   'nw-total': tsvg(tx(4, 9, 'NET WORTH', 5, T_A, 600) + tx(4, 26, '$237,361', 14, T_C) + tx(4, 35, '+$6,281 since last month', 4.6, T_G, 400) + tx(4, 47, 'Assets', 4.4, T_M, 400) + tx(4, 55, '$563,669', 6.5, T_G) + tx(52, 47, 'Liabilities', 4.4, T_M, 400) + tx(52, 55, '$326,308', 6.5, T_R)),
   'nw-trend': tsvg(['6M', '1Y', '3Y', 'All'].map((l, i) => (i === 1 ? bar(3 + i * 13, 2, 12, 7, T_S, 3.5) : '') + tx(9 + i * 13, 7.3, l, 4.2, i === 1 ? T_C : T_M, 500, 'middle')).join('') + `<path d="M4 54 L20 46 L34 48 L50 34 L66 30 L82 20 L96 13 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 54 20 46 34 48 50 34 66 30 82 20 96 13" stroke="${T_A}" stroke-width="2.4"/><circle cx="66" cy="30" r="2.6" fill="${T_A}"/>` + bar(52, 15, 28, 9, T_S, 3) + tx(66, 21.5, '$229,400', 4.4, T_C, 500, 'middle')),
-  'bd-month': tsvg([['Income', '$6,500', T_G, 4, 12], ['Spent', '$2,618', T_C, 54, 12], ['Saved', '$800', T_G, 4, 40], ['Money out', '$3,418', T_C, 54, 40]].map(([k, v, c, x, y]) => tx(x, y, k, 4.6, T_M, 400) + tx(x, y + 11, v, 9, c)).join('') + bar(49, 4, 0.8, 52, T_S, 0.4) + bar(4, 30, 92, 0.8, T_S, 0.4)),
+  'bd-month': tsvg(tx(4, 8, 'INCOME', 4.2, T_M, 500) + tx(4, 20, '$6,500', 11, T_G) + bar(4, 25, 92, 0.6, T_S, 0.3) + tx(4, 32, 'Spent', 3.8, T_M, 400) + tx(4, 39, '$2,685', 6, T_C) + tx(32, 38, '+', 5, T_M, 400) + tx(37, 32, 'Saved', 3.8, T_M, 400) + tx(37, 39, '$800', 6, T_G) + tx(58, 38, '=', 5, T_M, 400) + tx(63, 32, 'Total outflow', 3.8, T_M, 400) + tx(63, 39, '$3,485', 6, T_C) + bar(4, 44, 92, 0.6, T_S, 0.3) + tx(4, 54, 'Monthly net', 4.2, T_M, 400) + tx(32, 54.5, '+$3,815', 7, T_G, 600)),
   'bd-pie': tsvg(`<g transform="rotate(-90 30 30)"><circle cx="30" cy="30" r="21" stroke="#7aa7ff" stroke-width="9" stroke-dasharray="72 132"/><circle cx="30" cy="30" r="21" stroke="#f0a35e" stroke-width="9" stroke-dasharray="30 132" stroke-dashoffset="-73"/><circle cx="30" cy="30" r="21" stroke="#4cc3b5" stroke-width="9" stroke-dasharray="17 132" stroke-dashoffset="-104"/><circle cx="30" cy="30" r="21" stroke="#d08cf0" stroke-width="9" stroke-dasharray="9 132" stroke-dashoffset="-122"/></g>` + tx(30, 31, '$2,618', 6, T_C, 500, 'middle') + tx(30, 37, 'spent', 3.8, T_M, 400, 'middle') + [['#7aa7ff', 'Housing'], ['#f0a35e', 'Food'], ['#4cc3b5', 'Transport'], ['#d08cf0', 'Personal']].map(([c, l], i) => `<circle cx="62" cy="${14 + i * 10}" r="2.4" fill="${c}"/>` + tx(67, 15.8 + i * 10, l, 5, T_C, 400)).join('')),
   'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b * 0.55, '#7aa7ff', 0) + bar(x + 6, 50 - b * 0.55 - b * 0.3, 5, b * 0.3, '#f0a35e', 0) + bar(x + 6, 50 - b, 5, b * 0.15, '#d08cf0', 0) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
   'bd-upcoming': tsvg([['Dec 1', 'Rent', '$1,850', T_C, '#7aa7ff'], ['Dec 9', 'Electric', '~$150', T_C, '#7aa7ff'], ['Dec 15', 'Paycheck', '+$3,250', T_G, '#5cc28e']].map(([d, n, v, c, h], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, d, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
