@@ -155,12 +155,13 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .eq-k { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
 .eq-v { font-size:1.05rem; font-weight:500; margin-top:2px; }
 .stats { display:grid; grid-template-columns:1fr 1fr; }
-.stat { padding:10px 0; }
+.stat { padding:14px 0 12px; }
 .stat:nth-child(even) { padding-left:14px; border-left:1px solid var(--line); }
 .stat:nth-child(n+3) { border-top:1px solid var(--line); }
-.stat-k { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
-.stat-v { font-size:1.35rem; font-weight:500; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.stat-n { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+.stat-k { font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.stat-v { font-size:1.85rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stat-n { font-size:0.74rem; color:var(--cream-dim); margin-top:4px; }
+.stat-n:empty { display:none; }
 .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
 .row:first-child { border-top:none; }
 .row .k { color:var(--cream-dim); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -229,11 +230,16 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lc-tip b { display:block; font-size:0.9rem; color:var(--cream); font-weight:500; }
 .lc.show .lc-guide, .lc.show .lc-dot, .lc.show .lc-tip { display:block; }
 /* Bar chart hover */
+.tb-wrap { position:relative; }
 .tb-col { position:relative; cursor:default; }
-.tb-tip { position:absolute; left:50%; top:0; transform:translate(-50%, -100%); padding:8px 11px; min-width:150px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; z-index:2; }
-.tb-tip b { color:var(--cream); font-weight:500; }
-.tb-col:hover .tb-tip { display:block; }
-.tb:hover .tb-col:not(:hover) .tb-bar { opacity:.45; }
+.tb-float { position:absolute; z-index:5; transform:translate(-50%, calc(-100% - 8px)); padding:7px 11px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; box-shadow:0 8px 20px -10px rgba(0,0,0,0.6); }
+.tb-float.on { display:block; }
+.tb-float b { color:var(--cream); font-weight:500; font-size:0.86rem; }
+.tb-float .t-head { display:flex; align-items:center; gap:6px; }
+.tb-float i { width:7px; height:7px; border-radius:2px; display:inline-block; }
+/* While pointing at a piece, everything else steps back. */
+.tb.hl [data-tip]:not(.hot) { opacity:.3; }
+[data-tip] { cursor:pointer; transition:opacity .12s; }
 @media (max-width:420px) { .pie { flex-direction:column; align-items:stretch; } .pie-chart { align-self:center; } }
 /* Last updated */
 .lu { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
@@ -266,7 +272,6 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 /* Spending bar, split by category (bottom up, biggest category first) */
 .tb-stack { display:flex; flex-direction:column-reverse; gap:2px; width:40%; max-width:24px; min-height:2px; transition:opacity .15s; }
 .tb-stack span { display:block; width:100%; flex-basis:0; min-height:6px; border-radius:3px; }
-.tb:hover .tb-col:not(:hover) .tb-stack { opacity:.45; }
 .tb-bars { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
 .tb-bar { width:40%; max-width:24px; min-height:2px; border-radius:4px 4px 2px 2px; }
 .tb-bar.in { background:var(--green); } .tb-bar.out { background:var(--accent); }
@@ -740,7 +745,7 @@ function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' da
 const PIES = {};
 function pieOver(e, id, tap){
   const t = e.target.closest('[data-i]');
-  if (!t) { if (tap) pieFocus(id, -1); return; }
+  if (!t) { pieFocus(id, -1); return; }
   const i = Number(t.dataset.i), el = document.getElementById(id);
   pieFocus(id, tap && el.dataset.focus === String(i) ? -1 : i);
 }
@@ -752,6 +757,32 @@ function pieFocus(id, i){
   const mid = el.querySelector('.pie-mid'), x = p.top[i];
   mid.innerHTML = x ? `<b>${money(x.v)}</b><span>${escHtml(x.name)} · ${Math.round(x.v / p.total * 100)}%</span>` : `<b>${money(p.total)}</b><span>spent in ${p.month}</span>`;
 }
+/* Bar hover: the label of the exact piece under the pointer, placed above it. */
+function tbMove(e){
+  const wrap = e.currentTarget, tip = wrap.querySelector('.tb-float'), tb = wrap.querySelector('.tb');
+  // The piece under the pointer; failing that, the nearest piece within 10px in
+  // that month, so thin slices are easy to land on.
+  let t = e.target.closest('[data-tip]');
+  const col = !t && e.target.closest('.tb-col');
+  if (col) {
+    let best = null, bestD = 10;
+    for (const n of col.querySelectorAll('[data-tip]')) {
+      const r = n.getBoundingClientRect();
+      const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right), dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+      const dd = Math.hypot(dx, dy); if (dd < bestD) { bestD = dd; best = n; }
+    }
+    t = best;
+  }
+  wrap.querySelectorAll('.hot').forEach(n => { if (n !== t) n.classList.remove('hot'); });
+  if (!t) { tip.classList.remove('on'); tb.classList.remove('hl'); return; }
+  t.classList.add('hot'); tb.classList.add('hl');
+  if (tip.dataset.for !== t.dataset.tip) { tip.innerHTML = t.dataset.tip; tip.dataset.for = t.dataset.tip; }
+  const w = wrap.getBoundingClientRect(), r = t.getBoundingClientRect();
+  const half = tip.offsetWidth / 2, x = Math.max(half, Math.min(w.width - half, r.left + r.width / 2 - w.left));
+  tip.style.left = x + 'px'; tip.style.top = (r.top - w.top) + 'px';
+  tip.classList.add('on');
+}
+function tbLeave(wrap){ wrap.querySelector('.tb-float').classList.remove('on'); wrap.querySelector('.tb').classList.remove('hl'); wrap.querySelectorAll('.hot').forEach(n => n.classList.remove('hot')); }
 /* Line chart hover: the month and value under the pointer. */
 const LCS = {};
 function lcMove(e, id){
@@ -766,7 +797,9 @@ function lcMove(e, id){
   el.querySelector('.lc-guide').style.left = xp + '%';
   const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
   const tip = el.querySelector('.lc-tip');
-  tip.style.left = Math.max(12, Math.min(88, xp)) + '%'; tip.style.top = yp + 'px';
+  tip.style.top = yp + 'px';
+  const half = (tip.offsetWidth || 120) / 2, px = xp / 100 * r.width;
+  tip.style.left = Math.max(half, Math.min(r.width - half, px)) + 'px';
   tip.innerHTML = d.tips ? d.tips[i] : `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
 }
 /* Shared y scale with round tick values, and short money labels for the axis. */
@@ -888,12 +921,12 @@ const RENDER = {
   },
   'bd-month'(){
     const now = new Date(), t = totals(txIn(now));
-    const rate = t.income > 0 && t.toSaving > 0.5 ? Math.round(t.toSaving / t.income * 100) + '% of income' : '';
+    const pct = v => t.income > 0 && v > 0.5 ? Math.round(v / t.income * 100) + '% of income' : '';
     return `<div class="stats">
-      <div class="stat"><div class="stat-k">Income</div><div class="stat-v up">${money(t.income)}</div></div>
-      <div class="stat"><div class="stat-k">Spent</div><div class="stat-v">${money(t.spent)}</div></div>
-      <div class="stat"><div class="stat-k">Saved & invested</div><div class="stat-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><div class="stat-n">${rate}</div></div>
-      <div class="stat"><div class="stat-k">Money out</div><div class="stat-v">${money(t.spent + t.toSaving)}</div></div>
+      <div class="stat"><div class="stat-k">Income</div><div class="stat-v up">${money(t.income)}</div><div class="stat-n"></div></div>
+      <div class="stat"><div class="stat-k">Spent</div><div class="stat-v">${money(t.spent)}</div><div class="stat-n">${pct(t.spent)}</div></div>
+      <div class="stat"><div class="stat-k">Saved & invested</div><div class="stat-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><div class="stat-n">${pct(t.toSaving)}</div></div>
+      <div class="stat"><div class="stat-k">Money out</div><div class="stat-v">${money(t.spent + t.toSaving)}</div><div class="stat-n">${pct(t.spent + t.toSaving)}</div></div>
     </div>`;
   },
   'bd-categories'(it){
@@ -917,17 +950,21 @@ const RENDER = {
     const sum = {}; data.forEach(d => { for (const [g, v] of Object.entries(d.by)) if (v > 0) sum[g] = (sum[g] || 0) + v; });
     const cats = Object.keys(sum).sort((a, b) => sum[b] - sum[a]).slice(0, 6).map(id => { const g = groupById(id); return { id, name:g ? g.name : 'Other', color:groupHue(g) }; });
     const max = Math.max(1, ...data.map(d => Math.max(d.t.income, d.t.spent)));
-    const avg = data.reduce((a, d) => a + d.t.spent, 0) / data.length;
+    // Average over the months that have anything logged.
+    const logged = data.filter(d => d.t.income > 0.5 || d.t.spent > 0.5);
+    const avg = logged.reduce((a, d) => a + d.t.spent, 0) / Math.max(1, logged.length);
+    const tipAttr = html => `data-tip="${escHtml(html)}"`;
     const cols = data.map(d => {
+      const mn = monthName(d.m, true);
       const segs = cats.map(c => ({ c, v:Math.max(0, d.by[c.id] || 0) })).filter(x => x.v > 0);
       const other = Math.max(0, d.t.spent - segs.reduce((a, x) => a + x.v, 0));
       if (other > 0.5) segs.push({ c:{ name:'Other', color:'#8d8d8d' }, v:other });
-      const tot = segs.reduce((a, x) => a + x.v, 0) || 1;
-      const tip = `<span class="t-head">${monthName(d.m, true)}</span><span class="t-row"><span><i style="background:var(--green)"></i>Income</span><b class="up">${money(d.t.income)}</b></span><span class="t-row"><span>Spent</span><b>${money(d.t.spent)}</b></span>`
-        + segs.map(x => `<span class="t-row"><span><i style="background:${x.c.color}"></i>${escHtml(x.c.name)}</span><b>${money(x.v)}</b></span>`).join('');
-      return `<div class="tb-col"><span class="tb-tip">${tip}</span><div class="tb-bars"><span class="tb-bar in" style="height:${(d.t.income / max * 100).toFixed(1)}%"></span><span class="tb-stack" style="height:${(Math.max(0, d.t.spent) / max * 100).toFixed(1)}%">${segs.map(x => `<span style="flex-grow:${x.v.toFixed(2)};background:${x.c.color}" title="${escHtml(x.c.name)}: ${money(x.v)}"></span>`).join('')}</span></div><span class="tb-lbl">${monthName(d.m)}</span></div>`;
+      // Each piece carries its own label: the slice you point at is the one shown.
+      const inBar = d.t.income > 0.5 ? `<span class="tb-bar in" style="height:${(d.t.income / max * 100).toFixed(1)}%" ${tipAttr(`<span class="t-head"><i style="background:var(--green)"></i>${mn} income</span><b>${money(d.t.income)}</b>`)}></span>` : '';
+      const outBar = d.t.spent > 0.5 ? `<span class="tb-stack" style="height:${(d.t.spent / max * 100).toFixed(1)}%">${segs.map(x => `<span style="flex-grow:${x.v.toFixed(2)};background:${x.c.color}" ${tipAttr(`<span class="t-head"><i style="background:${x.c.color}"></i>${escHtml(x.c.name)} in ${mn}</span><b>${money(x.v)}</b> · ${Math.round(x.v / d.t.spent * 100)}% of ${money(d.t.spent)} spent`)}></span>`).join('')}</span>` : '';
+      return `<div class="tb-col"><div class="tb-bars">${inBar}${outBar}</div><span class="tb-lbl">${monthName(d.m)}</span></div>`;
     }).join('');
-    return `<div class="tb">${cols}</div>
+    return `<div class="tb-wrap" onpointerover="tbMove(event)" onpointermove="tbMove(event)" onpointerdown="tbMove(event)" onpointerleave="tbLeave(this)"><div class="tb">${cols}</div><span class="tb-float"></span></div>
       <div class="legend"><span><i style="background:var(--green)"></i>Income</span>${cats.map(c => `<span><i style="background:${c.color}"></i>${escHtml(c.name)}</span>`).join('')}<span>Average spent <b>${money(avg)}</b></span></div>`;
   },
   'bd-targets'(it){
