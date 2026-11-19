@@ -171,11 +171,14 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .mo-v { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mo-op { color:var(--muted); font-size:1.1rem; text-align:center; line-height:1; }
 .mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
-.mo-net { margin-top:auto; display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; padding-top:12px; border-top:1px solid var(--line); }
-.mo-net .stat-k { line-height:1; }
+.mo-net { margin-top:auto; display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; padding-top:12px; border-top:1px solid var(--line); }
+/* Each text box is trimmed to its letter height (cap top to baseline), so
+   centering the boxes centers the letters themselves, whatever their size. */
+.mo-net .stat-k, .mo-net-v, .mo-note { line-height:1; text-box:trim-both cap alphabetic; }
 .mo-net-v { font-size:1.35rem; font-weight:600; }
 .mo-net-v.up { color:var(--green); } .mo-net-v.down { color:var(--red); }
-/* Saved note: a small chip, set apart from the figure */
+/* Saved note: plain, right after the figure */
+.mo-note { font-size:0.8rem; color:var(--cream-dim); }
 .own { margin-top:auto; padding-top:16px; }
 .own-bar { display:flex; gap:2px; height:8px; }
 .own-bar span { display:block; height:100%; border-radius:999px; }
@@ -185,7 +188,6 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .own-k span { font-weight:600; }
 .own-k .up { color:var(--green); } .own-k .down { color:var(--red); }
 .own-k b.up { color:var(--green); } .own-k b.down { color:var(--red); }
-.mo-chip { margin-left:auto; padding:3px 10px; border-radius:999px; background:color-mix(in srgb, var(--green) 14%, transparent); color:var(--green); font-size:0.72rem; font-weight:500; white-space:nowrap; }
 .row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
 .row:first-child { border-top:none; }
 .row .k { color:var(--cream-dim); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -243,7 +245,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .t-row b.up { color:var(--green); } .t-row b.down { color:var(--red); }
 .t-row.t-sum { border-top:1px solid var(--line); margin-top:3px; padding-top:3px; }
 
-/* What moved it: a narrow column, so names and values sit close together */
+/* What moved: a narrow column, so names and values sit close together */
 .cols.nwt { grid-template-columns:minmax(0,1fr) minmax(220px,300px); gap:0 32px; }
 @media (max-width:720px) { .cols.nwt { grid-template-columns:minmax(0,1fr); } }
 /* Line chart hover: a dot and a small label for the month under the pointer */
@@ -271,7 +273,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lu-ic { flex:0 0 auto; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--surface); color:var(--accent); }
 .lu-ic svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .lu-main { flex:1; min-width:0; }
-.lu-k { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
+.lu-k { font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--cream); font-weight:600; }
 .lu-v { font-size:0.95rem; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .lu-n { font-size:0.76rem; color:var(--cream-dim); margin-top:1px; }
 .lu-n.stale { color:var(--amber); }
@@ -613,7 +615,7 @@ const groupTarget = g => D.cats.filter(c => c.group_id === g.id && !c.hidden && 
 const HAS = {
   nw: () => D.entries.length > 0,
   both: () => HAS.nw() && HAS.budget(),
-  any: () => HAS.nw() || D.tx.length > 0,
+  any: () => HAS.nw() || D.tx.length > 0 || D.rec.length > 0,
   budget: () => D.tx.length > 0 || D.rec.length > 0,
   debts: () => D.debts.some(d => !d.paid_off) || holdings().some(h => h.type === 'liability' && h.value > 0),
 };
@@ -657,7 +659,7 @@ const NAMES = {
   'bd-month':     ['This month', 'Income, then what went out (spent plus saved), and what\u2019s left this month.'],
   'bd-pie':       ['Spending by category', 'A pie of this month\u2019s spending. Hover a slice to see the category.'],
   'bd-trend':     ['Income vs spending', 'Money in next to money out, month by month. Hover a month for the numbers.'],
-  'bd-upcoming':  ['Upcoming recurring', 'Your next repeating bills and paychecks, with their dates.'],
+  'bd-upcoming':  ['Recurring transactions', 'Your next repeating bills and paychecks, with their dates.'],
   'bd-recent':    ['Recent transactions', 'The last few transactions you logged.'],
   'last-updated': ['Last updated', 'When you last updated net worth and logged a transaction, with buttons to do it now.'],
 };
@@ -938,20 +940,23 @@ const RENDER = {
       <div class="pie-keys">${top.map((x, i) => `<button class="pie-key" data-i="${i}" type="button"><span class="dot" style="--h:${x.color}"></span>${escHtml(x.name)} ${Math.round(x.v / total * 100)}%</button>`).join('')}</div></div>`;
   },
   'last-updated'(){
-    const now = new Date(), rows = [];
+    const NW_IC = '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+    const BD_IC = '<svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg>';
+    const row = (ic, tracker, v, n, stale, btn, href) => `<div class="lu"><span class="lu-ic">${ic}</span><div class="lu-main"><div class="lu-k">${tracker}</div><div class="lu-v">${v}</div><div class="lu-n${stale ? ' stale' : ''}">${n}</div></div><a class="btn btn-ghost" href="${href}">${btn}</a></div>`;
+    const rows = [];
     if (HAS.nw()) {
       const stamp = e => String(e.updated_at || e.created_at || e.date);
       const lastE = D.entries.reduce((a, e) => !a || stamp(e) > stamp(a) ? e : a, null);
       const d = new Date(stamp(lastE).length > 10 ? stamp(lastE) : parseYmd(stamp(lastE))), days = daysAgo(d);
-      rows.push(`<div class="lu"><span class="lu-ic"><svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span><div class="lu-main"><div class="lu-k">Net worth</div><div class="lu-v">Updated ${shortDate(ymd(d))}</div><div class="lu-n${days >= 31 ? ' stale' : ''}">${agoText(days)}${days >= 31 ? ', time for an update' : ''}</div></div><a class="btn btn-ghost" href="/net-worth/?update=1">Update</a></div>`);
-    }
+      rows.push(row(NW_IC, 'Net worth tracker', `Updated ${shortDate(ymd(d))}`, agoText(days) + (days >= 31 ? ', time for an update' : ''), days >= 31, 'Update', '/net-worth/?update=1'));
+    } else rows.push(row(NW_IC, 'Net worth tracker', 'Not started yet', 'Track what you own and owe each month.', false, 'Start', '/net-worth/'));
     if (D.tx.length) {
       const t = D.tx.reduce((a, x) => !a || String(x.created_at || x.date) > String(a.created_at || a.date) ? x : a, null);
       const c = catById(t.category_id), amt = Number(t.amount), name = t.description || (c ? c.name : 'Uncategorized');
       const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date), days = daysAgo(logged);
-      rows.push(`<div class="lu"><span class="lu-ic"><svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg></span><div class="lu-main"><div class="lu-k">Last transaction</div><div class="lu-v">${escHtml(name)} <span class="${amt > 0 ? 'up' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</span></div><div class="lu-n${days >= 7 ? ' stale' : ''}">Logged ${agoText(days).toLowerCase()}</div></div><a class="btn btn-ghost" href="/budget/?add=1">Add</a></div>`);
-    }
-    return rows.length ? `<div class="lu-list">${rows.join('')}</div>` : '<div class="w-empty">Nothing logged yet.</div>';
+      rows.push(row(BD_IC, 'Budget tracker', `${escHtml(name)} <span class="${amt > 0 ? 'up' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</span>`, 'Last transaction, logged ' + agoText(days).toLowerCase(), days >= 7, 'Add', '/budget/?add=1'));
+    } else rows.push(row(BD_IC, 'Budget tracker', 'Not started yet', 'Log spending and income to see where it goes.', false, 'Start', '/budget/'));
+    return `<div class="lu-list">${rows.join('')}</div>`;
   },
   'nw-trend-body'(it, s){
     if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
@@ -967,7 +972,7 @@ const RENDER = {
         return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
       }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
       return `<div class="cols nwt"><div>${nwChart(s)}${meta}</div>
-        <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved it</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
+        <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
     }
     return nwChart(s) + meta;
   },
@@ -1005,7 +1010,7 @@ const RENDER = {
         <div class="stat-k">Spent</div><span></span><div class="stat-k">Saved</div><span></span><div class="stat-k">Total outflow</div>
         <div class="mo-v">${money(t.spent)}</div><span class="mo-op">+</span><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><span class="mo-op">=</span><div class="mo-v">${money(out)}</div>
       </div>
-      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-chip">Includes ${money(t.toSaving)} saved</span>` : ''}</div>
+      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-note">includes ${money(t.toSaving)} saved</span>` : ''}</div>
     </div>`;
   },
   'bd-categories'(it){
