@@ -107,7 +107,9 @@ a { color:inherit; }
 
 /* ── Grid of widgets ── */
 .grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
-.w { grid-column:span 1; min-width:0; background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:16px; }
+.w { grid-column:span 1; min-width:0; background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; }
+.w-body { flex:1; display:flex; flex-direction:column; min-height:0; }
+.w-body > * { flex-shrink:0; }
 .w.full { grid-column:1 / -1; }
 @media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } .w, .w.full { grid-column:1 / -1; } }
 .editing .w { outline:1.5px dashed var(--line); outline-offset:-1px; }
@@ -253,6 +255,18 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lu-n.stale { color:var(--amber); }
 .lu .btn { flex:0 0 auto; padding:8px 14px; font-size:0.8rem; }
 .spark svg { height:70px; }
+/* Net worth total: a small 12-month line at the bottom */
+.nw-spark { margin-top:auto; padding-top:14px; }
+.nw-spark .lc { margin-top:0; }
+.nw-spark svg { height:48px; }
+.nw-spark-k { display:flex; justify-content:space-between; font-size:0.7rem; color:var(--muted); margin-top:4px; }
+/* Last updated: rows share the card's height */
+.lu-list { flex:1; display:flex; flex-direction:column; justify-content:space-around; }
+/* Upcoming recurring: totals pinned to the bottom */
+.up-sum { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); display:flex; gap:6px 16px; flex-wrap:wrap; font-size:0.8rem; color:var(--cream-dim); }
+.up-sum b { font-weight:500; color:var(--cream); }
+.up-sum b.up { color:var(--green); }
+.up-list { margin-bottom:12px; }
 
 /* Bars */
 .cb { padding:8px 0; }
@@ -635,9 +649,9 @@ const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['n
 /* Starting layouts. The default picks itself from the data you have, and
    stays automatic until you customize. */
 const PRESETS = {
-  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-recent','half'], ['bd-trend','full']] },
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['bd-upcoming','half'], ['nw-trend','full'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
   networth:   { name:'Net worth', desc:'Your total and how it has changed.', items:[['nw-total','half'], ['last-updated','half'], ['nw-trend','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-upcoming','half'], ['bd-trend','full'], ['bd-recent','half']] },
+  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full'], ['bd-upcoming','half']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
@@ -836,7 +850,8 @@ const RENDER = {
     const s = snapshots(), last = s[s.length - 1], prev = s.length > 1 ? s[s.length - 2] : null;
     const delta = prev ? `<div class="delta ${last.net - prev.net >= 0 ? 'up' : 'down'}">${signed(last.net - prev.net)} since ${monthLabel(prev.month)}</div>` : '<div class="delta">First month logged</div>';
     return `<div class="big${last.net < 0 ? ' neg' : ''}">${money(last.net)}</div>${delta}
-      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>`;
+      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>` +
+      (s.length > 2 ? `<div class="nw-spark">${lineChart(s.slice(-12).map(x => x.net))}<div class="nw-spark-k"><span>${monthLabel(s.slice(-12)[0].month)}</span><span>Last 12 months</span><span>${monthLabel(last.month)}</span></div></div>` : '');
   },
   'nw-trend'(it){
     const r = nwRange(), all = snapshots(), s = r.months ? all.slice(-r.months) : all;
@@ -873,7 +888,7 @@ const RENDER = {
       const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date), days = daysAgo(logged);
       rows.push(`<div class="lu"><span class="lu-ic"><svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg></span><div class="lu-main"><div class="lu-k">Last transaction</div><div class="lu-v">${escHtml(name)} <span class="${amt > 0 ? 'up' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</span></div><div class="lu-n${days >= 7 ? ' stale' : ''}">Logged ${agoText(days).toLowerCase()}</div></div><a class="btn btn-ghost" href="/budget/?add=1">Add</a></div>`);
     }
-    return rows.join('') || '<div class="w-empty">Nothing logged yet.</div>';
+    return rows.length ? `<div class="lu-list">${rows.join('')}</div>` : '<div class="w-empty">Nothing logged yet.</div>';
   },
   'nw-trend-body'(it, s){
     if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
@@ -997,12 +1012,14 @@ const RENDER = {
     }).join('');
   },
   'bd-upcoming'(){
-    const list = D.rec.slice().sort((a, b) => String(a.next_date).localeCompare(String(b.next_date))).slice(0, 5);
+    const list = D.rec.slice().sort((a, b) => String(a.next_date).localeCompare(String(b.next_date))).slice(0, 7);
     if (!list.length) return `<div class="w-empty">Nothing recurring. <a href="/budget/">Add one in the budget tracker</a></div>`;
-    return list.map(r => {
+    const out = list.reduce((a, r) => a + Math.max(0, -Number(r.amount)), 0), inn = list.reduce((a, r) => a + Math.max(0, Number(r.amount)), 0);
+    const sum = `<div class="up-sum"><span>Going out <b>${money(out)}</b></span>${inn > 0.5 ? `<span>Coming in <b class="up">+${money(inn)}</b></span>` : ''}<span>by ${shortDate(list[list.length - 1].next_date)}</span></div>`;
+    return '<div class="up-list">' + list.map(r => {
       const c = catById(r.category_id), amt = Number(r.amount);
       return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta">${shortDate(r.next_date)}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${r.amount_varies ? '~' : ''}${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
-    }).join('');
+    }).join('') + '</div>' + sum;
   },
   'flow'(){
     const now = new Date(), t = totals(txIn(now)), { byGroup } = spendBy(now);
