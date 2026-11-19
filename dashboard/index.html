@@ -171,14 +171,16 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .mo-v { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mo-op { color:var(--muted); font-size:1.1rem; text-align:center; line-height:1; }
 .mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
-.mo-net { margin-top:auto; display:flex; align-items:center; flex-wrap:wrap; gap:8px 10px; padding-top:12px; border-top:1px solid var(--line); }
+/* Label and figure on one line, centered; the saved note sits under the figure as a footnote. */
+.mo-net { margin-top:auto; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:7px 10px; padding-top:12px; border-top:1px solid var(--line); }
 /* Each text box is trimmed to its letter height (cap top to baseline), so
    centering the boxes centers the letters themselves, whatever their size. */
-.mo-net .stat-k, .mo-net-v, .mo-note { line-height:1; text-box:trim-both cap alphabetic; }
+.mo-net .stat-k, .mo-net-v { line-height:1; text-box:trim-both cap alphabetic; }
 .mo-net-v { font-size:1.35rem; font-weight:600; }
 .mo-net-v.up { color:var(--green); } .mo-net-v.down { color:var(--red); }
 /* Saved note: plain, right after the figure */
-.mo-note { font-size:0.8rem; color:var(--green); font-weight:500; }
+.mo-note { font-size:0.72rem; color:var(--cream-dim); line-height:1.2; }
+.mo-mark { font-size:0.6em; font-weight:500; color:var(--cream-dim); margin-left:1px; vertical-align:super; line-height:0; }
 .own { margin-top:auto; padding-top:16px; }
 .own-bar { display:flex; gap:2px; height:8px; }
 .own-bar span { display:block; height:100%; border-radius:999px; }
@@ -1033,7 +1035,7 @@ const RENDER = {
         <div class="stat-k">Spent</div><span></span><div class="stat-k">Saved</div><span></span><div class="stat-k">Total outflow</div>
         <div class="mo-v">${money(t.spent)}</div><span class="mo-op">+</span><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><span class="mo-op">=</span><div class="mo-v">${money(out)}</div>
       </div>
-      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}</span>${t.toSaving > 0.5 ? `<span class="mo-note">includes ${money(t.toSaving)} saved</span>` : ''}</div>
+      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}${t.toSaving > 0.5 ? '<sup class="mo-mark">*</sup>' : ''}</span>${t.toSaving > 0.5 ? `<span></span><span class="mo-note">* Includes ${money(t.toSaving)} saved</span>` : ''}</div>
     </div>`;
   },
   'bd-categories'(it){
