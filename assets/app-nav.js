@@ -4,7 +4,6 @@
      <aside data-vf-nav data-active="budget"></aside>
      <script src="/assets/app-nav.js"></script>
    data-active: dashboard (shown as Home) | networth | budget | debts
-   data-theme="navy" on pages that are still in the old navy theme.
    Hidden at 768px and below, where each page keeps its own phone layout.
 
    Each tracker has a dropdown of quick actions. They are links with a query
@@ -25,13 +24,9 @@
   display:flex; flex-direction:column; padding:0 10px 20px; background:var(--nv-bg); border-right:1px solid var(--nv-line);
   font-family:'Outfit',sans-serif;
 }
-:root[data-theme="light"] .vf-nav:not(.navy) {
+:root[data-theme="light"] .vf-nav {
   --nv-bg:#f3f2ef; --nv-line:rgba(0,0,0,0.09); --nv-text:#1b1b1b; --nv-item:#565656; --nv-dim:#7b7b7b;
   --nv-hover:rgba(0,0,0,0.04); --nv-on:#e7e4de; --nv-accent:#1b1b1b;
-}
-.vf-nav.navy {
-  --nv-bg:#0a0f1e; --nv-line:rgba(255,255,255,0.07); --nv-text:#f5f0e8; --nv-item:#b9b6b0; --nv-dim:#7d7c7a;
-  --nv-hover:rgba(255,255,255,0.04); --nv-on:#1a2540; --nv-accent:#c9a84c;
 }
 .vf-nav::-webkit-scrollbar-track { margin:12px 0; }
 .vf-brand { display:block; padding:22px 12px 10px; font-family:'Exo 2',sans-serif; font-size:1.15rem; color:var(--nv-accent); text-decoration:none; }
@@ -89,7 +84,6 @@
     // First visit: the page you're on starts open. After that, your choice sticks.
     const isOpen = key => openSet ? openSet.has(key) : key === active;
     el.classList.add('vf-nav');
-    if (el.dataset.theme === 'navy') el.classList.add('navy');
     el.setAttribute('aria-label', 'VestlyFi tools');
     el.innerHTML = '<a class="vf-brand" href="/dashboard/">VestlyFi</a>' + NAV.map(g =>
       (g.cap ? `<div class="vf-cap">${g.cap}</div>` : '') +

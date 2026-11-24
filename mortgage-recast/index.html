@@ -109,24 +109,24 @@
 <link rel="manifest" href="/site.webmanifest">
 <style>
   :root {
-    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
-    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
-    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
-    --green:#4ade80; --red:#f87171; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+    --navy:#0b0b0b; --navy-mid:#1b1b1b; --navy-light:#262626; --navy-card:#131313;
+    --gold:#dcc392; --gold-light:#ecd9b2; --gold-dim:rgba(220,195,146,0.13);
+    --cream:#ededed; --cream-dim:#969696; --muted:#5f5f5f;
+    --green:#5cc28e; --red:#e8706a; --border:rgba(220,195,146,0.15); --border-soft:rgba(255,255,255,0.07);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(220,195,146,0.06) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(220,195,146,0.04) 0%,transparent 60%); pointer-events:none; z-index:0; }
 
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(10,15,30,0.85); backdrop-filter:blur(12px); }
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:rgba(11,11,11,0.85); backdrop-filter:blur(12px); }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
   .site-nav-links a:hover { color:var(--cream); }
   .site-nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
   .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
@@ -150,20 +150,20 @@
   input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
   input.has-prefix { padding-left:30px; }
   input.has-suffix { padding-right:48px; }
-  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(220,195,146,0.1); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
   .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:end; }
   .input-row > .input-group { display:flex; flex-direction:column; justify-content:flex-end; }
   @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
 
   .pill-group { display:flex; gap:9px; flex-wrap:wrap; }
-  .pill { padding:9px 18px; border-radius:100px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
+  .pill { padding:9px 18px; border-radius:100px; border:1px solid rgba(220,195,146,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
   .pill:hover { border-color:var(--gold); color:var(--cream); }
   .pill.selected { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
 
   .step-nav { display:flex; gap:10px; margin-top:36px; }
-  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(220,195,146,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(220,195,146,0.42); }
   .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
   .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
   .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
@@ -173,7 +173,7 @@
   .cmp-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:28px; }
   @media(max-width:640px) { .cmp-grid{grid-template-columns:1fr;} }
   .cmp-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:18px; }
-  .cmp-card.winner { border-color:var(--gold); box-shadow:0 0 0 1px rgba(201,168,76,0.25); }
+  .cmp-card.winner { border-color:var(--gold); box-shadow:0 0 0 1px rgba(220,195,146,0.25); }
   .cmp-name { font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--gold); font-weight:500; margin-bottom:12px; }
   .cmp-pay { font-size:1.55rem; font-weight:400; color:var(--cream); letter-spacing:-0.02em; }
   .cmp-pay-lbl { font-size:0.7rem; color:var(--muted); margin-bottom:12px; }
@@ -183,7 +183,7 @@
 
   .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
   .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
-  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+  .disclaimer { font-size:0.7rem; color:rgba(237,237,237,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
 
   /* SEO CONTENT */
   .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
@@ -212,7 +212,7 @@
   .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
   .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(220,195,146,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -418,16 +418,16 @@
 
 <!-- About Modal -->
 <div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
-      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p>Questions? <span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -561,7 +561,7 @@ function calculate() {
     breakEvenHtml = `The refinance rate (${refiRate}%) isn't below your current rate (${rate}%), so refinancing has no rate advantage here. Its lower payment comes only from stretching the term back out to ${refiTerm} years, which means more total interest.`;
   } else if (monthlySave > 0 && upfrontDelta > 0) {
     const be = Math.ceil(upfrontDelta / monthlySave);
-    breakEvenHtml = `Refinancing costs <strong style="color:var(--cream)">${fmt(upfrontDelta)}</strong> more upfront than recasting but lowers the payment by <strong style="color:var(--cream)">${fmt(monthlySave)}/month</strong> more. It breaks even in <strong style="color:${be <= H ? '#4caf7d' : '#e05c5c'}">${be} months</strong> (${(be/12).toFixed(1)} years)${be > H ? ', which is longer than you plan to keep the home' : ''}.`;
+    breakEvenHtml = `Refinancing costs <strong style="color:var(--cream)">${fmt(upfrontDelta)}</strong> more upfront than recasting but lowers the payment by <strong style="color:var(--cream)">${fmt(monthlySave)}/month</strong> more. It breaks even in <strong style="color:${be <= H ? '#5cc28e' : '#e8706a'}">${be} months</strong> (${(be/12).toFixed(1)} years)${be > H ? ', which is longer than you plan to keep the home' : ''}.`;
   } else if (monthlySave <= 0) {
     breakEvenHtml = `Even at ${refiRate}%, the refinance payment isn't lower than the recast payment, so there's no monthly savings to recover the ${fmt(closingCosts)} in closing costs.`;
   } else {
@@ -569,7 +569,7 @@ function calculate() {
   }
 
   const winner = recastWins ? 'Recast' : 'Refinance';
-  const winnerColor = recastWins ? '#5bb8f5' : '#c9a84c';
+  const winnerColor = recastWins ? '#5bb8f5' : '#dcc392';
 
   function cmpCard(name, pay, upfront, cost, payoffM, isWinner, note) {
     return `
@@ -592,7 +592,7 @@ function calculate() {
       <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:${winnerColor};margin-bottom:6px;">${winner}</div>
       <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">is the cheaper way to use your ${fmt(lumpSum)}, ${horizonLabel}</div>
 
-      <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+      <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:#a1a1a1;">
         ${recastWins
           ? `Recasting costs <strong style="color:var(--cream)">${fmt(margin)}</strong> less than refinancing ${horizonLabel}, counting interest and fees. Your payment drops from <strong style="color:var(--cream)">${fmt(pay0)}</strong> to <strong style="color:#5bb8f5">${fmt(payR)}</strong> for a one-time ${fmt(recastFee)} fee, and you keep your ${rate}% rate.`
           : `Refinancing at ${refiRate}% costs <strong style="color:var(--cream)">${fmt(margin)}</strong> less than recasting ${horizonLabel}, counting interest and fees. Your payment drops from <strong style="color:var(--cream)">${fmt(pay0)}</strong> to <strong style="color:var(--gold-light)">${fmt(payF)}</strong> after ${fmt(closingCosts)} in closing costs.`}
@@ -604,11 +604,11 @@ function calculate() {
         ${cmpCard('Just prepay', pay0, lumpSum, costPrepay, simPrepay.months, false, `payment unchanged, payoff moves up`)}
       </div>
 
-      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
-        Don't need a lower payment? Just applying the ${fmt(lumpSum)} without recasting keeps your payment at ${fmt(pay0)} but pays the loan off in <strong style="color:#4caf7d">${monthYear(simPrepay.months)}</strong> instead of ${monthYear(simNothing.months)}, and it has the lowest lifetime interest of any option here.
+      <div style="background:rgba(92,194,142,0.07);border:1px solid rgba(92,194,142,0.2);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:#a1a1a1;line-height:1.75;">
+        Don't need a lower payment? Just applying the ${fmt(lumpSum)} without recasting keeps your payment at ${fmt(pay0)} but pays the loan off in <strong style="color:#5cc28e">${monthYear(simPrepay.months)}</strong> instead of ${monthYear(simNothing.months)}, and it has the lowest lifetime interest of any option here.
       </div>
 
-      <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+      <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:#a1a1a1;line-height:1.75;">
         ${breakEvenHtml}
       </div>
 
@@ -618,10 +618,10 @@ function calculate() {
           <canvas id="recastChart"></canvas>
         </div>
         <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:0.75rem;color:var(--muted);">
-          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:rgba(245,240,232,0.35);border-radius:2px;"></span>Do nothing</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5f5f5f;border-radius:2px;"></span>Do nothing</span>
           <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5bb8f5;border-radius:2px;"></span>Recast</span>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#c9a84c;border-radius:2px;"></span>Refinance</span>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#4caf7d;border-radius:2px;"></span>Just prepay</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#dcc392;border-radius:2px;"></span>Refinance</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5cc28e;border-radius:2px;"></span>Just prepay</span>
         </div>
       </div>
 
@@ -661,26 +661,26 @@ function calculate() {
       data: {
         labels,
         datasets: [
-          { label: 'Do nothing', data: dN, borderColor: 'rgba(245,240,232,0.35)', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.15 },
+          { label: 'Do nothing', data: dN, borderColor: '#5f5f5f', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.15 },
           { label: 'Recast', data: dR, borderColor: '#5bb8f5', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 },
-          { label: 'Refinance', data: dF, borderColor: '#c9a84c', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 },
-          { label: 'Just prepay', data: dP, borderColor: '#4caf7d', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 }
+          { label: 'Refinance', data: dF, borderColor: '#dcc392', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 },
+          { label: 'Just prepay', data: dP, borderColor: '#5cc28e', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: false, tension: 0.15 }
         ]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#131313', borderColor: 'rgba(220,195,146,0.2)', borderWidth: 1, titleColor: '#808080', bodyColor: '#ecd9b2', padding: 10, callbacks: { label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
         scales: {
           x: {
             grid: { color: 'rgba(255,255,255,0.03)' },
             afterBuildTicks: axis => { axis.ticks = axis.ticks.filter((t, i) => i % xStep === 0); },
-            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
+            ticks: { color: '#545454', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
           },
           y: {
             min: 0,
             grid: { color: 'rgba(255,255,255,0.03)' },
-            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, padding: 8, callback: v => fmt(v) }
+            ticks: { color: '#545454', font: { family:'Outfit', size:10 }, padding: 8, callback: v => fmt(v) }
           }
         }
       }
@@ -727,22 +727,22 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e8706a">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -765,13 +765,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='#e8706a'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#5cc28e'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e8706a'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');

@@ -25,17 +25,17 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <style>
   :root {
-    --navy: #0a0f1e;
-    --navy-mid: #111827;
-    --navy-light: #1a2540;
-    --navy-card: #141d35;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --gold-dim: rgba(201,168,76,0.13);
-    --cream: #f5f0e8;
-    --cream-dim: rgba(245,240,232,0.6);
-    --muted: rgba(245,240,232,0.35);
-    --border: rgba(201,168,76,0.15);
+    --navy: #0b0b0b;
+    --navy-mid: #1b1b1b;
+    --navy-light: #262626;
+    --navy-card: #131313;
+    --gold: #dcc392;
+    --gold-light: #ecd9b2;
+    --gold-dim: rgba(220,195,146,0.13);
+    --cream: #ededed;
+    --cream-dim: #969696;
+    --muted: #5f5f5f;
+    --border: rgba(220,195,146,0.15);
     --border-soft: rgba(255,255,255,0.07);
   }
 
@@ -45,7 +45,7 @@
     background: var(--navy);
     color: var(--cream);
     font-family: 'Outfit', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     min-height: 100vh;
   }
 
@@ -56,7 +56,7 @@
     padding: 0 40px; height: 64px;
     display: flex; align-items: center; justify-content: space-between;
     border-bottom: 1px solid var(--border-soft);
-    background:#0a0f1e;
+    background:#0b0b0b;
   }
   .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .nav-logo:hover { opacity: 0.8; }
@@ -64,8 +64,8 @@
   .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.83rem; font-weight: 300; transition: color 0.15s; }
   .nav-links a:hover { color: var(--cream); }
   .nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
   .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .nav-links { display: none; } nav { padding: 0 20px; } }
 
@@ -125,10 +125,10 @@
   .diagram-card::before {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(220,195,146,0.05) 0%, transparent 60%);
     opacity: 0; transition: opacity 0.22s;
   }
-  .diagram-card:hover { border-color: var(--border); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,168,76,0.1); }
+  .diagram-card:hover { border-color: var(--border); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(220,195,146,0.1); }
   .diagram-card:hover::before { opacity: 1; }
 
   .card-preview {
@@ -153,7 +153,7 @@
   .card-tag {
     font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
     padding: 3px 9px; border-radius:4px; font-weight: 500;
-    color: #60a5fa; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.22);
+    color: #7aa7ff; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.22);
   }
   .card-arrow {
     width: 28px; height: 28px; border-radius: 50%;
@@ -185,7 +185,7 @@
   .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
   .footer-links a:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(220,195,146,0.3); color:var(--cream); }
   @media(max-width:600px) { footer { padding: 24px 20px; } main { padding: 48px 20px 60px; } }
 </style>
 </head>
@@ -217,22 +217,22 @@
     <a class="diagram-card" href="/create-a-diagram/budget-sankey/">
       <div class="card-preview">
         <svg class="sankey-preview" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">
-          <rect width="280" height="130" fill="#0d1526" rx="8"/>
+          <rect width="280" height="130" fill="#131313" rx="8"/>
           <!-- Income node -->
-          <rect x="14" y="10" width="16" height="110" rx="3" fill="rgba(201,168,76,0.8)"/>
-          <text x="14" y="7" font-family="Outfit,sans-serif" font-size="7" fill="rgba(201,168,76,0.7)">Income</text>
+          <rect x="14" y="10" width="16" height="110" rx="3" fill="rgba(220,195,146,0.8)"/>
+          <text x="14" y="7" font-family="Outfit,sans-serif" font-size="7" fill="rgba(220,195,146,0.7)">Income</text>
 
           <!-- Housing flow (top, largest) ~38% -->
-          <path d="M30,10 C100,10 100,14 158,14 L158,55 C100,55 100,51 30,51 Z" fill="rgba(74,222,128,0.22)"/>
-          <rect x="158" y="14" width="14" height="41" rx="3" fill="rgba(74,222,128,0.75)"/>
-          <text x="178" y="30" font-family="Outfit,sans-serif" font-size="8" fill="rgba(74,222,128,0.9)">Housing</text>
-          <text x="178" y="42" font-family="Outfit,sans-serif" font-size="7" fill="rgba(245,240,232,0.35)">$1,800</text>
+          <path d="M30,10 C100,10 100,14 158,14 L158,55 C100,55 100,51 30,51 Z" fill="rgba(92,194,142,0.22)"/>
+          <rect x="158" y="14" width="14" height="41" rx="3" fill="rgba(92,194,142,0.75)"/>
+          <text x="178" y="30" font-family="Outfit,sans-serif" font-size="8" fill="rgba(92,194,142,0.9)">Housing</text>
+          <text x="178" y="42" font-family="Outfit,sans-serif" font-size="7" fill="#5f5f5f">$1,800</text>
 
           <!-- Savings flow ~25% -->
           <path d="M30,53 C100,53 100,57 158,57 L158,83 C100,83 100,79 30,79 Z" fill="rgba(96,165,250,0.22)"/>
           <rect x="158" y="57" width="14" height="26" rx="3" fill="rgba(96,165,250,0.75)"/>
           <text x="178" y="68" font-family="Outfit,sans-serif" font-size="8" fill="rgba(96,165,250,0.9)">Savings</text>
-          <text x="178" y="79" font-family="Outfit,sans-serif" font-size="7" fill="rgba(245,240,232,0.35)">$1,200</text>
+          <text x="178" y="79" font-family="Outfit,sans-serif" font-size="7" fill="#5f5f5f">$1,200</text>
 
           <!-- Food flow ~17% -->
           <path d="M30,81 C100,81 100,85 158,85 L158,102 C100,102 100,98 30,98 Z" fill="rgba(251,146,60,0.22)"/>
@@ -245,7 +245,7 @@
           <text x="178" y="116" font-family="Outfit,sans-serif" font-size="8" fill="rgba(251,191,36,0.9)">Other</text>
 
           <!-- Watermark -->
-          <text x="266" y="127" font-family="Outfit,sans-serif" font-size="6" fill="rgba(201,168,76,0.2)" text-anchor="end">vestlyfi.com</text>
+          <text x="266" y="127" font-family="Outfit,sans-serif" font-size="6" fill="rgba(220,195,146,0.2)" text-anchor="end">vestlyfi.com</text>
         </svg>
       </div>
       <div class="card-title">Budget Sankey</div>
@@ -280,22 +280,22 @@ function showAbout() {
 
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e8706a">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -318,13 +318,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='#e8706a'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#5cc28e'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e8706a'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');
