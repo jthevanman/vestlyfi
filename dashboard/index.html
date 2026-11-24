@@ -657,7 +657,7 @@ const WIDGETS = {
   'last-updated':  { src:'any', name:'Last updated', desc:'When you last updated net worth and logged a transaction.', size:'half' },
   'bd-pie':        { src:'budget', name:'Spending breakdown', desc:'This month\u2019s spending by category, as a pie.', size:'half', link:['/budget/', 'Budget'] },
   'milestone':     { src:'nw', name:'Next milestone', desc:'How close you are to your next round number.', size:'half', link:['/net-worth/', 'Net worth'] },
-  'debts':         { src:'debts', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'debts':         { src:'nw', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'] },
 };
 const canExpand = def => !!def.wide;
 /* Launch set: the widgets that ship. The others stay in the code, switched
@@ -1235,6 +1235,7 @@ const RENDER = {
     for (const e of sortedEntries()) if (e.type === 'liability' && !(e.category in first)) first[e.category] = Number(e.value) || 0;
     let rows = holdings().filter(h => h.type === 'liability' && h.value > 0).map(h => ({ name:h.category, cur:h.value, orig:Math.max(h.value, first[h.category] || 0) }));
     if (!rows.length) rows = D.debts.filter(d => !d.paid_off).map(d => ({ name:d.name, cur:Number(d.balance) || 0, orig:Number(d.original_balance) || Number(d.balance) || 0 }));
+    if (!rows.length) return `<div class="w-empty">No liabilities on your net worth tracker. <a href="/net-worth/">Open the net worth tracker</a></div>`;
     rows.sort((a, b) => b.cur - a.cur);
     const cur = rows.reduce((a, r) => a + r.cur, 0), orig = rows.reduce((a, r) => a + r.orig, 0);
     const paid = orig > 0 ? Math.max(0, (orig - cur) / orig * 100) : 0;
