@@ -403,6 +403,11 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
   .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
   .grid.pack-dense { grid-auto-flow:row dense; }   /* layouts saved before Nov 18 2026 */
 }
+/* Older layouts place widgets with CSS alone; an expanded (tall) widget there
+   simply spans two rows. Newer layouts place it in fillGapsTall. */
+@media (min-width:721px) {
+  .grid.pack-dense .w.tall { grid-row:span 2; }
+}
 
 /* ── Dashboard-only visuals ── */
 /* Money flow: income on the left, where it went on the right. */
@@ -657,7 +662,8 @@ const WIDGETS = {
   'last-updated':  { src:'any', name:'Last updated', desc:'When you last updated net worth and logged a transaction.', size:'half' },
   'bd-pie':        { src:'budget', name:'Spending breakdown', desc:'This month\u2019s spending by category, as a pie.', size:'half', link:['/budget/', 'Budget'] },
   'milestone':     { src:'nw', name:'Next milestone', desc:'How close you are to your next round number.', size:'half', link:['/net-worth/', 'Net worth'] },
-  'debts':         { src:'nw', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'debts':         { src:'nw', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'],
+                     tallable:true, tallOn:'Two rows high in the right column, up to 8 debts.', tallOff:'One row high, your top 5 debts.' },
 };
 const canExpand = def => !!def.wide;
 /* Launch set: the widgets that ship. The others stay in the code, switched
@@ -758,9 +764,10 @@ function widgetHtml(it, i, n){
       <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move earlier" title="Move earlier"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
       <button class="t-btn" onclick="moveItem('${it.id}',1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move later" title="Move later"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       ${canExpand(def) ? `<button class="t-pill" onclick="toggleSize('${it.id}')">${wide ? 'Compact' : 'Expand'}</button>` : ''}
+      ${def.tallable ? `<button class="t-pill" onclick="toggleTall('${it.id}')">${it.tall ? 'Collapse' : 'Expand'}</button>` : ''}
       ${def.config ? `<button class="t-pill" onclick="configure('${it.id}')">Change</button>` : ''}
       <button class="t-btn danger" onclick="removeItem('${it.id}')" aria-label="Remove ${escHtml(def.name)}"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
-    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}` : '';
+    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}${def.tallable ? `<div class="t-hint">${it.tall ? 'Collapse: ' + def.tallOff : 'Expand: ' + def.tallOn}</div>` : ''}` : '';
   const link = !editing && def.link ? `<a class="w-link" href="${def.link[0]}">${def.link[1]}${CHEV}</a>` : '';
   const grab = editing ? ` onpointerdown="armDrag(event,'${it.id}',false)"` : '';
   return `<section class="w${wide ? ' full' : ''}${it.tall && !wide ? ' tall' : ''}" id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div><div class="w-body">${body}</div></section>`;
@@ -1266,6 +1273,7 @@ function gripKey(e, id){
   const g = document.querySelector('#w_' + id + ' .grip'); if (g) g.focus();
 }
 function toggleSize(id){ const it = findItem(id); it.size = it.size === 'full' ? 'half' : 'full'; saveLayout(); render(); }
+function toggleTall(id){ const it = findItem(id); if (it.tall) delete it.tall; else it.tall = true; saveLayout(); render(); }
 
 /* ── Drag to rearrange ──
    Mouse: grab anywhere on a widget (not its buttons). Touch: grab the handle,
