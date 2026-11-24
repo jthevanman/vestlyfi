@@ -92,7 +92,7 @@ function build() {
   ];
 
   const meta = {
-    title: 'Quarterly Estimated Tax Deadlines for 2026 | VestlyFi',
+    title: 'Quarterly Tax Due Dates 2026: All Four Deadlines | VestlyFi',
     description: 'All four 2026 estimated tax due dates: April 15, June 15, September 15, and January 15, 2027. Plus weekend rules, penalties, and the states with different deadlines.',
     canonical: URL,
     url: URL,
@@ -127,7 +127,7 @@ function build() {
 <div class="page">
   ${crumbsHtml(crumbs)}
   <div class="page-tag">Side-Income Tools</div>
-  <h1>Quarterly Estimated Tax Deadlines for 2026</h1>
+  <h1>Quarterly Estimated Tax Due Dates for 2026</h1>
   <p class="intro">Federal estimated payments for tax year 2026 are due <strong>April 15</strong>, <strong>June 15</strong>, and <strong>September 15, 2026</strong>, and <strong>January 15, 2027</strong>. All four land on weekdays this year, so there are no weekend shifts. Here is the full schedule, what each payment covers, what a missed date actually costs, and the four states that march to their own calendar.</p>
 
   <div class="note-card" id="nextDeadline"><strong>Next up:</strong> the Q3 2026 payment is due Tuesday, September 15, 2026.</div>
