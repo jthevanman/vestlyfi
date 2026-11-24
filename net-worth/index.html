@@ -1890,8 +1890,8 @@ function renderChart(){
   if(first.liabilities>0||last.liabilities>0){debtEl.innerHTML=`${ld>=0?'Debt paid off':'Debt added'} &nbsp;<span class="${ld>=0?'up':'down'}">${fmtMoney(Math.abs(ld))}</span>`;debtEl.style.display='block';}else{debtEl.style.display='none';}
   if(chartInstance)chartInstance.destroy();
   chartInstance=new Chart(canvas,{type:'line',data:{labels:snaps.map(s=>fmtMonthLabel(s.month)),datasets:[
-    {label:'Net Worth',data:snaps.map(s=>s.netWorth),borderColor:T('--accent'),backgroundColor:`rgba(${T('--accent-rgb')},0.07)`,borderWidth:2,pointBackgroundColor:T('--accent'),pointRadius:3,pointHoverRadius:5,fill:true,tension:0.35,order:1},
-  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:T('--raised'),borderColor:T('--line'),borderWidth:1,titleColor:T('--muted'),bodyColor:T('--cream'),padding:12,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},scales:{x:{grid:{color:`rgba(${T('--tint')},0.05)`},ticks:{color:T('--muted'),font:{family:'Outfit',size:11}}},y:{grid:{color:`rgba(${T('--tint')},0.05)`},ticks:{color:T('--muted'),font:{family:'Outfit',size:11},callback:v=>fmtMoney(v)}}}}});
+    {label:'Net Worth',data:snaps.map(s=>s.netWorth),borderColor:T('--accent'),backgroundColor:`rgba(${T('--accent-rgb')},0.07)`,borderWidth:2,pointBackgroundColor:T('--accent'),pointRadius:2,pointHoverRadius:4,fill:true,tension:0.35,order:1},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:T('--raised'),borderColor:T('--line'),borderWidth:1,titleColor:T('--muted'),bodyColor:T('--cream'),padding:12,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtMoney(ctx.raw)}`}}},scales:{x:{grid:{display:false},ticks:{color:T('--muted'),font:{family:'Outfit',size:11}}},y:{grid:{color:`rgba(${T('--tint')},0.05)`},ticks:{color:T('--muted'),font:{family:'Outfit',size:11},callback:v=>fmtMoney(v)}}}}});
 }
 
 // One entry per date, the last saved winning. Saving the update screen twice in
