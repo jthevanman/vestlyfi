@@ -276,17 +276,16 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .lu-ic svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .lu-main { flex:1; min-width:0; }
 .lu-k { font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; }
-/* Tracker colors: net worth green, budget blue, on the label and the icon */
+/* Tracker colors: net worth green, budget blue, on the icon only. Text stays grey. */
 .lu.nw { --t:var(--green); } .lu.bd { --t:#7aa7ff; }
 :root[data-theme="light"] .lu.bd { --t:#3d6fd6; }
-.lu .lu-k { color:var(--t); }
+.lu .lu-k { color:var(--muted); }
 .lu .lu-ic { background:color-mix(in srgb, var(--t) 16%, transparent); color:var(--t); }
 .lu-amt { font-weight:500; margin-left:4px; }
 .lu-amt.up { color:var(--green); }
 .lu-more { font-size:0.74rem; color:var(--muted); margin-left:4px; }
 .lu-v { font-size:0.95rem; margin-top:2px; line-height:1.3; overflow-wrap:anywhere; }
 .lu-n { font-size:0.76rem; color:var(--cream-dim); margin-top:1px; }
-.lu-n.stale { color:var(--amber); }
 .lu .btn { flex:0 0 auto; padding:8px 14px; font-size:0.8rem; }
 .spark svg { height:70px; }
 /* Last updated: rows share the card's height */
