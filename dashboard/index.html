@@ -191,7 +191,8 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .mo-op { color:var(--muted); font-size:1.1rem; text-align:center; line-height:1; }
 .mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
 /* Label and figure on one line, centered; the saved note sits under the figure as a footnote. */
-.mo-net { margin-top:auto; display:grid; grid-template-columns:auto 1fr; align-items:center; gap:7px 10px; padding-top:12px; border-top:1px solid var(--line); }
+/* Monthly net follows straight after the equation; a taller card leaves its spare room at the bottom, never above the net. */
+.mo-net { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:7px 10px; padding-top:12px; border-top:1px solid var(--line); }
 /* Each text box is trimmed to its letter height (cap top to baseline), so
    centering the boxes centers the letters themselves, whatever their size. */
 .mo-net .stat-k, .mo-net-v { line-height:1; text-box:trim-both cap alphabetic; }
@@ -294,6 +295,29 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .up-sum b { font-weight:500; color:var(--cream); }
 .up-sum b.up { color:var(--green); }
 .up-list { margin-bottom:12px; }
+/* Add transaction */
+.qa { display:flex; flex-direction:column; gap:10px; }
+.qa-mode { display:flex; gap:4px; padding:3px; border-radius:999px; background:var(--surface); align-self:flex-start; }
+.qa-mode button { height:30px; padding:0 14px; border:none; border-radius:999px; background:none; color:var(--cream-dim); font:inherit; font-size:0.8rem; font-weight:500; cursor:pointer; }
+.qa-mode button.on { background:var(--surface-2); color:var(--cream); }
+.qa-amt { display:flex; align-items:center; gap:6px; height:52px; padding:0 16px; border-radius:12px; background:var(--surface); border:1px solid transparent; cursor:text; }
+.qa-amt:focus-within, .qa-in:focus, .qa-sel select:focus { border-color:var(--accent); }
+.qa-amt span { font-size:1.3rem; color:var(--muted); }
+.qa-amt input { flex:1; min-width:0; background:none; border:none; outline:none; color:var(--cream); font:inherit; font-size:1.5rem; font-weight:500; }
+.qa-in, .qa-sel select { width:100%; height:44px; padding:0 16px; border-radius:12px; background:var(--surface); border:1px solid transparent; color:var(--cream); font:inherit; font-size:16px; outline:none; }
+.qa-sel { position:relative; }
+.qa-sel select { appearance:none; -webkit-appearance:none; padding-right:40px; cursor:pointer; }
+.qa-sel select option, .qa-sel select optgroup { background:var(--raised); color:var(--cream); }
+.qa-sel svg { position:absolute; right:14px; top:50%; width:16px; height:16px; transform:translateY(-50%); fill:none; stroke:var(--muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
+.qa-foot { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.qa-meta { font-size:0.76rem; color:var(--muted); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.qa-meta.err { color:var(--red); }
+.rec-meta { display:flex; align-items:center; gap:5px; }
+.rec-meta span { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.loop-ic { flex:0 0 auto; width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+/* The link at the end of a scrolling list (Recent transactions). */
+.list-more { display:block; padding:14px 0 4px; text-align:center; font-size:0.8rem; color:var(--accent); text-decoration:none; border-top:1px solid var(--line); }
+.list-more:hover { text-decoration:underline; }
 
 /* Bars */
 .cb { padding:8px 0; }
@@ -316,7 +340,8 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .tb-bars { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
 .tb-bar { width:40%; max-width:24px; min-height:2px; border-radius:4px 4px 2px 2px; }
 .tb-bar.in { background:var(--green); } .tb-bar.out { background:var(--accent); }
-.tb-lbl { font-size:0.72rem; color:var(--muted); }
+.tb-lbl { font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+@media (max-width:720px) { .tb-old { display:none; } }
 .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:0.78rem; color:var(--cream-dim); margin-top:12px; }
 .legend span { display:inline-flex; align-items:center; gap:6px; }
 .legend i { width:9px; height:9px; border-radius:50%; display:inline-block; }
@@ -544,6 +569,61 @@ function moneyC(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { styl
 function signed(n){ return (n >= 0 ? '+' : '−') + money(Math.abs(n)); }
 function monthName(d, long){ return d.toLocaleDateString(VestlyCurrency.locale(), { month: long ? 'long' : 'short' }); }
 function shortDate(s){ return parseYmd(s).toLocaleDateString(VestlyCurrency.locale(), { month:'short', day:'numeric' }); }
+/* ── Add transaction widget ──
+   Same rules as the budget tracker's add screen: Spent picks from expense and
+   transfer categories, Received from income; amounts are stored negative for
+   money out. The account is the one last used there (it saves it in this
+   browser), else none. */
+let qaMode = 'spent';
+const QA_ACCT_KEY = 'vf_budget_last_account';
+function qaAccount(){
+  let id = null; try { id = localStorage.getItem(QA_ACCT_KEY); } catch (e) {}
+  const a = id && D.accts.find(x => x.id === id && !x.archived);
+  return a || null;
+}
+function qaOptions(){
+  const kinds = qaMode === 'received' ? ['income'] : ['expense', 'transfer'];
+  const groups = D.groups.filter(g => !g.hidden && kinds.includes(g.kind)).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+  return '<option value="">Category (optional)</option>' + groups.map(g => {
+    const cs = D.cats.filter(c => c.group_id === g.id && !c.hidden).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0) || a.name.localeCompare(b.name));
+    return cs.length ? `<optgroup label="${escHtml(g.name)}">${cs.map(c => `<option value="${c.id}">${escHtml(c.name)}</option>`).join('')}</optgroup>` : '';
+  }).join('');
+}
+function qaSetMode(m){
+  qaMode = m;
+  document.querySelectorAll('.qa-mode button').forEach(b => b.classList.toggle('on', b.textContent.toLowerCase() === m));
+  const sel = document.getElementById('qaCat'); if (sel) sel.innerHTML = qaOptions();
+}
+async function qaSave(){
+  const amtEl = document.getElementById('qaAmt'), msg = document.getElementById('qaMsg'), btn = document.getElementById('qaBtn');
+  const amount = VestlyCurrency.parseDec(amtEl.value);
+  if (!(amount > 0)) { msg.textContent = 'Enter an amount.'; msg.classList.add('err'); amtEl.focus(); return; }
+  const acct = qaAccount();
+  const row = {
+    account_id: acct ? acct.id : null,
+    category_id: document.getElementById('qaCat').value || null,
+    date: ymd(new Date()),
+    amount: Math.round(amount * 100) / 100 * (qaMode === 'received' ? 1 : -1),
+    description: document.getElementById('qaDesc').value.trim(),
+    pending: false
+  };
+  btn.disabled = true;
+  try {
+    let saved;
+    if (sample) saved = { ...row, id:'s' + Date.now(), created_at:new Date().toISOString() };
+    else {
+      const { data, error } = await sb.from('budget_transactions').insert({ ...row, user_id:user.id }).select('id,date,amount,category_id,account_id,description,pending,created_at').single();
+      if (error) { msg.textContent = error.message || 'Could not save. Try again.'; msg.classList.add('err'); return; }
+      saved = data;
+    }
+    D.tx.push(saved);
+    render();
+    toast(sample ? 'Added to the sample (not saved)' : 'Saved');
+  } finally { const b = document.getElementById('qaBtn'); if (b) b.disabled = false; }
+}
+/* Recurring: how often, in the budget tracker's words, with a loop icon. */
+const REPEAT_NAME = { weekly:'Every week', biweekly:'Every 2 weeks', monthly:'Every month', yearly:'Every year' };
+const LOOP_IC = '<svg class="loop-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>';
 function toast(t){ const el = document.getElementById('toast'); el.textContent = t; el.className = 'toast show'; clearTimeout(toast._t); toast._t = setTimeout(() => el.className = 'toast', 2200); }
 const CHEV = '<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
 const CHECK = '<svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg>';
@@ -648,9 +728,10 @@ const WIDGETS = {
   'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', wide:'Adds what moved it: the biggest changes behind the total.', narrow:'Net worth line only.', link:['/net-worth/', 'Net worth'] },
   'nw-sheet':      { src:'nw', name:'Balance sheet', desc:'Your assets and liabilities, adding up to net worth.', size:'half', wide:'Assets and liabilities side by side, up to 8 each.', narrow:'Your top 4 of each.', link:['/net-worth/', 'Net worth'] },
   'nw-watch':      { src:'nw', name:'One asset or liability', desc:'Pick one and see its value over time.', size:'half', multi:true, config:true, link:['/net-worth/', 'Net worth'] },
+  'bd-add':        { src:'budget', name:'Add transaction', desc:'Log spending or income without leaving Home.', size:'half', link:['/budget/', 'Budget'] },
   'bd-month':      { src:'budget', name:'This month', desc:'Income, spent, saved & invested, and money out.', size:'half', link:['/budget/', 'Budget'] },
   'bd-categories': { src:'budget', name:'Spending by category', desc:'Where this month’s money went, against your targets.', size:'half', wide:'Adds the subcategories under each category.', narrow:'Categories only.', link:['/budget/', 'Budget'] },
-  'bd-trend':      { src:'budget', name:'Income and spending', desc:'Money in and out, month by month.', size:'full', wide:'Shows 12 months.', narrow:'Shows 6 months.', link:['/budget/', 'Budget'] },
+  'bd-trend':      { src:'budget', name:'Income and spending', desc:'Money in and out, month by month.', size:'full', link:['/budget/', 'Budget'] },
   'bd-targets':    { src:'budget', name:'Targets', desc:'Subcategories with a monthly target and how close you are.', size:'half', wide:'Shows every target, in two columns.', narrow:'The 6 closest to their limit.', link:['/budget/', 'Budget'] },
   'bd-watch':      { src:'budget', name:'One category', desc:'Pick a category or subcategory and follow it month to month.', size:'half', multi:true, config:true, link:['/budget/', 'Budget'] },
   'bd-recent':     { src:'budget', name:'Recent transactions', desc:'The latest money in and out.', size:'half', link:['/budget/', 'Budget'] },
@@ -666,7 +747,7 @@ const WIDGETS = {
 const canExpand = def => !!def.wide;
 /* Launch set: the widgets that ship. The others stay in the code, switched
    off, until each one is worth bringing back. */
-const LAUNCH = ['nw-total', 'nw-trend', 'holdings', 'debts','bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent'];
+const LAUNCH = ['nw-total', 'nw-trend', 'holdings', 'debts', 'bd-add', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent'];
 const NAMES = {
   'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
   'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
@@ -684,7 +765,7 @@ const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['n
 const PRESETS = {
   everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
   networth:   { name:'Net worth', desc:'Your total, what you own and owe, and how it has changed.', items:[['nw-total','half'], ['holdings','half'], ['debts','half'], ['nw-trend','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['bd-pie','half'], ['bd-trend','full'], ['bd-upcoming','half'], ['bd-recent','half']] },
+  budget:     { name:'Budget', desc:'This month, a quick add, and where your money goes.', items:[['bd-month','half'], ['bd-add','half'], ['bd-recent','half'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-trend','full']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
@@ -784,7 +865,7 @@ function widgetHtml(it, i, n){
   try { body = HAS[def.src]() ? RENDER[it.type](it) : emptyFor(def.src); }
   catch (e) { console.error(e); body = '<div class="w-empty">This widget could not load.</div>'; }
   const title = (RENDER_TITLE[it.type] && RENDER_TITLE[it.type](it)) || def.name;
-  const wide = def.fixed === 'full' || (it.size === 'full' && canExpand(def));
+  const wide = def.fixed === 'full' || it.size === 'full';
   const tools = editing ? `<div class="w-tools">
       <button class="t-btn grip" onpointerdown="armDrag(event,'${it.id}',true)" onkeydown="gripKey(event,'${it.id}')" aria-label="Move ${escHtml(def.name)}. Drag, or use the arrow keys." title="Drag to move"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
       <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move earlier" title="Move earlier"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
@@ -1065,7 +1146,8 @@ const RENDER = {
     const logged = data.filter(d => d.t.income > 0.5 || d.t.spent > 0.5);
     const avg = logged.reduce((a, d) => a + d.t.spent, 0) / Math.max(1, logged.length);
     const tipAttr = html => `data-tip="${escHtml(html)}"`;
-    const cols = data.map(d => {
+    // Phones show the latest 6 of the 12 months; the older ones are marked so CSS can hide them.
+    const cols = data.map((d, i) => {
       const mn = monthName(d.m, true);
       const segs = cats.map(c => ({ c, v:Math.max(0, d.by[c.id] || 0) })).filter(x => x.v > 0);
       const other = Math.max(0, d.t.spent - segs.reduce((a, x) => a + x.v, 0));
@@ -1073,7 +1155,7 @@ const RENDER = {
       // Each piece carries its own label: the slice you point at is the one shown.
       const inBar = d.t.income > 0.5 ? `<span class="tb-bar in" style="height:${(d.t.income / max * 100).toFixed(1)}%" ${tipAttr(`<span class="t-head"><i style="background:var(--green)"></i>${mn} income</span><b>${money(d.t.income)}</b>`)}></span>` : '';
       const outBar = d.t.spent > 0.5 ? `<span class="tb-stack" style="height:${(d.t.spent / max * 100).toFixed(1)}%">${segs.map(x => `<span style="flex-grow:${x.v.toFixed(2)};background:${x.c.color}" ${tipAttr(`<span class="t-head"><i style="background:${x.c.color}"></i>${escHtml(x.c.name)} in ${mn}</span><b>${money(x.v)}</b> · ${Math.round(x.v / d.t.spent * 100)}% of ${money(d.t.spent)} spent`)}></span>`).join('')}</span>` : '';
-      return `<div class="tb-col"><div class="tb-bars">${inBar}${outBar}</div><span class="tb-lbl">${monthName(d.m)}</span></div>`;
+      return `<div class="tb-col${data.length - i > 6 ? ' tb-old' : ''}"><div class="tb-bars">${inBar}${outBar}</div><span class="tb-lbl">${monthName(d.m)} ${String(d.m.getFullYear()).slice(-2)}</span></div>`;
     }).join('');
     return `<div class="tb-wrap" onpointerover="tbMove(event)" onpointermove="tbMove(event)" onpointerdown="tbMove(event)" onpointerleave="tbLeave(this)"><div class="tb">${cols}</div><span class="tb-float"></span></div>`;
   },
@@ -1096,15 +1178,31 @@ const RENDER = {
     return `<div class="big">${money(cur)}</div><div class="delta">${t ? `of ${money(t)} this month` : 'this month'} · ${money(avg)} a month before</div>
       <div class="tb" style="height:110px;margin-top:14px">${months.map((m, i) => `<div class="tb-col"><div class="tb-bars"><span class="tb-bar" style="width:46%;max-width:26px;height:${(vals[i] / max * 100).toFixed(1)}%;background:${i === months.length - 1 ? 'var(--accent)' : groupHue(g)}" title="${money(vals[i])}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>`;
   },
+  'bd-add'(){
+    // Quick add: spent or received, amount, category, note. Dated today, on the
+    // account you last used in the budget tracker. More options live there.
+    const acct = qaAccount();
+    return `<div class="qa">
+      <div class="qa-mode">${[['spent', 'Spent'], ['received', 'Received']].map(([m, l]) => `<button type="button" class="${qaMode === m ? 'on' : ''}" onclick="qaSetMode('${m}')">${l}</button>`).join('')}</div>
+      <label class="qa-amt"><span>${escHtml(VestlyCurrency.symbol())}</span><input id="qaAmt" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Amount" onkeydown="if(event.key==='Enter')qaSave()"></label>
+      <div class="qa-sel"><select id="qaCat" aria-label="Category">${qaOptions()}</select><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <input id="qaDesc" class="qa-in" maxlength="200" autocomplete="off" placeholder="What for? (optional)" aria-label="Description" onkeydown="if(event.key==='Enter')qaSave()">
+      <div class="qa-foot"><span class="qa-meta" id="qaMsg">Today${acct ? ' · ' + escHtml(acct.name) : ''}</span><button type="button" class="btn btn-gold" id="qaBtn" onclick="qaSave()">Add</button></div>
+    </div>`;
+  },
   'bd-recent'(){
-    const list = D.tx.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)) || String(b.created_at || '').localeCompare(String(a.created_at || ''))).slice(0, 6);
-    if (!list.length) return '<div class="w-empty">No transactions yet.</div>';
-    return list.map(t => {
+    // Everything logged this month, newest first, in a list that scrolls; older
+    // months are one link away in the budget tracker.
+    const first = ymd(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+    const list = D.tx.filter(t => String(t.date) >= first).sort((a, b) => String(b.date).localeCompare(String(a.date)) || String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    const more = '<a class="list-more" href="/budget/">See full history in the budget tracker</a>';
+    if (!list.length) return `<div class="w-empty">Nothing logged yet this month. <a href="/budget/">Open the budget tracker</a></div>`;
+    return '<div class="scroll-list">' + list.map(t => {
       const c = catById(t.category_id), a = acctById(t.account_id), amt = Number(t.amount);
       const name = t.description || (c ? c.name : 'Uncategorized');
       const meta = [t.description && c && norm(t.description) !== norm(c.name) ? c.name : null, a ? a.name : null, shortDate(t.date)].filter(Boolean).join(' · ');
       return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(name)}</div><div class="li-meta">${escHtml(meta)}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
-    }).join('');
+    }).join('') + more + '</div>';
   },
   'bd-upcoming'(){
     const list = D.rec.slice().sort((a, b) => String(a.next_date).localeCompare(String(b.next_date))).slice(0, 7);
@@ -1113,7 +1211,7 @@ const RENDER = {
     const sum = `<div class="up-sum"><span>Going out <b>${money(out)}</b></span>${inn > 0.5 ? `<span>Coming in <b class="up">+${money(inn)}</b></span>` : ''}<span>by ${shortDate(list[list.length - 1].next_date)}</span></div>`;
     return '<div class="up-list">' + list.map(r => {
       const c = catById(r.category_id), amt = Number(r.amount);
-      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta">${shortDate(r.next_date)}${r.amount_varies ? ' · Amount may change' : ''}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
+      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta rec-meta">${LOOP_IC}<span>${REPEAT_NAME[r.frequency] || 'Repeats'} · next ${shortDate(r.next_date)}${r.amount_varies ? ' · Amount may change' : ''}</span></div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
     }).join('') + '</div>' + sum;
   },
   'flow'(){
@@ -1352,6 +1450,7 @@ const bar = (x, y, w, h, c, r = 2) => `<rect x="${x}" y="${y}" width="${w}" heig
 const tx = (x, y, t, size, fill, weight, anchor) => `<text x="${x}" y="${y}" font-family="Outfit,sans-serif" font-size="${size}" font-weight="${weight || 500}" fill="${fill}"${anchor ? ` text-anchor="${anchor}"` : ''}>${t}</text>`;
 const T_C = 'var(--cream)';
 const THUMBS_LAUNCH = {
+  'bd-add': tsvg(bar(4, 3, 40, 10, T_S, 5) + bar(5.5, 4.5, 19, 7, T_A, 3.5) + bar(4, 17, 92, 14, T_S, 4) + tx(9, 26.5, '$42.00', 7, T_C) + bar(4, 34, 92, 9, T_S, 4) + bar(4, 46, 64, 9, T_S, 4) + bar(74, 46, 22, 9, T_A, 4.5)),
   'nw-total': tsvg(tx(4, 9, 'NET WORTH', 5, T_A, 600) + tx(4, 26, '$237,361', 14, T_C) + tx(4, 35, '+$6,281 since last month', 4.6, T_G, 400) + tx(4, 47, 'Assets', 4.4, T_M, 400) + tx(4, 55, '$563,669', 6.5, T_G) + tx(52, 47, 'Liabilities', 4.4, T_M, 400) + tx(52, 55, '$326,308', 6.5, T_R)),
   'nw-trend': tsvg(['6M', '1Y', '3Y', 'All'].map((l, i) => (i === 1 ? bar(3 + i * 13, 2, 12, 7, T_S, 3.5) : '') + tx(9 + i * 13, 7.3, l, 4.2, i === 1 ? T_C : T_M, 500, 'middle')).join('') + `<path d="M4 54 L20 46 L34 48 L50 34 L66 30 L82 20 L96 13 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 54 20 46 34 48 50 34 66 30 82 20 96 13" stroke="${T_A}" stroke-width="2.4"/><circle cx="66" cy="30" r="2.6" fill="${T_A}"/>` + bar(52, 15, 28, 9, T_S, 3) + tx(66, 21.5, '$229,400', 4.4, T_C, 500, 'middle')),
   'bd-month': tsvg(tx(4, 8, 'INCOME', 4.2, T_M, 500) + tx(4, 20, '$6,500', 11, T_G) + bar(4, 25, 92, 0.6, T_S, 0.3) + tx(4, 32, 'Spent', 3.8, T_M, 400) + tx(4, 39, '$2,685', 6, T_C) + tx(32, 38, '+', 5, T_M, 400) + tx(37, 32, 'Saved', 3.8, T_M, 400) + tx(37, 39, '$800', 6, T_G) + tx(58, 38, '=', 5, T_M, 400) + tx(63, 32, 'Total outflow', 3.8, T_M, 400) + tx(63, 39, '$3,485', 6, T_C) + bar(4, 44, 92, 0.6, T_S, 0.3) + tx(4, 54, 'Monthly net', 4.2, T_M, 400) + tx(32, 54.5, '+$3,815', 7, T_G, 600)),
@@ -1543,8 +1642,8 @@ function sampleData(){
     T(D_(16), 'c10', -800, 'To savings', 'a2');
   }
   const nx = (day) => { const d = new Date(now.getFullYear(), now.getMonth(), day); if (d <= now) d.setMonth(d.getMonth() + 1); return ymd(d); };
-  const rec = [{ id:'r1', description:'Rent', amount:-1850, category_id:'c1', next_date:nx(1) }, { id:'r2', description:'Paycheck', amount:3250, category_id:'c11', next_date:nx(15) },
-    { id:'r3', description:'Netflix', amount:-15.49, category_id:'c8', next_date:nx(11) }, { id:'r4', description:'Electric', amount:-150, category_id:'c2', next_date:nx(9), amount_varies:true }];
+  const rec = [{ id:'r1', description:'Rent', amount:-1850, category_id:'c1', frequency:'monthly', next_date:nx(1) }, { id:'r2', description:'Paycheck', amount:3250, category_id:'c11', frequency:'biweekly', next_date:nx(15) },
+    { id:'r3', description:'Netflix', amount:-15.49, category_id:'c8', frequency:'monthly', next_date:nx(11) }, { id:'r4', description:'Electric', amount:-150, category_id:'c2', frequency:'monthly', next_date:nx(9), amount_varies:true }];
   // No debt-tracker rows: Debt paydown falls back to the net worth liabilities, so the numbers agree.
   return { entries, groups, cats, accts, tx, rec, debts:[] };
 }
