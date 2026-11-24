@@ -96,6 +96,16 @@ a { color:inherit; }
 .dash-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 16px; }
 .dash-title { font-size:1.5rem; font-weight:500; }
 .dash-sub { font-size:0.82rem; color:var(--muted); margin-top:3px; }
+/* Last updated, in the header: a pill per tracker. Tracker color on the icon only; text stays grey. */
+.hu-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.hu-row:empty { display:none; }
+.hu { display:inline-flex; align-items:center; gap:7px; height:28px; padding:0 12px 0 5px; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.76rem; text-decoration:none; white-space:nowrap; transition:background .15s; }
+.hu:hover { background:var(--surface-2); }
+.hu b { font-weight:500; color:var(--cream); }
+.hu.nw { --t:var(--green); } .hu.bd { --t:#7aa7ff; }
+:root[data-theme="light"] .hu.bd { --t:#3d6fd6; }
+.hu-ic { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--t) 16%, transparent); color:var(--t); }
+.hu-ic svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .sample-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; margin-bottom:16px; border-radius:8px; background:var(--surface); font-size:0.84rem; color:var(--cream-dim); }
 .sample-bar b { color:var(--cream); font-weight:500; }
 .sample-bar .btn { margin-left:auto; padding:7px 14px; }
@@ -269,27 +279,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .tb.hl [data-tip]:not(.hot) { opacity:.3; }
 [data-tip] { cursor:pointer; transition:opacity .12s; }
 @media (max-width:420px) { .pie { flex-direction:column; align-items:stretch; } .pie-chart { align-self:center; } }
-/* Last updated */
-.lu { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line); }
-.lu:first-child { border-top:none; padding-top:2px; }
-.lu-ic { flex:0 0 auto; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--surface); color:var(--accent); }
-.lu-ic svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-.lu-main { flex:1; min-width:0; }
-.lu-k { font-size:0.72rem; letter-spacing:0.06em; text-transform:uppercase; font-weight:600; }
-/* Tracker colors: net worth green, budget blue, on the icon only. Text stays grey. */
-.lu.nw { --t:var(--green); } .lu.bd { --t:#7aa7ff; }
-:root[data-theme="light"] .lu.bd { --t:#3d6fd6; }
-.lu .lu-k { color:var(--muted); }
-.lu .lu-ic { background:color-mix(in srgb, var(--t) 16%, transparent); color:var(--t); }
-.lu-amt { font-weight:500; margin-left:4px; }
-.lu-amt.up { color:var(--green); }
-.lu-more { font-size:0.74rem; color:var(--muted); margin-left:4px; }
-.lu-v { font-size:0.95rem; margin-top:2px; line-height:1.3; overflow-wrap:anywhere; }
-.lu-n { font-size:0.76rem; color:var(--cream-dim); margin-top:1px; }
-.lu .btn { flex:0 0 auto; padding:8px 14px; font-size:0.8rem; }
 .spark svg { height:70px; }
-/* Last updated: rows share the card's height */
-.lu-list { flex:1; display:flex; flex-direction:column; justify-content:space-around; }
 /* Upcoming recurring: totals pinned to the bottom */
 .up-sum { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); display:flex; gap:6px 16px; flex-wrap:wrap; font-size:0.8rem; color:var(--cream-dim); }
 .up-sum b { font-weight:500; color:var(--cream); }
@@ -403,11 +393,6 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
   .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
   .grid.pack-dense { grid-auto-flow:row dense; }   /* layouts saved before Nov 18 2026 */
 }
-/* Older layouts place widgets with CSS alone; an expanded (tall) widget there
-   simply spans two rows. Newer layouts place it in fillGapsTall. */
-@media (min-width:721px) {
-  .grid.pack-dense .w.tall { grid-row:span 2; }
-}
 
 /* ── Dashboard-only visuals ── */
 /* Money flow: income on the left, where it went on the right. */
@@ -443,6 +428,11 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 .ms-main { min-width:0; }
 .ms-main .big { font-size:1.6rem; }
 .big.debt-total { font-size:1.35rem; }   /* Debt payoff: room for the debts themselves */
+/* Debt payoff is one card size. Every debt is listed; the list fills the card
+   (its height comes from the row, not from the list) and scrolls past that.
+   The minimum keeps about three and a half debts in view when the card stands alone. */
+.debt-list { flex:1 1 auto; height:0; min-height:150px; overflow-y:auto; margin-top:12px; padding-right:6px; }
+.w-body > .debt-list { flex-shrink:1; }
 </style>
 </head>
 <body>
@@ -467,7 +457,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
   <div class="app" id="app">
     <div class="topbar">
       <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
-      <div class="topbar-title"><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div></div>
+      <div class="topbar-title"><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div><div class="hu-row js-lu"></div></div>
       <div class="topbar-right">
         <button class="btn btn-ghost" id="customizeBtn" onclick="setEditing(true)">Customize</button>
         <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Switch theme"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg></button>
@@ -485,7 +475,7 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
     <div class="sample-bar hidden" id="sampleBar"><span><b>Sample data.</b> Nothing here is yours.</span><button class="btn btn-gold" onclick="exitSample()">Exit sample</button></div>
 
     <div class="dash-head">
-      <div><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div></div>
+      <div><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div><div class="hu-row js-lu"></div></div>
     </div>
 
     <div class="edit-bar hidden" id="editBar">
@@ -659,16 +649,14 @@ const WIDGETS = {
   'flow':          { src:'budget', name:'Money flow', desc:'This month\u2019s income and where it went, in one picture.', size:'full', fixed:'full', link:['/budget/', 'Budget'] },
   'calendar':      { src:'budget', name:'Spending calendar', desc:'Each day this month, shaded by how much you spent.', size:'half', link:['/budget/', 'Budget'] },
   'kept':          { src:'both', name:'Kept vs net worth', desc:'What you kept from income next to how your net worth moved.', size:'half' },
-  'last-updated':  { src:'any', name:'Last updated', desc:'When you last updated net worth and logged a transaction.', size:'half' },
   'bd-pie':        { src:'budget', name:'Spending breakdown', desc:'This month\u2019s spending by category, as a pie.', size:'half', link:['/budget/', 'Budget'] },
   'milestone':     { src:'nw', name:'Next milestone', desc:'How close you are to your next round number.', size:'half', link:['/net-worth/', 'Net worth'] },
-  'debts':         { src:'nw', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'],
-                     tallable:true, tallOn:'Two rows high in the right column, up to 8 debts.', tallOff:'One row high, your top 5 debts.' },
+  'debts':         { src:'nw', name:'Debt payoff', desc:'What you still owe and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'] },
 };
 const canExpand = def => !!def.wide;
 /* Launch set: the widgets that ship. The others stay in the code, switched
    off, until each one is worth bringing back. */
-const LAUNCH = ['nw-total', 'nw-trend', 'debts', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent', 'last-updated'];
+const LAUNCH = ['nw-total', 'nw-trend', 'debts', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent'];
 const NAMES = {
   'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
   'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
@@ -677,7 +665,6 @@ const NAMES = {
   'bd-trend':     ['Income vs spending', 'Money in next to money out, month by month. Hover a month for the numbers.'],
   'bd-upcoming':  ['Recurring transactions', 'Your next repeating bills and paychecks, with their dates.'],
   'bd-recent':    ['Recent transactions', 'The last few transactions you logged.'],
-  'last-updated': ['Last updated', 'When you last updated net worth and logged a transaction, with buttons to do it now.'],
 };
 for (const [k, [name, desc]] of Object.entries(NAMES)) Object.assign(WIDGETS[k], { name, desc });
 const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['nw', 'Net worth'], ['budget', 'Budget'], ['debts', 'Debts']];
@@ -685,16 +672,15 @@ const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['n
 /* Starting layouts. The default picks itself from the data you have, and
    stays automatic until you customize. */
 const PRESETS = {
-  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
-  // A third value of true makes a widget tall: two rows high in the rightmost column.
-  networth:   { name:'Net worth', desc:'Your total, your debts, and how it has changed.', items:[['nw-total','half'], ['debts','half', true], ['last-updated','half'], ['nw-trend','full']] },
-  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-trend','full'], ['bd-upcoming','half'], ['bd-recent','half']] },
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
+  networth:   { name:'Net worth', desc:'Your total, your debts, and how it has changed.', items:[['nw-total','half'], ['debts','half'], ['nw-trend','full']] },
+  budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['bd-pie','half'], ['bd-trend','full'], ['bd-upcoming','half'], ['bd-recent','half']] },
 };
 function autoPreset(){
   const nw = HAS.nw(), bd = HAS.budget();
   return nw && !bd ? 'networth' : bd && !nw ? 'budget' : 'everything';
 }
-function itemsFor(key){ return PRESETS[key].items.map(([type, size, tall]) => Object.assign({ id:uid(), type, size, opts:null }, tall ? { tall:true } : {})); }
+function itemsFor(key){ return PRESETS[key].items.map(([type, size]) => ({ id:uid(), type, size, opts:null })); }
 function currentItems(){ return layout ? layout.items : itemsFor(autoPreset()); }
 
 /* Layout lives in this browser for now, per account. */
@@ -730,6 +716,8 @@ function render(){
   const now = new Date();
   const today = now.toLocaleDateString(VestlyCurrency.locale(), { weekday:'long', month:'long', day:'numeric' });
   document.querySelectorAll('.js-date').forEach(el => el.textContent = today);
+  const lu = lastUpdatedHtml();
+  document.querySelectorAll('.js-lu').forEach(el => el.innerHTML = lu);
 
   const anyData = HAS.nw() || HAS.budget() || D.debts.length > 0;
   if (!anyData && !editing) {
@@ -745,6 +733,34 @@ function render(){
   // Someone using only one tracker sees the other as an option, once, at the bottom.
   const missing = !editing && ['nw', 'budget'].find(s => !HAS[s]());
   extra.innerHTML = missing ? `<div class="welcome also">${startCard(missing)}</div>` : '';
+}
+/* Last updated: a permanent line in the page header, one pill per tracker
+   you use, saying when you last updated it. Each pill opens that tracker's
+   update or add screen; hovering shows what you did. */
+function lastUpdatedHtml(){
+  const NW_IC = '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+  const BD_IC = '<svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg>';
+  const ago = d => { const n = daysAgo(d); return n === 0 ? 'today' : n === 1 ? 'yesterday' : n + ' days ago'; };
+  const pill = (cls, ic, name, d, tip, href) => `<a class="hu ${cls}" href="${href}" title="${escHtml(tip)}"><span class="hu-ic">${ic}</span><span><b>${name}</b> updated ${ago(d)}</span></a>`;
+  const list = names => names.length <= 2 ? names.join(' and ') : `${names[0]} and ${names.length - 1} more`;
+  const out = [];
+  if (HAS.nw()) {
+    // When you last saved, not the month the values are for; and what you saved that day.
+    const stamp = e => String(e.updated_at || e.created_at || e.date);
+    const lastE = D.entries.reduce((a, e) => !a || stamp(e) > stamp(a) ? e : a, null);
+    const d = stamp(lastE).length > 10 ? new Date(stamp(lastE)) : parseYmd(stamp(lastE)), day = ymd(d);
+    const names = [...new Set(D.entries.filter(e => { const x = stamp(e); return ymd(x.length > 10 ? new Date(x) : parseYmd(x)) === day; }).map(e => e.category))];
+    out.push(pill('nw', NW_IC, 'Net worth', d, `Updated ${list(names)} on ${shortDate(day)}`, '/net-worth/?update=1'));
+  }
+  if (D.tx.length) {
+    // The transaction you logged most recently (by when you logged it).
+    const stamp = x => String(x.created_at || x.date);
+    const t = D.tx.reduce((a, x) => !a || stamp(x) > stamp(a) ? x : a, null);
+    const c = catById(t.category_id), amt = Number(t.amount);
+    const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date);
+    out.push(pill('bd', BD_IC, 'Budget', logged, `Last logged: ${t.description || (c ? c.name : 'Uncategorized')} ${amt > 0 ? '+' : '−'}${moneyC(Math.abs(amt))} on ${shortDate(ymd(logged))}`, '/budget/?add=1'));
+  }
+  return out.join('');
 }
 function startCard(src){
   const t = src === 'nw'
@@ -764,13 +780,12 @@ function widgetHtml(it, i, n){
       <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move earlier" title="Move earlier"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
       <button class="t-btn" onclick="moveItem('${it.id}',1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move later" title="Move later"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
       ${canExpand(def) ? `<button class="t-pill" onclick="toggleSize('${it.id}')">${wide ? 'Compact' : 'Expand'}</button>` : ''}
-      ${def.tallable ? `<button class="t-pill" onclick="toggleTall('${it.id}')">${it.tall ? 'Collapse' : 'Expand'}</button>` : ''}
       ${def.config ? `<button class="t-pill" onclick="configure('${it.id}')">Change</button>` : ''}
       <button class="t-btn danger" onclick="removeItem('${it.id}')" aria-label="Remove ${escHtml(def.name)}"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
-    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}${def.tallable ? `<div class="t-hint">${it.tall ? 'Collapse: ' + def.tallOff : 'Expand: ' + def.tallOn}</div>` : ''}` : '';
+    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}` : '';
   const link = !editing && def.link ? `<a class="w-link" href="${def.link[0]}">${def.link[1]}${CHEV}</a>` : '';
   const grab = editing ? ` onpointerdown="armDrag(event,'${it.id}',false)"` : '';
-  return `<section class="w${wide ? ' full' : ''}${it.tall && !wide ? ' tall' : ''}" id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div><div class="w-body">${body}</div></section>`;
+  return `<section class="w${wide ? ' full' : ''}"id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div><div class="w-body">${body}</div></section>`;
 }
 function emptyFor(src){ if (src === 'both' || src === 'any') src = HAS.nw() ? 'budget' : 'nw'; const s = START[src]; return `<div class="w-empty">${s.line} <a href="${s.href}">Open the ${s.name}</a></div>`; }
 
@@ -815,7 +830,6 @@ function fillGaps(){
   const items = [...grid.children].filter(n => n.classList.contains('w') && !n.classList.contains('dragging'));
   items.forEach(n => { n.style.gridColumn = ''; n.style.gridRow = ''; });
   if (C < 2 || packOf() !== 'fill') return;
-  if (items.some(n => n.classList.contains('tall'))) return fillGapsTall(items, C);
   let col = 0, last = null;
   const close = () => { if (last && col > 0 && col < C) last.style.gridColumn = 'span ' + (1 + C - col); col = 0; last = null; };
   for (const n of items) {
@@ -825,40 +839,6 @@ function fillGaps(){
     if (col >= C) { col = 0; last = null; }
   }
   close();
-}
-/* Layouts with a tall widget (only new default layouts have one, so saved
-   layouts keep the placement above). A tall widget takes the rightmost
-   column for two rows, starting on the row where it comes in the order;
-   the others keep their order around it, a full-width widget takes the
-   free width of its row, and a widget with empty cells to its right
-   stretches into them. Every widget gets an explicit row and column. */
-function fillGapsTall(items, C){
-  const occ = [], free = (r, c) => !(occ[r] && occ[r][c]);
-  const take = (r, c, w, h) => { for (let y = r; y < r + h; y++) { occ[y] = occ[y] || []; for (let x = c; x < c + w; x++) occ[y][x] = true; } };
-  const placed = [];
-  let r = 0, c = 0;
-  const advance = () => { while (!free(r, c)) { if (++c >= C) { c = 0; r++; } } };
-  for (const n of items) {
-    if (n.classList.contains('tall')) {
-      let y = r; while (!free(y, C - 1) || !free(y + 1, C - 1)) y++;
-      take(y, C - 1, 1, 2); placed.push({ n, r:y, c:C - 1, w:1, h:2, tall:true });
-      continue;
-    }
-    advance();
-    if (n.classList.contains('full')) {
-      if (c > 0) { c = 0; r++; advance(); }
-      let w = 0; while (c + w < C && free(r, c + w)) w++;
-      take(r, c, w, 1); placed.push({ n, r, c, w, h:1 });
-    } else {
-      take(r, c, 1, 1); placed.push({ n, r, c, w:1, h:1 });
-    }
-  }
-  // Stretch into empty cells on the right.
-  for (const p of placed) {
-    if (p.tall) continue;
-    while (p.c + p.w < C && free(p.r, p.c + p.w)) { take(p.r, p.c + p.w, 1, 1); p.w++; }
-  }
-  for (const p of placed) { p.n.style.gridRow = `${p.r + 1} / span ${p.h}`; p.n.style.gridColumn = `${p.c + 1} / span ${p.w}`; }
 }
 function fillGapsSoon(){ requestAnimationFrame(fillGaps); }
 let gapCols = 0;
@@ -994,38 +974,6 @@ const RENDER = {
     return `<div class="pie" id="${id}" onpointerover="pieOver(event,'${id}')" onpointerleave="pieFocus('${id}',-1)" onclick="pieOver(event,'${id}',true)">
       <div class="pie-chart"><svg viewBox="0 0 120 120" role="img" aria-label="Spending by category">${arcs}</svg><div class="pie-mid"><b>${money(total)}</b><span>spent in ${PIES[id].month}</span></div></div>
       <div class="pie-keys">${top.map((x, i) => `<button class="pie-key" data-i="${i}" type="button"><span class="dot" style="--h:${x.color}"></span>${escHtml(x.name)} ${Math.round(x.v / total * 100)}%</button>`).join('')}</div></div>`;
-  },
-  'last-updated'(){
-    const NW_IC = '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
-    const BD_IC = '<svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg>';
-    // Each tracker has its own color on its label and icon.
-    const row = (cls, ic, tracker, v, n, stale, btn, href) => `<div class="lu ${cls}"><span class="lu-ic">${ic}</span><div class="lu-main"><div class="lu-k">${tracker}</div><div class="lu-v">${v}</div><div class="lu-n${stale ? ' stale' : ''}">${n}</div></div><a class="btn btn-ghost" href="${href}">${btn}</a></div>`;
-    const when = d => { const n = daysAgo(d); return `${shortDate(ymd(d))}${n === 0 ? ', today' : n === 1 ? ', yesterday' : `, ${n} days ago`}`; };
-    const list = names => names.length <= 2 ? names.join(' and ') : `${names[0]} and ${names.length - 1} more`;
-    const rows = [];
-    if (HAS.nw()) {
-      // When you last saved, not the month the values are for; and what you saved that day.
-      const stamp = e => String(e.updated_at || e.created_at || e.date);
-      const lastE = D.entries.reduce((a, e) => !a || stamp(e) > stamp(a) ? e : a, null);
-      const d = stamp(lastE).length > 10 ? new Date(stamp(lastE)) : parseYmd(stamp(lastE)), day = ymd(d), days = daysAgo(d);
-      const sameDay = D.entries.filter(e => { const x = stamp(e); return ymd(x.length > 10 ? new Date(x) : parseYmd(x)) === day; });
-      const names = [...new Set(sameDay.sort((a, b) => stamp(b).localeCompare(stamp(a))).map(e => e.category))];
-      rows.push(row('nw', NW_IC, 'Net worth tracker', `Updated ${escHtml(list(names))}`, when(d) + (days >= 31 ? ', time for an update' : ''), days >= 31, 'Update', '/net-worth/?update=1'));
-    } else rows.push(row('nw', NW_IC, 'Net worth tracker', 'Not started yet', 'Track what you own and owe each month.', false, 'Start', '/net-worth/'));
-    if (D.tx.length) {
-      // The transaction you logged most recently (by when you logged it), how
-      // many others you logged that day, and when. Category and account are in
-      // Recent transactions, so they aren't repeated here.
-      const stamp = x => String(x.created_at || x.date);
-      const t = D.tx.reduce((a, x) => !a || stamp(x) > stamp(a) ? x : a, null);
-      const c = catById(t.category_id), amt = Number(t.amount);
-      const name = t.description || (c ? c.name : 'Uncategorized');
-      const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date), days = daysAgo(logged), day = ymd(logged);
-      const others = D.tx.filter(x => x !== t && ymd(x.created_at ? new Date(x.created_at) : parseYmd(x.date)) === day).length;
-      rows.push(row('bd', BD_IC, 'Budget tracker', `${escHtml(name)} <span class="lu-amt${amt > 0 ? ' up' : ''}">${amt > 0 ? '+' : '\u2212'}${moneyC(Math.abs(amt))}</span>${others ? ` <span class="lu-more">+${others} more</span>` : ''}`,
-        when(logged), days >= 7, 'Add', '/budget/?add=1'));
-    } else rows.push(row('bd', BD_IC, 'Budget tracker', 'Not started yet', 'Log spending and income to see where it goes.', false, 'Start', '/budget/'));
-    return `<div class="lu-list">${rows.join('')}</div>`;
   },
   'nw-trend-body'(it, s){
     if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
@@ -1235,7 +1183,7 @@ const RENDER = {
     return `<div class="ms"><div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--surface)" stroke-width="12"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(C * pct).toFixed(1)} ${C.toFixed(1)}"/></svg><div class="ring-pct">${Math.floor(pct * 100)}%</div></div>
       <div class="ms-main"><div class="big">${money(next - net)}</div><div class="delta">to go until ${net < 0 ? 'a positive net worth' : money(next)}</div>${passed ? `<div class="delta" style="margin-top:8px">Passed ${money(prev)} in ${monthLabel(passed)}</div>` : ''}</div></div>`;
   },
-  'debts'(it){
+  'debts'(){
     // The liabilities on the net worth tracker (the page this widget links to,
     // so the total matches its liabilities), else the debt tracker's debts.
     const first = {};
@@ -1247,7 +1195,7 @@ const RENDER = {
     const cur = rows.reduce((a, r) => a + r.cur, 0), orig = rows.reduce((a, r) => a + r.orig, 0);
     const paid = orig > 0 ? Math.max(0, (orig - cur) / orig * 100) : 0;
     return `<div class="big debt-total down">${money(cur)}</div><div class="delta">left to pay · <span class="up">${paid.toFixed(0)}% paid off</span></div>
-      <div style="margin-top:12px">${rows.slice(0, it && it.tall ? 8 : 5).map(r => { const p = r.orig > 0 ? Math.max(0, Math.min(100, (r.orig - r.cur) / r.orig * 100)) : 0; return `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.name)}</span></span><span class="cb-v">${money(r.cur)}<small> · ${p.toFixed(0)}% paid</small></span></div><div class="track"><span class="fill ok" style="width:${p.toFixed(1)}%"></span></div></div>`; }).join('')}</div>`;
+      <div class="debt-list">${rows.map(r => { const p = r.orig > 0 ? Math.max(0, Math.min(100, (r.orig - r.cur) / r.orig * 100)) : 0; return `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.name)}</span></span><span class="cb-v">${money(r.cur)}<small> · ${p.toFixed(0)}% paid</small></span></div><div class="track"><span class="fill ok" style="width:${p.toFixed(1)}%"></span></div></div>`; }).join('')}</div>`;
   },
 };
 
@@ -1273,7 +1221,6 @@ function gripKey(e, id){
   const g = document.querySelector('#w_' + id + ' .grip'); if (g) g.focus();
 }
 function toggleSize(id){ const it = findItem(id); it.size = it.size === 'full' ? 'half' : 'full'; saveLayout(); render(); }
-function toggleTall(id){ const it = findItem(id); if (it.tall) delete it.tall; else it.tall = true; saveLayout(); render(); }
 
 /* ── Drag to rearrange ──
    Mouse: grab anywhere on a widget (not its buttons). Touch: grab the handle,
@@ -1300,7 +1247,7 @@ function startDrag(id, px, py){
   const el = document.getElementById('w_' + id); if (!el) return;
   const r = el.getBoundingClientRect();
   const ph = document.createElement('div');
-  ph.className = 'w ph' + (el.classList.contains('full') ? ' full' : '') + (el.classList.contains('tall') ? ' tall' : '');
+  ph.className = 'w ph' + (el.classList.contains('full') ? ' full' : '');
   ph.style.height = r.height + 'px';
   el.after(ph);
   Object.assign(el.style, { position:'fixed', left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px', zIndex:100, pointerEvents:'none', margin:0 });
@@ -1393,7 +1340,6 @@ const THUMBS_LAUNCH = {
   'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b * 0.55, '#7aa7ff', 0) + bar(x + 6, 50 - b * 0.55 - b * 0.3, 5, b * 0.3, '#f0a35e', 0) + bar(x + 6, 50 - b, 5, b * 0.15, '#d08cf0', 0) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
   'bd-upcoming': tsvg([['Dec 1', 'Rent', '$1,850', T_C, '#7aa7ff'], ['Dec 9', 'Electric', '~$150', T_C, '#7aa7ff'], ['Dec 15', 'Paycheck', '+$3,250', T_G, '#5cc28e']].map(([d, n, v, c, h], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, d, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
   'bd-recent': tsvg([['Trader Joe\u2019s', 'Groceries · Today', '$84.12', '#f0a35e', T_C], ['Paycheck', 'Income · Nov 15', '+$3,250', '#5cc28e', T_G], ['Netflix', 'Subscriptions · Nov 11', '$15.49', '#d08cf0', T_C]].map(([n, m, v, h, c], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, m, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
-  'last-updated': tsvg([['NET WORTH', 'Updated Nov 1', '16 days ago', 'Update'], ['LAST TRANSACTION', 'Trader Joe\u2019s $84', 'Logged today', 'Add']].map(([k, v, n, b], i) => { const y = 4 + i * 28; return tx(4, y + 4, k, 4, T_M, 500) + tx(4, y + 13, v, 6.4, T_C) + tx(4, y + 20, n, 4.4, T_M, 400) + bar(74, y + 6, 22, 10, T_S, 5) + tx(85, y + 12.6, b, 4.6, T_C, 500, 'middle'); }).join('')),
 };
 const THUMBS = {
   'nw-total': tsvg(bar(4, 6, 40, 4, T_M) + bar(4, 16, 62, 12, 'var(--cream)', 3) + bar(4, 33, 30, 4, T_G) + bar(4, 46, 34, 7, T_G) + bar(54, 46, 34, 7, T_R)),
@@ -1412,7 +1358,6 @@ const THUMBS = {
   'calendar': tsvg([...Array(21)].map((_, i) => { const a = [0.9, .2, .5, 0, .3, .1, .6, .2, 0, .4, .8, .3, .1, .2, .5, 0, .3, .7, .2, .1, .4][i]; return `<rect x="${4 + (i % 7) * 13.5}" y="${4 + Math.floor(i / 7) * 18}" width="11" height="15" rx="3" fill="${T_A}" fill-opacity="${(0.12 + a * 0.85).toFixed(2)}"/>`; }).join('')),
   'flow': tsvg(`<path d="M8 6 C50 6 50 4 92 4 L92 22 C50 22 50 24 8 24 Z" fill="#7aa7ff" fill-opacity=".45"/><path d="M8 24 C50 24 50 28 92 28 L92 38 C50 38 50 36 8 36 Z" fill="#f0a35e" fill-opacity=".45"/><path d="M8 36 C50 36 50 44 92 44 L92 56 C50 56 50 54 8 54 Z" fill="${T_G}" fill-opacity=".45"/>` + bar(4, 6, 4, 48, T_G, 1.5) + bar(92, 4, 4, 18, '#7aa7ff', 1.5) + bar(92, 28, 4, 10, '#f0a35e', 1.5) + bar(92, 44, 4, 12, T_G, 1.5)),
   'kept': tsvg([0, 1, 2, 3, 4, 5].map(i => { const x = 6 + i * 15, a = [20, 24, 22, 26, 24, 28][i], b = [16, 30, 12, 34, 22, 40][i]; return bar(x, 50 - a, 5, a, T_A, 1.5) + bar(x + 6, 50 - b, 5, b, T_G, 1.5); }).join('') + bar(2, 50, 96, 1.5, T_M, .75)),
-  'last-updated': tsvg([[8, T_A], [34, T_A]].map(([y, c]) => `<circle cx="10" cy="${y + 8}" r="7" fill="${T_S}"/><circle cx="10" cy="${y + 8}" r="2.5" fill="${c}"/>` + bar(22, y + 2, 40, 4, 'var(--cream)') + bar(22, y + 9, 26, 3, T_M) + bar(72, y + 3, 24, 9, T_S, 4.5)).join('')),
   'debts': tsvg(bar(4, 4, 46, 10, T_R, 3) + [[60], [30], [15]].map(([w], i) => bar(4, 26 + i * 11, 92, 5, T_S, 2.5) + bar(4, 26 + i * 11, w, 5, T_G, 2.5)).join('')),
 };
 function addWidget(type){
