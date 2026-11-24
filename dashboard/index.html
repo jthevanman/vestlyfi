@@ -969,17 +969,17 @@ const RENDER = {
       rows.push(row('nw', NW_IC, 'Net worth tracker', `Updated ${escHtml(list(names))}`, when(d) + (days >= 31 ? ', time for an update' : ''), days >= 31, 'Update', '/net-worth/?update=1'));
     } else rows.push(row('nw', NW_IC, 'Net worth tracker', 'Not started yet', 'Track what you own and owe each month.', false, 'Start', '/net-worth/'));
     if (D.tx.length) {
-      // The transaction you logged most recently (by when you logged it), its
-      // category and account, and how many others you logged that day.
+      // The transaction you logged most recently (by when you logged it), how
+      // many others you logged that day, and when. Category and account are in
+      // Recent transactions, so they aren't repeated here.
       const stamp = x => String(x.created_at || x.date);
       const t = D.tx.reduce((a, x) => !a || stamp(x) > stamp(a) ? x : a, null);
-      const c = catById(t.category_id), g = c && groupById(c.group_id), a = acctById(t.account_id), amt = Number(t.amount);
+      const c = catById(t.category_id), amt = Number(t.amount);
       const name = t.description || (c ? c.name : 'Uncategorized');
       const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date), days = daysAgo(logged), day = ymd(logged);
       const others = D.tx.filter(x => x !== t && ymd(x.created_at ? new Date(x.created_at) : parseYmd(x.date)) === day).length;
-      const meta = [c ? `<span class="lu-cat"><span class="dot" style="--h:${groupHue(g)}"></span>${escHtml(c.name)}</span>` : null, a ? escHtml(a.name) : null].filter(Boolean).join(' · ');
       rows.push(row('bd', BD_IC, 'Budget tracker', `${escHtml(name)} <span class="lu-amt${amt > 0 ? ' up' : ''}">${amt > 0 ? '+' : '\u2212'}${moneyC(Math.abs(amt))}</span>${others ? ` <span class="lu-more">+${others} more</span>` : ''}`,
-        (meta ? meta + ' · ' : '') + when(logged), days >= 7, 'Add', '/budget/?add=1'));
+        when(logged), days >= 7, 'Add', '/budget/?add=1'));
     } else rows.push(row('bd', BD_IC, 'Budget tracker', 'Not started yet', 'Log spending and income to see where it goes.', false, 'Start', '/budget/'));
     return `<div class="lu-list">${rows.join('')}</div>`;
   },
