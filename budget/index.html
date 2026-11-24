@@ -584,6 +584,9 @@ input, select { font-family:inherit; }
   .topbar { justify-content:flex-end; }
   .toast { left:calc(50% + var(--vf-nav-w) / 2); }
   .add-dock { left:var(--vf-nav-w); }
+  /* Dialogs center over the page content, right of the menu, not over the whole window. */
+  .sheet-overlay { padding-left:calc(var(--vf-nav-w) + 20px); }
+  .confirm-overlay { padding-left:calc(var(--vf-nav-w) + 24px); }
 }
 </style>
 </head>

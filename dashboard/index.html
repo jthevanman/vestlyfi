@@ -410,6 +410,9 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
   .topbar-left, .dash-head { display:none; }
   .topbar-title { display:flex; }
   .toast { left:calc(50% + var(--vf-nav-w) / 2); }
+  /* Dialogs center over the page content, right of the menu, not over the whole window. */
+  .sheet-overlay { padding-left:calc(var(--vf-nav-w) + 16px); }
+  .confirm-overlay { padding-left:calc(var(--vf-nav-w) + 24px); }
 }
 /* Wide screens: three columns instead of two, wider page; gaps left by
    full-width widgets are filled by the next ones that fit. */
@@ -1140,9 +1143,9 @@ const RENDER = {
     if (!list.length) return `<div class="w-empty">Nothing recurring. <a href="/budget/">Add one in the budget tracker</a></div>`;
     // Totals per month across every active rule, not just the ones listed: weekly x 52/12, every 2 weeks x 26/12, yearly / 12.
     const perMonth = r => Number(r.amount) * ({ weekly:52 / 12, biweekly:26 / 12, monthly:1, yearly:1 / 12 }[r.frequency] || 1);
-    // Rounded to whole units first so In minus Out always equals the Net shown.
-    const out = Math.round(D.rec.reduce((a, r) => a + Math.max(0, -perMonth(r)), 0)), inn = Math.round(D.rec.reduce((a, r) => a + Math.max(0, perMonth(r)), 0)), net = inn - out;
-    const sum = `<div class="up-sum"><span class="up-k">Per month</span><span>Out <b>${money(out)}</b></span>${inn > 0.5 ? `<span>In <b class="up">+${money(inn)}</b></span>` : ''}<span>Net <b class="${net >= 0 ? 'up' : 'down'}">${signed(net)}</b></span></div>`;
+    // One total: every rule added up as a monthly amount, money in minus money out.
+    const total = Math.round(D.rec.reduce((a, r) => a + perMonth(r), 0));
+    const sum = `<div class="up-sum"><span class="up-k">Per month</span><b class="${total >= 0 ? 'up' : 'down'}">${signed(total)}</b></div>`;
     return '<div class="up-list">' + list.map(r => {
       const c = catById(r.category_id), amt = Number(r.amount);
       return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta rec-meta">${LOOP_IC}<span>${REPEAT_NAME[r.frequency] || 'Repeats'}, next ${shortDate(r.next_date)}${r.amount_varies ? ', amount may change' : ''}</span></div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
