@@ -661,7 +661,7 @@ const WIDGETS = {
 const canExpand = def => !!def.wide;
 /* Launch set: the widgets that ship. The others stay in the code, switched
    off, until each one is worth bringing back. */
-const LAUNCH = ['nw-total', 'nw-trend', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent', 'last-updated'];
+const LAUNCH = ['nw-total', 'nw-trend', 'debts', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent', 'last-updated'];
 const NAMES = {
   'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
   'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
@@ -679,7 +679,7 @@ const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['n
    stays automatic until you customize. */
 const PRESETS = {
   everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['last-updated','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
-  networth:   { name:'Net worth', desc:'Your total and how it has changed.', items:[['nw-total','half'], ['last-updated','half'], ['nw-trend','full']] },
+  networth:   { name:'Net worth', desc:'Your total, your debts, and how it has changed.', items:[['nw-total','half'], ['debts','half'], ['last-updated','half'], ['nw-trend','full']] },
   budget:     { name:'Budget', desc:'Money in and out, month by month.', items:[['bd-month','half'], ['last-updated','half'], ['bd-pie','half'], ['bd-trend','full'], ['bd-upcoming','half'], ['bd-recent','half']] },
 };
 function autoPreset(){
