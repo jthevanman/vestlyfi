@@ -1111,7 +1111,7 @@ const RENDER = {
     const sum = `<div class="up-sum"><span>Going out <b>${money(out)}</b></span>${inn > 0.5 ? `<span>Coming in <b class="up">+${money(inn)}</b></span>` : ''}<span>by ${shortDate(list[list.length - 1].next_date)}</span></div>`;
     return '<div class="up-list">' + list.map(r => {
       const c = catById(r.category_id), amt = Number(r.amount);
-      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta">${shortDate(r.next_date)}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${r.amount_varies ? '~' : ''}${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
+      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta">${shortDate(r.next_date)}${r.amount_varies ? ' · Amount may change' : ''}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
     }).join('') + '</div>' + sum;
   },
   'flow'(){
