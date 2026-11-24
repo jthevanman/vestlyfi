@@ -270,6 +270,8 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
 /* What moved: a narrow column, so names and values sit close together */
 .cols.nwt { grid-template-columns:minmax(0,1fr) minmax(220px,300px); gap:0 32px; }
 @media (max-width:720px) { .cols.nwt { grid-template-columns:minmax(0,1fr); } }
+.cols.nwt.stack { grid-template-columns:minmax(0,1fr); }
+.cols.nwt.stack > .col2 { margin-top:18px; }
 /* Line chart hover: a dot and a small label for the month under the pointer */
 .lc.hover { cursor:crosshair; touch-action:pan-y; }
 .lc-guide { position:absolute; top:0; bottom:0; width:1px; background:var(--line); pointer-events:none; display:none; }
@@ -667,7 +669,7 @@ const START = {
    say what each size shows. */
 const WIDGETS = {
   'nw-total':      { src:'nw', name:'Net worth', desc:'What you own minus what you owe, and the change since last month.', size:'half', link:['/net-worth/', 'Net worth'] },
-  'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', wide:'Adds what moved it: the biggest changes behind the total.', narrow:'Net worth line only.', link:['/net-worth/', 'Net worth'] },
+  'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', link:['/net-worth/', 'Net worth'] },
   'nw-sheet':      { src:'nw', name:'Balance sheet', desc:'Your assets and liabilities, adding up to net worth.', size:'half', wide:'Assets and liabilities side by side, up to 8 each.', narrow:'Your top 4 of each.', link:['/net-worth/', 'Net worth'] },
   'nw-watch':      { src:'nw', name:'One asset or liability', desc:'Pick one and see its value over time.', size:'half', multi:true, config:true, link:['/net-worth/', 'Net worth'] },
   'bd-add':        { src:'budget', name:'Add transaction', desc:'One big button to the budget tracker’s add screen.', size:'half', link:['/budget/', 'Budget'] },
@@ -1013,18 +1015,18 @@ const RENDER = {
     const first = s[0], last = s[s.length - 1], ch = last.net - first.net;
     const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
     const meta = `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div>`;
-    if (it.size === 'full') {
-      // Expanded: the chart plus what moved it, the biggest changes over the same months.
+    {
+      // The chart plus what moved it, the biggest changes over the same months.
       // A liability going down is good for net worth, so it shows green.
+      // One size only; a half-width card from an older saved layout stacks What moved under the chart.
       const then = holdingsAt(first.month), nowH = holdingsAt(last.month);
       const moves = [...new Set([...Object.keys(then), ...Object.keys(nowH)])].map(k => {
         const a = then[k], b = nowH[k], h = b || a, d = (b ? b.value : 0) - (a ? a.value : 0);
         return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
       }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
-      return `<div class="cols nwt"><div>${nwChart(s)}${meta}</div>
+      return `<div class="cols nwt${it.size === 'full' ? '' : ' stack'}"><div>${nwChart(s)}${meta}</div>
         <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
     }
-    return nwChart(s) + meta;
   },
   'nw-sheet'(it){
     const h = holdings().filter(x => x.value !== 0), wide = it.size === 'full', show = wide ? 8 : 4;
