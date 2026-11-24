@@ -75,24 +75,24 @@
 <link rel="manifest" href="/site.webmanifest">
 <style>
   :root {
-    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
-    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
-    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
-    --green:#4ade80; --red:#f87171; --amber:#fbbf24;
-    --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+    --navy:#0b0b0b; --navy-mid:#1b1b1b; --navy-light:#262626; --navy-card:#131313;
+    --gold:#dcc392; --gold-light:#ecd9b2; --gold-dim:rgba(220,195,146,0.13);
+    --cream:#ededed; --cream-dim:#969696; --muted:#5f5f5f;
+    --green:#5cc28e; --red:#e8706a; --amber:#e3a857;
+    --border:rgba(220,195,146,0.15); --border-soft:rgba(255,255,255,0.07);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; min-height:100vh; }
   
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0a0f1e; }
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0b0b0b; }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
   .site-nav-links a:hover { color:var(--cream); }
   .site-nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
   .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
@@ -112,8 +112,8 @@
   @media(max-width:380px) { .input-grid,.input-grid-3{grid-template-columns:1fr;} }
   .input-wrap { position:relative; }
 
-  .calc-btn { width:100%; margin-top:22px; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .calc-btn { width:100%; margin-top:22px; padding:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.95rem; cursor:pointer; box-shadow:0 4px 20px rgba(220,195,146,0.28); transition:transform .15s,box-shadow .2s; }
+  .calc-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(220,195,146,0.42); }
   .calc-btn:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
 
   .err { color:var(--red); font-size:0.8rem; margin-top:10px; display:none; }
@@ -124,13 +124,13 @@
   @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
 
   .result-banner { border-radius:14px; padding:28px; text-align:center; margin-bottom:24px; }
-  .result-banner.good { background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(74,222,128,0.03)); border:1px solid rgba(74,222,128,0.2); }
+  .result-banner.good { background:linear-gradient(135deg,rgba(92,194,142,0.08),rgba(92,194,142,0.03)); border:1px solid rgba(92,194,142,0.2); }
   .result-banner.warn { background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.03)); border:1px solid rgba(251,191,36,0.2); }
-  .result-banner.bad { background:linear-gradient(135deg,rgba(248,113,113,0.08),rgba(248,113,113,0.03)); border:1px solid rgba(248,113,113,0.2); }
+  .result-banner.bad { background:linear-gradient(135deg,rgba(232,112,106,0.08),rgba(232,112,106,0.03)); border:1px solid rgba(232,112,106,0.2); }
   .result-badge { display:inline-block; padding:5px 14px; border-radius:4px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:14px; }
-  .badge-green{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);}
+  .badge-green{background:rgba(92,194,142,0.12);color:var(--green);border:1px solid rgba(92,194,142,0.25);}
   .badge-amber{background:rgba(251,191,36,0.12);color:var(--amber);border:1px solid rgba(251,191,36,0.25);}
-  .badge-red{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
+  .badge-red{background:rgba(232,112,106,0.12);color:var(--red);border:1px solid rgba(232,112,106,0.25);}
   .result-price { font-family:'Outfit',sans-serif; font-size:clamp(2.5rem,8vw,4.5rem); font-weight:600; line-height:1; margin-bottom:6px; }
   .result-price.good{color:var(--green);} .result-price.warn{color:var(--amber);} .result-price.bad{color:var(--red);}
   .result-label { font-size:0.88rem; color:var(--cream-dim); margin-bottom:10px; }
@@ -149,10 +149,10 @@
   .breakdown-card { background:var(--navy-light); border:1px solid var(--border-soft); border-radius:14px; padding:22px; margin-bottom:24px; }
   .breakdown-title { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; font-weight:500; }
   .breakdown-bar { display:flex; height:10px; border-radius:10px; overflow:hidden; margin-bottom:12px; gap:2px; }
-  .bar-principal { background:#c9a84c; }
-  .bar-interest { background:#4ade80; }
-  .bar-tax { background:#60a5fa; }
-  .bar-insurance { background:#a78bfa; }
+  .bar-principal { background:#dcc392; }
+  .bar-interest { background:#5cc28e; }
+  .bar-tax { background:#7aa7ff; }
+  .bar-insurance { background:#b39af5; }
   .breakdown-legend { display:flex; gap:16px; flex-wrap:wrap; }
   .legend-item { display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--cream-dim); }
   .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -161,7 +161,7 @@
   .insight-list li { padding:13px 0; border-bottom:1px solid var(--border-soft); font-size:0.88rem; line-height:1.55; color:var(--cream-dim); }
   .insight-list li:last-child { border-bottom:none; }
 
-  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
+  .aff-section { background:linear-gradient(135deg,rgba(220,195,146,0.08),rgba(220,195,146,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
   .aff-section h3 { font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
   .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
   .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
@@ -169,10 +169,10 @@
   .aff-link:hover { background:var(--gold-dim); border-color:var(--gold); transform:translateY(-1px); }
 
   .btn-share-result { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; padding:13px; margin-bottom:24px; background:var(--gold-dim); border:1px solid var(--border); border-radius:10px; color:var(--gold-light); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:500; cursor:pointer; transition:all .18s; }
-  .btn-share-result:hover { background:rgba(201,168,76,0.2); border-color:var(--gold); }
+  .btn-share-result:hover { background:rgba(220,195,146,0.2); border-color:var(--gold); }
   .btn-recalc { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-bottom:6px; }
   .btn-recalc:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
-  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
+  .disclaimer { font-size:0.7rem; color:rgba(237,237,237,0.18); line-height:1.6; text-align:center; padding:8px 0 24px; }
 
   /* SEO CONTENT */
   .seo-section { max-width:720px; margin:0 auto; padding:40px 24px 60px; }
@@ -189,7 +189,7 @@
   .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
   .footer-links a:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(220,195,146,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} .page{padding:40px 20px 60px;} }
 
 
@@ -201,11 +201,11 @@
   .input-prefix { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:0.95rem; pointer-events:none; font-family:'Outfit',sans-serif; }
   .input-suffix { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.8rem; pointer-events:none; }
   input[type="number"], input[type="text"], select { width:100%; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; padding:13px 14px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.97rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
-  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(220,195,146,0.1); }
   .has-prefix { padding-left:36px; }
   .has-suffix { padding-right:48px; }
   input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; }
-  select option { background:#111827; }
+  select option { background:#1b1b1b; }
 
 
   /* ── Input system ── */
@@ -221,11 +221,11 @@
     font-family:'Outfit',sans-serif; font-size:0.93rem; font-weight:300;
     outline:none; transition:border-color .2s,box-shadow .2s; -webkit-appearance:none; appearance:none;
   }
-  input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(220,195,146,0.1); }
   input.has-prefix { padding-left:30px; }
   input.has-suffix { padding-right:52px; }
   input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
-  select option { background:#111827; }
+  select option { background:#1b1b1b; }
   .input-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:end; }
   .input-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:end; }
   @media(max-width:560px) { .input-grid,.input-grid-3 { grid-template-columns:1fr 1fr; } }
@@ -428,29 +428,29 @@
 
 <!-- About Modal -->
 <div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
-      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;">VestlyFi is a collection of free financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p>Questions? <span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
 
 <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
-      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
-      <p><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#ededed;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
+      <p><strong style="color:#ededed;">Contact</strong><br><span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -590,10 +590,10 @@ function calculate() {
       ${hoa > 0 ? `<div class="bar-interest" style="width:${hoaPct}%"></div>` : ''}
     </div>
     <div class="breakdown-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div> Principal & Interest: ${fmt(maxPI)}/mo</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Property Tax: ${fmt(monthlyTax)}/mo</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> Insurance: ${fmt(monthlyInsurance)}/mo</div>
-      ${hoa > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> HOA: ${fmt(hoa)}/mo</div>` : ''}
+      <div class="legend-item"><div class="legend-dot" style="background:#dcc392"></div> Principal & Interest: ${fmt(maxPI)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7aa7ff"></div> Property Tax: ${fmt(monthlyTax)}/mo</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#b39af5"></div> Insurance: ${fmt(monthlyInsurance)}/mo</div>
+      ${hoa > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:#5cc28e"></div> HOA: ${fmt(hoa)}/mo</div>` : ''}
     </div>
   `;
 
@@ -647,19 +647,19 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 </script>
 
 <div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;padding:20px;overflow-y:auto;" onclick="if(event.target===this)closeShareModal()">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:420px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share Your Result</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget. Great for Reddit or socials.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:420px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Share Your Result</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A clean snapshot of your home buying budget. Great for Reddit or socials.</div>
     <div style="border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
-      <div id="shareGenerating" style="padding:80px 0;color:rgba(245,240,232,0.35);font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+      <div id="shareGenerating" style="padding:80px 0;color:#5f5f5f;font-size:0.82rem;font-family:'Outfit',sans-serif;">Generating image…</div>
       <img id="sharePreviewImg" style="display:none;width:100%;border-radius:12px;vertical-align:top;" alt="Share preview">
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
-      <button onclick="copyShareImage()" style="padding:12px 16px;background:#1a2540;color:#f5f0e8;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy Image</button>
+      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
+      <button onclick="copyShareImage()" style="padding:12px 16px;background:#262626;color:#ededed;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy Image</button>
     </div>
-    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:18px;color:#4ade80;font-family:'Outfit',sans-serif;"></div>
+    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:18px;color:#5cc28e;font-family:'Outfit',sans-serif;"></div>
   </div>
 </div>
 <canvas id="shareCanvas" style="display:none"></canvas>
@@ -671,23 +671,23 @@ async function renderShareCanvas(){
   const W=1080,H=560,PAD=64,canvas=document.getElementById('shareCanvas');
   canvas.width=W;canvas.height=H;const ctx=canvas.getContext('2d');
   try{await document.fonts.load('700 100px Outfit');await document.fonts.load('600 22px Outfit');await document.fonts.load('400 18px Outfit');await document.fonts.load('700 32px "Exo 2"');await document.fonts.ready;}catch(e){}
-  const accent = d.statusClass==='good'?'#4ade80':d.statusClass==='warn'?'#fbbf24':'#f87171';
+  const accent = d.statusClass==='good'?'#5cc28e':d.statusClass==='warn'?'#e3a857':'#e8706a';
   const rk = n => Math.round(n/1000)*1000;
-  ctx.fillStyle='#0e1530';ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(201,168,76,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
+  ctx.fillStyle='#1b1b1b';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(220,195,146,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
   ctx.textAlign='left';ctx.textBaseline='alphabetic';
-  ctx.font='700 32px "Exo 2",sans-serif';ctx.fillStyle='#c9a84c';ctx.fillText('VestlyFi',PAD,86);
-  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.5)';ctx.fillText('Your home buying budget',PAD,176);
+  ctx.font='700 32px "Exo 2",sans-serif';ctx.fillStyle='#dcc392';ctx.fillText('VestlyFi',PAD,86);
+  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='#808080';ctx.fillText('Your home buying budget',PAD,176);
   ctx.font='700 100px Outfit,sans-serif';ctx.fillStyle=accent;ctx.fillText(fmt(rk(d.maxHomePrice)),PAD-3,282);
-  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.6)';ctx.fillText('Comfortable ',PAD,326);const cLblW=ctx.measureText('Comfortable ').width;
-  ctx.font='600 22px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(fmt(rk(d.comfortablePrice)),PAD+cLblW,326);
+  ctx.font='400 22px Outfit,sans-serif';ctx.fillStyle='#969696';ctx.fillText('Comfortable ',PAD,326);const cLblW=ctx.measureText('Comfortable ').width;
+  ctx.font='600 22px Outfit,sans-serif';ctx.fillStyle='#ededed';ctx.fillText(fmt(rk(d.comfortablePrice)),PAD+cLblW,326);
   ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD,384);ctx.lineTo(W-PAD,384);ctx.stroke();
   const stats=[['EST. MONTHLY PAYMENT',fmt(d.maxMonthlyTotal)+'/mo'],['DOWN PAYMENT',fmt(d.downPayment)],['INTEREST RATE',d.rate.toFixed(2)+'%']];
   const colW=(W-PAD*2)/3;
   stats.forEach((s,i)=>{
     const cx=PAD+colW*i;
-    ctx.font='600 15px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.42)';shareDrawSpaced(ctx,s[0],cx,450,2);
-    ctx.font='700 42px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(s[1],cx,506);
+    ctx.font='600 15px Outfit,sans-serif';ctx.fillStyle='#6f6f6f';shareDrawSpaced(ctx,s[0],cx,450,2);
+    ctx.font='700 42px Outfit,sans-serif';ctx.fillStyle='#ededed';ctx.fillText(s[1],cx,506);
   });
   const dataUrl=canvas.toDataURL('image/png');
   document.getElementById('shareGenerating').style.display='none';
@@ -709,29 +709,29 @@ function downloadShareImage(){
   const canvas=document.getElementById('shareCanvas'),dataUrl=canvas.toDataURL('image/png');
   const isMob=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if(isMob){const w=window.open();if(w){w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`);w.document.close();}}
-  else{const a=document.createElement('a');a.download='vestlyfi-home-affordability.png';a.href=dataUrl;a.click();const msg=document.getElementById('shareMsg');msg.style.color='#4ade80';msg.textContent='Downloaded!';}
+  else{const a=document.createElement('a');a.download='vestlyfi-home-affordability.png';a.href=dataUrl;a.click();const msg=document.getElementById('shareMsg');msg.style.color='#5cc28e';msg.textContent='Downloaded!';}
 }
-async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.style.color='#4ade80';msg.textContent='Copied to clipboard!';});}catch(e){msg.style.color='#f87171';msg.textContent='Copy not supported. Use Download instead.';}}
+async function copyShareImage(){const canvas=document.getElementById('shareCanvas'),msg=document.getElementById('shareMsg');try{canvas.toBlob(async blob=>{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);msg.style.color='#5cc28e';msg.textContent='Copied to clipboard!';});}catch(e){msg.style.color='#e8706a';msg.textContent='Copy not supported. Use Download instead.';}}
 document.addEventListener('keydown', e => { if(e.key==='Escape' && document.getElementById('shareModal').style.display==='flex') closeShareModal(); });
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e8706a">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -754,13 +754,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='#e8706a'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#5cc28e'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e8706a'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');
