@@ -1450,7 +1450,7 @@ function pickConfig(i){
 }
 function openLayouts(){
   showSheet('Start from a layout', '<div class="w-empty" style="padding-top:0">Replaces the widgets on your dashboard.</div>' +
-    Object.entries(PRESETS).map(([k, p]) => `<button class="opt" onclick="choosePreset('${k}')"><span class="opt-main"><span class="opt-name">${p.name}</span><span class="opt-desc">${p.desc} ${p.items.length} widgets.</span></span>${CHEV.replace('<svg', '<svg style="stroke:var(--muted)"')}</button>`).join(''));
+    Object.entries(PRESETS).map(([k, p]) => `<button class="opt" onclick="choosePreset('${k}')"><span class="opt-main"><span class="opt-name">${p.name}</span><span class="opt-desc">${p.desc}</span></span>${CHEV.replace('<svg', '<svg style="stroke:var(--muted)"')}</button>`).join(''));
 }
 async function choosePreset(k){
   closeSheet();

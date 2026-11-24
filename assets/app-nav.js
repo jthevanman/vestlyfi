@@ -50,9 +50,11 @@
 .vf-toggle[aria-expanded="true"] svg { transform:rotate(180deg); }
 .vf-sub { display:none; flex-direction:column; margin:2px 0 6px; }
 .vf-sub.open { display:flex; }
-.vf-sub a { display:flex; align-items:center; gap:9px; height:32px; padding:0 12px 0 41px; border-radius:999px; color:var(--nv-item); font-size:0.82rem; text-decoration:none; white-space:nowrap; }
+.vf-sub a { display:flex; align-items:center; gap:8px; height:32px; padding:0 12px 0 38px; border-radius:999px; color:var(--nv-item); font-size:0.82rem; text-decoration:none; white-space:nowrap; }
 .vf-sub a:hover { background:var(--nv-hover); color:var(--nv-text); }
-.vf-sub a::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--nv-dim); flex:0 0 auto; margin-left:-14px; }
+/* Quick actions sit indented under their tracker, each with a down-and-right arrow. */
+.vf-sub a svg { flex:0 0 auto; width:13px; height:13px; fill:none; stroke:var(--nv-dim); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.vf-sub a:hover svg { stroke:currentColor; }
 @media (max-width:768px) { .vf-nav { display:none !important; } }
 `;
   const I = {
@@ -81,6 +83,7 @@
     document.head.appendChild(st);
   }
   const CHEV = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+  const SUB_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v8a4 4 0 0 0 4 4h10"/><polyline points="16 12 20 16 16 20"/></svg>';
   document.querySelectorAll('[data-vf-nav]:not(.vf-nav)').forEach(el => {
     const active = el.dataset.active;
     // First visit: the page you're on starts open. After that, your choice sticks.
@@ -93,7 +96,7 @@
       g.items.map(([key, label, href, badge, acts]) => {
         const row = `<div class="vf-row${acts ? ' has-sub' : ''}"><a class="vf-item" href="${href}"${key === active ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${I[key]}</svg><span>${label}</span>${badge ? `<span class="vf-badge">${badge}</span>` : ''}</a>` +
           (acts ? `<button class="vf-toggle" type="button" data-key="${key}" aria-expanded="${isOpen(key)}" aria-controls="vfsub-${key}" aria-label="${label} quick actions">${CHEV}</button>` : '') + '</div>';
-        const sub = acts ? `<div class="vf-sub${isOpen(key) ? ' open' : ''}" id="vfsub-${key}">${acts.map(([t, act]) => `<a href="${actionHref(href, key, act)}" data-path="${href}" data-act="${act}">${t}</a>`).join('')}</div>` : '';
+        const sub = acts ? `<div class="vf-sub${isOpen(key) ? ' open' : ''}" id="vfsub-${key}">${acts.map(([t, act]) => `<a href="${actionHref(href, key, act)}" data-path="${href}" data-act="${act}">${SUB_ARROW}${t}</a>`).join('')}</div>` : '';
         return row + sub;
       }).join('')
     ).join('');
