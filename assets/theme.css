@@ -1,0 +1,46 @@
+/* VestlyFi theme: one set of colors for every page.
+   Charcoal (dark) is the default. Pages with the light/dark switch (the
+   trackers and Home) also get the light set when <html data-theme="light">.
+   Load this before a page's own <style>, and /assets/theme.js in the head.
+
+   Color names
+     --page        page background            --bg       panels / cards
+     --raised      menus, sheets               --surface  inputs, chips, hovers
+     --surface-2   pressed / selected
+     --accent      champagne on dark, ink on light; --accent-light for hover
+     --on-accent   text on an accent fill
+     --cream       main text   --cream-dim  secondary text   --muted  labels
+     --line        hairlines
+     --green / --red / --amber, with -soft versions for small text on panels
+   The *-rgb triplets are for tints: rgba(var(--accent-rgb), 0.1).
+   --tint is white on dark and black on light, for hovers and faint fills. */
+:root {
+  color-scheme: dark;
+  --page:#0b0b0b; --bg:#131313; --raised:#1b1b1b; --surface:#262626; --surface-2:#303030;
+  --accent:#dcc392; --accent-light:#ecd9b2; --on-accent:#161310;
+  --cream:#ededed; --cream-dim:#b4b4b4; --muted:#8d8d8d;
+  --line:rgba(255,255,255,0.08);
+  --green:#5cc28e; --red:#e8706a; --amber:#e3a857; --blue:#7aa7ff; --purple:#b39af5;
+  --green-soft:#7fd3a6; --red-soft:#ef8f89; --on-green:#08301e; --on-red:#3d0f0f;
+  --tint:255,255,255; --page-rgb:11,11,11; --accent-rgb:220,195,146; --green-rgb:92,194,142; --red-rgb:232,112,106;
+  --shadow:0 8px 16px -8px rgba(0,0,0,0.8);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --page:#f3f2ef; --bg:#ffffff; --raised:#ffffff; --surface:#f1efeb; --surface-2:#e7e4de;
+  --accent:#1b1b1b; --accent-light:#000000; --on-accent:#ffffff;
+  --cream:#1b1b1b; --cream-dim:#565656; --muted:#7b7b7b;
+  --line:rgba(0,0,0,0.09);
+  --green:#1f9a5e; --red:#cf4a42; --amber:#b5761d; --blue:#3d6fd6; --purple:#7357d1;
+  --green-soft:#1f9a5e; --red-soft:#cf4a42; --on-green:#ffffff; --on-red:#ffffff;
+  --tint:0,0,0; --page-rgb:243,242,239; --accent-rgb:27,27,27; --green-rgb:31,154,94; --red-rgb:207,74,66;
+  --shadow:0 6px 14px -8px rgba(0,0,0,0.22);
+}
+
+/* The light/dark switch: a round button with a sun (on dark) or moon (on light). */
+.vf-theme-btn { width:36px; height:36px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--surface); color:var(--cream-dim); cursor:pointer; transition:background .15s, color .15s; }
+.vf-theme-btn:hover { background:var(--surface-2); color:var(--cream); }
+.vf-theme-btn svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.vf-theme-btn .i-moon { display:none; }
+:root[data-theme="light"] .vf-theme-btn .i-sun { display:none; }
+:root[data-theme="light"] .vf-theme-btn .i-moon { display:block; }

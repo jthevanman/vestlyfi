@@ -24,42 +24,42 @@
 
   const CSS = `
 .vfs-save-row{display:flex;flex-direction:column;align-items:center;gap:6px;margin:16px 0 24px}
-.vfs-btn-save{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:none;border:1px solid rgba(201,168,76,0.15);border-radius:10px;color:#e8c97a;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all .18s}
-.vfs-btn-save:hover:not(:disabled){background:rgba(201,168,76,0.13);border-color:#c9a84c}
+.vfs-btn-save{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:none;border:1px solid rgba(220,195,146,0.15);border-radius:10px;color:#ecd9b2;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all .18s}
+.vfs-btn-save:hover:not(:disabled){background:rgba(220,195,146,0.13);border-color:#dcc392}
 .vfs-btn-save:disabled{cursor:default;opacity:0.8}
-.vfs-status{font-size:0.78rem;min-height:16px;color:rgba(245,240,232,0.35)}
-.vfs-status.ok{color:#4ade80}
-.vfs-status.err{color:#e05c5c}
-.vfs-card{background:#1a2540;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 24px;margin:0 0 28px}
-.vfs-card-title{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,232,0.35);margin-bottom:6px;font-weight:500;font-family:'Outfit',sans-serif}
+.vfs-status{font-size:0.78rem;min-height:16px;color:#5f5f5f}
+.vfs-status.ok{color:#5cc28e}
+.vfs-status.err{color:#e8706a}
+.vfs-card{background:#262626;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 24px;margin:0 0 28px}
+.vfs-card-title{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#5f5f5f;margin-bottom:6px;font-weight:500;font-family:'Outfit',sans-serif}
 .vfs-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
 .vfs-item:last-child{border-bottom:none}
-.vfs-item-label{font-size:0.88rem;color:rgba(245,240,232,0.6);font-family:'Outfit',sans-serif}
-.vfs-item-date{font-size:0.72rem;color:rgba(245,240,232,0.35);margin-top:2px}
+.vfs-item-label{font-size:0.88rem;color:#969696;font-family:'Outfit',sans-serif}
+.vfs-item-date{font-size:0.72rem;color:#5f5f5f;margin-top:2px}
 .vfs-item-actions{display:flex;gap:8px;flex-shrink:0}
-.vfs-btn{background:none;border:1px solid rgba(255,255,255,0.07);border-radius:8px;color:rgba(245,240,232,0.6);padding:6px 14px;font-family:'Outfit',sans-serif;font-size:0.78rem;cursor:pointer;transition:all .15s}
-.vfs-btn:hover{border-color:rgba(201,168,76,0.15);color:#f5f0e8}
-.vfs-btn.del:hover{border-color:rgba(224,92,92,0.5);color:#e05c5c}
+.vfs-btn{background:none;border:1px solid rgba(255,255,255,0.07);border-radius:8px;color:#969696;padding:6px 14px;font-family:'Outfit',sans-serif;font-size:0.78rem;cursor:pointer;transition:all .15s}
+.vfs-btn:hover{border-color:rgba(220,195,146,0.15);color:#ededed}
+.vfs-btn.del:hover{border-color:rgba(232,112,106,0.5);color:#e8706a}
 .vfs-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:600;overflow-y:auto;padding:40px 20px}
-.vfs-modal-box{max-width:420px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:32px;font-family:'Outfit',sans-serif}
+.vfs-modal-box{max-width:420px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:32px;font-family:'Outfit',sans-serif}
 .vfs-modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-.vfs-modal-title{font-size:1.2rem;color:#e8c97a}
-.vfs-modal-close{background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px}
-.vfs-modal-sub{font-size:0.83rem;color:rgba(245,240,232,0.35);line-height:1.6;margin-bottom:22px}
+.vfs-modal-title{font-size:1.2rem;color:#ecd9b2}
+.vfs-modal-close{background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px}
+.vfs-modal-sub{font-size:0.83rem;color:#5f5f5f;line-height:1.6;margin-bottom:22px}
 .vfs-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:22px}
-.vfs-tab{flex:1;padding:10px;text-align:center;font-size:0.82rem;color:rgba(245,240,232,0.35);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif}
-.vfs-tab.active{color:#f5f0e8;border-bottom-color:#c9a84c}
+.vfs-tab{flex:1;padding:10px;text-align:center;font-size:0.82rem;color:#5f5f5f;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif}
+.vfs-tab.active{color:#ededed;border-bottom-color:#dcc392}
 .vfs-field{margin-bottom:14px}
-.vfs-field label{display:block;font-size:0.72rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase}
-.vfs-field input{width:100%;box-sizing:border-box;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;transition:border-color .15s;appearance:none}
-.vfs-field input:focus{border-color:#c9a84c}
-.vfs-btn-auth{width:100%;padding:13px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;border-radius:10px;color:#0a0f1e;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;margin-top:4px}
-.vfs-msg{font-size:0.8rem;margin-top:10px;text-align:center;min-height:18px;color:rgba(245,240,232,0.35)}
-.vfs-msg.err{color:#e05c5c}
-.vfs-msg.ok{color:#4ade80}
+.vfs-field label{display:block;font-size:0.72rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase}
+.vfs-field input{width:100%;box-sizing:border-box;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;transition:border-color .15s;appearance:none}
+.vfs-field input:focus{border-color:#dcc392}
+.vfs-btn-auth{width:100%;padding:13px;background:linear-gradient(135deg,#dcc392,#ecd9b2);border:none;border-radius:10px;color:#0b0b0b;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.9rem;cursor:pointer;margin-top:4px}
+.vfs-msg{font-size:0.8rem;margin-top:10px;text-align:center;min-height:18px;color:#5f5f5f}
+.vfs-msg.err{color:#e8706a}
+.vfs-msg.ok{color:#5cc28e}
 .vfs-alt{text-align:center;margin-top:12px}
-.vfs-link{color:rgba(245,240,232,0.35);font-size:0.78rem;text-decoration:none;transition:color .15s}
-.vfs-link:hover{color:#e8c97a}
+.vfs-link{color:#5f5f5f;font-size:0.78rem;text-decoration:none;transition:color .15s}
+.vfs-link:hover{color:#ecd9b2}
 `;
 
   const MODAL_HTML = `
@@ -84,7 +84,7 @@
     <div class="vfs-field"><label>Email</label><input type="email" data-f="siEmail" placeholder="you@example.com"></div>
     <div class="vfs-field"><label>Password</label><input type="password" data-f="siPassword" placeholder="••••••••"></div>
     <button type="button" class="vfs-btn-auth" data-action="signin">Sign In &amp; Save</button>
-    <div class="vfs-alt"><a class="vfs-link" href="/net-worth/">Forgot your password?</a></div>
+    <div class="vfs-alt"><a class="vfs-link" href="/signin/?mode=reset&amp;next=${encodeURIComponent(location.pathname)}">Forgot your password?</a></div>
     <div class="vfs-msg" data-msg="signin"></div>
   </div>
 </div>`;

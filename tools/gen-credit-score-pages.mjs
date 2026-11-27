@@ -314,6 +314,7 @@ const EXTRA_CSS = `
   .score-table { width:100%; border-collapse:collapse; margin:16px 0 10px; font-size:0.88rem; }
   .score-table td { padding:10px 8px; border-bottom:1px solid var(--border-soft); color:var(--cream-dim); }
   .score-table td:last-child { text-align:right; color:var(--cream); font-weight:500; white-space:nowrap; }
+  @media (max-width:600px) { .score-table { display:block; overflow-x:auto; } }
   .score-chips { display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 6px; }
   .score-chip { padding:7px 12px; border-radius:8px; background:var(--navy-mid); border:1px solid var(--border-soft); color:var(--cream-dim); text-decoration:none; font-size:0.8rem; transition:all .15s; }
   a.score-chip:hover { border-color:var(--gold); color:var(--gold-light); }

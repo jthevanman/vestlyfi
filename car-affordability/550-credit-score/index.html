@@ -135,15 +135,15 @@
 </script>
 <style>
 :root{
-  --navy:#0a0f1e;--navy-mid:#111827;--navy-light:#1a2540;--navy-card:#141d35;
-  --gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:rgba(201,168,76,0.13);
-  --cream:#f5f0e8;--cream-dim:rgba(245,240,232,0.6);--muted:rgba(245,240,232,0.35);
-  --green:#4ade80;--red:#f87171;--amber:#fbbf24;--blue:#60a5fa;
-  --border:rgba(201,168,76,0.15);--border-soft:rgba(255,255,255,0.07);
+  --navy:#0b0b0b;--navy-mid:#1b1b1b;--navy-light:#262626;--navy-card:#131313;
+  --gold:#dcc392;--gold-light:#ecd9b2;--gold-dim:rgba(220,195,146,0.13);
+  --cream:#ededed;--cream-dim:#969696;--muted:#5f5f5f;
+  --green:#5cc28e;--red:#e8706a;--amber:#e3a857;--blue:#7aa7ff;
+  --border:rgba(220,195,146,0.15);--border-soft:rgba(255,255,255,0.07);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;}
-.site-nav{position:sticky;top:0;z-index:50;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:#0a0f1e;}
+body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;font-weight:400;min-height:100vh;}
+.site-nav{position:sticky;top:0;z-index:50;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:#0b0b0b;}
 .site-nav-logo{font-family:'Exo 2',sans-serif;font-size:1.25rem;color:var(--gold);text-decoration:none;transition:opacity .15s;letter-spacing:0.01em;}
 .site-nav-logo:hover{opacity:.8;}
 .site-nav-links{display:flex;gap:24px;align-items:center;}
@@ -174,16 +174,16 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .input-wrap{position:relative;display:flex;align-items:center;}
 .input-prefix{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:0.9rem;pointer-events:none;font-family:'Outfit',sans-serif;z-index:1;}
 input[type="text"],input[type="number"],select{width:100%;background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:12px 14px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.93rem;font-weight:300;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;appearance:none;}
-input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.1);}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(220,195,146,0.1);}
 input.has-prefix{padding-left:30px;}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-select option{background:#111827;}
-.calc-btn{width:100%;margin-top:22px;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:10px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,0.28);transition:transform .15s,box-shadow .2s;}
-.calc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(201,168,76,0.42);}
+select option{background:#1b1b1b;}
+.calc-btn{width:100%;margin-top:22px;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;border-radius:10px;color:var(--navy);font-family:'Outfit',sans-serif;font-weight:500;font-size:0.95rem;cursor:pointer;box-shadow:0 4px 20px rgba(220,195,146,0.28);transition:transform .15s,box-shadow .2s;}
+.calc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 26px rgba(220,195,146,0.42);}
 .results{display:none;margin-bottom:26px;}
 .results.visible{display:block;animation:fadeUp .4s cubic-bezier(.4,0,.2,1) forwards;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
-.result-banner{border-radius:14px;padding:26px;text-align:center;margin-bottom:22px;background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));border:1px solid var(--border);}
+.result-banner{border-radius:14px;padding:26px;text-align:center;margin-bottom:22px;background:linear-gradient(135deg,rgba(220,195,146,0.08),rgba(220,195,146,0.03));border:1px solid var(--border);}
 .result-total{font-family:'Outfit',sans-serif;font-size:clamp(2.2rem,7vw,3.4rem);font-weight:600;line-height:1;color:var(--gold-light);margin-bottom:6px;}
 .result-label{font-size:0.85rem;color:var(--cream-dim);}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
@@ -224,7 +224,7 @@ select option{background:#111827;}
 .state-grid a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:var(--navy-light);border:1px solid var(--border-soft);border-radius:9px;color:var(--cream-dim);text-decoration:none;font-size:0.83rem;transition:all .15s;}
 .state-grid a:hover{border-color:var(--gold);color:var(--cream);}
 .state-grid a .ab{font-size:0.66rem;color:var(--muted);letter-spacing:0.06em;}
-.disclaimer{font-size:0.72rem;color:rgba(245,240,232,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
+.disclaimer{font-size:0.72rem;color:rgba(237,237,237,0.28);line-height:1.7;margin-top:40px;padding-top:20px;border-top:1px solid var(--border-soft);}
 footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--muted);}
 .footer-links{display:flex;gap:18px;align-items:center;}
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
@@ -252,6 +252,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 .sched td.hl,.sched .hl td{color:var(--gold-light);font-weight:500;}
 .sched tr:last-child td{font-weight:inherit;color:var(--cream-dim);}
 .sched tr.hl td{color:var(--gold-light);}
+@media(max-width:480px){.sched th,.sched td{padding:10px 8px;}.sched{display:block;overflow-x:auto;}}
 </style>
 <div class="page">
   <div class="crumbs"><a href="/">Home</a><span class="sep">/</span><a href="/calculators/">Calculators</a><span class="sep">/</span><a href="/car-affordability/">Car Affordability</a><span class="sep">/</span><span class="current">550 Credit Score</span></div>

@@ -14,22 +14,18 @@
 <link rel="manifest" href="/site.webmanifest">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/currency.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<script src="/assets/theme.js"></script>
 <style>
   :root {
-    --navy: #0a0f1e;
-    --navy-mid: #111827;
-    --navy-light: #1a2540;
-    --navy-card: #141d35;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cream: #f5f0e8;
-    --cream-dim: rgba(245,240,232,0.6);
-    --muted: rgba(245,240,232,0.35);
-    --border: rgba(201,168,76,0.15);
-    --border-soft: rgba(255,255,255,0.07);
-    --green: #4caf7d;
-    --red: #e05c5c;
-  }
+  /* Colors come from /assets/theme.css (charcoal, or light when switched).
+     These older names map onto it so the rest of this page keeps working. */
+  --navy:var(--page); --navy-mid:var(--raised); --navy-light:var(--surface); --navy-card:var(--bg);
+  --gold:var(--accent); --gold-light:var(--accent-light); --gold-dim:rgba(var(--accent-rgb),0.12);
+  --green-dim:rgba(var(--green-rgb),0.10); --red-dim:rgba(var(--red-rgb),0.10);
+  --border:rgba(var(--tint),0.12); --border-soft:var(--line);
+  --sidebar-w:220px;
+}
 
   * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -37,7 +33,7 @@
     background: var(--navy);
     color: var(--cream);
     font-family: 'Outfit', sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -48,7 +44,7 @@
     position:sticky; top:0; z-index:100;
     display:flex; justify-content:space-between; align-items:center;
     padding:0 40px; height:56px;
-    background:#0a0f1e;
+    background:var(--page);
     border-bottom:1px solid var(--border-soft);
   }
   .nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; letter-spacing:0.01em; }
@@ -56,9 +52,9 @@
   .nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; font-weight:300; transition:color .15s; }
   .nav-links a:hover { color:var(--cream); }
   .nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
-  .nav-sep { color:rgba(255,255,255,0.18); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(var(--accent-rgb),0.07); border:1px solid rgba(var(--accent-rgb),0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(var(--accent-rgb),0.65); padding-right:8px; border-right:1px solid rgba(var(--accent-rgb),0.2); }
+  .nav-sep { color:rgba(var(--tint),0.18); }
   @media(max-width:600px) { .nav-links{display:none;} nav{padding:0 20px;} }
 
   /* ── LAYOUT ── */
@@ -74,7 +70,7 @@
     display:flex; align-items:center; justify-content:center;
     background:linear-gradient(145deg, var(--gold) 0%, var(--gold-light) 100%);
     color:var(--navy); font-family:'Exo 2',sans-serif; font-size:1.15rem; letter-spacing:0.02em;
-    box-shadow:0 4px 16px rgba(201,168,76,0.18);
+    box-shadow:0 4px 16px rgba(var(--accent-rgb),0.18);
   }
   .identity-text { min-width:0; }
   .identity-email { font-size:1.05rem; font-weight:400; color:var(--cream); line-height:1.3; word-break:break-all; }
@@ -115,7 +111,7 @@
   .saved-open { display:inline-flex; align-items:center; padding:7px 14px; border:1px solid var(--border-soft); border-radius:8px; color:var(--gold); text-decoration:none; font-size:0.78rem; transition:all .15s; }
   .saved-open:hover { border-color:var(--border); color:var(--gold-light); }
   .saved-del { background:none; border:1px solid var(--border-soft); border-radius:8px; color:var(--muted); padding:7px 11px; font-family:'Outfit',sans-serif; font-size:0.78rem; cursor:pointer; transition:all .15s; }
-  .saved-del:hover { border-color:rgba(224,92,92,0.5); color:var(--red); }
+  .saved-del:hover { border-color:rgba(var(--red-rgb),0.5); color:var(--red); }
   @media(max-width:480px) { .snapshot-grid { grid-template-columns:1fr; } }
 
   /* ── LOADING / REDIRECT ── */
@@ -267,7 +263,7 @@
   .footer-links a { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; }
   .footer-links a:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(var(--accent-rgb),0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:24px 20px; flex-direction:column; gap:12px;} }
 </style>
 </head>
@@ -281,6 +277,7 @@
     <a href="/create-a-diagram/">Diagrams</a>
     <a href="/net-worth/">Net Worth Tracker</a>
     <a href="/account/" class="active">Account</a>
+    <button data-vf-theme-btn></button>
   </div>
 </nav>
 
@@ -429,8 +426,8 @@ let currentUser = null;
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session?.user) {
-    // Not logged in; redirect to net worth page which has the auth UI
-    window.location.href = '/net-worth/';
+    // Not signed in: the shared sign-in page brings them back here.
+    window.location.href = '/signin/?mode=signin&next=%2Faccount%2F';
     return;
   }
   currentUser = session.user;
@@ -442,7 +439,7 @@ let currentUser = null;
 
 sb.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
-    window.location.href = '/net-worth/';
+    window.location.href = '/signin/?mode=signin&next=%2Faccount%2F';
   }
 });
 
@@ -717,22 +714,22 @@ document.getElementById('currentPassword').addEventListener('keydown', e => { if
 
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:var(--raised);border:1px solid var(--line);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:var(--cream);font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:var(--red)">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:var(--accent);color:var(--on-accent);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -755,13 +752,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='var(--red)'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='var(--green)'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='var(--red)'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');

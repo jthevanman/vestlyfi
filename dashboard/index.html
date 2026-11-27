@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Home | VestlyFi</title>
+<!-- The signed-in home screen: nothing here for search, so it stays out of it. -->
+<meta name="robots" content="noindex, nofollow">
+<script>
+// Visiting any page with ?internal=1 marks this browser as the site owner's, so
+// its visits stay out of Google Analytics. ?internal=0 undoes it. This has to
+// run before the analytics config below.
+try{var vfq=new URLSearchParams(location.search);if(vfq.has('internal')){if(vfq.get('internal')==='0')localStorage.removeItem('vf_internal');else localStorage.setItem('vf_internal','1');}if(localStorage.getItem('vf_internal')==='1')window['ga-disable-G-NPZ7QVQQNS']=true;}catch(e){}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/currency.js"></script>
+<script>try { if (localStorage.getItem('vf-theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}</script>
+<style>
+/* Graphite theme, same tokens as /budget/. */
+:root {
+  color-scheme: dark;
+  --bg:#131313; --raised:#1b1b1b; --surface:#262626; --surface-2:#303030;
+  --accent:#dcc392; --accent-light:#ecd9b2; --on-accent:#161310;
+  --cream:#ededed; --cream-dim:#b4b4b4; --muted:#8d8d8d;
+  --line:rgba(255,255,255,0.08); --green:#5cc28e; --red:#e8706a; --amber:#e3a857;
+  --page:#0b0b0b; --hover:rgba(255,255,255,0.03); --shadow:0 8px 16px -8px rgba(0,0,0,0.8);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:#ffffff; --raised:#ffffff; --surface:#f1efeb; --surface-2:#e7e4de;
+  --accent:#1b1b1b; --accent-light:#000000; --on-accent:#ffffff;
+  --cream:#1b1b1b; --cream-dim:#565656; --muted:#7b7b7b;
+  --line:rgba(0,0,0,0.09); --green:#1f9a5e; --red:#cf4a42; --amber:#b5761d;
+  --page:#f3f2ef; --hover:rgba(0,0,0,0.03); --shadow:0 6px 14px -8px rgba(0,0,0,0.22);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+::-webkit-scrollbar { width:10px; height:10px; }
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--surface-2); border:3px solid transparent; border-radius:999px; background-clip:padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color:var(--muted); }
+::-webkit-scrollbar-button { display:none; width:0; height:0; }
+@supports (-moz-appearance:none) { * { scrollbar-width:thin; scrollbar-color:var(--surface-2) transparent; } }
+body { background:var(--page); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; min-height:100vh; overflow-x:hidden; }
+button, input { font-family:inherit; }
+a { color:inherit; }
+.hidden { display:none !important; }
+
+/* ── Auth ── */
+#authScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+.auth-panel { width:100%; max-width:380px; }
+.brand { font-family:'Exo 2',sans-serif; font-size:1.15rem; color:var(--accent); text-decoration:none; }
+.auth-title { font-size:1.4rem; font-weight:400; margin:18px 0 6px; }
+.auth-sub { font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:22px; }
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:0.68rem; color:var(--muted); margin-bottom:5px; letter-spacing:0.05em; text-transform:uppercase; }
+.field input { width:100%; padding:12px 16px; background:var(--surface); border:1px solid transparent; border-radius:12px; color:var(--cream); font-size:16px; outline:none; }
+.field input:focus { border-color:var(--accent); }
+.msg { font-size:0.8rem; min-height:20px; margin-top:8px; color:var(--cream-dim); }
+.msg.err { color:var(--red); }
+.auth-alt { font-size:0.8rem; color:var(--muted); margin-top:18px; line-height:1.6; }
+.auth-alt a { color:var(--accent); }
+
+/* ── Buttons: actions are pills or circles ── */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 18px; border-radius:999px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:background .15s, color .15s; text-decoration:none; white-space:nowrap; }
+.btn-gold { background:var(--accent); color:var(--on-accent); }
+.btn-gold:hover { background:var(--accent-light); }
+.btn-ghost { background:var(--surface); color:var(--cream-dim); font-weight:500; }
+.btn-ghost:hover { background:var(--surface-2); color:var(--cream); }
+.btn-block { width:100%; }
+.auth-ctas { display:flex; flex-direction:column; gap:10px; }
+.auth-ctas .btn { height:48px; text-decoration:none; }
+.btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.link-btn { background:none; border:none; color:var(--accent); font-size:0.8rem; cursor:pointer; padding:0; }
+
+/* ── Shell ── */
+.app { max-width:1200px; margin:0 auto; padding:16px 16px calc(48px + env(safe-area-inset-bottom)); }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 0 18px; }
+.topbar-left, .topbar-right { display:flex; align-items:center; gap:8px; min-width:0; }
+.pill { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); border:1px solid var(--line); border-radius:20px; padding:2px 8px; }
+.icon-btn { width:40px; height:40px; display:inline-flex; align-items:center; justify-content:center; padding:0; border-radius:50%; border:none; background:none; color:var(--cream); cursor:pointer; transition:background .15s; }
+.icon-btn:hover { background:var(--surface); }
+.icon-btn svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.theme-btn .i-moon { display:none; }
+:root[data-theme="light"] .theme-btn .i-sun { display:none; }
+:root[data-theme="light"] .theme-btn .i-moon { display:block; }
+.acct-wrap { position:relative; }
+.acct-btn { background:var(--surface); }
+.acct-btn:hover, .acct-btn[aria-expanded="true"] { background:var(--surface-2); }
+.acct-menu { position:absolute; top:calc(100% + 8px); right:0; z-index:150; width:248px; padding:6px 0; background:var(--raised); border:1px solid var(--line); border-radius:16px; box-shadow:0 12px 28px -10px rgba(0,0,0,0.6); }
+.acct-menu[hidden] { display:none; }
+.acct-who { padding:10px 16px 12px; border-bottom:1px solid var(--line); }
+.acct-who-label { font-size:0.68rem; color:var(--muted); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:3px; }
+.acct-email { font-size:0.88rem; overflow-wrap:anywhere; }
+.acct-item { display:flex; align-items:center; gap:12px; width:100%; padding:12px 16px; background:none; border:none; color:var(--cream); font-size:0.9rem; text-align:left; text-decoration:none; cursor:pointer; }
+.acct-item:hover { background:var(--hover); }
+.acct-item svg { width:18px; height:18px; fill:none; stroke:var(--cream-dim); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+.dash-head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:0 0 16px; }
+.dash-title { font-size:1.5rem; font-weight:500; }
+.dash-sub { font-size:0.82rem; color:var(--muted); margin-top:3px; }
+/* Last updated, in the header: a pill per tracker. Tracker color on the icon only; text stays grey. */
+/* Beside the title, not under it; drops under it only when there's no room. */
+.head-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px 24px; }
+.hu-row { display:flex; flex-wrap:wrap; gap:6px; }
+/* Phone: the pills stack on the right of the title. */
+@media (max-width:768px) {
+  .head-row { flex:1; flex-wrap:nowrap; justify-content:space-between; gap:12px; }
+  .head-row > :first-child { flex:0 0 auto; white-space:nowrap; }
+  .hu-row { flex-direction:column; align-items:flex-end; min-width:0; }
+  .hu-w { display:none; }   /* "Net worth 22 days ago" fits beside the title */
+}
+.hu-row:empty { display:none; }
+.hu { display:inline-flex; align-items:center; gap:7px; height:28px; padding:0 12px 0 5px; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.76rem; text-decoration:none; white-space:nowrap; transition:background .15s; }
+.hu:hover { background:var(--surface-2); }
+.hu b { font-weight:500; color:var(--cream); }
+.hu.nw { --t:var(--green); } .hu.bd { --t:#7aa7ff; }
+:root[data-theme="light"] .hu.bd { --t:#3d6fd6; }
+.hu-ic { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--t) 16%, transparent); color:var(--t); }
+.hu-ic svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.sample-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; margin-bottom:16px; border-radius:8px; background:var(--surface); font-size:0.84rem; color:var(--cream-dim); }
+.sample-bar b { color:var(--cream); font-weight:500; }
+.sample-bar .btn { margin-left:auto; padding:7px 14px; }
+
+/* Edit bar: shown while customizing. */
+.edit-bar { position:sticky; top:8px; z-index:60; display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px 10px 10px 16px; margin-bottom:16px; border-radius:999px; background:var(--raised); border:1px solid var(--line); box-shadow:var(--shadow); }
+.edit-bar-label { font-size:0.88rem; font-weight:500; margin-right:auto; }
+@media (max-width:560px) { .edit-bar { border-radius:20px; } .edit-bar-label { flex-basis:100%; } .edit-bar .btn { flex:1; } }
+
+/* ── Grid of widgets ── */
+.grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+.w { grid-column:span 1; min-width:0; background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:16px; display:flex; flex-direction:column; }
+.w-body { flex:1; display:flex; flex-direction:column; min-height:0; }
+.w-body > * { flex-shrink:0; }
+.w.full { grid-column:1 / -1; }
+@media (max-width:720px) { .grid { grid-template-columns:minmax(0,1fr); } .w, .w.full { grid-column:1 / -1; } }
+.editing .w { outline:1.5px dashed var(--line); outline-offset:-1px; }
+@media (pointer:fine) { .editing .w { cursor:grab; } }
+/* Dragging: the widget lifts and follows the pointer; a dashed slot shows where it lands. */
+.w.dragging { box-shadow:0 28px 56px -16px rgba(0,0,0,0.75); transform:scale(1.015); cursor:grabbing; outline-color:var(--accent); }
+.w.ph { background:transparent; box-shadow:none; outline:2px dashed var(--accent); outline-offset:-2px; opacity:.5; }
+body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
+/* Two columns inside an expanded widget; one on phones. */
+.cols { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0 28px; }
+.cols > .cb { border-top:1px solid var(--line); }
+.cols > .cb:nth-child(-n+2) { border-top:none; }
+@media (max-width:720px) { .cols { grid-template-columns:minmax(0,1fr); } .cols > .cb:nth-child(2) { border-top:1px solid var(--line); } .cols > .col2 { margin-top:18px; } }
+.sub { display:flex; justify-content:space-between; gap:10px; padding:4px 0 4px 17px; font-size:0.8rem; color:var(--cream-dim); }
+.sub span:first-child { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Widget titles stand out on their own: bold, in the accent color, no line under them. */
+.w-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; min-height:28px; }
+.w-title { font-size:0.74rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.w-link { flex:0 0 auto; display:inline-flex; align-items:center; gap:2px; font-size:0.78rem; color:var(--cream-dim); text-decoration:none; }
+.w-link:hover { color:var(--accent-light); }
+.w-link svg { width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.w-empty { color:var(--muted); font-size:0.86rem; line-height:1.6; padding:14px 0 6px; }
+.w-empty a { color:var(--accent); text-decoration:none; font-weight:500; }
+.w-empty .btn { margin-top:10px; }
+
+/* Widget tools (customize mode) */
+.w-tools { display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin:-4px 0 12px; }
+.t-btn { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border:none; border-radius:50%; background:var(--surface); color:var(--cream-dim); cursor:pointer; }
+.t-btn:hover:not(:disabled) { background:var(--surface-2); color:var(--cream); }
+.t-btn:disabled { opacity:.3; cursor:default; }
+.t-btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.t-btn.danger { color:var(--red); margin-left:auto; }
+.t-pill { height:32px; padding:0 12px; border:none; border-radius:999px; background:var(--surface); color:var(--cream-dim); font-size:0.78rem; font-weight:500; cursor:pointer; white-space:nowrap; }
+.t-pill:hover { background:var(--surface-2); color:var(--cream); }
+.t-btn.grip { cursor:grab; touch-action:none; }
+.t-btn.grip svg { fill:currentColor; stroke:none; }
+.t-hint { font-size:0.74rem; color:var(--muted); margin:-6px 0 12px; }
+
+/* Figures */
+.big { font-size:2.1rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; }
+.big.neg { color:var(--red); }
+.delta { font-size:0.82rem; margin-top:4px; color:var(--cream-dim); }
+.up { color:var(--green); } .down { color:var(--red); }
+.eq { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid var(--line); }
+.eq-k { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); }
+.eq-v { font-size:1.05rem; font-weight:500; margin-top:2px; }
+.stats { display:grid; grid-template-columns:1fr 1fr; }
+.stat { padding:14px 0 12px; }
+.stat:nth-child(even) { padding-left:14px; border-left:1px solid var(--line); }
+.stat:nth-child(n+3) { border-top:1px solid var(--line); }
+.stat-k { font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.stat-v { font-size:1.85rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.stat-n { font-size:0.74rem; color:var(--cream-dim); margin-top:4px; }
+.stat-n:empty { display:none; }
+/* This month: income, then spent + saved = total outflow, then the net */
+.mo { flex:1; display:flex; flex-direction:column; gap:14px; }
+.mo-big { font-size:2rem; font-weight:500; letter-spacing:-0.015em; line-height:1.15; margin-top:4px; }
+.mo-eq { display:grid; grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr); align-items:center; gap:3px 6px; padding-top:12px; border-top:1px solid var(--line); }
+.mo-v { font-size:1.15rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mo-op { color:var(--muted); font-size:1.1rem; text-align:center; line-height:1; }
+.mo-eq .stat-k { white-space:nowrap; font-size:0.64rem; letter-spacing:0.04em; }
+/* Label and figure on one line, centered; the saved note sits under the figure as a footnote. */
+/* Monthly net follows straight after the equation; a taller card leaves its spare room at the bottom, never above the net. */
+.mo-net { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:7px 10px; padding-top:12px; border-top:1px solid var(--line); }
+/* Each text box is trimmed to its letter height (cap top to baseline), so
+   centering the boxes centers the letters themselves, whatever their size. */
+.mo-net .stat-k, .mo-net-v { line-height:1; text-box:trim-both cap alphabetic; }
+.mo-net-v { font-size:1.35rem; font-weight:600; }
+.mo-net-v.up { color:var(--green); } .mo-net-v.down { color:var(--red); }
+/* Saved note: plain, right after the figure */
+.mo-note { font-size:0.72rem; color:var(--cream-dim); line-height:1.2; }
+.mo-mark { font-size:0.6em; font-weight:500; color:var(--cream-dim); margin-left:1px; vertical-align:super; line-height:0; }
+.own { margin-top:auto; padding-top:16px; }
+.own-bar { display:flex; gap:2px; height:8px; }
+.own-bar span { display:block; height:100%; border-radius:999px; }
+.own-mine { background:var(--green); }
+.own-owed { background:var(--red); opacity:.85; }
+.own-k { display:flex; justify-content:space-between; gap:6px 14px; flex-wrap:wrap; margin-top:8px; font-size:0.78rem; color:var(--cream-dim); }
+.own-k span { font-weight:600; }
+.own-k .up { color:var(--green); } .own-k .down { color:var(--red); }
+.own-k b.up { color:var(--green); } .own-k b.down { color:var(--red); }
+.row { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; }
+.row:first-child { border-top:none; }
+.row .k { color:var(--cream-dim); min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.row .v { flex:0 0 auto; font-weight:500; }
+.row.sec { padding-top:14px; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+.row.sec .v { font-size:0.9rem; letter-spacing:0; text-transform:none; color:var(--cream); }
+.row.total { border-top:1px solid var(--cream-dim); font-weight:600; }
+.row.total .k { color:var(--cream); }
+
+/* Line chart */
+.lc { position:relative; margin-top:6px; }
+.lc svg { display:block; width:100%; height:170px; }
+.lc-line { fill:none; stroke:var(--accent); stroke-width:2.2; stroke-linejoin:round; stroke-linecap:round; }
+.lc-area { fill:color-mix(in srgb, var(--accent) 14%, transparent); stroke:none; }
+.lc-zero { stroke:var(--line); stroke-width:1; stroke-dasharray:4 4; }
+.lc-x { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--muted); margin-top:6px; }
+.lc-meta { display:flex; gap:18px; flex-wrap:wrap; font-size:0.8rem; color:var(--cream-dim); margin-top:10px; }
+.lc-meta b { color:var(--cream); font-weight:500; }
+/* Gains green, losses red, wherever a figure carries a direction. */
+.lc-meta b.up, .mini-stats b.up, .legend b.up, .stat-v.up, .eq-v.up, .row .v.up { color:var(--green); }
+.lc-meta b.down, .mini-stats b.down, .legend b.down, .stat-v.down, .eq-v.down, .row .v.down, .big.down { color:var(--red); }
+.row.sec .v.up { color:var(--green); } .row.sec .v.down { color:var(--red); }
+/* Range pills on the net worth chart */
+.rng { display:flex; gap:4px; margin:-4px 0 10px; }
+.rng button { height:28px; padding:0 11px; border:none; border-radius:999px; background:none; color:var(--muted); font-size:0.76rem; font-weight:500; cursor:pointer; }
+.rng button:hover { color:var(--cream); }
+.rng button.on { background:var(--surface); color:var(--cream); }
+/* Spending pie */
+.pie { display:flex; flex-direction:column; align-items:center; gap:12px; }
+.pie-chart { position:relative; width:min(100%, 250px); aspect-ratio:1; }
+.pie-chart svg { width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
+.pie-seg { cursor:pointer; transition:opacity .15s, stroke-width .15s; }
+.pie.focus .pie-seg:not(.on) { opacity:.3; }
+.pie-seg.on { stroke-width:20; }
+.pie-mid { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none; padding:0 22%; }
+.pie-mid b { font-size:1.35rem; font-weight:500; }
+.pie-mid span { font-size:0.76rem; color:var(--cream-dim); margin-top:2px; line-height:1.3; }
+.pie-keys { display:flex; flex-wrap:wrap; justify-content:center; gap:2px 12px; font-size:0.74rem; color:var(--cream-dim); }
+.pie-key { display:inline-flex; align-items:center; gap:5px; padding:2px 4px; border:none; border-radius:999px; background:none; color:inherit; font:inherit; cursor:pointer; }
+.pie-key:hover, .pie-key.on { color:var(--cream); }
+.pie-key .dot { width:7px; height:7px; }
+/* Net worth chart: y-axis values on the left, months below. */
+.nw-tools { display:flex; justify-content:space-between; align-items:center; gap:6px 12px; flex-wrap:wrap; margin:-4px 0 10px; }
+.nw-tools .rng { margin:0; }
+.yc { display:grid; grid-template-columns:auto minmax(0,1fr); column-gap:10px; }
+.y-labels { position:relative; min-width:40px; }
+.y-labels span { position:absolute; right:0; transform:translateY(-50%); font-size:0.68rem; color:var(--muted); white-space:nowrap; }
+.yc .lc { margin-top:0; }
+.lc-grid { stroke:var(--line); stroke-width:1; }
+.t-row { display:flex; justify-content:space-between; align-items:center; gap:14px; text-align:left; line-height:1.55; }
+.t-row b { display:inline; font-size:0.8rem; color:var(--cream); font-weight:500; }
+.t-row > span { display:inline-flex; align-items:center; gap:6px; }
+.t-row i { width:7px; height:7px; border-radius:2px; display:inline-block; }
+.t-head { display:block; color:var(--cream); font-weight:500; margin-bottom:2px; }
+.t-row b.up { color:var(--green); } .t-row b.down { color:var(--red); }
+.t-row.t-sum { border-top:1px solid var(--line); margin-top:3px; padding-top:3px; }
+
+/* What moved: a narrow column, so names and values sit close together */
+.cols.nwt { grid-template-columns:minmax(0,1fr) minmax(220px,300px); gap:0 32px; }
+@media (max-width:720px) { .cols.nwt { grid-template-columns:minmax(0,1fr); } }
+.cols.nwt.stack { grid-template-columns:minmax(0,1fr); }
+.cols.nwt.stack > .col2 { margin-top:18px; }
+/* Line chart hover: a dot and a small label for the month under the pointer */
+.lc.hover { cursor:crosshair; touch-action:pan-y; }
+.lc-guide { position:absolute; top:0; bottom:0; width:1px; background:var(--line); pointer-events:none; display:none; }
+.lc-dot { position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--bg); pointer-events:none; display:none; }
+.lc-tip { position:absolute; transform:translate(-50%, calc(-100% - 12px)); padding:6px 10px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; text-align:center; }
+.lc-tip b { display:block; font-size:0.9rem; color:var(--cream); font-weight:500; }
+.lc.show .lc-guide, .lc.show .lc-dot, .lc.show .lc-tip { display:block; }
+/* Bar chart hover */
+.tb-wrap { position:relative; }
+.tb-col { position:relative; cursor:default; }
+.tb-float { position:absolute; z-index:5; transform:translate(-50%, calc(-100% - 8px)); padding:7px 11px; border-radius:10px; background:var(--surface-2); white-space:nowrap; font-size:0.74rem; color:var(--cream-dim); pointer-events:none; display:none; box-shadow:0 8px 20px -10px rgba(0,0,0,0.6); }
+.tb-float.on { display:block; }
+.tb-float b { color:var(--cream); font-weight:500; font-size:0.86rem; }
+.tb-float .t-head { display:flex; align-items:center; gap:6px; }
+.tb-float i { width:7px; height:7px; border-radius:2px; display:inline-block; }
+/* While pointing at a piece, everything else steps back. */
+.tb.hl [data-tip]:not(.hot) { opacity:.3; }
+[data-tip] { cursor:pointer; transition:opacity .12s; }
+@media (max-width:420px) { .pie { flex-direction:column; align-items:stretch; } .pie-chart { align-self:center; } }
+.spark svg { height:70px; }
+/* Upcoming recurring: totals pinned to the bottom */
+.up-sum { margin-top:auto; padding-top:12px; border-top:1px solid var(--line); display:flex; gap:6px 16px; flex-wrap:wrap; font-size:0.8rem; color:var(--cream-dim); }
+.up-sum b { font-weight:500; color:var(--cream); }
+.up-sum b.up { color:var(--green); } .up-sum b.down { color:var(--red); }
+.up-sum .up-k { font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); align-self:center; }
+.up-list { margin-bottom:12px; }
+/* Add transaction: one big button filling the card */
+.add-big { flex:1; min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; border-radius:12px; background:var(--surface); color:var(--cream); text-decoration:none; transition:background .15s; }
+.add-big:hover { background:var(--surface-2); }
+.add-plus { width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--accent); color:var(--on-accent); }
+.add-plus svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; }
+.add-lbl { font-size:1.05rem; font-weight:500; }
+.add-sub { font-size:0.76rem; color:var(--muted); }
+.rec-meta { display:flex; align-items:center; gap:5px; }
+.rec-meta span { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.loop-ic { flex:0 0 auto; width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+/* The link at the end of a scrolling list (Recent transactions). */
+.list-more { display:block; padding:14px 0 4px; text-align:center; font-size:0.8rem; color:var(--accent); text-decoration:none; border-top:1px solid var(--line); }
+.list-more:hover { text-decoration:underline; }
+
+/* Bars */
+.cb { padding:8px 0; }
+.cb + .cb { border-top:1px solid var(--line); }
+.cb-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font-size:0.9rem; }
+.cb-name { display:flex; align-items:center; gap:8px; min-width:0; }
+.cb-name span:last-child { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cb-v { flex:0 0 auto; font-weight:500; }
+.cb-v small { color:var(--muted); font-weight:400; font-size:0.78rem; }
+.dot { flex:0 0 auto; width:9px; height:9px; border-radius:50%; background:var(--h, var(--muted)); }
+.track { height:6px; border-radius:999px; background:var(--surface); margin-top:7px; overflow:hidden; }
+.fill { display:block; height:100%; border-radius:999px; background:var(--h, var(--accent)); }
+.fill.ok { background:var(--green); } .fill.ahead { background:var(--amber); } .fill.over { background:var(--red); }
+.tb { display:flex; align-items:stretch; gap:8px; height:170px; margin-top:4px; }
+.tb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
+.tb-bar { transition:opacity .15s; }
+/* Spending bar, split by category (bottom up, biggest category first) */
+.tb-stack { display:flex; flex-direction:column-reverse; gap:2px; width:40%; max-width:24px; min-height:2px; transition:opacity .15s; }
+.tb-stack span { display:block; width:100%; flex-basis:0; min-height:6px; border-radius:3px; }
+.tb-bars { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; gap:4px; }
+.tb-bar { width:40%; max-width:24px; min-height:2px; border-radius:4px 4px 2px 2px; }
+.tb-bar.in { background:var(--green); } .tb-bar.out { background:var(--accent); }
+.tb-lbl { font-size:0.72rem; color:var(--muted); white-space:nowrap; }
+@media (max-width:720px) { .tb-old { display:none; } }
+.legend { display:flex; gap:16px; flex-wrap:wrap; font-size:0.78rem; color:var(--cream-dim); margin-top:12px; }
+.legend span { display:inline-flex; align-items:center; gap:6px; }
+.legend i { width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+/* Lists */
+.li { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--line); }
+.li:first-child { border-top:none; }
+.li-main { flex:1; min-width:0; }
+.li-name { font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.li-meta { font-size:0.74rem; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.li-amt { flex:0 0 auto; font-size:0.9rem; font-weight:500; }
+.li-amt.in { color:var(--green); }
+
+/* Welcome (no data yet) and "also try" cards */
+.welcome { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+@media (max-width:720px) { .welcome { grid-template-columns:minmax(0,1fr); } }
+.start { display:flex; flex-direction:column; gap:8px; padding:20px; border-radius:8px; background:var(--bg); box-shadow:var(--shadow); text-decoration:none; }
+.start h3 { font-size:1.1rem; font-weight:500; }
+.start p { font-size:0.86rem; color:var(--cream-dim); line-height:1.5; flex:1; }
+.start .btn { align-self:flex-start; margin-top:6px; }
+.also { margin-top:16px; }
+
+/* ── Floating card (pickers, add widget, layouts) ── */
+.sheet-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:16px; }
+.sheet-overlay.open { display:flex; }
+.sheet { width:100%; max-width:400px; max-height:86vh; overflow-y:auto; background:var(--raised); border:1px solid var(--line); border-radius:24px; padding:20px 18px; box-shadow:0 24px 48px -16px rgba(0,0,0,0.7); }
+/* Keep the scroll bar on the straight part of the edge, clear of the rounded corners. */
+.sheet::-webkit-scrollbar-track { margin:22px 0; }
+/* Add a widget: picture tiles */
+.sheet.wide { max-width:580px; }
+.wg-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px 12px; }
+@media (max-width:420px) { .wg-grid { grid-template-columns:minmax(0,1fr); } }
+.wg { display:flex; flex-direction:column; align-items:stretch; gap:4px; padding:6px; border:none; border-radius:16px; background:none; color:var(--cream); font:inherit; text-align:left; cursor:pointer; }
+.wg-thumb { position:relative; aspect-ratio:5 / 3; border-radius:12px; background:var(--surface); padding:10px 12px; transition:background .15s; }
+.wg:hover:not(:disabled) .wg-thumb { background:var(--surface-2); }
+.wg-thumb svg { display:block; width:100%; height:100%; }
+.wg-name { font-size:0.88rem; font-weight:500; line-height:1.25; margin-top:4px; }
+.wg-desc { font-size:0.74rem; color:var(--muted); line-height:1.35; }
+.wg:disabled .wg-desc { opacity:.5; }
+.wg:disabled { cursor:default; }
+.wg:disabled .wg-thumb svg, .wg:disabled .wg-name { opacity:.35; }
+.wg-tag { position:absolute; top:6px; right:6px; padding:1px 7px; border-radius:20px; background:var(--raised); color:var(--cream-dim); font-size:0.62rem; font-weight:500; }
+.sheet-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.sheet-title { font-size:1rem; font-weight:500; }
+.close-x { background:none; border:none; color:var(--muted); font-size:1.5rem; line-height:1; cursor:pointer; padding:0 4px; }
+.close-x:hover { color:var(--cream); }
+.sheet-sec { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin:16px 0 4px; }
+.sheet-sec:first-child { margin-top:4px; }
+.opt { display:flex; align-items:center; gap:12px; width:100%; min-height:54px; padding:10px 4px; background:none; border:none; border-bottom:1px solid var(--line); color:var(--cream); font:inherit; text-align:left; cursor:pointer; }
+.opt:hover:not(:disabled) { background:var(--hover); }
+.opt:disabled { cursor:default; opacity:.5; }
+.opt-main { flex:1; min-width:0; }
+.opt-name { display:block; font-size:0.95rem; }
+.opt-desc { display:block; font-size:0.76rem; color:var(--muted); margin-top:2px; line-height:1.4; }
+.opt.on .opt-name { color:var(--accent-light); }
+.opt-tag { flex:0 0 auto; font-size:0.72rem; color:var(--muted); }
+.opt svg { flex:0 0 auto; width:18px; height:18px; fill:none; stroke:var(--accent); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* Confirm */
+.confirm-overlay { display:none; position:fixed; inset:0; z-index:300; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:24px; }
+.confirm-overlay.open { display:flex; }
+.confirm { width:100%; max-width:340px; padding:24px 20px 18px; background:var(--raised); border:1px solid var(--line); border-radius:24px; text-align:center; }
+.cf-title { font-size:1.08rem; font-weight:500; margin-bottom:8px; }
+.cf-body { font-size:0.88rem; color:var(--cream-dim); line-height:1.5; }
+.cf-actions { display:flex; gap:8px; margin-top:20px; }
+.cf-actions .btn { flex:1; height:46px; }
+
+.toast { position:fixed; left:50%; bottom:calc(24px + var(--vf-tabs-h, env(safe-area-inset-bottom))); transform:translateX(-50%); background:var(--surface-2); color:var(--cream); font-size:0.84rem; padding:10px 18px; border-radius:999px; z-index:400; width:max-content; max-width:calc(100vw - 32px); text-align:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+.toast.show { opacity:1; }
+
+/* Desktop: the shared left menu (assets/app-nav.js) carries the logo, and the
+   title moves into the top bar so the widgets start higher. */
+.topbar-title { display:none; }
+@media (min-width:769px) {
+  .topbar-left, .dash-head { display:none; }
+  .topbar-title { display:flex; }
+  .toast { left:calc(50% + var(--vf-nav-w) / 2); }
+  /* Dialogs center over the page content, right of the menu, not over the whole window. */
+  .sheet-overlay { padding-left:calc(var(--vf-nav-w) + 16px); }
+  .confirm-overlay { padding-left:calc(var(--vf-nav-w) + 24px); }
+}
+/* Wide screens: three columns instead of two, wider page; gaps left by
+   full-width widgets are filled by the next ones that fit. */
+@media (min-width:1400px) {
+  .app { max-width:1600px; }
+  .grid { grid-template-columns:repeat(3, minmax(0,1fr)); }
+  .grid.pack-dense { grid-auto-flow:row dense; }   /* layouts saved before Nov 18 2026 */
+}
+
+/* ── Dashboard-only visuals ── */
+/* Money flow: income on the left, where it went on the right. */
+.flow { display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; gap:0 12px; }
+.flow-col { position:relative; min-width:70px; }
+.flow-lbl { position:absolute; transform:translateY(-50%); white-space:nowrap; font-size:0.76rem; line-height:1.25; color:var(--cream-dim); }
+.flow-col.l .flow-lbl { right:0; text-align:right; }
+.flow-lbl b { display:block; font-size:0.9rem; font-weight:500; color:var(--cream); }
+.flow svg { display:block; width:100%; }
+/* Spending calendar */
+.cal { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:5px; }
+.cal-h { font-size:0.66rem; color:var(--muted); text-align:center; }
+.cal-d { height:32px; border-radius:7px; padding:4px 5px; font-size:0.66rem; color:var(--cream-dim); background:color-mix(in srgb, var(--accent) calc(var(--a, 0) * 90%), var(--surface)); }
+.cal-d.hot { color:var(--on-accent); }
+.cal-d.fut { background:transparent; outline:1px dashed var(--line); outline-offset:-1px; color:var(--muted); }
+.cal-d.today { box-shadow:inset 0 0 0 1.5px var(--cream); }
+.mini-stats { display:flex; gap:6px 18px; flex-wrap:wrap; font-size:0.8rem; color:var(--cream-dim); margin-top:12px; }
+.mini-stats b { color:var(--cream); font-weight:500; }
+/* Kept vs net worth */
+.kb { display:flex; gap:8px; height:150px; }
+.kb-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0; }
+.kb-plot { position:relative; flex:1; width:100%; }
+.kb-base { position:absolute; left:-4px; right:-4px; border-top:1px solid var(--line); }
+.kb-bar { position:absolute; width:32%; max-width:16px; min-height:2px; border-radius:3px; }
+.kb-bar.k { left:16%; background:var(--accent); }
+.kb-bar.n { right:16%; background:var(--green); }
+.kb-bar.n.neg { background:var(--red); }
+/* Next milestone */
+.ms { display:flex; align-items:center; gap:18px; }
+.ring { position:relative; flex:0 0 auto; width:116px; height:116px; }
+.ring svg { width:100%; height:100%; transform:rotate(-90deg); }
+.ring-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:1.35rem; font-weight:500; }
+.ms-main { min-width:0; }
+.ms-main .big { font-size:1.6rem; }
+.big.list-total { font-size:1.35rem; }   /* Holdings and Debt paydown: a smaller total, room for the list */
+/* Holdings and Debt paydown are one card size. Every row is listed; the list fills the card
+   (its height comes from the row, not from the list) and scrolls past that.
+   The minimum keeps about three and a half rows in view when the card stands alone. */
+.scroll-list { flex:1 1 auto; height:0; min-height:150px; overflow-y:auto; margin-top:12px; padding-right:6px; }
+.w-body > .scroll-list { flex-shrink:1; }
+</style>
+</head>
+<body>
+
+<!-- ══ SIGN IN ══ -->
+<div id="authScreen" class="hidden">
+  <div class="auth-panel">
+    <a class="brand" href="/">VestlyFi</a>
+    <h1 class="auth-title">Dashboard</h1>
+    <p class="auth-sub">Your net worth and budget in one place.</p>
+    <div class="auth-ctas">
+      <a class="btn btn-gold btn-block" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fdashboard%2F">Create free account</a>
+      <a class="btn btn-ghost btn-block" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fdashboard%2F">Sign in</a>
+    </div>
+    <p class="auth-alt">Or <button class="link-btn" onclick="startSample()">see it with sample data</button>.</p>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="appScreen" class="hidden">
+  <div class="vf-shell"><aside data-vf-nav data-active="dashboard"></aside><script src="/assets/app-nav.js"></script><div class="vf-main">
+  <div class="app" id="app">
+    <div class="topbar">
+      <div class="topbar-left"><a class="brand" href="/">VestlyFi</a><span class="pill">Beta</span></div>
+      <div class="topbar-title head-row"><div><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div></div><div class="hu-row js-lu"></div></div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost" id="customizeBtn" onclick="setEditing(true)">Customize</button>
+        <button class="icon-btn theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Switch theme"><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg></button>
+        <div class="acct-wrap">
+          <button class="icon-btn acct-btn" id="acctBtn" onclick="toggleAcctMenu()" aria-label="Account" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg></button>
+          <div class="acct-menu" id="acctMenu" role="menu" hidden>
+            <div class="acct-who"><div class="acct-who-label" id="acctLabel">Signed in as</div><div class="acct-email" id="userEmail"></div></div>
+            <a class="acct-item" role="menuitem" href="/account/"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>Account settings</a>
+            <button class="acct-item" role="menuitem" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span id="signOutLabel">Sign out</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sample-bar hidden" id="sampleBar"><span><b>Sample data.</b> Nothing here is yours.</span><button class="btn btn-gold" onclick="exitSample()">Exit sample</button></div>
+
+    <div class="dash-head">
+      <div class="head-row"><div><h1 class="dash-title">Home</h1><div class="dash-sub js-date"></div></div><div class="hu-row js-lu"></div></div>
+    </div>
+
+    <div class="edit-bar hidden" id="editBar">
+      <span class="edit-bar-label">Customizing</span>
+      <button class="btn btn-ghost" onclick="openAddSheet()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add widget</button>
+      <button class="btn btn-ghost" onclick="openLayouts()">Layouts</button>
+      <button class="btn btn-gold" onclick="setEditing(false)">Done</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div id="extra"></div>
+  </div>
+  </div></div>
+</div>
+
+<div class="sheet-overlay" id="sheet" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head"><div class="sheet-title" id="sheetTitle"></div><button class="close-x" onclick="closeSheet()" aria-label="Close">&times;</button></div>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirmBox" onclick="if(event.target===this)answerConfirm(false)">
+  <div class="confirm" role="alertdialog" aria-modal="true" aria-labelledby="cfTitle">
+    <div class="cf-title" id="cfTitle"></div>
+    <div class="cf-body" id="cfBody"></div>
+    <div class="cf-actions"><button class="btn btn-ghost" id="cfNo" onclick="answerConfirm(false)"></button><button class="btn btn-gold" id="cfYes" onclick="answerConfirm(true)"></button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
+
+/* The dashboard only reads. Every number comes from the trackers' own
+   tables, with the same math they use, so the two never disagree. */
+let user = null, sample = false, booted = false;
+let D = { entries:[], groups:[], cats:[], accts:[], tx:[], rec:[], debts:[] };
+let layout = null;      // { preset, items:[{ id, type, size, opts }] } once the user customizes
+let editing = false;
+
+/* ── small helpers ── */
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parseYmd = s => { const [y, m, d] = String(s).slice(0, 10).split('-').map(Number); return new Date(y, m - 1, d || 1); };
+const firstOfMonth = d => new Date(d.getFullYear(), d.getMonth(), 1);
+const lastOfMonth = d => new Date(d.getFullYear(), d.getMonth() + 1, 0);
+const sameMonth = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+const monthKey = d => d.getFullYear() + '-' + pad(d.getMonth() + 1);
+const norm = s => String(s || '').trim().toLowerCase();
+const uid = () => Math.random().toString(36).slice(2, 10);
+function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+function money(n){ return VestlyCurrency.fmt(Math.round(Number(n) || 0)); }
+function moneyC(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { style:'currency', currency:VestlyCurrency.code(), minimumFractionDigits:2, maximumFractionDigits:2 }).format(Number(n) || 0); }
+function signed(n){ return (n >= 0 ? '+' : '−') + money(Math.abs(n)); }
+function monthName(d, long){ return d.toLocaleDateString(VestlyCurrency.locale(), { month: long ? 'long' : 'short' }); }
+function shortDate(s){ return parseYmd(s).toLocaleDateString(VestlyCurrency.locale(), { month:'short', day:'numeric' }); }
+/* Recurring: how often, in the budget tracker's words, with a loop icon. */
+const REPEAT_NAME = { weekly:'Every week', biweekly:'Every 2 weeks', monthly:'Every month', yearly:'Every year' };
+const LOOP_IC = '<svg class="loop-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>';
+function toast(t){ const el = document.getElementById('toast'); el.textContent = t; el.className = 'toast show'; clearTimeout(toast._t); toast._t = setTimeout(() => el.className = 'toast', 2200); }
+const CHEV = '<svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24"><polyline points="5 12.5 10 17 19 7"/></svg>';
+const PLUS = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+/* ── Net worth math (same as /net-worth/) ──
+   Each month carries forward the last value logged for every asset and
+   liability, keyed on type + name so a "Silverado" asset and a "Silverado"
+   loan stay separate. */
+function sortedEntries(){ return D.entries.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))); }
+function snapshots(){
+  if (!D.entries.length) return [];
+  const es = sortedEntries();
+  const now = monthKey(new Date());
+  let cur = String(es[0].date).slice(0, 7);
+  const out = [], last = {};
+  let i = 0;
+  while (cur <= now) {
+    while (i < es.length && String(es[i].date).slice(0, 7) <= cur) { const e = es[i++]; last[e.type + '\u0000' + e.category] = { type:e.type, value:Number(e.value) || 0 }; }
+    let a = 0, l = 0;
+    for (const c of Object.values(last)) { if (c.type === 'asset') a += c.value; else l += c.value; }
+    out.push({ month:cur, assets:a, liabilities:l, net:a - l });
+    const [y, m] = cur.split('-').map(Number);
+    cur = m === 12 ? (y + 1) + '-01' : y + '-' + pad(m + 1);
+  }
+  return out;
+}
+/* Current value of every asset and liability; rows add up to the latest snapshot. */
+function holdings(){
+  const last = {};
+  for (const e of sortedEntries()) last[e.type + '\u0000' + e.category] = { type:e.type, category:e.category, value:Number(e.value) || 0, date:e.date };
+  return Object.values(last);
+}
+/* Value of each asset and liability as of the end of a month ("2026-05"). */
+function holdingsAt(k){
+  const out = {};
+  for (const e of sortedEntries()) { if (String(e.date).slice(0, 7) > k) break; out[e.type + '\u0000' + e.category] = { type:e.type, category:e.category, value:Number(e.value) || 0 }; }
+  return out;
+}
+const monthLabel = k => { const [y, m] = k.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString(VestlyCurrency.locale(), { month:'short', year:'2-digit' }); };
+
+/* ── Budget math (same as /budget/) ── */
+const groupById = id => D.groups.find(g => g.id === id);
+const catById = id => D.cats.find(c => c.id === id);
+const acctById = id => D.accts.find(a => a.id === id);
+const kindOfCat = c => { const g = c && groupById(c.group_id); return g ? g.kind : null; };
+function txIn(d){ return D.tx.filter(t => sameMonth(parseYmd(t.date), d)); }
+function totals(list){
+  let income = 0, spent = 0, toSaving = 0;
+  for (const t of list) {
+    const c = catById(t.category_id), k = kindOfCat(c), amt = Number(t.amount);
+    if (k === 'transfer') { if (c.counts_as_saving) toSaving -= amt; continue; }
+    if (k === 'income') income += amt;
+    else if (k === 'expense') spent -= amt;
+    else if (amt > 0) income += amt; else spent -= amt;
+  }
+  return { income, spent, toSaving };
+}
+function monthPace(){ const now = new Date(); return now.getDate() / lastOfMonth(now).getDate(); }
+function targetState(s, t){ if (!t) return ''; if (s > t) return 'over'; if (s > t * monthPace() + 0.005) return 'ahead'; return 'ok'; }
+const HUES = { housing:'#7aa7ff', food:'#f0a35e', transportation:'#4cc3b5', personal:'#d08cf0', transfers:'#e8c15a', income:'#5cc28e' };
+const SPARE_HUES = ['#ff8f8f', '#8fd16a', '#6fc8ff', '#f78fc0', '#b3a1ff', '#e8c15a'];
+function groupHue(g){
+  if (!g) return '#8d8d8d';
+  const k = HUES[norm(g.name)]; if (k) return k;
+  let h = 0; for (const ch of String(g.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return SPARE_HUES[h % SPARE_HUES.length];
+}
+/* Spending per expense category (and per subcategory) for one month. */
+function spendBy(d){
+  const byCat = {}, byGroup = {};
+  for (const t of txIn(d)) {
+    const c = catById(t.category_id); if (!c || kindOfCat(c) !== 'expense') continue;
+    const s = -Number(t.amount);
+    byCat[c.id] = (byCat[c.id] || 0) + s;
+    byGroup[c.group_id] = (byGroup[c.group_id] || 0) + s;
+  }
+  return { byCat, byGroup };
+}
+const groupTarget = g => D.cats.filter(c => c.group_id === g.id && !c.hidden && c.monthly_target != null).reduce((a, c) => a + Number(c.monthly_target), 0);
+
+/* What each source has. A widget whose source is empty shows a way to start it. */
+const HAS = {
+  nw: () => D.entries.length > 0,
+  both: () => HAS.nw() && HAS.budget(),
+  any: () => HAS.nw() || D.tx.length > 0 || D.rec.length > 0,
+  budget: () => D.tx.length > 0 || D.rec.length > 0,
+  debts: () => D.debts.some(d => !d.paid_off) || holdings().some(h => h.type === 'liability' && h.value > 0),
+};
+const START = {
+  nw: { href:'/net-worth/', name:'net worth tracker', line:'No net worth entries yet.' },
+  budget: { href:'/budget/', name:'budget tracker', line:'No transactions yet.' },
+  debts: { href:'/debt-tracker/', name:'debt tracker', line:'No debts logged.' },
+};
+
+/* ── Widgets ──
+   Only widgets with something more to show can expand, and expanding
+   changes what they show, not just how big it is. `wide` and `narrow`
+   say what each size shows. */
+const WIDGETS = {
+  'nw-total':      { src:'nw', name:'Net worth', desc:'What you own minus what you owe, and the change since last month.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'nw-trend':      { src:'nw', name:'Net worth over time', desc:'Your net worth each month for the last year.', size:'full', link:['/net-worth/', 'Net worth'] },
+  'nw-sheet':      { src:'nw', name:'Balance sheet', desc:'Your assets and liabilities, adding up to net worth.', size:'half', wide:'Assets and liabilities side by side, up to 8 each.', narrow:'Your top 4 of each.', link:['/net-worth/', 'Net worth'] },
+  'nw-watch':      { src:'nw', name:'One asset or liability', desc:'Pick one and see its value over time.', size:'half', multi:true, config:true, link:['/net-worth/', 'Net worth'] },
+  'bd-add':        { src:'budget', name:'Add transaction', desc:'One big button to the budget tracker’s add screen.', size:'half', link:['/budget/', 'Budget'] },
+  'bd-month':      { src:'budget', name:'This month', desc:'Income, spent, saved & invested, and money out.', size:'half', link:['/budget/', 'Budget'] },
+  'bd-categories': { src:'budget', name:'Spending by category', desc:'Where this month’s money went, against your targets.', size:'half', wide:'Adds the subcategories under each category.', narrow:'Categories only.', link:['/budget/', 'Budget'] },
+  'bd-trend':      { src:'budget', name:'Income and spending', desc:'Money in and out, month by month.', size:'full', link:['/budget/', 'Budget'] },
+  'bd-targets':    { src:'budget', name:'Targets', desc:'Subcategories with a monthly target and how close you are.', size:'half', wide:'Shows every target, in two columns.', narrow:'The 6 closest to their limit.', link:['/budget/', 'Budget'] },
+  'bd-watch':      { src:'budget', name:'One category', desc:'Pick a category or subcategory and follow it month to month.', size:'half', multi:true, config:true, link:['/budget/', 'Budget'] },
+  'bd-recent':     { src:'budget', name:'Recent transactions', desc:'The latest money in and out.', size:'half', link:['/budget/', 'Budget'] },
+  'bd-upcoming':   { src:'budget', name:'Coming up', desc:'Recurring transactions due next.', size:'half', link:['/budget/', 'Budget'] },
+  'flow':          { src:'budget', name:'Money flow', desc:'This month\u2019s income and where it went, in one picture.', size:'full', fixed:'full', link:['/budget/', 'Budget'] },
+  'calendar':      { src:'budget', name:'Spending calendar', desc:'Each day this month, shaded by how much you spent.', size:'half', link:['/budget/', 'Budget'] },
+  'kept':          { src:'both', name:'Kept vs net worth', desc:'What you kept from income next to how your net worth moved.', size:'half' },
+  'bd-pie':        { src:'budget', name:'Spending breakdown', desc:'This month\u2019s spending by category, as a pie.', size:'half', link:['/budget/', 'Budget'] },
+  'milestone':     { src:'nw', name:'Next milestone', desc:'How close you are to your next round number.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'holdings':      { src:'nw', name:'Holdings', desc:'What you own, each asset’s value and its share of the total.', size:'half', link:['/net-worth/', 'Net worth'] },
+  'debts':         { src:'nw', name:'Debt paydown', desc:'What you still owe on each debt and how much is paid off.', size:'half', link:['/net-worth/', 'Net worth'] },
+};
+const canExpand = def => !!def.wide;
+/* Launch set: the widgets that ship. The others stay in the code, switched
+   off, until each one is worth bringing back. */
+const LAUNCH = ['nw-total', 'nw-trend', 'holdings', 'debts', 'bd-add', 'bd-month', 'bd-pie', 'bd-trend', 'bd-upcoming', 'bd-recent'];
+const NAMES = {
+  'nw-total':     ['Net worth total', 'Your net worth today (assets minus liabilities) and the change since last month.'],
+  'nw-trend':     ['Net worth chart', 'Your net worth month by month. Pick 6 months, 1 year, 3 years or all of it.'],
+  'bd-month':     ['This month', 'Income, then what went out (spent plus saved), and what\u2019s left this month.'],
+  'bd-pie':       ['Spending by category', 'A pie of this month\u2019s spending. Hover a slice to see the category.'],
+  'bd-trend':     ['Income vs spending', 'Money in next to money out, month by month. Hover a month for the numbers.'],
+  'bd-upcoming':  ['Recurring transactions', 'Your next repeating bills and paychecks, with their dates.'],
+  'bd-recent':    ['Recent transactions', 'The last few transactions you logged.'],
+};
+for (const [k, [name, desc]] of Object.entries(NAMES)) Object.assign(WIDGETS[k], { name, desc });
+const SOURCES = [['any', 'Both trackers'], ['both', 'Net worth and budget'], ['nw', 'Net worth'], ['budget', 'Budget'], ['debts', 'Debts']];
+
+/* Starting layouts. The default picks itself from the data you have, and
+   stays automatic until you customize. */
+const PRESETS = {
+  everything: { name:'Everything', desc:'Net worth and budget together.', items:[['nw-total','half'], ['bd-month','half'], ['bd-add','half'], ['nw-trend','full'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-recent','half'], ['bd-trend','full']] },
+  networth:   { name:'Net worth', desc:'Your total, what you own and owe, and how it has changed.', items:[['nw-total','half'], ['holdings','half'], ['debts','half'], ['nw-trend','full']] },
+  budget:     { name:'Budget', desc:'This month, adding a transaction, and where your money goes.', items:[['bd-month','half'], ['bd-add','half'], ['bd-recent','half'], ['bd-upcoming','half'], ['bd-pie','half'], ['bd-trend','full']] },
+};
+function autoPreset(){
+  const nw = HAS.nw(), bd = HAS.budget();
+  return nw && !bd ? 'networth' : bd && !nw ? 'budget' : 'everything';
+}
+function itemsFor(key){ return PRESETS[key].items.map(([type, size]) => ({ id:uid(), type, size, opts:null })); }
+function currentItems(){ return layout ? layout.items : itemsFor(autoPreset()); }
+
+/* Layout lives in this browser for now, per account. */
+const layoutKey = () => 'vf_dash_v1_' + (sample ? 'sample' : user.id);
+/* A saved layout belongs to the user. Rules:
+   1. Never rewrite it on load. Widgets this version doesn't show are parked
+      exactly as they were and saved back untouched; they return if re-enabled.
+      Sizes are kept as saved; what a widget can show is decided when drawing.
+   2. Each layout keeps the placement rule it was arranged under (pack):
+      'dense' = layouts saved before Nov 18 2026 (later cards slide up into
+      holes on three-column screens); 'fill' = keep order and stretch the last
+      card in a short row. Changing defaults or placement must not change how
+      an existing saved layout looks; new behavior goes in a new pack value. */
+const showable = it => !!(it && WIDGETS[it.type] && LAUNCH.includes(it.type));
+function loadLayout(){
+  let v = null;
+  try { v = JSON.parse(localStorage.getItem(layoutKey()) || 'null'); } catch (e) {}
+  if (!v || !Array.isArray(v.items)) { layout = null; return; }
+  const all = v.items.concat(Array.isArray(v.parked) ? v.parked : []);
+  layout = Object.assign({}, v, { items:all.filter(showable), parked:all.filter(it => !showable(it)), pack:v.pack || 'dense' });
+}
+function saveLayout(){ try { localStorage.setItem(layoutKey(), JSON.stringify(layout)); } catch (e) {} }
+function ensureLayout(){ if (!layout) layout = { preset:autoPreset(), pack:'fill', items:itemsFor(autoPreset()), parked:[] }; }
+const packOf = () => layout ? layout.pack || 'dense' : 'fill';
+
+/* ── Rendering ── */
+function render(){
+  const items = currentItems();
+  const grid = document.getElementById('grid'), extra = document.getElementById('extra');
+  document.getElementById('app').classList.toggle('editing', editing);
+  document.getElementById('editBar').classList.toggle('hidden', !editing);
+  document.getElementById('customizeBtn').classList.toggle('hidden', editing);
+  const now = new Date();
+  const today = now.toLocaleDateString(VestlyCurrency.locale(), { weekday:'long', month:'long', day:'numeric' });
+  document.querySelectorAll('.js-date').forEach(el => el.textContent = today);
+  const lu = lastUpdatedHtml();
+  document.querySelectorAll('.js-lu').forEach(el => el.innerHTML = lu);
+
+  const anyData = HAS.nw() || HAS.budget() || D.debts.length > 0;
+  if (!anyData && !editing) {
+    grid.innerHTML = '';
+    extra.innerHTML = `<div class="welcome">${startCard('nw')}${startCard('budget')}</div>`;
+    document.getElementById('customizeBtn').classList.add('hidden');
+    return;
+  }
+  grid.classList.toggle('pack-dense', packOf() === 'dense');
+  fillGapsSoon();
+  grid.innerHTML = items.map((it, i) => widgetHtml(it, i, items.length)).join('') ||
+    '<div class="w full"><div class="w-empty">Your dashboard is empty. Add a widget to start.</div></div>';
+  // Someone using only one tracker sees the other as an option, once, at the bottom.
+  const missing = !editing && ['nw', 'budget'].find(s => !HAS[s]());
+  extra.innerHTML = missing ? `<div class="welcome also">${startCard(missing)}</div>` : '';
+}
+/* Last updated: a permanent line in the page header, one pill per tracker
+   you use, saying when you last updated it. Each pill opens that tracker's
+   update or add screen; hovering shows what you did. */
+function lastUpdatedHtml(){
+  const NW_IC = '<svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+  const BD_IC = '<svg viewBox="0 0 24 24"><path d="M18.5 7.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v12A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5H6.5"/><circle cx="15.5" cy="13.5" r="1.2"/></svg>';
+  const ago = d => { const n = daysAgo(d); return n === 0 ? 'today' : n === 1 ? 'yesterday' : n + ' days ago'; };
+  const pill = (cls, ic, name, d, tip, href) => `<a class="hu ${cls}" href="${href}" title="${escHtml(tip)}"><span class="hu-ic">${ic}</span><span><b>${name}</b><span class="hu-w"> updated</span> ${ago(d)}</span></a>`;
+  const list = names => names.length <= 2 ? names.join(' and ') : `${names[0]} and ${names.length - 1} more`;
+  const out = [];
+  if (HAS.nw()) {
+    // When you last saved, not the month the values are for; and what you saved that day.
+    const stamp = e => String(e.updated_at || e.created_at || e.date);
+    const lastE = D.entries.reduce((a, e) => !a || stamp(e) > stamp(a) ? e : a, null);
+    const d = stamp(lastE).length > 10 ? new Date(stamp(lastE)) : parseYmd(stamp(lastE)), day = ymd(d);
+    const names = [...new Set(D.entries.filter(e => { const x = stamp(e); return ymd(x.length > 10 ? new Date(x) : parseYmd(x)) === day; }).map(e => e.category))];
+    out.push(pill('nw', NW_IC, 'Net worth', d, `Updated ${list(names)} on ${shortDate(day)}`, '/net-worth/?update=1'));
+  }
+  if (D.tx.length) {
+    // The transaction you logged most recently (by when you logged it).
+    const stamp = x => String(x.created_at || x.date);
+    const t = D.tx.reduce((a, x) => !a || stamp(x) > stamp(a) ? x : a, null);
+    const c = catById(t.category_id), amt = Number(t.amount);
+    const logged = t.created_at ? new Date(t.created_at) : parseYmd(t.date);
+    out.push(pill('bd', BD_IC, 'Budget', logged, `Last logged: ${t.description || (c ? c.name : 'Uncategorized')} ${amt > 0 ? '+' : '−'}${moneyC(Math.abs(amt))} on ${shortDate(ymd(logged))}`, '/budget/?add=1'));
+  }
+  return out.join('');
+}
+function startCard(src){
+  const t = src === 'nw'
+    ? { h:'Net worth tracker', p:'Log what you own and owe once a month and watch the total grow.', a:'Start tracking net worth' }
+    : { h:'Budget tracker', p:'Log spending and income to see where your money goes each month.', a:'Start a budget' };
+  return `<a class="start" href="${START[src].href}"><h3>${t.h}</h3><p>${t.p}</p><span class="btn btn-gold">${t.a}</span></a>`;
+}
+function widgetHtml(it, i, n){
+  const def = WIDGETS[it.type]; if (!def) return '';
+  let body;
+  try { body = HAS[def.src]() ? RENDER[it.type](it) : emptyFor(def.src); }
+  catch (e) { console.error(e); body = '<div class="w-empty">This widget could not load.</div>'; }
+  const title = (RENDER_TITLE[it.type] && RENDER_TITLE[it.type](it)) || def.name;
+  const wide = def.fixed === 'full' || it.size === 'full';
+  const tools = editing ? `<div class="w-tools">
+      <button class="t-btn grip" onpointerdown="armDrag(event,'${it.id}',true)" onkeydown="gripKey(event,'${it.id}')" aria-label="Move ${escHtml(def.name)}. Drag, or use the arrow keys." title="Drag to move"><svg viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+      <button class="t-btn" onclick="moveItem('${it.id}',-1)" ${i === 0 ? 'disabled' : ''} aria-label="Move earlier" title="Move earlier"><svg viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></svg></button>
+      <button class="t-btn" onclick="moveItem('${it.id}',1)" ${i === n - 1 ? 'disabled' : ''} aria-label="Move later" title="Move later"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></button>
+      ${canExpand(def) ? `<button class="t-pill" onclick="toggleSize('${it.id}')">${wide ? 'Compact' : 'Expand'}</button>` : ''}
+      ${def.config ? `<button class="t-pill" onclick="configure('${it.id}')">Change</button>` : ''}
+      <button class="t-btn danger" onclick="removeItem('${it.id}')" aria-label="Remove ${escHtml(def.name)}"><svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+    </div>${canExpand(def) ? `<div class="t-hint">${wide ? 'Compact: ' + def.narrow : 'Expand: ' + def.wide}</div>` : ''}` : '';
+  const link = !editing && def.link ? `<a class="w-link" href="${def.link[0]}">${def.link[1]}${CHEV}</a>` : '';
+  const grab = editing ? ` onpointerdown="armDrag(event,'${it.id}',false)"` : '';
+  return `<section class="w${wide ? ' full' : ''}"id="w_${it.id}" data-id="${it.id}"${grab}>${tools}<div class="w-head"><h2 class="w-title">${escHtml(title)}</h2>${link}</div><div class="w-body">${body}</div></section>`;
+}
+function emptyFor(src){ if (src === 'both' || src === 'any') src = HAS.nw() ? 'budget' : 'nw'; const s = START[src]; return `<div class="w-empty">${s.line} <a href="${s.href}">Open the ${s.name}</a></div>`; }
+
+/* Line chart: vector-effect keeps the stroke even while the SVG stretches. */
+/* vals: one series of numbers, or a list of { vals, color } sharing one scale.
+   The first series gets the soft fill. */
+function lineChart(vals, cls, labels){
+  const series = typeof vals[0] === 'number' ? [{ vals }] : vals;
+  const W = 600, H = 170, P = 8, all = series.flatMap(s => s.vals), len = series[0].vals.length;
+  let min = Math.min(...all), max = Math.max(...all);
+  if (min === max) { min -= 1; max += 1; }
+  const x = i => len === 1 ? W / 2 : P + i * (W - 2 * P) / (len - 1);
+  const y = v => P + (H - 2 * P) * (1 - (v - min) / (max - min));
+  const pts = s => s.vals.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1));
+  const first = pts(series[0]);
+  const area = `M${x(0).toFixed(1)},${H} L${first.join(' L')} L${x(len - 1).toFixed(1)},${H} Z`;
+  const zero = min < 0 && max > 0 ? `<line class="lc-zero" x1="0" x2="${W}" y1="${y(0).toFixed(1)}" y2="${y(0).toFixed(1)}" vector-effect="non-scaling-stroke"/>` : '';
+  const lines = series.map(s => `<polyline class="lc-line" points="${pts(s).join(' ')}" vector-effect="non-scaling-stroke"${s.color ? ` style="stroke:${s.color}"` : ''}/>`).join('');
+  if (labels && series.length === 1) {
+    const id = 'lc_' + uid();
+    LCS[id] = { vals:series[0].vals, labels, min, max, W, H, P };
+    return `<div class="lc hover ${cls || ''}" id="${id}" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}${lines}</svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>`;
+  }
+  return `<div class="lc ${cls || ''}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path class="lc-area" d="${area}"/>${zero}${lines}</svg></div>`;
+}
+function lastMonths(n){ const now = new Date(), out = []; for (let i = n - 1; i >= 0; i--) out.push(new Date(now.getFullYear(), now.getMonth() - i, 1)); return out; }
+
+/* Time ranges for Net worth over time; the choice is kept in this browser. */
+const RANGES = [{ key:'6m', label:'6M', months:6 }, { key:'1y', label:'1Y', months:12 }, { key:'3y', label:'3Y', months:36 }, { key:'all', label:'All', months:0 }];
+const RANGE_KEY = 'vf_dash_nw_range';
+function nwRange(){ let k = '1y'; try { k = localStorage.getItem(RANGE_KEY) || k; } catch (e) {} return RANGES.find(x => x.key === k) || RANGES[1]; }
+function setNwRange(k){ try { localStorage.setItem(RANGE_KEY, k); } catch (e) {} render(); }
+function nwTrendBody(it, s){ return RENDER['nw-trend-body'](it, s); }
+function daysAgo(d){ const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(d); b.setHours(0, 0, 0, 0); return Math.max(0, Math.round((a - b) / 864e5)); }
+function agoText(n){ return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : n + ' days ago'; }
+/* No gaps: widgets keep their order; when a row would end with an empty
+   space (the next widget is full width, or the list ends), the last widget
+   in that row stretches across it. Re-checked when the column count changes. */
+function fillGaps(){
+  const grid = document.getElementById('grid'); if (!grid) return;
+  const C = gridCols();
+  const items = [...grid.children].filter(n => n.classList.contains('w') && !n.classList.contains('dragging'));
+  items.forEach(n => { n.style.gridColumn = ''; n.style.gridRow = ''; });
+  if (C < 2 || packOf() !== 'fill') return;
+  let col = 0, last = null;
+  const close = () => { if (last && col > 0 && col < C) last.style.gridColumn = 'span ' + (1 + C - col); col = 0; last = null; };
+  for (const n of items) {
+    const span = n.classList.contains('full') ? C : 1;
+    if (col + span > C) close();
+    col += span; last = n;
+    if (col >= C) { col = 0; last = null; }
+  }
+  close();
+}
+function fillGapsSoon(){ requestAnimationFrame(fillGaps); }
+let gapCols = 0;
+/* Column count from the same breakpoints as the .grid CSS. Reading the
+   computed grid would count the extra columns a placed widget creates. */
+function gridCols(){ return matchMedia('(max-width:720px)').matches ? 1 : matchMedia('(min-width:1400px)').matches ? 3 : 2; }
+window.addEventListener('resize', () => { const g = document.getElementById('grid'); if (!g) return; const c = gridCols(); if (c !== gapCols) { gapCols = c; fillGaps(); } });
+/* Net worth total footer: one bar split into assets (green) and liabilities
+   (red) by their share of the two together, with that share under each side. */
+function nwOwnBar(s, last){
+  const tot = last.assets + last.liabilities;
+  if (!(tot > 0)) return '';
+  const a = last.assets / tot, l = 1 - a;
+  return `<div class="own">
+    <div class="own-bar" aria-hidden="true">${a > 0 ? `<span class="own-mine" style="width:${(a * 100).toFixed(1)}%"></span>` : ''}${l > 0 ? `<span class="own-owed" style="width:${(l * 100).toFixed(1)}%"></span>` : ''}</div>
+    <div class="own-k"><span class="up">${Math.round(a * 100)}% assets</span><span class="down">${Math.round(l * 100)}% liabilities</span></div>
+  </div>`;
+}
+/* Pie hover: the middle shows the category under the pointer. */
+const PIES = {};
+function pieOver(e, id, tap){
+  const t = e.target.closest('[data-i]');
+  if (!t) { pieFocus(id, -1); return; }
+  const i = Number(t.dataset.i), el = document.getElementById(id);
+  pieFocus(id, tap && el.dataset.focus === String(i) ? -1 : i);
+}
+function pieFocus(id, i){
+  const el = document.getElementById(id), p = PIES[id]; if (!el || !p) return;
+  el.dataset.focus = String(i);
+  el.classList.toggle('focus', i >= 0);
+  el.querySelectorAll('[data-i]').forEach(n => n.classList.toggle('on', Number(n.dataset.i) === i));
+  const mid = el.querySelector('.pie-mid'), x = p.top[i];
+  mid.innerHTML = x ? `<b>${money(x.v)}</b><span>${escHtml(x.name)} · ${Math.round(x.v / p.total * 100)}%</span>` : `<b>${money(p.total)}</b><span>spent in ${p.month}</span>`;
+}
+/* Bar hover: the label of the exact piece under the pointer, placed above it. */
+function tbMove(e){
+  const wrap = e.currentTarget, tip = wrap.querySelector('.tb-float'), tb = wrap.querySelector('.tb');
+  // The piece under the pointer; failing that, the nearest piece within 10px in
+  // that month, so thin slices are easy to land on.
+  let t = e.target.closest('[data-tip]');
+  const col = !t && e.target.closest('.tb-col');
+  if (col) {
+    let best = null, bestD = 10;
+    for (const n of col.querySelectorAll('[data-tip]')) {
+      const r = n.getBoundingClientRect();
+      const dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right), dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+      const dd = Math.hypot(dx, dy); if (dd < bestD) { bestD = dd; best = n; }
+    }
+    t = best;
+  }
+  wrap.querySelectorAll('.hot').forEach(n => { if (n !== t) n.classList.remove('hot'); });
+  if (!t) { tip.classList.remove('on'); tb.classList.remove('hl'); return; }
+  t.classList.add('hot'); tb.classList.add('hl');
+  if (tip.dataset.for !== t.dataset.tip) { tip.innerHTML = t.dataset.tip; tip.dataset.for = t.dataset.tip; }
+  const w = wrap.getBoundingClientRect(), r = t.getBoundingClientRect();
+  const half = tip.offsetWidth / 2, x = Math.max(half, Math.min(w.width - half, r.left + r.width / 2 - w.left));
+  tip.style.left = x + 'px'; tip.style.top = (r.top - w.top) + 'px';
+  tip.classList.add('on');
+}
+function tbLeave(wrap){ wrap.querySelector('.tb-float').classList.remove('on'); wrap.querySelector('.tb').classList.remove('hl'); wrap.querySelectorAll('.hot').forEach(n => n.classList.remove('hot')); }
+/* Line chart hover: the month and value under the pointer. */
+const LCS = {};
+function lcMove(e, id){
+  const el = document.getElementById(id), d = LCS[id]; if (!el || !d) return;
+  const r = el.getBoundingClientRect(), n = d.vals.length;
+  const fx = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  const i = d.cols ? Math.max(0, Math.min(n - 1, Math.floor((fx * d.W - d.P) / d.cols)))
+    : n === 1 ? 0 : Math.max(0, Math.min(n - 1, Math.round((fx * d.W - d.P) / ((d.W - 2 * d.P) / (n - 1)))));
+  const xp = (d.cols ? (d.P + (i + 0.5) * d.cols) / d.W : n === 1 ? 0.5 : (d.P + i * (d.W - 2 * d.P) / (n - 1)) / d.W) * 100;
+  const yp = (d.fy ? d.fy[i] : (d.P + (d.H - 2 * d.P) * (1 - (d.vals[i] - d.min) / (d.max - d.min))) / d.H) * r.height;
+  el.classList.add('show');
+  el.querySelector('.lc-guide').style.left = xp + '%';
+  const dot = el.querySelector('.lc-dot'); dot.style.left = xp + '%'; dot.style.top = yp + 'px';
+  const tip = el.querySelector('.lc-tip');
+  tip.style.top = yp + 'px';
+  const half = (tip.offsetWidth || 120) / 2, px = xp / 100 * r.width;
+  tip.style.left = Math.max(half, Math.min(r.width - half, px)) + 'px';
+  tip.innerHTML = d.tips ? d.tips[i] : `<b>${money(d.vals[i])}</b>${escHtml(d.labels[i])}`;
+}
+/* Shared y scale with round tick values, and short money labels for the axis. */
+function niceTicks(lo, hi, n){
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const raw = (hi - lo) / (n || 4), mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+  const step = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * mag;
+  const out = []; for (let v = Math.floor(lo / step) * step; v <= Math.ceil(hi / step) * step + step / 2; v += step) out.push(Math.round(v / step) * step || 0);   // || 0 turns -0 into 0
+  return out;
+}
+function moneyShort(n){ return new Intl.NumberFormat(VestlyCurrency.locale(), { style:'currency', currency:VestlyCurrency.code(), notation:'compact', maximumFractionDigits:1 }).format(n); }
+/* Net worth chart: the net worth line with a y axis of round values. */
+function nwChart(s){
+  const W = 600, H = 200, P = 6, n = s.length, labels = s.map(x => monthLabel(x.month));
+  const x = i => n === 1 ? W / 2 : P + i * (W - 2 * P) / (n - 1);
+  const ticks = niceTicks(Math.min(...s.map(m => m.net)), Math.max(...s.map(m => m.net)), 4), t0 = ticks[0], t1 = ticks[ticks.length - 1];
+  const y = v => (t1 - v) / (t1 - t0) * H;
+  const grid = ticks.map(t => `<line class="lc-grid" x1="0" x2="${W}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" vector-effect="non-scaling-stroke"/>`).join('');
+  const linePts = s.map((m, i) => `${x(i).toFixed(1)},${y(m.net).toFixed(1)}`).join(' ');
+  const fill = `<path class="lc-area" d="M${x(0).toFixed(1)},${H} L${linePts.split(' ').join(' L')} L${x(n - 1).toFixed(1)},${H} Z"/>`;
+  const id = 'lc_' + uid();
+  LCS[id] = { vals:s.map(m => m.net), labels, W, P, fy:s.map(m => y(m.net) / H) };
+  return `<div class="yc"><div class="y-labels" style="height:${H}px">${ticks.map(t => `<span style="top:${(y(t) / H * 100).toFixed(1)}%">${moneyShort(t)}</span>`).join('')}</div>
+    <div class="lc hover" id="${id}" style="height:${H}px" onpointermove="lcMove(event,'${id}')" onpointerdown="lcMove(event,'${id}')" onpointerleave="lcLeave('${id}')"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${grid}${fill}<polyline class="lc-line" points="${linePts}" vector-effect="non-scaling-stroke"/></svg><span class="lc-guide"></span><span class="lc-dot"></span><span class="lc-tip"></span></div>
+    <span></span><div class="lc-x"><span>${labels[0]}</span><span>${labels[n - 1]}</span></div></div>`;
+}
+function lcLeave(id){ const el = document.getElementById(id); if (el) el.classList.remove('show'); }
+const RENDER_TITLE = {
+  'nw-watch': it => it.opts ? it.opts.category : null,
+  'bd-watch': it => { if (!it.opts) return null; const x = it.opts.kind === 'group' ? groupById(it.opts.id) : catById(it.opts.id); return x ? x.name : null; },
+};
+const RENDER = {
+  'nw-total'(){
+    const s = snapshots(), last = s[s.length - 1], prev = s.length > 1 ? s[s.length - 2] : null;
+    const delta = prev ? `<div class="delta ${last.net - prev.net >= 0 ? 'up' : 'down'}">${signed(last.net - prev.net)} since ${monthLabel(prev.month)}</div>` : '<div class="delta">First month logged</div>';
+    return `<div class="big${last.net < 0 ? ' neg' : ''}">${money(last.net)}</div>${delta}
+      <div class="eq"><div><div class="eq-k">Assets</div><div class="eq-v up">${money(last.assets)}</div></div><div><div class="eq-k">Minus liabilities</div><div class="eq-v down">${money(last.liabilities)}</div></div></div>` + nwOwnBar(s, last);
+  },
+  'nw-trend'(it){
+    const r = nwRange(), all = snapshots(), s = r.months ? all.slice(-r.months) : all;
+    const pills = '<div class="rng" role="group" aria-label="Time range">' + RANGES.map(x => `<button class="${x.key === r.key ? 'on' : ''}" onclick="setNwRange('${x.key}')" aria-pressed="${x.key === r.key}">${x.label}</button>`).join('') + '</div>';
+    return `<div class="nw-tools">${pills}</div>` + nwTrendBody(it, s);
+  },
+  'bd-pie'(it){
+    const { byGroup } = spendBy(new Date());
+    const rows = D.groups.filter(g => g.kind === 'expense' && (byGroup[g.id] || 0) > 0.5).map(g => ({ name:g.name, v:byGroup[g.id], color:groupHue(g) })).sort((a, b) => b.v - a.v);
+    const top = rows.slice(0, 6), rest = rows.slice(6).reduce((a, x) => a + x.v, 0);
+    if (rest > 0.5) top.push({ name:'Other', v:rest, color:'#8d8d8d' });
+    const total = top.reduce((a, x) => a + x.v, 0);
+    if (!total) return '<div class="w-empty">Nothing spent yet this month.</div>';
+    const id = 'pie_' + it.id, R = 44, C = 2 * Math.PI * R;
+    PIES[id] = { top, total, month:monthName(new Date(), true) };
+    let off = 0;
+    const arcs = top.map((x, i) => { const len = x.v / total * C, a = `<circle class="pie-seg" data-i="${i}" cx="60" cy="60" r="${R}" fill="none" stroke="${x.color}" stroke-width="15" stroke-dasharray="${Math.max(0.5, len - 1.4).toFixed(2)} ${C.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"/>`; off += len; return a; }).join('');
+    // Hover (or tap) a slice or a key to see that category in the middle.
+    return `<div class="pie" id="${id}" onpointerover="pieOver(event,'${id}')" onpointerleave="pieFocus('${id}',-1)" onclick="pieOver(event,'${id}',true)">
+      <div class="pie-chart"><svg viewBox="0 0 120 120" role="img" aria-label="Spending by category">${arcs}</svg><div class="pie-mid"><b>${money(total)}</b><span>spent in ${PIES[id].month}</span></div></div>
+      <div class="pie-keys">${top.map((x, i) => `<button class="pie-key" data-i="${i}" type="button"><span class="dot" style="--h:${x.color}"></span>${escHtml(x.name)} ${Math.round(x.v / total * 100)}%</button>`).join('')}</div></div>`;
+  },
+  'nw-trend-body'(it, s){
+    if (s.length < 2) return '<div class="w-empty">The chart starts once you have two months logged.</div>';
+    const first = s[0], last = s[s.length - 1], ch = last.net - first.net;
+    const ca = last.assets - first.assets, cl = last.liabilities - first.liabilities;
+    const meta = `<div class="lc-meta"><span>Change <b class="${ch >= 0 ? 'up' : 'down'}">${signed(ch)}</b></span><span>Assets <b class="${ca >= 0 ? 'up' : 'down'}">${signed(ca)}</b></span><span>Liabilities <b class="${cl <= 0 ? 'up' : 'down'}">${signed(cl)}</b></span></div>`;
+    {
+      // The chart plus what moved it, the biggest changes over the same months.
+      // A liability going down is good for net worth, so it shows green.
+      // One size only; a half-width card from an older saved layout stacks What moved under the chart.
+      const then = holdingsAt(first.month), nowH = holdingsAt(last.month);
+      const moves = [...new Set([...Object.keys(then), ...Object.keys(nowH)])].map(k => {
+        const a = then[k], b = nowH[k], h = b || a, d = (b ? b.value : 0) - (a ? a.value : 0);
+        return { name:h.category, type:h.type, d, good:h.type === 'asset' ? d >= 0 : d <= 0 };
+      }).filter(m => Math.abs(m.d) >= 1).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 5);
+      return `<div class="cols nwt${it.size === 'full' ? '' : ' stack'}"><div>${nwChart(s)}${meta}</div>
+        <div class="col2"><div class="row sec" style="padding-top:0"><span class="k">What moved</span><span class="v"></span></div>${moves.map(m => `<div class="row"><span class="k">${escHtml(m.name)} <small style="color:var(--muted)">${m.type === 'asset' ? 'asset' : 'liability'}</small></span><span class="v ${m.good ? 'up' : 'down'}">${signed(m.d)}</span></div>`).join('') || '<div class="w-empty">No changes yet.</div>'}</div></div>`;
+    }
+  },
+  'nw-sheet'(it){
+    const h = holdings().filter(x => x.value !== 0), wide = it.size === 'full', show = wide ? 8 : 4;
+    const block = (type, label) => {
+      const rows = h.filter(x => x.type === type).sort((a, b) => b.value - a.value);
+      const total = rows.reduce((a, x) => a + x.value, 0);
+      const top = rows.slice(0, show), rest = rows.slice(show);
+      let html = `<div class="row sec"><span class="k">${label}</span><span class="v ${type === 'asset' ? 'up' : 'down'}">${money(total)}</span></div>`;
+      html += top.map(x => `<div class="row"><span class="k">${escHtml(x.category)}</span><span class="v">${money(x.value)}</span></div>`).join('');
+      if (rest.length) html += `<div class="row"><span class="k">${rest.length} more</span><span class="v">${money(rest.reduce((a, x) => a + x.value, 0))}</span></div>`;
+      return { html, total };
+    };
+    const a = block('asset', 'Assets'), l = block('liability', 'Liabilities');
+    const total = `<div class="row total"><span class="k">Net worth${wide ? ` <small style="color:var(--muted);font-weight:400">= ${money(a.total)} − ${money(l.total)}</small>` : ''}</span><span class="v">${money(a.total - l.total)}</span></div>`;
+    return wide ? `<div class="cols"><div>${a.html}</div><div>${l.html}</div></div>${total}` : `<div>${a.html}${l.html}${total}</div>`;
+  },
+  'nw-watch'(it){
+    if (!it.opts) return `<div class="w-empty">Pick an asset or liability to follow.<br><button class="btn btn-ghost" onclick="configure('${it.id}')">Pick one</button></div>`;
+    const es = sortedEntries().filter(e => e.type === it.opts.type && norm(e.category) === norm(it.opts.category));
+    if (!es.length) return '<div class="w-empty">No entries for this one anymore.</div>';
+    const byMonth = {}; for (const e of es) byMonth[String(e.date).slice(0, 7)] = Number(e.value) || 0;
+    const keys = Object.keys(byMonth).sort().slice(-12), vals = keys.map(k => byMonth[k]);
+    const cur = vals[vals.length - 1], ch = cur - vals[0];
+    const good = it.opts.type === 'asset' ? ch >= 0 : ch <= 0;
+    return `<div class="big">${money(cur)}</div><div class="delta">${it.opts.type === 'asset' ? 'Asset' : 'Liability'}${keys.length > 1 ? ` · <span class="${good ? 'up' : 'down'}">${signed(ch)}</span> since ${monthLabel(keys[0])}` : ''}</div>` +
+      (vals.length > 1 ? lineChart(vals, 'spark') : '');
+  },
+  'bd-month'(){
+    const t = totals(txIn(new Date())), out = t.spent + t.toSaving, net = t.income - t.spent;
+    return `<div class="mo">
+      <div class="mo-in"><div class="stat-k">Income</div><div class="mo-big up">${money(t.income)}</div></div>
+      <div class="mo-eq">
+        <div class="stat-k">Spent</div><span></span><div class="stat-k">Saved</div><span></span><div class="stat-k">Total outflow</div>
+        <div class="mo-v">${money(t.spent)}</div><span class="mo-op">+</span><div class="mo-v${t.toSaving > 0.5 ? ' up' : ''}">${money(t.toSaving)}</div><span class="mo-op">=</span><div class="mo-v">${money(out)}</div>
+      </div>
+      <div class="mo-net"><span class="stat-k">Monthly net</span><span class="mo-net-v ${net >= 0 ? 'up' : 'down'}">${signed(net)}${t.toSaving > 0.5 ? '<sup class="mo-mark">*</sup>' : ''}</span>${t.toSaving > 0.5 ? `<span></span><span class="mo-note">* Includes ${money(t.toSaving)} saved</span>` : ''}</div>
+    </div>`;
+  },
+  'bd-categories'(it){
+    const { byGroup, byCat } = spendBy(new Date()), wide = it.size === 'full';
+    const rows = D.groups.filter(g => g.kind === 'expense').map(g => ({ g, s:byGroup[g.id] || 0, t:groupTarget(g) })).filter(r => r.s > 0 || r.t > 0).sort((a, b) => b.s - a.s);
+    if (!rows.length) return '<div class="w-empty">Nothing spent yet this month.</div>';
+    const max = Math.max(...rows.map(r => Math.max(r.s, r.t)));
+    const html = rows.slice(0, wide ? 12 : 7).map(r => {
+      const st = targetState(r.s, r.t), pct = Math.max(0, Math.min(100, (r.t ? r.s / r.t : r.s / max) * 100));
+      // Expanded: the subcategories that make up each category's total.
+      const subs = wide ? D.cats.filter(c => c.group_id === r.g.id && (byCat[c.id] || 0) > 0).sort((a, b) => byCat[b.id] - byCat[a.id])
+        .map(c => `<div class="sub"><span>${escHtml(c.name)}</span><span>${money(byCat[c.id])}${c.monthly_target != null ? ` of ${money(c.monthly_target)}` : ''}</span></div>`).join('') : '';
+      return `<div class="cb" style="--h:${groupHue(r.g)}"><div class="cb-top"><span class="cb-name"><span class="dot"></span><span>${escHtml(r.g.name)}</span></span><span class="cb-v">${money(r.s)}${r.t ? `<small> of ${money(r.t)}</small>` : ''}</span></div><div class="track"><span class="fill ${st}" style="width:${pct.toFixed(1)}%"></span></div>${subs ? `<div style="margin-top:6px">${subs}</div>` : ''}</div>`;
+    });
+    return wide ? `<div class="cols">${html.join('')}</div>` : html.join('');
+  },
+  'bd-trend'(it){
+    const months = lastMonths(it.size === 'full' ? 12 : 6);
+    const data = months.map(m => ({ m, t:totals(txIn(m)), by:spendBy(m).byGroup }));
+    // Same category order in every month: biggest over the whole period at the bottom.
+    const sum = {}; data.forEach(d => { for (const [g, v] of Object.entries(d.by)) if (v > 0) sum[g] = (sum[g] || 0) + v; });
+    const cats = Object.keys(sum).sort((a, b) => sum[b] - sum[a]).slice(0, 6).map(id => { const g = groupById(id); return { id, name:g ? g.name : 'Other', color:groupHue(g) }; });
+    const max = Math.max(1, ...data.map(d => Math.max(d.t.income, d.t.spent)));
+    // Average over the months that have anything logged.
+    const logged = data.filter(d => d.t.income > 0.5 || d.t.spent > 0.5);
+    const avg = logged.reduce((a, d) => a + d.t.spent, 0) / Math.max(1, logged.length);
+    const tipAttr = html => `data-tip="${escHtml(html)}"`;
+    // Phones show the latest 6 of the 12 months; the older ones are marked so CSS can hide them.
+    const cols = data.map((d, i) => {
+      const mn = monthName(d.m, true);
+      const segs = cats.map(c => ({ c, v:Math.max(0, d.by[c.id] || 0) })).filter(x => x.v > 0);
+      const other = Math.max(0, d.t.spent - segs.reduce((a, x) => a + x.v, 0));
+      if (other > 0.5) segs.push({ c:{ name:'Other', color:'#8d8d8d' }, v:other });
+      // Each piece carries its own label: the slice you point at is the one shown.
+      const inBar = d.t.income > 0.5 ? `<span class="tb-bar in" style="height:${(d.t.income / max * 100).toFixed(1)}%" ${tipAttr(`<span class="t-head"><i style="background:var(--green)"></i>${mn} income</span><b>${money(d.t.income)}</b>`)}></span>` : '';
+      const outBar = d.t.spent > 0.5 ? `<span class="tb-stack" style="height:${(d.t.spent / max * 100).toFixed(1)}%">${segs.map(x => `<span style="flex-grow:${x.v.toFixed(2)};background:${x.c.color}" ${tipAttr(`<span class="t-head"><i style="background:${x.c.color}"></i>${escHtml(x.c.name)} in ${mn}</span><b>${money(x.v)}</b> · ${Math.round(x.v / d.t.spent * 100)}% of ${money(d.t.spent)} spent`)}></span>`).join('')}</span>` : '';
+      return `<div class="tb-col${data.length - i > 6 ? ' tb-old' : ''}"><div class="tb-bars">${inBar}${outBar}</div><span class="tb-lbl">${monthName(d.m)} ${String(d.m.getFullYear()).slice(-2)}</span></div>`;
+    }).join('');
+    return `<div class="tb-wrap" onpointerover="tbMove(event)" onpointermove="tbMove(event)" onpointerdown="tbMove(event)" onpointerleave="tbLeave(this)"><div class="tb">${cols}</div><span class="tb-float"></span></div>`;
+  },
+  'bd-targets'(it){
+    const { byCat } = spendBy(new Date()), wide = it.size === 'full';
+    const rows = D.cats.filter(c => !c.hidden && c.monthly_target != null && Number(c.monthly_target) > 0 && kindOfCat(c) === 'expense').map(c => ({ c, s:byCat[c.id] || 0, t:Number(c.monthly_target) })).sort((a, b) => (b.s / b.t) - (a.s / a.t));
+    if (!rows.length) return `<div class="w-empty">No targets set. <a href="/budget/">Set them in the budget tracker</a></div>`;
+    const html = (wide ? rows : rows.slice(0, 6)).map(r => `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.c.name)}</span></span><span class="cb-v">${money(r.s)}<small> of ${money(r.t)}</small></span></div><div class="track"><span class="fill ${targetState(r.s, r.t)}" style="width:${Math.min(100, r.s / r.t * 100).toFixed(1)}%"></span></div></div>`).join('');
+    return wide ? `<div class="cols">${html}</div>` : html;
+  },
+  'bd-watch'(it){
+    if (!it.opts) return `<div class="w-empty">Pick a category or subcategory to follow.<br><button class="btn btn-ghost" onclick="configure('${it.id}')">Pick one</button></div>`;
+    const isGroup = it.opts.kind === 'group', x = isGroup ? groupById(it.opts.id) : catById(it.opts.id);
+    if (!x) return '<div class="w-empty">This category no longer exists.</div>';
+    const g = isGroup ? x : groupById(x.group_id);
+    const months = lastMonths(6), vals = months.map(m => { const s = spendBy(m); return isGroup ? (s.byGroup[x.id] || 0) : (s.byCat[x.id] || 0); });
+    const cur = vals[vals.length - 1], t = isGroup ? groupTarget(x) : (x.monthly_target != null ? Number(x.monthly_target) : 0);
+    const avg = vals.slice(0, -1).reduce((a, v) => a + v, 0) / Math.max(1, vals.length - 1);
+    const max = Math.max(1, t, ...vals);
+    return `<div class="big">${money(cur)}</div><div class="delta">${t ? `of ${money(t)} this month` : 'this month'} · ${money(avg)} a month before</div>
+      <div class="tb" style="height:110px;margin-top:14px">${months.map((m, i) => `<div class="tb-col"><div class="tb-bars"><span class="tb-bar" style="width:46%;max-width:26px;height:${(vals[i] / max * 100).toFixed(1)}%;background:${i === months.length - 1 ? 'var(--accent)' : groupHue(g)}" title="${money(vals[i])}"></span></div><span class="tb-lbl">${monthName(m)}</span></div>`).join('')}</div>`;
+  },
+  'bd-add'(){
+    // One big button to the budget tracker's full add screen (opens on Spent).
+    return `<a class="add-big" href="/budget/?add=spent"><span class="add-plus"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span><span class="add-lbl">Add a transaction</span><span class="add-sub">Spending or income, in the budget tracker</span></a>`;
+  },
+  'bd-recent'(){
+    // Everything logged this month, newest first, in a list that scrolls; older
+    // months are one link away in the budget tracker.
+    const first = ymd(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+    const list = D.tx.filter(t => String(t.date) >= first).sort((a, b) => String(b.date).localeCompare(String(a.date)) || String(b.created_at || '').localeCompare(String(a.created_at || '')));
+    const more = '<a class="list-more" href="/budget/">See full history in the budget tracker</a>';
+    if (!list.length) return `<div class="w-empty">Nothing logged yet this month. <a href="/budget/">Open the budget tracker</a></div>`;
+    return '<div class="scroll-list">' + list.map(t => {
+      const c = catById(t.category_id), a = acctById(t.account_id), amt = Number(t.amount);
+      const name = t.description || (c ? c.name : 'Uncategorized');
+      const meta = [t.description && c && norm(t.description) !== norm(c.name) ? c.name : null, a ? a.name : null, shortDate(t.date)].filter(Boolean).join(' · ');
+      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(name)}</div><div class="li-meta">${escHtml(meta)}</div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
+    }).join('') + more + '</div>';
+  },
+  'bd-upcoming'(){
+    const list = D.rec.slice().sort((a, b) => String(a.next_date).localeCompare(String(b.next_date))).slice(0, 7);
+    if (!list.length) return `<div class="w-empty">Nothing recurring. <a href="/budget/">Add one in the budget tracker</a></div>`;
+    // Totals per month across every active rule, not just the ones listed: weekly x 52/12, every 2 weeks x 26/12, yearly / 12.
+    const perMonth = r => Number(r.amount) * ({ weekly:52 / 12, biweekly:26 / 12, monthly:1, yearly:1 / 12 }[r.frequency] || 1);
+    // One total: every rule added up as a monthly amount, money in minus money out.
+    const total = Math.round(D.rec.reduce((a, r) => a + perMonth(r), 0));
+    const sum = `<div class="up-sum"><span class="up-k">Per month</span><b class="${total >= 0 ? 'up' : 'down'}">${signed(total)}</b></div>`;
+    return '<div class="up-list">' + list.map(r => {
+      const c = catById(r.category_id), amt = Number(r.amount);
+      return `<div class="li" style="--h:${groupHue(c && groupById(c.group_id))}"><span class="dot"></span><div class="li-main"><div class="li-name">${escHtml(r.description || (c ? c.name : 'Recurring'))}</div><div class="li-meta rec-meta">${LOOP_IC}<span>${REPEAT_NAME[r.frequency] || 'Repeats'}, next ${shortDate(r.next_date)}${r.amount_varies ? ', amount may change' : ''}</span></div></div><div class="li-amt${amt > 0 ? ' in' : ''}">${amt > 0 ? '+' : ''}${moneyC(Math.abs(amt))}</div></div>`;
+    }).join('') + '</div>' + sum;
+  },
+  'flow'(){
+    const now = new Date(), t = totals(txIn(now)), { byGroup } = spendBy(now);
+    const groupsOut = D.groups.filter(g => g.kind === 'expense' && (byGroup[g.id] || 0) > 0.5).map(g => ({ name:g.name, v:byGroup[g.id], color:groupHue(g) })).sort((a, b) => b.v - a.v);
+    const outs = groupsOut.slice(0, 5);
+    const other = groupsOut.slice(5).reduce((a, x) => a + x.v, 0) + Math.max(0, t.spent - groupsOut.reduce((a, x) => a + x.v, 0));
+    if (other > 0.5) outs.push({ name:'Other spending', v:other, color:'#8d8d8d' });
+    if (t.toSaving > 0.5) outs.push({ name:'Saved & invested', v:t.toSaving, color:'var(--green)' });
+    const outTotal = outs.reduce((a, x) => a + x.v, 0), left = t.income - outTotal;
+    if (left > 0.5) outs.push({ name:'Not spent yet', v:left, color:'var(--muted)', soft:true });
+    if (t.income <= 0.5 && outTotal <= 0.5) return '<div class="w-empty">Nothing logged this month yet.</div>';
+    const ins = [{ name:'Income', v:Math.max(0, t.income), color:'var(--green)' }].filter(x => x.v > 0.5);
+    if (left < -0.5) ins.push({ name:'More than income', v:-left, color:'var(--amber)' });
+    // Heights are to scale; small items get extra room below them so every
+    // label sits next to its own bar. Income is centered on the left.
+    const BASE = 220, GAP = 8, SLOT = 36, W = 600, NW = 10, total = outs.reduce((a, x) => a + x.v, 0), k = BASE / total;
+    let yR = 0; const R = outs.map(x => { const h = Math.max(2, x.v * k); const r = Object.assign({}, x, { y:yR, h, rem:x.v }); yR += Math.max(h + GAP, SLOT); return r; });
+    const leftH = total * k + GAP * (ins.length - 1), H = Math.max(BASE, yR - GAP, leftH);
+    let yL = (H - leftH) / 2; const L = ins.map(x => { const h = Math.max(2, x.v * k); const r = Object.assign({}, x, { y:yL, h, rem:x.v }); yL += h + GAP; return r; });
+    let ribbons = '', li = 0;
+    for (const r of R) {
+      while (r.rem > 0.01 && li < L.length) {
+        const l = L[li], amt = Math.min(l.rem, r.rem);
+        const y0 = l.y + (l.v - l.rem) / l.v * l.h, h0 = amt / l.v * l.h, y1 = r.y + (r.v - r.rem) / r.v * r.h, h1 = amt / r.v * r.h;
+        ribbons += `<path d="M${NW},${y0.toFixed(1)} C${W / 2},${y0.toFixed(1)} ${W / 2},${y1.toFixed(1)} ${W - NW},${y1.toFixed(1)} L${W - NW},${(y1 + h1).toFixed(1)} C${W / 2},${(y1 + h1).toFixed(1)} ${W / 2},${(y0 + h0).toFixed(1)} ${NW},${(y0 + h0).toFixed(1)} Z" fill="${r.color}" fill-opacity="${r.soft ? 0.12 : 0.32}"/>`;
+        l.rem -= amt; r.rem -= amt; if (l.rem <= 0.01) li++;
+      }
+    }
+    const nodes = L.map(n => `<rect x="0" y="${n.y.toFixed(1)}" width="${NW}" height="${n.h.toFixed(1)}" rx="3" fill="${n.color}"/>`).join('') + R.map(n => `<rect x="${W - NW}" y="${n.y.toFixed(1)}" width="${NW}" height="${n.h.toFixed(1)}" rx="3" fill="${n.color}"${n.soft ? ' fill-opacity="0.4"' : ''}/>`).join('');
+    // Labels: centered on their node, pushed apart if two would overlap.
+    const place = list => { let last = -99; return list.map(n => { const y = Math.max(n.y + n.h / 2, last + 36); last = y; return `<div class="flow-lbl" style="top:${y.toFixed(0)}px"><b>${money(n.v)}</b>${escHtml(n.name)}</div>`; }).join(''); };
+    return `<div class="flow"><div class="flow-col l" style="height:${H}px">${place(L)}</div><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" aria-hidden="true">${ribbons}${nodes}</svg><div class="flow-col" style="height:${H}px">${place(R)}</div></div>`;
+  },
+  'calendar'(){
+    const now = new Date(), y = now.getFullYear(), m = now.getMonth(), days = lastOfMonth(now).getDate(), today = now.getDate();
+    const per = {};
+    for (const t of txIn(now)) {
+      const c = catById(t.category_id), amt = Number(t.amount);
+      if (kindOfCat(c) === 'expense' || (!c && amt < 0)) { const d = parseYmd(t.date).getDate(); per[d] = (per[d] || 0) - amt; }
+    }
+    const max = Math.max(1, ...Object.values(per));
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;   // weeks start Monday
+    let cells = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => `<span class="cal-h">${d}</span>`).join('') + '<span></span>'.repeat(lead);
+    let big = null, noSpend = 0, spent = 0;
+    for (let d = 1; d <= days; d++) {
+      const v = Math.max(0, per[d] || 0), fut = d > today;
+      if (!fut) { spent += v; if (v < 0.5) noSpend++; if (!big || v > big.v) big = { d, v }; }
+      const a = fut ? 0 : Math.sqrt(v / max);   // square root so one big bill doesn't wash out the rest
+      cells += `<span class="cal-d${fut ? ' fut' : ''}${d === today ? ' today' : ''}${a > 0.6 ? ' hot' : ''}" style="--a:${a.toFixed(2)}" title="${monthName(now)} ${d}: ${money(v)}">${d}</span>`;
+    }
+    return `<div class="cal">${cells}</div><div class="mini-stats"><span>No-spend days <b>${noSpend}</b></span><span>Daily average <b>${money(spent / today)}</b></span>${big && big.v > 0 ? `<span>Biggest day <b>${monthName(now)} ${big.d}, ${money(big.v)}</b></span>` : ''}</div>`;
+  },
+  'kept'(){
+    const months = lastMonths(6), s = snapshots();
+    const change = {}; s.forEach((x, i) => { if (i > 0) change[x.month] = x.net - s[i - 1].net; });
+    const rows = months.map(m => { const t = totals(txIn(m)); return { m, kept:t.income - t.spent, nw:change[monthKey(m)] }; });
+    const vals = rows.flatMap(r => [r.kept, r.nw == null ? 0 : r.nw]);
+    const hi = Math.max(0, ...vals), lo = Math.min(0, ...vals), span = (hi - lo) || 1;
+    const bar = (v, cls) => { const top = (hi - Math.max(v, 0)) / span * 100, h = Math.abs(v) / span * 100; return `<span class="kb-bar ${cls}${v < 0 ? ' neg' : ''}" style="top:${top.toFixed(1)}%;height:${h.toFixed(1)}%" title="${money(v)}"></span>`; };
+    const cur = rows[rows.length - 1];
+    return `<div class="kb">${rows.map(r => `<div class="kb-col"><div class="kb-plot"><span class="kb-base" style="top:${(hi / span * 100).toFixed(1)}%"></span>${bar(r.kept, 'k')}${r.nw == null ? '' : bar(r.nw, 'n')}</div><span class="tb-lbl">${monthName(r.m)}</span></div>`).join('')}</div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Kept from income</span><span><i style="background:var(--green)"></i>Net worth change</span></div>
+      <div class="mini-stats"><span>This month: kept <b>${money(cur.kept)}</b></span>${cur.nw == null ? '' : `<span>net worth <b class="${cur.nw >= 0 ? 'up' : 'down'}">${signed(cur.nw)}</b></span>`}</div>`;
+  },
+  'milestone'(){
+    const s = snapshots(), net = s[s.length - 1].net;
+    const STEPS = [10e3, 25e3, 50e3, 75e3, 100e3, 150e3, 200e3, 250e3, 300e3, 400e3, 500e3, 750e3, 1e6, 1.5e6, 2e6, 2.5e6, 3e6, 4e6, 5e6, 7.5e6, 10e6];
+    let prev, next;
+    if (net < 0) { next = 0; prev = Math.min(...s.map(x => x.net)); }
+    else { next = STEPS.find(v => v > net) || Math.ceil((net + 1) / 5e6) * 5e6; prev = [0, ...STEPS].filter(v => v <= net).pop(); }
+    const pct = next > prev ? Math.max(0, Math.min(1, (net - prev) / (next - prev))) : 1;
+    // When the last milestone was passed, from the monthly history.
+    let passed = null;
+    if (prev > 0) for (let i = 1; i < s.length; i++) if (s[i].net >= prev && s[i - 1].net < prev) passed = s[i].month;
+    const C = 2 * Math.PI * 50;
+    return `<div class="ms"><div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="50" fill="none" stroke="var(--surface)" stroke-width="12"/><circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(C * pct).toFixed(1)} ${C.toFixed(1)}"/></svg><div class="ring-pct">${Math.floor(pct * 100)}%</div></div>
+      <div class="ms-main"><div class="big">${money(next - net)}</div><div class="delta">to go until ${net < 0 ? 'a positive net worth' : money(next)}</div>${passed ? `<div class="delta" style="margin-top:8px">Passed ${money(prev)} in ${monthLabel(passed)}</div>` : ''}</div></div>`;
+  },
+  'holdings'(){
+    // The assets on the net worth tracker, largest first, each with its share of
+    // total assets. Same shape as Debt paydown; the total matches Net worth total's Assets.
+    const rows = holdings().filter(h => h.type === 'asset' && h.value > 0).sort((a, b) => b.value - a.value);
+    if (!rows.length) return `<div class="w-empty">No assets on your net worth tracker. <a href="/net-worth/">Open the net worth tracker</a></div>`;
+    const total = rows.reduce((a, r) => a + r.value, 0);
+    return `<div class="big list-total up">${money(total)}</div><div class="delta">in assets · ${rows.length} ${rows.length === 1 ? 'holding' : 'holdings'}</div>
+      <div class="scroll-list">${rows.map(r => { const p = r.value / total * 100; return `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.category)}</span></span><span class="cb-v">${money(r.value)}<small> · ${p < 1 ? '<1' : p.toFixed(0)}%</small></span></div><div class="track"><span class="fill ok" style="width:${p.toFixed(1)}%"></span></div></div>`; }).join('')}</div>`;
+  },
+  'debts'(){
+    // The liabilities on the net worth tracker (the page this widget links to,
+    // so the total matches its liabilities), else the debt tracker's debts.
+    const first = {};
+    for (const e of sortedEntries()) if (e.type === 'liability' && !(e.category in first)) first[e.category] = Number(e.value) || 0;
+    let rows = holdings().filter(h => h.type === 'liability' && h.value > 0).map(h => ({ name:h.category, cur:h.value, orig:Math.max(h.value, first[h.category] || 0) }));
+    if (!rows.length) rows = D.debts.filter(d => !d.paid_off).map(d => ({ name:d.name, cur:Number(d.balance) || 0, orig:Number(d.original_balance) || Number(d.balance) || 0 }));
+    if (!rows.length) return `<div class="w-empty">No liabilities on your net worth tracker. <a href="/net-worth/">Open the net worth tracker</a></div>`;
+    rows.sort((a, b) => b.cur - a.cur);
+    const cur = rows.reduce((a, r) => a + r.cur, 0), orig = rows.reduce((a, r) => a + r.orig, 0);
+    const paid = orig > 0 ? Math.max(0, (orig - cur) / orig * 100) : 0;
+    return `<div class="big list-total down">${money(cur)}</div><div class="delta">left to pay · <span class="up">${paid.toFixed(0)}% paid off</span></div>
+      <div class="scroll-list">${rows.map(r => { const p = r.orig > 0 ? Math.max(0, Math.min(100, (r.orig - r.cur) / r.orig * 100)) : 0; return `<div class="cb"><div class="cb-top"><span class="cb-name"><span>${escHtml(r.name)}</span></span><span class="cb-v">${money(r.cur)}<small> · ${p.toFixed(0)}% paid</small></span></div><div class="track"><span class="fill ok" style="width:${p.toFixed(1)}%"></span></div></div>`; }).join('')}</div>`;
+  },
+};
+
+/* ── Customizing ── */
+function setEditing(on){
+  editing = on;
+  if (on) ensureLayout();
+  closeSheet(); render();
+  if (on) toast('Drag widgets, or use the arrows, to move them.');
+}
+function findItem(id){ return layout.items.find(x => x.id === id); }
+/* Keyboard moving, from the drag handle: arrow keys step one place. */
+function moveItem(id, dir){
+  const a = layout.items, i = a.findIndex(x => x.id === id), j = i + dir;
+  if (i < 0 || j < 0 || j >= a.length) return;
+  [a[i], a[j]] = [a[j], a[i]]; saveLayout(); render();
+  const el = document.getElementById('w_' + id); if (el) el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+function gripKey(e, id){
+  const dir = { ArrowUp:-1, ArrowLeft:-1, ArrowDown:1, ArrowRight:1 }[e.key];
+  if (!dir) return;
+  e.preventDefault(); moveItem(id, dir);
+  const g = document.querySelector('#w_' + id + ' .grip'); if (g) g.focus();
+}
+function toggleSize(id){ const it = findItem(id); it.size = it.size === 'full' ? 'half' : 'full'; saveLayout(); render(); }
+
+/* ── Drag to rearrange ──
+   Mouse: grab anywhere on a widget (not its buttons). Touch: grab the handle,
+   so the rest of the widget still scrolls the page. The widget follows the
+   pointer and a dashed slot shows where it will land. */
+let drag = null, armed = null;
+function armDrag(e, id, fromHandle){
+  if (!editing || drag || (e.button !== undefined && e.button !== 0)) return;
+  if (!fromHandle && (e.pointerType !== 'mouse' || e.target.closest('button, a'))) return;
+  if (fromHandle) { e.stopPropagation(); e.preventDefault(); startDrag(id, e.clientX, e.clientY); return; }
+  // From the body: wait for a few pixels of movement so a plain click stays a click.
+  armed = { id, x:e.clientX, y:e.clientY };
+  document.addEventListener('pointermove', armedMove);
+  document.addEventListener('pointerup', disarm, { once:true });
+}
+function armedMove(e){
+  if (!armed) return;
+  if (Math.hypot(e.clientX - armed.x, e.clientY - armed.y) < 5) return;
+  const { id, x, y } = armed; disarm();
+  startDrag(id, x, y); onDragMove(e);
+}
+function disarm(){ armed = null; document.removeEventListener('pointermove', armedMove); }
+function startDrag(id, px, py){
+  const el = document.getElementById('w_' + id); if (!el) return;
+  const r = el.getBoundingClientRect();
+  const ph = document.createElement('div');
+  ph.className = 'w ph' + (el.classList.contains('full') ? ' full' : '');
+  ph.style.height = r.height + 'px';
+  el.after(ph);
+  Object.assign(el.style, { position:'fixed', left:r.left + 'px', top:r.top + 'px', width:r.width + 'px', height:r.height + 'px', zIndex:100, pointerEvents:'none', margin:0 });
+  el.classList.add('dragging'); document.body.classList.add('drag-on');
+  drag = { id, el, ph, dx:px - r.left, dy:py - r.top, x:px, y:py, raf:0 };
+  document.addEventListener('pointermove', onDragMove);
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
+  drag.raf = requestAnimationFrame(autoScroll);
+}
+function onDragMove(e){
+  if (!drag) return;
+  e.preventDefault();
+  drag.x = e.clientX; drag.y = e.clientY;
+  drag.el.style.left = (e.clientX - drag.dx) + 'px';
+  drag.el.style.top = (e.clientY - drag.dy) + 'px';
+  placeSlot();
+}
+function placeSlot(){
+  const grid = document.getElementById('grid');
+  const sib = (n, dir) => { let s = dir < 0 ? n.previousElementSibling : n.nextElementSibling; while (s === drag.el) s = dir < 0 ? s.previousElementSibling : s.nextElementSibling; return s; };
+  const hit = document.elementFromPoint(drag.x, drag.y);
+  const target = hit && hit.closest('#grid > .w');
+  if (!target) {
+    // Below the last widget: drop at the end.
+    const last = [...grid.children].filter(n => n !== drag.el).pop();
+    if (last && last !== drag.ph && drag.y > last.getBoundingClientRect().bottom) { grid.appendChild(drag.ph); fillGaps(); }
+    return;
+  }
+  if (target === drag.ph) return;
+  const r = target.getBoundingClientRect();
+  const sideBySide = r.width < grid.clientWidth * 0.75;   // half-width neighbours compare left/right
+  const before = sideBySide ? drag.x < r.left + r.width / 2 : drag.y < r.top + r.height / 2;
+  if (before ? sib(target, -1) === drag.ph : sib(target, 1) === drag.ph) return;
+  grid.insertBefore(drag.ph, before ? target : target.nextElementSibling);
+  fillGaps();
+}
+function autoScroll(){
+  if (!drag) return;
+  const edge = 80, y = drag.y;
+  const dy = y < edge ? -Math.ceil((edge - y) / 6) : y > innerHeight - edge ? Math.ceil((y - innerHeight + edge) / 6) : 0;
+  if (dy) { window.scrollBy(0, dy); placeSlot(); }
+  drag.raf = requestAnimationFrame(autoScroll);
+}
+function endDrag(){
+  if (!drag) return;
+  cancelAnimationFrame(drag.raf);
+  document.removeEventListener('pointermove', onDragMove);
+  document.removeEventListener('pointerup', endDrag);
+  document.removeEventListener('pointercancel', endDrag);
+  const { el, ph } = drag;
+  ph.replaceWith(el);
+  el.removeAttribute('style'); el.classList.remove('dragging'); document.body.classList.remove('drag-on');
+  const order = [...document.querySelectorAll('#grid > .w[data-id]')].map(n => n.dataset.id);
+  layout.items.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  drag = null; saveLayout(); render();
+}
+async function removeItem(id){
+  const it = findItem(id), def = WIDGETS[it.type];
+  if (!await askConfirm({ title:`Remove ${(RENDER_TITLE[it.type] && RENDER_TITLE[it.type](it)) || def.name}?`, body:'You can add it back anytime.', yes:'Remove', no:'Cancel' })) return;
+  layout.items = layout.items.filter(x => x.id !== id); saveLayout(); render();
+}
+/* Add a widget: a small picture of each one, grouped by tracker. The
+   one-line description shows on hover and to screen readers. */
+const ADD_GROUPS = [['Net worth and budget', ['any', 'both']], ['Net worth', ['nw']], ['Budget', ['budget']], ['Debts', ['debts']]];
+function openAddSheet(){
+  const onDash = new Set(layout.items.map(x => x.type));
+  let html = '';
+  for (const [label, srcs] of ADD_GROUPS) {
+    const list = Object.entries(WIDGETS).filter(([t, d]) => LAUNCH.includes(t) && srcs.includes(d.src));
+    if (!list.length) continue;
+    html += `<div class="sheet-sec">${label}</div><div class="wg-grid">` + list.map(([type, def]) => {
+      const added = onDash.has(type) && !def.multi;
+      return `<button class="wg" onclick="addWidget('${type}')" ${added ? 'disabled' : ''} title="${escHtml(def.desc)}" aria-label="${escHtml(def.name)}. ${escHtml(def.desc)}${added ? ' Already added.' : ''}"><span class="wg-thumb">${THUMBS_LAUNCH[type] || THUMBS[type] || ''}${added ? '<span class="wg-tag">Added</span>' : ''}</span><span class="wg-name">${escHtml(def.name)}</span><span class="wg-desc">${escHtml(def.desc)}</span></button>`;
+    }).join('') + '</div>';
+  }
+  showSheet('Add a widget', html, true);
+}
+/* Mini pictures of each widget, drawn in the theme's colors. */
+const T_A = 'var(--accent)', T_G = 'var(--green)', T_R = 'var(--red)', T_M = 'var(--muted)', T_S = 'var(--surface-2)';
+const tsvg = inner => `<svg viewBox="0 0 100 60" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+const bar = (x, y, w, h, c, r = 2) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${c}"/>`;
+const tx = (x, y, t, size, fill, weight, anchor) => `<text x="${x}" y="${y}" font-family="Outfit,sans-serif" font-size="${size}" font-weight="${weight || 500}" fill="${fill}"${anchor ? ` text-anchor="${anchor}"` : ''}>${t}</text>`;
+const T_C = 'var(--cream)';
+const THUMBS_LAUNCH = {
+  'bd-add': tsvg(bar(4, 6, 92, 48, T_S, 8) + `<circle cx="50" cy="24" r="8" fill="${T_A}"/><path d="M50 20v8M46 24h8" stroke="var(--on-accent)" stroke-width="1.8"/>` + tx(50, 43, 'Add a transaction', 6, T_C, 500, 'middle')),
+  'nw-total': tsvg(tx(4, 9, 'NET WORTH', 5, T_A, 600) + tx(4, 26, '$237,361', 14, T_C) + tx(4, 35, '+$6,281 since last month', 4.6, T_G, 400) + tx(4, 47, 'Assets', 4.4, T_M, 400) + tx(4, 55, '$563,669', 6.5, T_G) + tx(52, 47, 'Liabilities', 4.4, T_M, 400) + tx(52, 55, '$326,308', 6.5, T_R)),
+  'nw-trend': tsvg(['6M', '1Y', '3Y', 'All'].map((l, i) => (i === 1 ? bar(3 + i * 13, 2, 12, 7, T_S, 3.5) : '') + tx(9 + i * 13, 7.3, l, 4.2, i === 1 ? T_C : T_M, 500, 'middle')).join('') + `<path d="M4 54 L20 46 L34 48 L50 34 L66 30 L82 20 L96 13 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 54 20 46 34 48 50 34 66 30 82 20 96 13" stroke="${T_A}" stroke-width="2.4"/><circle cx="66" cy="30" r="2.6" fill="${T_A}"/>` + bar(52, 15, 28, 9, T_S, 3) + tx(66, 21.5, '$229,400', 4.4, T_C, 500, 'middle')),
+  'bd-month': tsvg(tx(4, 8, 'INCOME', 4.2, T_M, 500) + tx(4, 20, '$6,500', 11, T_G) + bar(4, 25, 92, 0.6, T_S, 0.3) + tx(4, 32, 'Spent', 3.8, T_M, 400) + tx(4, 39, '$2,685', 6, T_C) + tx(32, 38, '+', 5, T_M, 400) + tx(37, 32, 'Saved', 3.8, T_M, 400) + tx(37, 39, '$800', 6, T_G) + tx(58, 38, '=', 5, T_M, 400) + tx(63, 32, 'Total outflow', 3.8, T_M, 400) + tx(63, 39, '$3,485', 6, T_C) + bar(4, 44, 92, 0.6, T_S, 0.3) + tx(4, 54, 'Monthly net', 4.2, T_M, 400) + tx(32, 54.5, '+$3,815', 7, T_G, 600)),
+  'bd-pie': tsvg(`<g transform="rotate(-90 30 30)"><circle cx="30" cy="30" r="21" stroke="#7aa7ff" stroke-width="9" stroke-dasharray="72 132"/><circle cx="30" cy="30" r="21" stroke="#f0a35e" stroke-width="9" stroke-dasharray="30 132" stroke-dashoffset="-73"/><circle cx="30" cy="30" r="21" stroke="#4cc3b5" stroke-width="9" stroke-dasharray="17 132" stroke-dashoffset="-104"/><circle cx="30" cy="30" r="21" stroke="#d08cf0" stroke-width="9" stroke-dasharray="9 132" stroke-dashoffset="-122"/></g>` + tx(30, 31, '$2,618', 6, T_C, 500, 'middle') + tx(30, 37, 'spent', 3.8, T_M, 400, 'middle') + [['#7aa7ff', 'Housing'], ['#f0a35e', 'Food'], ['#4cc3b5', 'Transport'], ['#d08cf0', 'Personal']].map(([c, l], i) => `<circle cx="62" cy="${14 + i * 10}" r="2.4" fill="${c}"/>` + tx(67, 15.8 + i * 10, l, 5, T_C, 400)).join('')),
+  'bd-trend': tsvg(['J', 'A', 'S', 'O', 'N', 'D'].map((l, i) => { const x = 7 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 50 - a, 5, a, T_G, 1.5) + bar(x + 6, 50 - b, 5, b * 0.55, '#7aa7ff', 0) + bar(x + 6, 50 - b * 0.55 - b * 0.3, 5, b * 0.3, '#f0a35e', 0) + bar(x + 6, 50 - b, 5, b * 0.15, '#d08cf0', 0) + tx(x + 5.5, 57.5, l, 4.4, T_M, 400, 'middle'); }).join('') + `<circle cx="66" cy="4" r="2" fill="${T_G}"/>` + tx(70, 5.6, 'In', 4.2, T_M, 400) + `<circle cx="80" cy="4" r="2" fill="${T_A}"/>` + tx(84, 5.6, 'Out', 4.2, T_M, 400)),
+  'bd-upcoming': tsvg([['Dec 1', 'Rent', '$1,850', T_C, '#7aa7ff'], ['Dec 9', 'Electric', '~$150', T_C, '#7aa7ff'], ['Dec 15', 'Paycheck', '+$3,250', T_G, '#5cc28e']].map(([d, n, v, c, h], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, d, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
+  'bd-recent': tsvg([['Trader Joe\u2019s', 'Groceries · Today', '$84.12', '#f0a35e', T_C], ['Paycheck', 'Income · Nov 15', '+$3,250', '#5cc28e', T_G], ['Netflix', 'Subscriptions · Nov 11', '$15.49', '#d08cf0', T_C]].map(([n, m, v, h, c], i) => { const y = 6 + i * 18; return `<circle cx="6" cy="${y + 5}" r="2.6" fill="${h}"/>` + tx(12, y + 4.5, n, 6, T_C) + tx(12, y + 11, m, 4.4, T_M, 400) + tx(96, y + 7, v, 6, c, 500, 'end'); }).join('')),
+};
+const THUMBS = {
+  'nw-total': tsvg(bar(4, 6, 40, 4, T_M) + bar(4, 16, 62, 12, 'var(--cream)', 3) + bar(4, 33, 30, 4, T_G) + bar(4, 46, 34, 7, T_G) + bar(54, 46, 34, 7, T_R)),
+  'nw-trend': tsvg(`<path d="M4 52 L20 44 L34 46 L50 32 L66 28 L82 16 L96 8 L96 58 L4 58 Z" fill="${T_A}" fill-opacity=".18"/><polyline points="4 52 20 44 34 46 50 32 66 28 82 16 96 8" stroke="${T_A}" stroke-width="3"/>`),
+  'nw-sheet': tsvg([6, 16, 26].map(y => bar(4, y, 58, 4, T_M) + bar(78, y, 18, 4, T_G)).join('') + [36, 46].map(y => bar(4, y, 52, 4, T_M) + bar(78, y, 18, 4, T_R)).join('') + bar(4, 55, 92, 2, 'var(--cream)', 1)),
+  'nw-watch': tsvg(bar(4, 6, 46, 10, 'var(--cream)', 3) + `<polyline points="4 50 22 46 40 48 58 36 76 32 96 22" stroke="${T_A}" stroke-width="3"/><circle cx="96" cy="22" r="3.5" fill="${T_A}"/>`),
+  'milestone': tsvg(`<circle cx="26" cy="30" r="20" stroke="${T_S}" stroke-width="7"/><path d="M26 10 A20 20 0 1 1 7.5 37" stroke="${T_A}" stroke-width="7"/>` + bar(56, 20, 38, 9, 'var(--cream)', 3) + bar(56, 35, 28, 4, T_M)),
+  'bd-month': tsvg(bar(4, 6, 20, 3, T_M) + bar(4, 13, 36, 8, T_G, 3) + bar(54, 6, 20, 3, T_M) + bar(54, 13, 36, 8, 'var(--cream)', 3) + bar(4, 34, 20, 3, T_M) + bar(4, 41, 30, 8, T_G, 3) + bar(54, 34, 20, 3, T_M) + bar(54, 41, 38, 8, 'var(--cream)', 3)),
+  'bd-categories': tsvg([['#7aa7ff', 88], ['#f0a35e', 60], ['#4cc3b5', 40], ['#d08cf0', 24]].map(([c, w], i) => bar(4, 6 + i * 14, 92, 5, T_S, 2.5) + bar(4, 6 + i * 14, w, 5, c, 2.5)).join('')),
+  'bd-trend': tsvg([0, 1, 2, 3, 4, 5].map(i => { const x = 6 + i * 15, a = [34, 38, 32, 40, 36, 42][i], b = [26, 30, 34, 24, 30, 28][i]; return bar(x, 56 - a, 5, a, T_G, 1.5) + bar(x + 6, 56 - b, 5, b, T_A, 1.5); }).join('')),
+  'bd-targets': tsvg([[T_G, 50], [T_G, 70], ['var(--amber)', 82], [T_R, 92]].map(([c, w], i) => bar(4, 6 + i * 14, 92, 5, T_S, 2.5) + bar(4, 6 + i * 14, w, 5, c, 2.5)).join('')),
+  'bd-watch': tsvg(bar(4, 4, 34, 8, 'var(--cream)', 3) + [0, 1, 2, 3, 4, 5].map(i => { const h = [22, 28, 20, 24, 26, 34][i]; return bar(8 + i * 15, 58 - h, 9, h, i === 5 ? T_A : '#7aa7ff', 2); }).join('')),
+  'bd-recent': tsvg([['#f0a35e', 6], ['#7aa7ff', 26], ['#5cc28e', 46]].map(([c, y]) => `<circle cx="7" cy="${y + 3}" r="3.5" fill="${c}"/>` + bar(16, y, 44, 4, 'var(--cream)') + bar(16, y + 7, 28, 3, T_M) + bar(78, y + 1, 18, 4, 'var(--cream)')).join('')),
+  'bd-upcoming': tsvg([6, 26, 46].map((y, i) => bar(4, y - 1, 10, 10, T_S, 3) + bar(6, y + 1, 6, 2, T_A, 1) + bar(20, y, 40, 4, 'var(--cream)') + bar(20, y + 7, 18, 3, T_M) + bar(78, y + 1, 18, 4, i === 1 ? T_G : 'var(--cream)')).join('')),
+  'bd-pie': tsvg(`<circle cx="24" cy="30" r="18" stroke="#7aa7ff" stroke-width="9" stroke-dasharray="70 120" transform="rotate(-90 24 30)"/><circle cx="24" cy="30" r="18" stroke="#f0a35e" stroke-width="9" stroke-dasharray="26 120" stroke-dashoffset="-71" transform="rotate(-90 24 30)"/><circle cx="24" cy="30" r="18" stroke="#4cc3b5" stroke-width="9" stroke-dasharray="15 120" stroke-dashoffset="-98" transform="rotate(-90 24 30)"/>` + [['#7aa7ff', 14], ['#f0a35e', 26], ['#4cc3b5', 38]].map(([c, y]) => `<circle cx="56" cy="${y + 2}" r="3" fill="${c}"/>` + bar(63, y, 32, 4, T_M)).join('')),
+  'calendar': tsvg([...Array(21)].map((_, i) => { const a = [0.9, .2, .5, 0, .3, .1, .6, .2, 0, .4, .8, .3, .1, .2, .5, 0, .3, .7, .2, .1, .4][i]; return `<rect x="${4 + (i % 7) * 13.5}" y="${4 + Math.floor(i / 7) * 18}" width="11" height="15" rx="3" fill="${T_A}" fill-opacity="${(0.12 + a * 0.85).toFixed(2)}"/>`; }).join('')),
+  'flow': tsvg(`<path d="M8 6 C50 6 50 4 92 4 L92 22 C50 22 50 24 8 24 Z" fill="#7aa7ff" fill-opacity=".45"/><path d="M8 24 C50 24 50 28 92 28 L92 38 C50 38 50 36 8 36 Z" fill="#f0a35e" fill-opacity=".45"/><path d="M8 36 C50 36 50 44 92 44 L92 56 C50 56 50 54 8 54 Z" fill="${T_G}" fill-opacity=".45"/>` + bar(4, 6, 4, 48, T_G, 1.5) + bar(92, 4, 4, 18, '#7aa7ff', 1.5) + bar(92, 28, 4, 10, '#f0a35e', 1.5) + bar(92, 44, 4, 12, T_G, 1.5)),
+  'kept': tsvg([0, 1, 2, 3, 4, 5].map(i => { const x = 6 + i * 15, a = [20, 24, 22, 26, 24, 28][i], b = [16, 30, 12, 34, 22, 40][i]; return bar(x, 50 - a, 5, a, T_A, 1.5) + bar(x + 6, 50 - b, 5, b, T_G, 1.5); }).join('') + bar(2, 50, 96, 1.5, T_M, .75)),
+  'holdings': tsvg(bar(4, 4, 46, 10, T_G, 3) + [[70], [40], [18]].map(([w], i) => bar(4, 26 + i * 11, 92, 5, T_S, 2.5) + bar(4, 26 + i * 11, w, 5, T_G, 2.5)).join('')),
+  'debts': tsvg(bar(4, 4, 46, 10, T_R, 3) + [[60], [30], [15]].map(([w], i) => bar(4, 26 + i * 11, 92, 5, T_S, 2.5) + bar(4, 26 + i * 11, w, 5, T_G, 2.5)).join('')),
+};
+function addWidget(type){
+  const def = WIDGETS[type], it = { id:uid(), type, size:def.size, opts:null };
+  layout.items.push(it); saveLayout(); closeSheet(); render();
+  const el = document.getElementById('w_' + it.id); if (el) el.scrollIntoView({ block:'center', behavior:'smooth' });
+  if (def.config) configure(it.id);
+}
+function configure(id){
+  ensureLayout();
+  const it = findItem(id); if (!it) return;
+  let opts = [];
+  if (it.type === 'nw-watch') {
+    const h = holdings().filter(x => x.value !== 0).sort((a, b) => (a.type === b.type ? b.value - a.value : a.type === 'asset' ? -1 : 1));
+    opts = h.map(x => ({ key:x.type + '|' + x.category, name:x.category, desc:(x.type === 'asset' ? 'Asset · ' : 'Liability · ') + money(x.value), val:{ type:x.type, category:x.category } }));
+  } else if (it.type === 'bd-watch') {
+    for (const g of D.groups.filter(g => g.kind === 'expense' && !g.hidden).sort((a, b) => a.sort_order - b.sort_order)) {
+      opts.push({ key:'group|' + g.id, name:g.name, desc:'Whole category', val:{ kind:'group', id:g.id } });
+      for (const c of D.cats.filter(c => c.group_id === g.id && !c.hidden).sort((a, b) => a.sort_order - b.sort_order))
+        opts.push({ key:'cat|' + c.id, name:c.name, desc:'In ' + g.name, val:{ kind:'cat', id:c.id }, sub:true });
+    }
+  }
+  const curKey = it.opts ? (it.type === 'nw-watch' ? it.opts.type + '|' + it.opts.category : it.opts.kind + '|' + it.opts.id) : null;
+  if (!opts.length) { showSheet('Nothing to pick yet', '<div class="w-empty">Log some data in that tracker first.</div>'); return; }
+  configure.pending = { id, opts };
+  showSheet(it.type === 'nw-watch' ? 'Pick an asset or liability' : 'Pick a category',
+    opts.map((o, i) => `<button class="opt${o.key === curKey ? ' on' : ''}" onclick="pickConfig(${i})" ${o.sub ? 'style="padding-left:22px"' : ''}><span class="opt-main"><span class="opt-name">${escHtml(o.name)}</span><span class="opt-desc">${escHtml(o.desc)}</span></span>${o.key === curKey ? CHECK : ''}</button>`).join(''));
+}
+function pickConfig(i){
+  const p = configure.pending, it = p && findItem(p.id); if (!it) return;
+  it.opts = p.opts[i].val; saveLayout(); closeSheet(); render();
+}
+function openLayouts(){
+  showSheet('Start from a layout', '<div class="w-empty" style="padding-top:0">Replaces the widgets on your dashboard.</div>' +
+    Object.entries(PRESETS).map(([k, p]) => `<button class="opt" onclick="choosePreset('${k}')"><span class="opt-main"><span class="opt-name">${p.name}</span><span class="opt-desc">${p.desc}</span></span>${CHEV.replace('<svg', '<svg style="stroke:var(--muted)"')}</button>`).join(''));
+}
+async function choosePreset(k){
+  closeSheet();
+  if (!await askConfirm({ title:`Use the ${PRESETS[k].name} layout?`, body:'This replaces your current widgets.', yes:'Use it', no:'Cancel' })) return;
+  layout = { preset:k, pack:'fill', items:itemsFor(k), parked:layout ? layout.parked || [] : [] }; saveLayout(); render();
+}
+
+/* ── Sheet, confirm ── */
+function showSheet(title, html, wide){ document.querySelector('#sheet .sheet').classList.toggle('wide', !!wide); showSheetBody(title, html); }
+function showSheetBody(title, html){ document.getElementById('sheetTitle').textContent = title; document.getElementById('sheetBody').innerHTML = html; document.getElementById('sheet').classList.add('open'); }
+function closeSheet(){ document.getElementById('sheet').classList.remove('open'); }
+let cfResolve = null;
+function askConfirm({ title, body, yes = 'Yes', no = 'No' }){
+  document.getElementById('cfTitle').textContent = title;
+  document.getElementById('cfBody').textContent = body || '';
+  document.getElementById('cfYes').textContent = yes;
+  document.getElementById('cfNo').textContent = no;
+  document.getElementById('confirmBox').classList.add('open');
+  return new Promise(r => { cfResolve = r; });
+}
+function answerConfirm(v){ document.getElementById('confirmBox').classList.remove('open'); const r = cfResolve; cfResolve = null; if (r) r(v); }
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('confirmBox').classList.contains('open')) return answerConfirm(false);
+  if (document.getElementById('sheet').classList.contains('open')) return closeSheet();
+  if (!document.getElementById('acctMenu').hidden) return closeAcctMenu();
+  if (editing) setEditing(false);
+});
+
+/* ── Theme, account menu ── */
+function toggleTheme(){
+  const light = document.documentElement.dataset.theme !== 'light';
+  if (light) document.documentElement.dataset.theme = 'light'; else delete document.documentElement.dataset.theme;
+  try { localStorage.setItem('vf-theme', light ? 'light' : 'dark'); } catch (e) {}
+}
+function toggleAcctMenu(){ document.getElementById('acctMenu').hidden ? openAcctMenu() : closeAcctMenu(); }
+function openAcctMenu(){ document.getElementById('acctMenu').hidden = false; document.getElementById('acctBtn').setAttribute('aria-expanded', 'true'); }
+function closeAcctMenu(){ document.getElementById('acctMenu').hidden = true; document.getElementById('acctBtn').setAttribute('aria-expanded', 'false'); }
+document.addEventListener('click', e => { if (!e.target.closest('.acct-wrap')) closeAcctMenu(); });
+
+/* ── Auth and loading ── */
+function showAuth(){ document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
+function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
+// Signing in and creating an account happen on /signin/, shared by every tracker.
+function signinHref(mode){ return '/signin/?mode=' + mode + '&next=' + encodeURIComponent(location.pathname + location.search); }
+document.getElementById('ctaSignup').href = signinHref('signup');
+document.getElementById('ctaSignin').href = signinHref('signin');
+async function signOut(){ closeAcctMenu(); if (sample) return exitSample(); await sb.auth.signOut(); }
+
+async function loadAll(){
+  const since = ymd(new Date(new Date().getFullYear(), new Date().getMonth() - 11, 1));   // 12 months, for the expanded trend
+  const q = (p) => p.then(r => r.error ? (console.error(r.error), []) : (r.data || [])).catch(e => (console.error(e), []));
+  const [entries, groups, cats, accts, tx, rec, debts] = await Promise.all([
+    q(sb.from('net_worth_entries').select('type,category,value,date,paid_off,created_at,updated_at').order('date', { ascending:true })),
+    q(sb.from('budget_groups').select('*').order('sort_order')),
+    q(sb.from('budget_categories').select('*').order('sort_order')),
+    q(sb.from('budget_accounts').select('*').order('sort_order')),
+    q(sb.from('budget_transactions').select('id,date,amount,category_id,account_id,description,pending,created_at').gte('date', since)),
+    q(sb.from('budget_recurring').select('*').eq('active', true).order('next_date')),
+    q(sb.from('debts').select('*').order('sort_order', { ascending:true })),
+    VestlyCurrency.load(sb, user.id).catch(e => console.error(e)),
+  ]);
+  D = { entries, groups, cats, accts, tx, rec, debts };
+}
+async function boot(session){
+  if (sample) return;
+  if (!session || !session.user) { user = null; booted = false; showAuth(); return; }
+  if (booted && user && user.id === session.user.id) return;
+  user = session.user; booted = true;
+  document.getElementById('userEmail').textContent = user.email || '';
+  showApp();
+  document.getElementById('grid').innerHTML = '<div class="w full"><div class="w-empty">Loading…</div></div>';
+  await loadAll();
+  loadLayout(); render();
+}
+sb.auth.getSession().then(({ data }) => boot(data.session));
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_OUT') { user = null; booted = false; if (!sample) showAuth(); return; }
+  if (event === 'SIGNED_IN') boot(session);
+});
+
+/* ── Sample data: a made-up household, so the page can be seen without an account ── */
+function startSample(){
+  sample = true; D = sampleData(); loadLayout();
+  document.getElementById('sampleBar').classList.remove('hidden');
+  document.getElementById('userEmail').textContent = 'Sample data';
+  document.getElementById('acctLabel').textContent = 'Viewing';
+  document.getElementById('signOutLabel').textContent = 'Exit sample';
+  showApp(); render();
+}
+function exitSample(){ sample = false; editing = false; location.href = location.pathname; }
+function sampleData(){
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const now = new Date(), entries = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = ymd(new Date(now.getFullYear(), now.getMonth() - i, 1)), k = 13 - i;
+    const add = (type, category, value) => entries.push({ type, category, value:Math.round(value), date:d, paid_off:false });
+    add('asset', 'Home', 405000 + k * 1500);
+    add('asset', '401(k)', 61000 + k * 1450 + rnd() * 2500);
+    add('asset', 'Brokerage', 17000 + k * 950 + rnd() * 1800);
+    add('asset', 'Checking', 5200 + rnd() * 1600);
+    add('asset', 'Car', 24000 - k * 260);
+    add('liability', 'Mortgage', 319000 - k * 720);
+    add('liability', 'Car loan', 21500 - k * 460);
+    add('liability', 'Credit card', 900 + rnd() * 1500);
+  }
+  const G = (id, name, kind, o) => ({ id, name, kind, sort_order:o, hidden:false });
+  const groups = [G('g1','Housing','expense',1), G('g2','Food','expense',2), G('g3','Transportation','expense',3), G('g4','Personal','expense',4), G('g5','Transfers','transfer',5), G('g6','Income','income',6)];
+  const C = (id, g, name, o, t, extra) => Object.assign({ id, group_id:g, name, sort_order:o, hidden:false, monthly_target:t == null ? null : t }, extra || {});
+  const cats = [C('c1','g1','Rent',1,1850), C('c2','g1','Utilities',2,160), C('c3','g2','Groceries',1,550), C('c4','g2','Restaurants',2,200), C('c5','g2','Coffee',3,40),
+    C('c6','g3','Gas',1,140), C('c7','g3','Parking',2), C('c8','g4','Subscriptions',1,45), C('c9','g4','Clothing',2), C('c10','g5','To savings',1,null,{ counts_as_saving:true }), C('c11','g6','Paycheck',1)];
+  const accts = [{ id:'a1', name:'Chase card' }, { id:'a2', name:'Checking' }];
+  const tx = []; let n = 0;
+  const T = (d, cat, amt, desc, acct) => { if (d <= now) tx.push({ id:'t' + (n++), date:ymd(d), amount:Math.round(amt * 100) / 100, category_id:cat, account_id:acct || 'a1', description:desc || '', created_at:d.toISOString() }); };
+  for (let i = 11; i >= 0; i--) {
+    const y = now.getFullYear(), m = now.getMonth() - i, D_ = day => new Date(y, m, day);
+    T(D_(1), 'c11', 3250, 'Paycheck', 'a2'); T(D_(15), 'c11', 3250, 'Paycheck', 'a2');
+    T(D_(1), 'c1', -1850, 'Rent', 'a2'); T(D_(9), 'c2', -(120 + rnd() * 60), 'Electric');
+    for (const day of [3, 10, 17, 24]) T(D_(day), 'c3', -(95 + rnd() * 70), 'Trader Joe’s');
+    for (const day of [6, 13, 21]) T(D_(day), 'c4', -(30 + rnd() * 45), ['Tacos', 'Pho', 'Pizza'][day % 3]);
+    for (const day of [2, 8, 12, 19, 26]) T(D_(day), 'c5', -(5 + rnd() * 3), 'Coffee');
+    T(D_(5), 'c6', -(45 + rnd() * 20), 'Shell'); T(D_(20), 'c6', -(45 + rnd() * 20), 'Shell');
+    T(D_(11), 'c8', -15.49, 'Netflix'); T(D_(14), 'c8', -11.99, 'Spotify');
+    if (i % 2 === 0) T(D_(18), 'c9', -(60 + rnd() * 90), 'Uniqlo');
+    T(D_(16), 'c10', -800, 'To savings', 'a2');
+  }
+  const nx = (day) => { const d = new Date(now.getFullYear(), now.getMonth(), day); if (d <= now) d.setMonth(d.getMonth() + 1); return ymd(d); };
+  const rec = [{ id:'r1', description:'Rent', amount:-1850, category_id:'c1', frequency:'monthly', next_date:nx(1) }, { id:'r2', description:'Paycheck', amount:3250, category_id:'c11', frequency:'biweekly', next_date:nx(15) },
+    { id:'r3', description:'Netflix', amount:-15.49, category_id:'c8', frequency:'monthly', next_date:nx(11) }, { id:'r4', description:'Electric', amount:-150, category_id:'c2', frequency:'monthly', next_date:nx(9), amount_varies:true }];
+  // No debt-tracker rows: Debt paydown falls back to the net worth liabilities, so the numbers agree.
+  return { entries, groups, cats, accts, tx, rec, debts:[] };
+}
+if (new URLSearchParams(location.search).has('sample')) startSample();
+</script>
+</body>
+</html>

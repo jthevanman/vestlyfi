@@ -28,21 +28,23 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script src="/assets/currency.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<script src="/assets/theme.js"></script>
 <style>
 :root {
-  --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
-  --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
-  --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
-  --green:#4ade80; --red:#f87171; --amber:#fbbf24; --blue:#60a5fa;
-  --green-dim:rgba(74,222,128,0.10); --red-dim:rgba(248,113,113,0.10);
-  --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+  /* Colors come from /assets/theme.css (charcoal, or light when switched).
+     These older names map onto it so the rest of this page keeps working. */
+  --navy:var(--page); --navy-mid:var(--raised); --navy-light:var(--surface); --navy-card:var(--bg);
+  --gold:var(--accent); --gold-light:var(--accent-light); --gold-dim:rgba(var(--accent-rgb),0.12);
+  --green-dim:rgba(var(--green-rgb),0.10); --red-dim:rgba(var(--red-rgb),0.10);
+  --border:rgba(var(--tint),0.12); --border-soft:var(--line);
   --sidebar-w:220px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;font-weight:300;min-height:100vh;}
+body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;font-weight:400;min-height:100vh;}
 
 /* ══ SIGNED-OUT (auth) ══ */
-.locked-top{position:sticky;top:0;z-index:50;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:#0a0f1e;}
+.locked-top{position:sticky;top:0;z-index:50;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);background:var(--page);}
 .locked-top a.logo{font-family:'Exo 2',sans-serif;font-size:1.25rem;color:var(--gold);text-decoration:none;}
 .locked-top .back{color:var(--muted);text-decoration:none;font-size:0.82rem;}
 .locked-top .back:hover{color:var(--cream);}
@@ -66,6 +68,10 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .auth-field input:focus{border-color:var(--gold);}
 .btn-auth{width:100%;padding:12px;margin-top:6px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:background .15s;}
 .btn-auth:hover{background:var(--gold-light);}
+.auth-ctas{display:flex;flex-direction:column;gap:10px;}
+.auth-ctas a{display:block;text-align:center;text-decoration:none;margin-top:0;}
+.btn-auth-2{padding:12px;border:1px solid var(--border);border-radius:9px;color:var(--cream);font-size:0.9rem;font-weight:500;}
+.btn-auth-2:hover{background:var(--gold-dim);}
 .auth-msg{font-size:0.78rem;margin-top:10px;text-align:center;min-height:18px;}
 .auth-msg.err{color:var(--red);}
 .auth-msg.ok{color:var(--green);}
@@ -77,36 +83,27 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 
 /* ══ APP SHELL ══ */
 .app-shell{display:flex;min-height:100vh;position:relative;z-index:1;}
-.sidebar{width:var(--sidebar-w);flex-shrink:0;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--border-soft);background:#0a0f1e;z-index:40;}
-.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border-soft);}
-.sidebar-logo a{font-family:'Exo 2',sans-serif;font-size:1.1rem;color:var(--gold);text-decoration:none;}
-.sb-nav{flex:1;padding:6px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
-.sb-cap{padding:12px 10px 4px;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:rgba(245,240,232,0.2);}
-.sb-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;text-decoration:none;font-size:0.82rem;color:var(--muted);transition:all .15s;font-weight:300;}
-.sb-link:hover{background:rgba(255,255,255,0.04);color:var(--cream);}
-.sb-link.active{background:rgba(201,168,76,0.09);color:var(--gold);}
-.sb-link svg{flex-shrink:0;opacity:0.7;}
-.sb-link.active svg{opacity:1;}
-.sb-trackers{margin:2px 4px 0;border:1px solid rgba(201,168,76,0.15);border-radius:10px;background:rgba(201,168,76,0.03);padding:3px;display:flex;flex-direction:column;gap:2px;}
-.sb-trackers .sb-cap{padding:6px 8px 3px;}
-.sb-div{height:1px;background:var(--border-soft);margin:8px 14px;}
 /* Account menu: person icon at the top right of the page header. */
 .page-header { position:relative; }
 .page-header > :first-child { flex:1; min-width:0; }
 .acct-wrap { position:relative; flex-shrink:0; }
+.hdr-icons { display:flex; align-items:center; gap:8px; flex-shrink:0; }
 .acct-btn { width:36px; height:36px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--border); color:var(--gold); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .15s, border-color .15s; }
-.acct-btn:hover, .acct-btn[aria-expanded="true"] { background:rgba(201,168,76,0.22); border-color:rgba(201,168,76,0.4); }
+.acct-btn:hover, .acct-btn[aria-expanded="true"] { background:rgba(var(--accent-rgb),0.22); border-color:rgba(var(--accent-rgb),0.4); }
 .acct-menu { position:absolute; top:calc(100% + 8px); right:0; z-index:150; width:240px; padding:6px 0; background:var(--navy-mid); border:1px solid var(--border); border-radius:12px; box-shadow:0 16px 40px rgba(0,0,0,0.5); }
 .acct-menu[hidden] { display:none; }
 .acct-who { padding:10px 14px 12px; border-bottom:1px solid var(--border-soft); }
 .acct-who-label { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
 .acct-email { font-size:0.84rem; color:var(--cream); overflow-wrap:anywhere; }
 .acct-item { display:flex; align-items:center; gap:10px; width:100%; padding:11px 14px; background:none; border:none; color:var(--cream-dim); font-family:'Outfit',sans-serif; font-size:0.84rem; font-weight:400; text-align:left; text-decoration:none; cursor:pointer; transition:background .15s, color .15s; }
-.acct-item:hover { background:rgba(255,255,255,0.04); color:var(--cream); }
+.acct-item:hover { background:rgba(var(--tint),0.04); color:var(--cream); }
 /* Narrow screens: the header stacks, so pin the icon to its top right corner. */
 @media(max-width:760px) {
-  .page-header .acct-wrap { position:absolute; top:0; right:0; }
-  .page-header > :first-child { padding-right:48px; }
+  .page-header .hdr-icons { position:absolute; top:0; right:0; }
+  .page-header > :first-child { padding-right:92px; }
+  /* Phones: the action buttons drop under the title and wrap, instead of running off the edge. */
+  .page-header { flex-wrap:wrap; }
+  .header-actions { flex-wrap:wrap; width:100%; }
 }
 
 .main-outer{flex:1;display:flex;flex-direction:column;min-width:0;align-items:center;overflow-x:hidden;}
@@ -153,17 +150,17 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .chart-empty{text-align:center;color:var(--muted);font-size:0.8rem;padding:46px 10px;line-height:1.6;}
 
 /* ── RECOMMENDATION CARD ── */
-.rec-card{background:rgba(201,168,76,0.04);border:1px solid var(--border);border-radius:13px;padding:14px 17px;}
-.nw-sync-banner{display:flex;align-items:center;gap:14px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.28);border-radius:12px;padding:11px 14px;}
+.rec-card{background:rgba(var(--accent-rgb),0.04);border:1px solid var(--border);border-radius:13px;padding:14px 17px;}
+.nw-sync-banner{display:flex;align-items:center;gap:14px;background:var(--gold-dim);border:1px solid rgba(var(--accent-rgb),0.28);border-radius:12px;padding:11px 14px;}
 .nw-sync-banner svg{flex-shrink:0;color:var(--gold-light);}
 .nw-sync-text{flex:1;min-width:0;font-size:0.82rem;line-height:1.45;color:var(--cream-dim);}
 .nw-sync-text strong{color:var(--gold-light);font-weight:600;}
 .nw-sync-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .nw-sync-actions .btn-secondary{white-space:nowrap;}
 .nw-sync-dismiss{background:none;border:none;color:var(--muted);font-size:1.15rem;line-height:1;cursor:pointer;padding:2px 6px;border-radius:6px;transition:all .15s;}
-.nw-sync-dismiss:hover{color:var(--cream);background:rgba(255,255,255,0.05);}
+.nw-sync-dismiss:hover{color:var(--cream);background:rgba(var(--tint),0.05);}
 @media(max-width:560px){.nw-sync-banner{flex-wrap:wrap;}.nw-sync-text{flex-basis:100%;}}
-.nw-conflict{background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.28);border-radius:12px;padding:13px 15px;}
+.nw-conflict{background:rgba(var(--accent-rgb),0.04);border:1px solid rgba(var(--accent-rgb),0.28);border-radius:12px;padding:13px 15px;}
 .nw-conflict-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
 .nw-conflict-head svg{flex-shrink:0;color:var(--gold-light);}
 .nw-conflict-title{font-size:0.84rem;color:var(--cream);}
@@ -175,8 +172,8 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .nw-conflict-vals b{color:var(--cream-dim);font-weight:600;}
 .nw-conflict-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .nw-conflict-actions button{white-space:nowrap;font-size:0.78rem;padding:6px 11px;border-radius:8px;cursor:pointer;transition:all .15s;}
-.btn-use-nw{background:var(--gold-dim);border:1px solid rgba(201,168,76,0.35);color:var(--gold-light);}
-.btn-use-nw:hover{background:rgba(201,168,76,0.2);}
+.btn-use-nw{background:var(--gold-dim);border:1px solid rgba(var(--accent-rgb),0.35);color:var(--gold-light);}
+.btn-use-nw:hover{background:rgba(var(--accent-rgb),0.2);}
 .btn-keep-local{background:none;border:1px solid var(--border);color:var(--muted);}
 .btn-keep-local:hover{color:var(--cream);border-color:var(--border-soft);}
 @media(max-width:560px){.nw-conflict-row{flex-wrap:wrap;}.nw-conflict-actions{flex-basis:100%;}.nw-conflict-actions button{flex:1;}}
@@ -189,13 +186,13 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .rec-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
 @media(max-width:680px){.rec-rows{grid-template-columns:1fr;}}
 .rec-row{background:var(--navy-card);border:1px solid var(--border-soft);border-radius:9px;padding:11px 13px;}
-.rec-row.winner{border-color:rgba(74,222,128,0.22);background:rgba(74,222,128,0.04);}
+.rec-row.winner{border-color:rgba(var(--green-rgb),0.22);background:rgba(var(--green-rgb),0.04);}
 .rec-debt{font-size:0.78rem;color:var(--cream);}
 .rec-apr{font-size:0.64rem;color:var(--muted);margin-bottom:7px;}
 .rec-body{font-size:0.72rem;color:var(--cream-dim);line-height:1.55;}
 .rec-body strong{color:var(--cream);font-weight:500;}
 .rec-body .g{color:var(--green);font-weight:500;}
-.rec-badge{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:5px;font-size:0.6rem;font-weight:600;background:rgba(74,222,128,0.14);color:var(--green);}
+.rec-badge{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:5px;font-size:0.6rem;font-weight:600;background:rgba(var(--green-rgb),0.14);color:var(--green);}
 
 /* ── DEBT CARDS (V10) ── */
 .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;}
@@ -209,38 +206,38 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .badge-first{background:var(--red-dim);color:var(--red);}
 .badge-ok{background:var(--green-dim);color:var(--green);}
 .badge-paid{background:var(--green-dim);color:var(--green);}
-.badge-excl{background:rgba(255,255,255,0.05);color:var(--muted);}
-.dc-track{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:11px;overflow:hidden;}
+.badge-excl{background:rgba(var(--tint),0.05);color:var(--muted);}
+.dc-track{height:4px;background:rgba(var(--tint),0.06);border-radius:2px;margin-bottom:11px;overflow:hidden;}
 .dc-fill{height:100%;border-radius:2px;transition:width .5s ease;}
 .dc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-bottom:11px;}
 .dc-stat{min-width:0;padding-right:10px;}
 .dc-stat label{font-size:0.56rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px;}
 .dc-stat span{font-size:0.82rem;color:var(--cream);}
-.dc-control{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;padding-top:11px;border-top:1px solid rgba(255,255,255,0.05);}
+.dc-control{display:flex;align-items:center;justify-content:space-between;gap:12px 18px;flex-wrap:wrap;padding-top:11px;border-top:1px solid rgba(var(--tint),0.05);}
 .dc-extra{display:flex;align-items:center;gap:9px;min-width:0;}
 .dc-extra-lbl{font-size:0.6rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
 .dc-extra-wrap{position:relative;}
 .dc-extra-wrap .pfx{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:0.78rem;pointer-events:none;}
-.dc-extra-wrap input{width:84px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);border-radius:7px;color:var(--gold-light);font-size:0.8rem;font-family:'Outfit',sans-serif;outline:none;padding:5px 8px 5px 19px;}
-.dc-extra-wrap input:focus{border-color:rgba(201,168,76,0.45);}
+.dc-extra-wrap input{width:84px;background:rgba(var(--accent-rgb),0.07);border:1px solid rgba(var(--accent-rgb),0.18);border-radius:7px;color:var(--gold-light);font-size:0.8rem;font-family:'Outfit',sans-serif;outline:none;padding:5px 8px 5px 19px;}
+.dc-extra-wrap input:focus{border-color:rgba(var(--accent-rgb),0.45);}
 .dc-extra-wrap input::-webkit-outer-spin-button,.dc-extra-wrap input::-webkit-inner-spin-button{-webkit-appearance:none;}
 .saves-tag{font-size:0.68rem;color:var(--green);white-space:nowrap;}
 .dc-actions{display:flex;align-items:center;gap:7px;flex-shrink:0;}
 .dc-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:7px;border:1px solid var(--border-soft);background:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.7rem;cursor:pointer;transition:all .15s;}
 .dc-btn:hover{border-color:var(--border);color:var(--cream);}
-.dc-btn.primary{border-color:rgba(201,168,76,0.3);color:var(--gold-light);background:rgba(201,168,76,0.06);}
-.dc-btn.primary:hover{background:rgba(201,168,76,0.12);}
-.dc-btn.danger:hover{border-color:rgba(248,113,113,0.4);color:var(--red);}
+.dc-btn.primary{border-color:rgba(var(--accent-rgb),0.3);color:var(--gold-light);background:rgba(var(--accent-rgb),0.06);}
+.dc-btn.primary:hover{background:rgba(var(--accent-rgb),0.12);}
+.dc-btn.danger:hover{border-color:rgba(var(--red-rgb),0.4);color:var(--red);}
 .excl-row{display:flex;align-items:center;gap:5px;}
 .excl-check{width:12px;height:12px;accent-color:var(--gold);cursor:pointer;}
 .excl-label{font-size:0.68rem;color:var(--muted);cursor:pointer;white-space:nowrap;}
 .debt-card.excluded{opacity:.5;border-style:dashed;}
 .debt-card.paid .dc-fill{background:var(--green)!important;}
-.excl-section-hdr{font-size:0.58rem;color:rgba(245,240,232,0.2);letter-spacing:0.1em;text-transform:uppercase;margin:6px 0 2px;display:flex;align-items:center;gap:8px;}
-.excl-section-hdr::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.05);}
+.excl-section-hdr{font-size:0.58rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin:6px 0 2px;display:flex;align-items:center;gap:8px;}
+.excl-section-hdr::after{content:'';flex:1;height:1px;background:rgba(var(--tint),0.05);}
 
 /* ── EMPTY STATE ── */
-.empty-state{background:linear-gradient(135deg,rgba(201,168,76,0.06),rgba(201,168,76,0.02));border:1px solid var(--border);border-radius:14px;padding:44px 32px;text-align:center;}
+.empty-state{background:linear-gradient(135deg,rgba(var(--accent-rgb),0.06),rgba(var(--accent-rgb),0.02));border:1px solid var(--border);border-radius:14px;padding:44px 32px;text-align:center;}
 .empty-state h3{font-size:1.15rem;font-weight:400;margin-bottom:8px;}
 .empty-state p{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:22px;max-width:420px;margin-left:auto;margin-right:auto;}
 .empty-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
@@ -269,6 +266,8 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 
 /* ── MODALS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:200;align-items:center;justify-content:center;padding:20px;}
+/* Windows center over the page content, right of the left menu. */
+@media(min-width:769px){.modal-overlay{padding-left:calc(var(--vf-nav-w, 0px) + 20px);}}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:18px;padding:26px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;}
 .modal-title{font-size:1rem;font-weight:500;margin-bottom:5px;}
@@ -290,7 +289,7 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .btn-modal-cancel{padding:11px 16px;background:none;border:1px solid var(--border-soft);color:var(--muted);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.86rem;cursor:pointer;transition:all .15s;}
 .btn-modal-cancel:hover{border-color:var(--border);color:var(--cream);}
 .modal-err{font-size:0.76rem;color:var(--red);margin-top:6px;min-height:18px;}
-#sharePreviewWrap{margin-bottom:14px;border-radius:10px;overflow:hidden;background:#0a0f1e;min-height:180px;display:flex;align-items:center;justify-content:center;}
+#sharePreviewWrap{margin-bottom:14px;border-radius:10px;overflow:hidden;background:#0b0b0b;min-height:180px;display:flex;align-items:center;justify-content:center;}
 #shareGenerating{color:var(--muted);font-size:0.82rem;}
 #sharePreviewImg{display:none;width:100%;border-radius:10px;}
 
@@ -300,7 +299,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 .footer-links a{color:var(--muted);text-decoration:none;font-size:0.75rem;transition:color .15s;}
 .footer-links a:hover{color:var(--gold);}
 .btn-bug{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border-soft);background:none;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.75rem;cursor:pointer;transition:all .15s;}
-.btn-bug:hover{border-color:rgba(201,168,76,0.3);color:var(--cream);}
+.btn-bug:hover{border-color:rgba(var(--accent-rgb),0.3);color:var(--cream);}
 
 @media(max-width:860px){.two-col{grid-template-columns:1fr;}.pie-area{height:150px;}}
 @media(max-width:760px){
@@ -328,40 +327,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     </div>
     <div class="auth-card">
       <h2>Track your <em>progress</em></h2>
-      <p class="auth-card-sub">Sign in to save your debts, set extra payments, and watch your payoff date move closer.</p>
-      <div class="auth-tabs" id="authTabs">
-        <button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
-        <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
-      </div>
-      <div id="signinForm">
-        <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
-        <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
-        <button class="btn-auth" onclick="signIn()">Sign In</button>
-        <div class="auth-alt"><button type="button" class="auth-link" onclick="showResetForm()">Forgot your password?</button></div>
-        <div class="auth-msg" id="siMsg"></div>
-      </div>
-      <div id="signupForm" style="display:none">
-        <div class="auth-field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
-        <div class="auth-field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 6 characters"></div>
-        <div class="auth-field"><label>Confirm Password</label><input type="password" id="suPasswordConfirm" placeholder="Re-enter your password"></div>
-        <button class="btn-auth" onclick="signUp()">Create Account</button>
-        <div class="auth-msg" id="suMsg"></div>
-      </div>
-      <div id="resetForm" style="display:none">
-        <p class="auth-form-title">Reset your password</p>
-        <p class="auth-form-sub">Enter the email you signed up with and we'll send you a link to set a new password.</p>
-        <div class="auth-field"><label>Email</label><input type="email" id="rsEmail" placeholder="you@example.com"></div>
-        <button class="btn-auth" onclick="requestReset()">Send reset link</button>
-        <div class="auth-alt"><button type="button" class="auth-link" onclick="showSigninForm()">← Back to sign in</button></div>
-        <div class="auth-msg" id="rsMsg"></div>
-      </div>
-      <div id="newPasswordForm" style="display:none">
-        <p class="auth-form-title">Set a new password</p>
-        <p class="auth-form-sub">You're verified. Choose a new password for your account.</p>
-        <div class="auth-field"><label>New Password</label><input type="password" id="npPassword" placeholder="At least 6 characters"></div>
-        <div class="auth-field"><label>Confirm Password</label><input type="password" id="npPasswordConfirm" placeholder="Re-enter your password"></div>
-        <button class="btn-auth" onclick="updatePassword()">Update password</button>
-        <div class="auth-msg" id="npMsg"></div>
+      <p class="auth-card-sub">Create a free account to save your debts, set extra payments, and watch your payoff date move closer.</p>
+      <div class="auth-ctas">
+        <a class="btn-auth" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fdebt-tracker%2F">Create free account</a>
+        <a class="btn-auth-2" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fdebt-tracker%2F">Sign in</a>
       </div>
     </div>
   </div>
@@ -371,26 +340,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 <div id="dashApp" style="display:none">
   <div class="app-shell">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo"><a href="/">VestlyFi</a></div>
-      <div class="sb-nav">
-        <div class="sb-cap">Main</div>
-        <a href="/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a>
-        <div class="sb-trackers">
-          <div class="sb-cap">Trackers</div>
-          <a href="/net-worth/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Net Worth</a>
-          <a href="/debt-tracker/" class="sb-link active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Debt</a>
-        </div>
-        <a href="/calculators/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/></svg>Calculators</a>
-        <a href="/create-a-diagram/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><line x1="12" y1="7" x2="5" y2="17"/><line x1="12" y1="7" x2="19" y2="17"/></svg>Diagrams</a>
-        <div class="sb-div"></div>
-        <div class="sb-cap">Tools</div>
-        <a href="/coast-fire/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Coast FIRE</a>
-        <a href="/retirement/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Retirement</a>
-        <a href="/debt-payoff/" class="sb-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Debt Payoff</a>
-      </div>
-    </aside>
+    <!-- LEFT MENU (shared, assets/app-nav.js) -->
+    <aside data-vf-nav data-active="debts"></aside><script src="/assets/app-nav.js"></script>
 
     <!-- MAIN -->
     <div class="main-outer">
@@ -405,6 +356,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
             <button class="btn-secondary" onclick="openShareModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Share progress</button>
             <button class="btn-primary" onclick="openDebtModal()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add debt</button>
           </div>
+          <div class="hdr-icons">
+          <button data-vf-theme-btn></button>
           <div class="acct-wrap">
             <button class="acct-btn" id="acctBtn" onclick="toggleAcctMenu()" aria-label="Account" title="Account" aria-haspopup="menu" aria-expanded="false" aria-controls="acctMenu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg></button>
             <div class="acct-menu" id="acctMenu" role="menu" hidden>
@@ -412,6 +365,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
               <a class="acct-item" role="menuitem" href="/account/"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20.5c0-3.6 3.6-6 8-6s8 2.4 8 6"/></svg>Account settings</a>
               <button class="acct-item" role="menuitem" onclick="closeAcctMenu();signOut()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
             </div>
+          </div>
           </div>
         </div>
 
@@ -477,7 +431,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
               <div class="panel">
                 <div class="panel-ttl">Payoff timeline</div>
                 <div class="chart-legend">
-                  <div class="leg-item"><div class="leg-line" style="border-top:1.5px dashed rgba(245,240,232,0.3);height:0;"></div>Minimums only</div>
+                  <div class="leg-item"><div class="leg-line" style="border-top:1.5px dashed var(--muted);height:0;"></div>Minimums only</div>
                   <div class="leg-item"><div class="leg-line" style="background:var(--gold);"></div>With extra payments</div>
                 </div>
                 <div id="chartEmpty" class="chart-empty" style="display:none">Add an active debt to chart your payoff.</div>
@@ -612,33 +566,37 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 
 <!-- BUG MODAL -->
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:var(--raised);border:1px solid var(--line);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:var(--cream);font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:var(--red)">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected…" style="width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email (optional)</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:var(--muted);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email (optional)</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--line);border-radius:9px;color:var(--cream);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:var(--accent);color:var(--on-accent);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
 
 <script>
 const{createClient}=supabase;
+// Reset and expired email links belong to the shared sign-in page.
+if(/type=recovery|[#&]error(_code)?=/.test(location.hash))location.replace('/signin/?next=%2Fdebt-tracker%2F'+location.hash);
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
 const REC_DISMISS_KEY='vf_debt_rec_dismissed';
 const NW_SYNC_DISMISS_KEY='vf_debt_nwsync_dismissed';
 const NW_KEEP_LOCAL_KEY='vf_debt_nwkeep_local';
-const DEBT_COLORS=['#f87171','#c9a84c','#60a5fa','#4ade80','#a78bfa','#fb923c','#f472b6','#38bdf8'];
+/* Theme colors for script-drawn charts. */
+const T=n=>window.vfTheme?vfTheme.color(n):'';
+const DEBT_COLORS=['#e8706a','#dcc392','#7aa7ff','#5cc28e','#b39af5','#f0a35e','#e88ab8','#4cc3b5'];
 let currentUser=null,myDebts=[],myHistory=[],payoffChartInstance=null,breakdownChartInstance=null,editingDebtId=null,updatingBalDebtId=null;
 let nwLiabLatest={},pendingNwImports=[],nwConflicts=[];
 
@@ -696,68 +654,12 @@ function simPortfolio(debts,useExtra){
   return totals;
 }
 
-/* ── AUTH ── */
-function switchAuthTab(t){
-  document.getElementById('authTabs').style.display='flex';
-  ['resetForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.querySelectorAll('#dashLocked .auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
-  document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
-  document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
-}
-function showSigninForm(){switchAuthTab('signin');}
-function showResetForm(){
-  document.getElementById('authTabs').style.display='none';
-  ['signinForm','signupForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('resetForm').style.display='block';
-  document.getElementById('rsMsg').textContent='';
-  const si=document.getElementById('siEmail').value.trim();if(si)document.getElementById('rsEmail').value=si;
-}
-function showNewPasswordForm(){
-  document.getElementById('authTabs').style.display='none';
-  ['signinForm','signupForm','resetForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('newPasswordForm').style.display='block';
-  showDashLocked();
-}
-async function requestReset(){
-  const email=document.getElementById('rsEmail').value.trim(),msg=document.getElementById('rsMsg');
-  if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';return;}
-  msg.className='auth-msg';msg.textContent='Sending…';
-  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/debt-tracker/'});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link; check spam too.';}
-}
-async function updatePassword(){
-  const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');
-  if(pw!==cf){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
-  if(pw.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
-  msg.className='auth-msg';msg.textContent='Updating…';
-  const{error}=await sb.auth.updateUser({password:pw});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;return;}
-  msg.className='auth-msg ok';msg.textContent='Password updated! Loading your dashboard…';
-  recoveryMode=false;if(history.replaceState)history.replaceState(null,'',window.location.pathname);
-  setTimeout(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user)await onSignedIn(session);else{switchAuthTab('signin');document.getElementById('siMsg').className='auth-msg ok';document.getElementById('siMsg').textContent='Password updated. Please sign in.';}},800);
-}
-['siEmail','siPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signIn();}));
-['suEmail','suPassword','suPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
-document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='Enter')requestReset();});
-['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
-
-async function signIn(){
-  const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');
-  msg.className='auth-msg';msg.textContent='Signing in…';
-  const{error}=await sb.auth.signInWithPassword({email,password});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Success!';}
-}
-async function signUp(){
-  const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');
-  if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
-  if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
-  msg.className='auth-msg';msg.textContent='Creating account…';
-  const{error}=await sb.auth.signUp({email,password});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';}
-}
+/* ── AUTH ──
+   Signing in and creating an account happen on /signin/, shared by every
+   tracker; it sends people back here with any action still in the address. */
+function signinHref(mode){return'/signin/?mode='+mode+'&next='+encodeURIComponent(location.pathname+location.search);}
+document.getElementById('ctaSignup').href=signinHref('signup');
+document.getElementById('ctaSignin').href=signinHref('signin');
 async function signOut(){await sb.auth.signOut();}
 function showDashLocked(){document.getElementById('dashLocked').style.display='block';document.getElementById('dashApp').style.display='none';}
 function showDashApp(){document.getElementById('dashLocked').style.display='none';document.getElementById('dashApp').style.display='block';}
@@ -770,20 +672,19 @@ document.addEventListener('click',e=>{if(!e.target.closest('.acct-wrap'))closeAc
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('acctMenu').hidden)closeAcctMenu();});
 
 
-async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();}
+async function onSignedIn(session){currentUser=session.user;showDashApp();setUserChip();await loadDashboard();openFromLink();}
+// Links that open an action: ?add=1, ?share=1 (left menu). Run in place when already here.
+window.VF_ACTIONS={add:()=>openDebtModal(),share:()=>{if(myDebts.length)openShareModal();}};
+function openFromLink(){const q=new URLSearchParams(location.search);const act=['add','share'].find(k=>q.has(k));if(!act)return;q.delete(act);if(history.replaceState)history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));window.VF_ACTIONS[act]();}
 
-let initDone=false,recoveryMode=false;
-if(window.location.hash.includes('type=recovery'))recoveryMode=true;
+let initDone=false;
 (async()=>{
   const{data:{session}}=await sb.auth.getSession();
-  if(recoveryMode){showNewPasswordForm();}
-  else if(session?.user){await onSignedIn(session);}
+  if(session?.user){await onSignedIn(session);}
   else{showDashLocked();}
   initDone=true;
 })();
 sb.auth.onAuthStateChange(async(event,session)=>{
-  if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
-  if(recoveryMode&&event==='SIGNED_IN')return;
   if(!initDone&&event==='SIGNED_IN')return;
   if(event==='SIGNED_IN'&&session?.user){await onSignedIn(session);}
   else if(event==='SIGNED_OUT'){currentUser=null;myDebts=[];myHistory=[];showDashLocked();}
@@ -840,7 +741,7 @@ function findLinkedConflicts(){
 
 function renderConflicts(){
   const box=document.getElementById('nwConflict');
-  if(!nwConflicts.length){box.style.display='none';return;}
+  if(!nwConflicts.length){box.style.display='none';if(myDebts.length&&typeof nwLiabLatest==='object')updateSyncBanner();return;}
   document.getElementById('nwConflictRows').innerHTML=nwConflicts.map(c=>`
     <div class="nw-conflict-row">
       <div class="nw-conflict-info">
@@ -890,7 +791,8 @@ function updateSyncBanner(){
   pendingNwImports=Object.keys(nwLiabLatest)
     .filter(k=>nwLiabLatest[k].value>0&&!linked.has(k)&&!named.has(k)&&!dismissed.has(k))
     .map(k=>nwLiabLatest[k].label);
-  if(!pendingNwImports.length){banner.style.display='none';return;}
+  // One banner at a time: the mismatch box above outranks this one.
+  if(!pendingNwImports.length||document.getElementById('nwConflict').style.display!=='none'){banner.style.display='none';return;}
   const n=pendingNwImports.length;
   document.getElementById('nwSyncCount').textContent=n;
   const preview=pendingNwImports.slice(0,3).map(escHtml).join(', ')+(n>3?'…':'');
@@ -969,7 +871,10 @@ function renderDashboard(){
   }
 }
 
+// Redraw with the new colors when light/dark switches.
+window.addEventListener('vf-theme',()=>{if(window._payoffArgs){try{renderPayoffChart(...window._payoffArgs);}catch(e){}}});
 function renderPayoffChart(baseTotals,accelTotals){
+  window._payoffArgs=[baseTotals,accelTotals];
   document.getElementById('chartWrap').style.display='block';
   document.getElementById('chartEmpty').style.display='none';
   const n=Math.max(baseTotals.length,accelTotals.length);
@@ -985,14 +890,14 @@ function renderPayoffChart(baseTotals,accelTotals){
   payoffChartInstance=new Chart(payoffCv.getContext('2d'),{
     type:'line',
     data:{labels,datasets:[
-      {label:'Minimums only',data:base,borderColor:'rgba(245,240,232,0.3)',backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:0,pointHoverRadius:4,tension:0.25},
-      {label:'With extra payments',data:accel,borderColor:'#c9a84c',backgroundColor:'rgba(201,168,76,0.08)',borderWidth:2.5,pointRadius:0,pointHoverRadius:4,fill:true,tension:0.25}
+      {label:'Minimums only',data:base,borderColor:T('--muted'),backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:0,pointHoverRadius:4,tension:0.25},
+      {label:'With extra payments',data:accel,borderColor:T('--accent'),backgroundColor:`rgba(${T('--accent-rgb')},0.08)`,borderWidth:2.5,pointRadius:0,pointHoverRadius:4,fill:true,tension:0.25}
     ]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
       scales:{
-        x:{grid:{display:false},ticks:{color:'rgba(245,240,232,0.35)',font:{family:'Outfit',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
-        y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(245,240,232,0.35)',font:{family:'Outfit',size:10},callback:v=>fmt(v)}}
+        x:{grid:{display:false},ticks:{color:T('--muted'),font:{family:'Outfit',size:10},maxRotation:0,autoSkip:true,maxTicksLimit:7}},
+        y:{grid:{color:`rgba(${T('--tint')},0.05)`},ticks:{color:T('--muted'),font:{family:'Outfit',size:10},callback:v=>fmt(v)}}
       }
     }
   });
@@ -1053,7 +958,7 @@ function renderDebtCards(active,included,excluded,colorById,ordered){
     const extra=Number(d.extra_payment)||0;
     const pct=orig>0?Math.min(100,Math.max(0,((orig-bal)/orig)*100)):0;
     const a=activeById[d.id];
-    const color=colorById[d.id]||'#c9a84c';
+    const color=colorById[d.id]||'#dcc392';
     // badge
     let badge='';
     if(d.excluded)badge='<span class="dc-badge badge-excl">Excluded</span>';
@@ -1254,64 +1159,64 @@ async function renderShareCanvas(){
   const totalPaid=Math.max(0,totalOriginal-totalRemaining);
   const pct=totalOriginal>0?Math.min(100,Math.max(0,(totalPaid/totalOriginal)*100)):0;
 
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0e1530');bg.addColorStop(1,'#080c1a');
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#1b1b1b');bg.addColorStop(1,'#0b0b0b');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  let g1=ctx.createRadialGradient(W*.5,-140,0,W*.5,-140,560);g1.addColorStop(0,'rgba(201,168,76,0.15)');g1.addColorStop(1,'transparent');
+  let g1=ctx.createRadialGradient(W*.5,-140,0,W*.5,-140,560);g1.addColorStop(0,'rgba(220,195,146,0.15)');g1.addColorStop(1,'transparent');
   ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(201,168,76,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
+  ctx.strokeStyle='rgba(220,195,146,0.18)';ctx.lineWidth=2;ctx.strokeRect(1,1,W-2,H-2);
   ctx.textBaseline='alphabetic';ctx.textAlign='left';
 
-  ctx.font='700 30px "Exo 2",sans-serif';ctx.fillStyle='#c9a84c';ctx.fillText('VestlyFi',PAD,52);
+  ctx.font='700 30px "Exo 2",sans-serif';ctx.fillStyle='#dcc392';ctx.fillText('VestlyFi',PAD,52);
   const dateStr=new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
   ctx.font='400 18px Outfit,sans-serif';const dW=ctx.measureText(dateStr).width,dX=W-PAD-dW-30;
   ctx.fillStyle='rgba(255,255,255,0.05)';ctx.beginPath();ctx.roundRect(dX,32,dW+30,32,16);ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.stroke();
-  ctx.fillStyle='rgba(245,240,232,0.62)';ctx.fillText(dateStr,dX+15,53);
+  ctx.fillStyle='rgba(237,237,237,0.62)';ctx.fillText(dateStr,dX+15,53);
 
-  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle='#f5f0e8';ctx.fillText(pct.toFixed(0)+'% Paid Off',PAD-1,122);
-  ctx.font='600 20px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.55)';ctx.fillText(`${fmt(totalPaid)} paid · ${fmt(totalRemaining)} remaining`,PAD-1,150);
+  ctx.font='700 50px Outfit,sans-serif';ctx.fillStyle='#ededed';ctx.fillText(pct.toFixed(0)+'% Paid Off',PAD-1,122);
+  ctx.font='600 20px Outfit,sans-serif';ctx.fillStyle='rgba(237,237,237,0.55)';ctx.fillText(`${fmt(totalPaid)} paid · ${fmt(totalRemaining)} remaining`,PAD-1,150);
 
   const barY=178,barH=22,barX=PAD,barW=W-PAD*2;
   ctx.fillStyle='rgba(255,255,255,0.06)';ctx.beginPath();ctx.roundRect(barX,barY,barW,barH,11);ctx.fill();
   const fillW=barW*(pct/100);
-  if(fillW>0){const fg=ctx.createLinearGradient(barX,0,barX+fillW,0);fg.addColorStop(0,'#4ade80');fg.addColorStop(1,'#2d9960');ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(barX,barY,Math.max(fillW,22),barH,11);ctx.fill();}
+  if(fillW>0){const fg=ctx.createLinearGradient(barX,0,barX+fillW,0);fg.addColorStop(0,'#5cc28e');fg.addColorStop(1,'#3f9a6c');ctx.fillStyle=fg;ctx.beginPath();ctx.roundRect(barX,barY,Math.max(fillW,22),barH,11);ctx.fill();}
 
   const series=buildHistorySeries(),cY=238,cH=170;
   if(series.length>=2){
     const yAW=90,cX=PAD+yAW,cW=W-PAD-cX,vals=series.map(s=>s.total),minV=Math.min(...vals),maxV=Math.max(...vals),range=maxV-minV||1,p=range*.1,yMin=Math.max(0,minV-p),yMax=maxV+p,yR=yMax-yMin||1;
     const ptX=i=>cX+(i/(vals.length-1))*cW,ptY=v=>cY+cH-((v-yMin)/yR)*cH;
-    [minV,(minV+maxV)/2,maxV].forEach(v=>{const y=ptY(v);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cX,y);ctx.lineTo(cX+cW,y);ctx.stroke();ctx.textAlign='right';ctx.font='300 15px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.fillText(fmt(v),cX-14,y+5);});
+    [minV,(minV+maxV)/2,maxV].forEach(v=>{const y=ptY(v);ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cX,y);ctx.lineTo(cX+cW,y);ctx.stroke();ctx.textAlign='right';ctx.font='300 15px Outfit,sans-serif';ctx.fillStyle='rgba(237,237,237,0.3)';ctx.fillText(fmt(v),cX-14,y+5);});
     ctx.textAlign='left';
-    const fg=ctx.createLinearGradient(0,cY,0,cY+cH);fg.addColorStop(0,'rgba(248,113,113,0.18)');fg.addColorStop(1,'transparent');
+    const fg=ctx.createLinearGradient(0,cY,0,cY+cH);fg.addColorStop(0,'rgba(232,112,106,0.18)');fg.addColorStop(1,'transparent');
     ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
     ctx.lineTo(ptX(vals.length-1),cY+cH);ctx.lineTo(ptX(0),cY+cH);ctx.closePath();ctx.fillStyle=fg;ctx.fill();
     ctx.beginPath();ctx.moveTo(ptX(0),ptY(vals[0]));for(let i=1;i<vals.length;i++)ctx.lineTo(ptX(i),ptY(vals[i]));
-    ctx.strokeStyle='#f87171';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();
-    ctx.beginPath();ctx.arc(ptX(vals.length-1),ptY(vals[vals.length-1]),7,0,Math.PI*2);ctx.fillStyle='#f87171';ctx.fill();ctx.strokeStyle='#0e1530';ctx.lineWidth=3;ctx.stroke();
+    ctx.strokeStyle='#e8706a';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();
+    ctx.beginPath();ctx.arc(ptX(vals.length-1),ptY(vals[vals.length-1]),7,0,Math.PI*2);ctx.fillStyle='#e8706a';ctx.fill();ctx.strokeStyle='#131313';ctx.lineWidth=3;ctx.stroke();
   } else {
-    ctx.textAlign='center';ctx.font='300 20px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.3)';ctx.fillText('Log balance updates to see your trend',W/2,cY+cH/2);ctx.textAlign='left';
+    ctx.textAlign='center';ctx.font='300 20px Outfit,sans-serif';ctx.fillStyle='rgba(237,237,237,0.3)';ctx.fillText('Log balance updates to see your trend',W/2,cY+cH/2);ctx.textAlign='left';
   }
 
   const boxY=430,boxH=150,boxX=PAD,boxW=W-PAD*2;
   ctx.fillStyle='rgba(255,255,255,0.025)';ctx.beginPath();ctx.roundRect(boxX,boxY,boxW,boxH,16);ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.stroke();
-  ctx.font='600 13px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.4)';
+  ctx.font='600 13px Outfit,sans-serif';ctx.fillStyle='rgba(237,237,237,0.4)';
   let cx2=boxX+24;for(const ch of'YOUR DEBTS'){ctx.fillText(ch,cx2,boxY+30);cx2+=ctx.measureText(ch).width+3;}
   const sortedDebts=[...inc].sort((a,b)=>Number(b.balance)-Number(a.balance));
   let ry=boxY+58;
   sortedDebts.slice(0,5).forEach(d=>{
     const orig=Number(d.original_balance),bal=Number(d.balance),dpct=orig>0?Math.min(100,Math.max(0,((orig-bal)/orig)*100)):0;
-    ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle=d.paid_off?'rgba(245,240,232,0.4)':'rgba(245,240,232,0.85)';
+    ctx.font='400 17px Outfit,sans-serif';ctx.fillStyle=d.paid_off?'rgba(237,237,237,0.4)':'rgba(237,237,237,0.85)';
     ctx.fillText(fitText(ctx,d.name,280),boxX+24,ry);
     const barX2=boxX+340,barW2=420,barH2=8;
     ctx.fillStyle='rgba(255,255,255,0.08)';ctx.beginPath();ctx.roundRect(barX2,ry-13,barW2,barH2,4);ctx.fill();
-    if(dpct>0){ctx.fillStyle=d.paid_off?'#4ade80':'#c9a84c';ctx.beginPath();ctx.roundRect(barX2,ry-13,Math.max(barW2*(dpct/100),6),barH2,4);ctx.fill();}
-    ctx.textAlign='right';ctx.fillStyle='rgba(245,240,232,0.7)';ctx.fillText(fmt(bal),boxX+boxW-24,ry);ctx.textAlign='left';
+    if(dpct>0){ctx.fillStyle=d.paid_off?'#5cc28e':'#dcc392';ctx.beginPath();ctx.roundRect(barX2,ry-13,Math.max(barW2*(dpct/100),6),barH2,4);ctx.fill();}
+    ctx.textAlign='right';ctx.fillStyle='rgba(237,237,237,0.7)';ctx.fillText(fmt(bal),boxX+boxW-24,ry);ctx.textAlign='left';
     ry+=26;
   });
-  if(sortedDebts.length>5){ctx.font='400 14px Outfit,sans-serif';ctx.fillStyle='rgba(245,240,232,0.35)';ctx.fillText(`+${sortedDebts.length-5} more`,boxX+24,ry+2);}
+  if(sortedDebts.length>5){ctx.font='400 14px Outfit,sans-serif';ctx.fillStyle='rgba(237,237,237,0.35)';ctx.fillText(`+${sortedDebts.length-5} more`,boxX+24,ry+2);}
 
-  ctx.font='400 16px Outfit,sans-serif';ctx.fillStyle='rgba(201,168,76,0.5)';ctx.textAlign='right';ctx.fillText('vestlyfi.com/debt-tracker',W-PAD,H-22);
+  ctx.font='400 16px Outfit,sans-serif';ctx.fillStyle='rgba(220,195,146,0.5)';ctx.textAlign='right';ctx.fillText('vestlyfi.com/debt-tracker',W-PAD,H-22);
 
   const dataUrl=canvas.toDataURL('image/png');
   document.getElementById('shareGenerating').style.display='none';
@@ -1408,13 +1313,13 @@ function openBugModal(){document.getElementById('bugDescription').value='';docum
 function closeBugModal(){document.getElementById('bugModal').style.display='none';}
 async function submitBugReport(){
   const description=document.getElementById('bugDescription').value.trim(),email=document.getElementById('bugEmail').value.trim(),errEl=document.getElementById('bugErr'),btn=document.getElementById('bugSubmitBtn');
-  if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}
+  if(!description){errEl.style.color='var(--red)';errEl.textContent='Please describe the bug.';return;}
   btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';
   try{
     const res=await fetch('https://formspree.io/f/xjgaydej',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page:window.location.pathname,userAgent:navigator.userAgent})});
-    if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}
+    if(res.ok){btn.textContent='Sent!';errEl.style.color='var(--green)';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}
     else throw new Error();
-  }catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Email vestlyfi@gmail.com.';}
+  }catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='var(--red)';errEl.textContent='Something went wrong. Email vestlyfi@gmail.com.';}
 }
 (function(){const el=document.getElementById('bugModal');let d=false;el.addEventListener('mousedown',e=>{d=e.target===el;});el.addEventListener('click',e=>{if(e.target===el&&d)closeBugModal();d=false;});})();
 document.getElementById('bugDescription').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey))submitBugReport();});

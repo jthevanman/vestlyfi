@@ -108,23 +108,23 @@
 <link rel="manifest" href="/site.webmanifest">
 <style>
   :root {
-    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
-    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
-    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
-    --green:#4ade80; --red:#f87171; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+    --navy:#0b0b0b; --navy-mid:#1b1b1b; --navy-light:#262626; --navy-card:#131313;
+    --gold:#dcc392; --gold-light:#ecd9b2; --gold-dim:rgba(220,195,146,0.13);
+    --cream:#ededed; --cream-dim:#969696; --muted:#5f5f5f;
+    --green:#5cc28e; --red:#e8706a; --border:rgba(220,195,146,0.15); --border-soft:rgba(255,255,255,0.07);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; min-height:100vh; }
   
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0a0f1e; }
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0b0b0b; }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
   .site-nav-links a:hover { color:var(--cream); }
   .site-nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
   .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
@@ -148,19 +148,19 @@
   input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
   input.has-prefix { padding-left:30px; }
   input.has-suffix { padding-right:48px; }
-  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(220,195,146,0.1); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
   .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
   @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
 
   .pill-group { display:flex; gap:9px; flex-wrap:wrap; }
-  .pill { padding:9px 18px; border-radius:4px; border:1px solid rgba(201,168,76,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
+  .pill { padding:9px 18px; border-radius:4px; border:1px solid rgba(220,195,146,0.22); background:transparent; color:var(--cream-dim); cursor:pointer; font-family:'Outfit',sans-serif; font-size:0.87rem; transition:all .18s; }
   .pill:hover { border-color:var(--gold); color:var(--cream); }
   .pill.selected { background:var(--gold-dim); border-color:var(--gold); color:var(--gold-light); }
 
   .step-nav { display:flex; gap:10px; margin-top:36px; }
-  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(220,195,146,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(220,195,146,0.42); }
   .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
   .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
   .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
@@ -169,9 +169,9 @@
   /* RESULTS */
   .result-hero { text-align:center; padding:36px 0 32px; border-bottom:1px solid var(--border); margin-bottom:32px; }
   .result-badge { display:inline-block; padding:5px 14px; border-radius:4px; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; margin-bottom:16px; }
-  .badge-green { background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.25); }
-  .badge-gold { background:rgba(201,168,76,0.12); color:var(--gold-light); border:1px solid rgba(201,168,76,0.25); }
-  .badge-red { background:rgba(248,113,113,0.12); color:var(--red); border:1px solid rgba(248,113,113,0.25); }
+  .badge-green { background:rgba(92,194,142,0.12); color:var(--green); border:1px solid rgba(92,194,142,0.25); }
+  .badge-gold { background:rgba(220,195,146,0.12); color:var(--gold-light); border:1px solid rgba(220,195,146,0.25); }
+  .badge-red { background:rgba(232,112,106,0.12); color:var(--red); border:1px solid rgba(232,112,106,0.25); }
   .result-number { font-family:'Outfit',sans-serif; font-size:clamp(3rem,10vw,5.5rem); font-weight:600; line-height:1; color:var(--gold-light); margin-bottom:6px; }
   .result-number-label { font-size:0.9rem; color:var(--cream-dim); margin-bottom:12px; }
   .result-sub { color:var(--muted); font-size:0.9rem; line-height:1.65; max-width:480px; margin:0 auto; }
@@ -189,7 +189,7 @@
   .insight-list li:last-child { border-bottom:none; }
   .ii { flex-shrink:0; margin-top:1px; }
 
-  .aff-section { background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
+  .aff-section { background:linear-gradient(135deg,rgba(220,195,146,0.08),rgba(220,195,146,0.03)); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:22px; }
   .aff-section h3 { font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:400; margin-bottom:5px; }
   .aff-section p { color:var(--muted); font-size:0.82rem; line-height:1.6; margin-bottom:18px; }
   .aff-links { display:flex; gap:9px; flex-wrap:wrap; }
@@ -198,7 +198,7 @@
 
   .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
   .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
-  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+  .disclaimer { font-size:0.7rem; color:rgba(237,237,237,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
 
   /* SEO CONTENT */
   .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
@@ -230,7 +230,7 @@
   .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
   .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(220,195,146,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
 
   /* Progress */
@@ -465,29 +465,29 @@
 
 <!-- About Modal -->
 <div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
-      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p>Questions? <span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
 
 <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
-      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
-      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#ededed;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
+      <p style="margin-bottom:0;"><strong style="color:#ededed;">Contact</strong><br><span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -663,7 +663,7 @@ function calculate() {
   const chartPortfolio = currentSim.bals;
   const chartThreshold = chartAges.map(age => Math.round(coastAtAge(age)));
 
-  const barColor = pct >= 100 ? '#4caf7d' : pct >= 60 ? '#c9a84c' : '#5bb8f5';
+  const barColor = pct >= 100 ? '#5cc28e' : pct >= 60 ? '#dcc392' : '#5bb8f5';
 
   // Coast timing card
   let coastTimingHtml = '';
@@ -674,12 +674,12 @@ function calculate() {
         ? `At your current rate of <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, you`
         : `Even without new contributions, your existing balance will grow and you`;
       coastTimingHtml = `
-        <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        <div style="background:rgba(91,184,245,0.07);border:1px solid rgba(91,184,245,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:#a1a1a1;line-height:1.75;">
           ${contrib}'ll hit your Coast FIRE number at age <strong style="color:#5bb8f5">${coastAge}</strong>, in <strong style="color:#5bb8f5">${yrsToCoast} year${yrsToCoast !== 1 ? 's' : ''}</strong>. After that, you can stop contributing entirely.
         </div>`;
     } else {
       coastTimingHtml = `
-        <div style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+        <div style="background:rgba(232,112,106,0.07);border:1px solid rgba(232,112,106,0.18);border-radius:12px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:#a1a1a1;line-height:1.75;">
           At ${fmt(monthlyContrib)}/month you won't reach Coast FIRE before age ${retireAge}. Increase your monthly savings to see the options below.
         </div>`;
     }
@@ -691,24 +691,24 @@ function calculate() {
       <div style="font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500;">Your Result</div>
 
       ${alreadyCoasted ? `
-        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#4caf7d;margin-bottom:6px;">Already coasting</div>
+        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#5cc28e;margin-bottom:6px;">Already coasting</div>
         <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">You crossed your Coast FIRE number${coastedAtAge ? ` around age ${coastedAtAge}` : ''}</div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:#a1a1a1;">
           Your <strong style="color:var(--cream)">${fmt(currentSavings)}</strong> will compound on its own to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by age ${retireAge}. You don't need to save another dollar for retirement.
         </div>
       ` : coastAge ? `
         <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:var(--gold-light);margin-bottom:6px;">Age ${coastAge}</div>
         <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">when you'll hit Coast FIRE, ${coastAge - currentAge} year${coastAge - currentAge !== 1 ? 's' : ''} from now</div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:#a1a1a1;">
           ${monthlyContrib > 0
             ? `Saving <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, your portfolio hits <strong style="color:var(--cream)">${fmt(Math.round(coastAtAge(coastAge)))}</strong> at age ${coastAge}. From that point, compound growth alone carries you to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by retirement at age ${retireAge}. Contributions become optional.`
             : `Without any new contributions, your current balance will grow enough to cross the coast threshold at age ${coastAge}. After that, compound growth carries you to <strong style="color:var(--cream)">${fmt(fireNumber)}</strong> by retirement at age ${retireAge}.`
           }
         </div>
       ` : `
-        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#e05c5c;margin-bottom:6px;">Not on track</div>
+        <div style="font-size:clamp(2.8rem,8vw,4.5rem);font-weight:400;letter-spacing:-0.03em;color:#e8706a;margin-bottom:6px;">Not on track</div>
         <div style="font-size:0.88rem;color:var(--muted);margin-bottom:24px;">at your current savings rate</div>
-        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:rgba(245,240,232,0.65);">
+        <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:14px;padding:20px 22px;margin-bottom:28px;font-size:0.9rem;line-height:1.8;color:#a1a1a1;">
           Saving <strong style="color:var(--cream)">${fmt(monthlyContrib)}/month</strong>, your portfolio won't cross the Coast FIRE threshold before age ${retireAge}. Use the options below to find a savings rate that works.
         </div>
       `}
@@ -731,12 +731,12 @@ function calculate() {
       <div style="border:1px solid var(--border-soft);border-radius:14px;overflow:hidden;margin-bottom:28px;">
         <div style="padding:16px 20px;border-bottom:1px solid var(--border-soft);">
           <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);">How to get there faster</div>
-          <div style="font-size:0.8rem;color:rgba(245,240,232,0.4);margin-top:3px;">Monthly savings needed to hit Coast FIRE${monthlyContrib > 0 ? `, you currently save ${fmt(monthlyContrib)}/mo` : ''}</div>
+          <div style="font-size:0.8rem;color:#6a6a6a;margin-top:3px;">Monthly savings needed to hit Coast FIRE${monthlyContrib > 0 ? `, you currently save ${fmt(monthlyContrib)}/mo` : ''}</div>
         </div>
         ${scenarios.map((sc, i) => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;${i < scenarios.length - 1 ? 'border-bottom:1px solid var(--border-soft);' : ''}">
           <div style="font-size:0.9rem;color:var(--cream);">Coast by age <strong>${sc.targetAge}</strong> (in ${sc.yrs} yr${sc.yrs > 1 ? 's' : ''})</div>
-          <div style="font-size:1.15rem;color:${sc.onTrack ? '#4caf7d' : 'var(--gold-light)'};font-weight:400;">${sc.onTrack ? 'On track' : fmt(sc.monthly) + '/mo'}</div>
+          <div style="font-size:1.15rem;color:${sc.onTrack ? '#5cc28e' : 'var(--gold-light)'};font-weight:400;">${sc.onTrack ? 'On track' : fmt(sc.monthly) + '/mo'}</div>
         </div>`).join('')}
       </div>` : ''}
 
@@ -747,9 +747,9 @@ function calculate() {
         </div>
         <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:0.75rem;color:var(--muted);">
           <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;height:2px;background:#5bb8f5;border-radius:2px;"></span>Your portfolio</span>
-          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;border-top:2px dashed rgba(201,168,76,0.4);"></span>Coast FIRE threshold</span>
-          ${coastAge ? `<span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#4caf7d;"></span>Coast FIRE (age ${coastAge})</span>` : ''}
-          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#c9a84c;"></span>Full retirement (age ${retireAge})</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:14px;border-top:2px dashed rgba(220,195,146,0.4);"></span>Coast FIRE threshold</span>
+          ${coastAge ? `<span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#5cc28e;"></span>Coast FIRE (age ${coastAge})</span>` : ''}
+          <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#dcc392;"></span>Full retirement (age ${retireAge})</span>
         </div>
       </div>
 
@@ -761,13 +761,13 @@ function calculate() {
         </div>
         <div style="background:var(--navy-light);border:1px solid var(--border-soft);border-radius:12px;padding:16px 18px;">
           <div style="font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">${alreadyCoasted ? 'Surplus' : 'Gap to coast today'}</div>
-          <div style="font-size:1.3rem;font-weight:400;color:${alreadyCoasted ? '#4caf7d' : '#5bb8f5'};letter-spacing:-0.02em;">${fmt(Math.abs(gap))}</div>
+          <div style="font-size:1.3rem;font-weight:400;color:${alreadyCoasted ? '#5cc28e' : '#5bb8f5'};letter-spacing:-0.02em;">${fmt(Math.abs(gap))}</div>
           <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">${alreadyCoasted ? 'above your coast number' : 'below current coast threshold'}</div>
         </div>
       </div>
 
       ${alreadyCoasted ? `
-      <div style="background:rgba(76,175,125,0.07);border:1px solid rgba(76,175,125,0.2);border-radius:14px;padding:18px 22px;margin-bottom:28px;font-size:0.88rem;color:rgba(245,240,232,0.65);line-height:1.75;">
+      <div style="background:rgba(92,194,142,0.07);border:1px solid rgba(92,194,142,0.2);border-radius:14px;padding:18px 22px;margin-bottom:28px;font-size:0.88rem;color:#a1a1a1;line-height:1.75;">
         Any savings from here are optional. Extra contributions mean retiring earlier or spending more in retirement.
       </div>` : ''}
 
@@ -851,21 +851,21 @@ function calculate() {
           // Dot centered vertically on the line
           c.beginPath(); c.arc(xPx, midY, 5, 0, Math.PI*2);
           c.fillStyle = dotColor; c.fill();
-          c.strokeStyle = '#0a0f1e'; c.lineWidth = 2; c.stroke();
+          c.strokeStyle = '#0b0b0b'; c.lineWidth = 2; c.stroke();
           c.restore();
         }
 
         drawMarker({
           idx: retireIdx,
-          color: 'rgba(201,168,76,0.6)',
-          dotColor: '#c9a84c',
+          color: 'rgba(220,195,146,0.6)',
+          dotColor: '#dcc392',
         });
 
         if (crossIdx !== null) {
           drawMarker({
             idx: crossIdx,
-            color: 'rgba(76,175,125,0.6)',
-            dotColor: '#4caf7d',
+            color: 'rgba(92,194,142,0.6)',
+            dotColor: '#5cc28e',
           });
         }
       }
@@ -878,23 +878,23 @@ function calculate() {
         labels: chartAges,
         datasets: [
           { label: 'Your portfolio', data: chartPortfolio, borderColor: '#5bb8f5', backgroundColor: 'rgba(91,184,245,0.07)', borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, fill: true, tension: 0.3 },
-          { label: 'Coast FIRE threshold', data: chartThreshold, borderColor: 'rgba(201,168,76,0.4)', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.1 }
+          { label: 'Coast FIRE threshold', data: chartThreshold, borderColor: 'rgba(220,195,146,0.4)', borderWidth: 1.5, borderDash: [5,4], pointRadius: 0, fill: false, tension: 0.1 }
         ]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { title: i => `Age ${i[0].label}`, label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#131313', borderColor: 'rgba(220,195,146,0.2)', borderWidth: 1, titleColor: '#808080', bodyColor: '#ecd9b2', padding: 10, callbacks: { title: i => `Age ${i[0].label}`, label: i => ` ${i.dataset.label}: ${fmt(i.raw)}` } } },
         scales: {
           x: {
             grid: { color: 'rgba(255,255,255,0.03)' },
             afterBuildTicks: axis => { axis.ticks = axis.ticks.filter((t, i) => i % xStep === 0); },
-            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
+            ticks: { color: '#545454', font: { family:'Outfit', size:10 }, autoSkip: false, padding: 8 }
           },
           y: {
             min: yAxis.lo, max: yAxis.hi,
             grid: { color: 'rgba(255,255,255,0.03)' },
-            ticks: { color: 'rgba(245,240,232,0.3)', font: { family:'Outfit', size:10 }, stepSize: yAxis.step, padding: 8, callback: v => fmt(v) }
+            ticks: { color: '#545454', font: { family:'Outfit', size:10 }, stepSize: yAxis.step, padding: 8, callback: v => fmt(v) }
           }
         }
       }
@@ -964,22 +964,22 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 </script>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e8706a">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -1002,13 +1002,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='#e8706a'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#5cc28e'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e8706a'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');

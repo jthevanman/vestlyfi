@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// Email links (confirm email, reset password) that Supabase returns to the
+// site's main address go to the shared sign-in page, which completes them.
+if(/access_token=|type=(signup|recovery)|[#&]error_code=/.test(location.hash))location.replace('/signin/'+location.hash);
+</script>
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VestlyFi | Net Worth Tracker</title>
@@ -64,14 +69,14 @@ try{var vfq=new URLSearchParams(location.search);if(vfq.has('internal')){if(vfq.
 <link rel="manifest" href="/site.webmanifest">
 <style>
 :root {
-  --navy:       #0a0f1e;
-  --navy-card:  #141d35;
-  --gold:       #c9a84c;
-  --gold-light: #e8c97a;
-  --gold-dim:   rgba(201,168,76,0.10);
-  --cream:      #f5f0e8;
-  --muted:      rgba(245,240,232,0.38);
-  --border:     rgba(201,168,76,0.15);
+  --navy:       #0b0b0b;
+  --navy-card:  #131313;
+  --gold:       #dcc392;
+  --gold-light: #ecd9b2;
+  --gold-dim:   rgba(220,195,146,0.10);
+  --cream:      #ededed;
+  --muted:      #666666;
+  --border:     rgba(220,195,146,0.15);
   --border-soft:rgba(255,255,255,0.07);
 }
 
@@ -87,7 +92,7 @@ body {
   background: var(--navy);
   color: var(--cream);
   font-family: 'Outfit', sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -99,7 +104,7 @@ nav {
   padding:0 40px; height:64px;
   display:flex; align-items:center; justify-content:space-between;
   border-bottom:1px solid var(--border-soft);
-  background:#0a0f1e;
+  background:#0b0b0b;
 }
 
 .nav-logo {
@@ -115,8 +120,8 @@ nav {
 .nav-links { display:flex; gap:28px; align-items:center; }
 .nav-links a { color:var(--muted); text-decoration:none; font-size:0.82rem; font-weight:300; transition:color .15s; }
 .nav-links a:hover, .nav-links a.active { color:var(--cream); }
-.nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-.nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+.nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+.nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
 .nav-sep { color:rgba(255,255,255,0.18); }
 
 /* ── HERO: NET WORTH TRACKER ── */
@@ -135,7 +140,7 @@ nav {
   text-wrap:balance;
 }
 .hero-sub {
-  font-size:1.04rem; line-height:1.65; color:rgba(245,240,232,0.62);
+  font-size:1.04rem; line-height:1.65; color:#9a9a9a;
   margin:20px 0 30px; max-width:30em;
 }
 .hero-ctas { display:flex; flex-wrap:wrap; gap:12px; }
@@ -160,7 +165,7 @@ nav {
 .how-item { border:1px solid var(--border-soft); border-radius:14px; padding:22px 22px 24px; }
 .how-num { font-size:0.68rem; font-weight:500; letter-spacing:0.14em; color:var(--gold); }
 .how-item h3 { font-size:1.02rem; font-weight:500; color:var(--cream); margin:10px 0 6px; }
-.how-item p { font-size:0.88rem; line-height:1.6; color:rgba(245,240,232,0.55); }
+.how-item p { font-size:0.88rem; line-height:1.6; color:#8b8b8b; }
 
 /* ── TOOLS SECTION ── */
 .section-intro {
@@ -175,7 +180,7 @@ nav {
 .section-intro-rule span {
   font-size:0.65rem; font-weight:500;
   letter-spacing:0.16em; text-transform:uppercase;
-  color:rgba(245,240,232,0.18); white-space:nowrap;
+  color:rgba(237,237,237,0.18); white-space:nowrap;
 }
 .rule-line { flex:1; height:1px; background:var(--border-soft); }
 
@@ -221,10 +226,10 @@ nav {
   font-weight:500; display:inline-block;
   padding:3px 8px; border-radius:4px; width:fit-content;
 }
-.tag-nw   { color:#4caf7d; background:rgba(76,175,125,0.1);  border:1px solid rgba(76,175,125,0.18); }
-.tag-calc { color:#60a5fa; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
+.tag-nw   { color:#5cc28e; background:rgba(92,194,142,0.1);  border:1px solid rgba(92,194,142,0.18); }
+.tag-calc { color:#7aa7ff; background:rgba(96,165,250,0.1);  border:1px solid rgba(96,165,250,0.18); }
 .tag-diag { color:var(--gold); background:var(--gold-dim);   border:1px solid var(--border); }
-.tag-debt { color:#f87171; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.18); }
+.tag-debt { color:#e8706a; background:rgba(232,112,106,0.1); border:1px solid rgba(232,112,106,0.18); }
 
 /* ── CALC LIST (mobile) ── */
 .calc-list-card {
@@ -242,7 +247,7 @@ nav {
   border-bottom:1px solid var(--border-soft);
 }
 .calc-row:last-of-type { border-bottom:none; }
-.calc-row span { color:rgba(201,168,76,0.6); font-size:0.85rem; }
+.calc-row span { color:rgba(220,195,146,0.6); font-size:0.85rem; }
 
 /* ── FOOTER ── */
 footer {
@@ -270,14 +275,14 @@ footer {
   background:rgba(0,0,0,0.7); z-index:500;
   align-items:center; justify-content:center; padding:20px;
 }
-.modal-box { background:#111827; border:1px solid rgba(201,168,76,0.15); border-radius:16px; padding:28px; width:100%; max-width:460px; }
+.modal-box { background:#1b1b1b; border:1px solid rgba(220,195,146,0.15); border-radius:16px; padding:28px; width:100%; max-width:460px; }
 .modal-title { font-size:1.1rem; font-weight:500; margin-bottom:6px; color:var(--cream); }
-.modal-sub { font-size:0.82rem; color:rgba(245,240,232,0.35); margin-bottom:24px; line-height:1.5; font-weight:300; }
-.modal-label { display:block; font-size:0.72rem; color:rgba(245,240,232,0.35); margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; }
+.modal-sub { font-size:0.82rem; color:#5f5f5f; margin-bottom:24px; line-height:1.5; font-weight:300; }
+.modal-label { display:block; font-size:0.72rem; color:#5f5f5f; margin-bottom:6px; letter-spacing:0.05em; text-transform:uppercase; }
 .modal-input, .modal-textarea { width:100%; padding:11px 14px; background:var(--navy-card); border:1px solid var(--border-soft); border-radius:9px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:300; outline:none; line-height:1.5; }
 .modal-textarea { resize:vertical; }
 .modal-actions { display:flex; gap:10px; margin-top:16px; }
-.modal-cancel { padding:12px 18px; background:none; border:1px solid var(--border-soft); color:rgba(245,240,232,0.35); border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; }
+.modal-cancel { padding:12px 18px; background:none; border:1px solid var(--border-soft); color:#5f5f5f; border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; cursor:pointer; }
 .modal-submit { flex:1; padding:12px; background:var(--gold); color:var(--navy); border:none; border-radius:9px; font-family:'Outfit',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; }
 
 @media(max-width:900px) {
@@ -365,9 +370,9 @@ footer {
           <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
           <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
           <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18" fill="none" stroke="#4caf7d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18 L170,92 L14,92 Z" fill="rgba(76,175,125,0.08)"/>
-          <circle cx="170" cy="18" r="3.5" fill="#4caf7d" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+          <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18" fill="none" stroke="#5cc28e" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M14,86 L48,76 L82,64 L116,48 L150,30 L170,18 L170,92 L14,92 Z" fill="rgba(92,194,142,0.08)"/>
+          <circle cx="170" cy="18" r="3.5" fill="#5cc28e" stroke="rgba(11,11,11,0.8)" stroke-width="1.5"/>
         </svg>
       </div>
     </a>
@@ -383,9 +388,9 @@ footer {
           <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
           <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
           <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-          <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84 L170,92 L14,92 Z" fill="rgba(248,113,113,0.08)"/>
-          <circle cx="170" cy="84" r="3.5" fill="#f87171" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
+          <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84" fill="none" stroke="#e8706a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M14,18 L48,28 L82,42 L116,58 L150,72 L170,84 L170,92 L14,92 Z" fill="rgba(232,112,106,0.08)"/>
+          <circle cx="170" cy="84" r="3.5" fill="#e8706a" stroke="rgba(11,11,11,0.8)" stroke-width="1.5"/>
         </svg>
       </div>
     </a>
@@ -402,11 +407,11 @@ footer {
         <line x1="14" y1="38" x2="172" y2="38" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
         <line x1="14" y1="64" x2="172" y2="64" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
         <line x1="14" y1="90" x2="172" y2="90" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18" fill="none" stroke="#e8c97a" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18 L158,92 L14,92 Z" fill="rgba(232,201,122,0.07)"/>
-        <line x1="158" y1="10" x2="158" y2="92" stroke="rgba(245,240,232,0.1)" stroke-width="1" stroke-dasharray="3,3"/>
-        <circle cx="158" cy="18" r="3" fill="#e8c97a" stroke="rgba(10,15,30,0.8)" stroke-width="1.5"/>
-        <text x="152" y="15" font-family="Outfit" font-size="7.5" fill="#e8c97a" text-anchor="end" font-weight="500">Retire</text>
+        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18" fill="none" stroke="#ecd9b2" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M14,90 C48,88 76,78 106,64 C128,52 146,34 158,18 L158,92 L14,92 Z" fill="rgba(236,217,178,0.07)"/>
+        <line x1="158" y1="10" x2="158" y2="92" stroke="rgba(237,237,237,0.1)" stroke-width="1" stroke-dasharray="3,3"/>
+        <circle cx="158" cy="18" r="3" fill="#ecd9b2" stroke="rgba(11,11,11,0.8)" stroke-width="1.5"/>
+        <text x="152" y="15" font-family="Outfit" font-size="7.5" fill="#ecd9b2" text-anchor="end" font-weight="500">Retire</text>
       </svg>
     </div>
   </a>
@@ -432,19 +437,19 @@ footer {
     </div>
     <div class="card-preview">
       <svg viewBox="0 0 180 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:180px;">
-        <rect x="14" y="10" width="9" height="80" rx="2" fill="rgba(232,201,122,0.65)"/>
-        <path d="M23,12 C58,12 58,18 90,18 L90,32 C58,32 58,26 23,26 Z" fill="rgba(74,222,128,0.2)"/>
+        <rect x="14" y="10" width="9" height="80" rx="2" fill="rgba(236,217,178,0.65)"/>
+        <path d="M23,12 C58,12 58,18 90,18 L90,32 C58,32 58,26 23,26 Z" fill="rgba(92,194,142,0.2)"/>
         <path d="M23,28 C58,28 58,40 90,40 L90,54 C58,54 58,42 23,42 Z" fill="rgba(96,165,250,0.2)"/>
         <path d="M23,44 C58,44 58,56 90,56 L90,68 C58,68 58,56 23,56 Z" fill="rgba(251,146,60,0.2)"/>
         <path d="M23,60 C58,60 58,72 90,72 L90,82 C58,82 58,70 23,70 Z" fill="rgba(251,191,36,0.2)"/>
-        <rect x="90" y="18" width="8" height="14" rx="2" fill="rgba(74,222,128,0.7)"/>
+        <rect x="90" y="18" width="8" height="14" rx="2" fill="rgba(92,194,142,0.7)"/>
         <rect x="90" y="40" width="8" height="14" rx="2" fill="rgba(96,165,250,0.7)"/>
         <rect x="90" y="56" width="8" height="12" rx="2" fill="rgba(251,146,60,0.7)"/>
         <rect x="90" y="72" width="8" height="10" rx="2" fill="rgba(251,191,36,0.7)"/>
-        <text class="sv-lbl" x="102" y="28" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Housing</text>
-        <text class="sv-lbl" x="102" y="50" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Savings</text>
-        <text class="sv-lbl" x="102" y="65" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Food</text>
-        <text class="sv-lbl" x="102" y="80" font-family="Outfit" font-size="7" fill="rgba(245,240,232,0.45)">Transport</text>
+        <text class="sv-lbl" x="102" y="28" font-family="Outfit" font-size="7" fill="#757575">Housing</text>
+        <text class="sv-lbl" x="102" y="50" font-family="Outfit" font-size="7" fill="#757575">Savings</text>
+        <text class="sv-lbl" x="102" y="65" font-family="Outfit" font-size="7" fill="#757575">Food</text>
+        <text class="sv-lbl" x="102" y="80" font-family="Outfit" font-size="7" fill="#757575">Transport</text>
       </svg>
     </div>
   </a>
@@ -468,11 +473,11 @@ footer {
     <div class="modal-title">Report a Bug</div>
     <div class="modal-sub">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px">
-      <label class="modal-label">What went wrong? <span style="color:#e05c5c">*</span></label>
+      <label class="modal-label">What went wrong? <span style="color:#e8706a">*</span></label>
       <textarea id="bugDescription" class="modal-textarea" rows="4" placeholder="Describe what happened and what you expected…"></textarea>
     </div>
     <div style="margin-bottom:14px">
-      <label class="modal-label">Email <span style="color:#e05c5c">*</span></label>
+      <label class="modal-label">Email <span style="color:#e8706a">*</span></label>
       <input type="email" id="bugEmail" class="modal-input" placeholder="you@example.com">
     </div>
     <input type="hidden" id="bugPage">
@@ -489,7 +494,7 @@ footer {
 const FORMSPREE='https://formspree.io/f/xjgaydej';
 function openBugModal(){document.getElementById('bugDescription').value='';document.getElementById('bugEmail').value='';document.getElementById('bugPage').value=window.location.pathname;document.getElementById('bugErr').textContent='';document.getElementById('bugSubmitBtn').textContent='Send Report';document.getElementById('bugSubmitBtn').disabled=false;const m=document.getElementById('bugModal');m.style.display='flex';setTimeout(()=>document.getElementById('bugDescription').focus(),50);}
 function closeBugModal(){document.getElementById('bugModal').style.display='none';}
-async function submitBugReport(){const description=document.getElementById('bugDescription').value.trim();const email=document.getElementById('bugEmail').value.trim();const page=document.getElementById('bugPage').value;const errEl=document.getElementById('bugErr');const btn=document.getElementById('bugSubmitBtn');if(!description){errEl.style.color='#e05c5c';errEl.textContent='Please describe the bug.';return;}btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';try{const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page,userAgent:navigator.userAgent})});if(res.ok){btn.textContent='Sent!';errEl.style.color='#4caf7d';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}else throw new Error();}catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e05c5c';errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';}}
+async function submitBugReport(){const description=document.getElementById('bugDescription').value.trim();const email=document.getElementById('bugEmail').value.trim();const page=document.getElementById('bugPage').value;const errEl=document.getElementById('bugErr');const btn=document.getElementById('bugSubmitBtn');if(!description){errEl.style.color='#e8706a';errEl.textContent='Please describe the bug.';return;}btn.textContent='Sending…';btn.disabled=true;errEl.textContent='';try{const res=await fetch(FORMSPREE,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({description,email:email||'Not provided',page,userAgent:navigator.userAgent})});if(res.ok){btn.textContent='Sent!';errEl.style.color='#5cc28e';errEl.textContent="Thanks, we'll look into it.";setTimeout(()=>closeBugModal(),2000);}else throw new Error();}catch(e){btn.textContent='Send Report';btn.disabled=false;errEl.style.color='#e8706a';errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.';}}
 document.addEventListener('DOMContentLoaded',()=>{const m=document.getElementById('bugModal');let down=false;m.addEventListener('mousedown',e=>{down=e.target===m;});m.addEventListener('click',e=>{if(e.target===m&&down)closeBugModal();down=false;});});
 </script>
 </body>

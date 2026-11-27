@@ -109,23 +109,23 @@
 <link rel="manifest" href="/site.webmanifest">
 <style>
   :root {
-    --navy:#0a0f1e; --navy-mid:#111827; --navy-light:#1a2540; --navy-card:#141d35;
-    --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:rgba(201,168,76,0.13);
-    --cream:#f5f0e8; --cream-dim:rgba(245,240,232,0.6); --muted:rgba(245,240,232,0.35);
-    --green:#4ade80; --red:#f87171; --blue:#5bb8f5; --border:rgba(201,168,76,0.15); --border-soft:rgba(255,255,255,0.07);
+    --navy:#0b0b0b; --navy-mid:#1b1b1b; --navy-light:#262626; --navy-card:#131313;
+    --gold:#dcc392; --gold-light:#ecd9b2; --gold-dim:rgba(220,195,146,0.13);
+    --cream:#ededed; --cream-dim:#969696; --muted:#5f5f5f;
+    --green:#5cc28e; --red:#e8706a; --blue:#5bb8f5; --border:rgba(220,195,146,0.15); --border-soft:rgba(255,255,255,0.07);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
+  body { background:var(--navy); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; min-height:100vh; }
   
-  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0a0f1e; }
+  .site-nav { position:sticky; top:0; z-index:50; padding:0 40px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-soft); background:#0b0b0b; }
   .site-nav-logo { font-family:'Exo 2',sans-serif; font-size:1.25rem; color:var(--gold); text-decoration:none; transition:opacity .15s; letter-spacing:0.01em; }
   .site-nav-logo:hover { opacity:.8; }
   .site-nav-links { display:flex; gap:24px; align-items:center; }
   .site-nav-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color .15s; }
   .site-nav-links a:hover { color:var(--cream); }
   .site-nav-links a.active { color:var(--cream); }
-  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(201,168,76,0.07); border:1px solid rgba(201,168,76,0.13); border-radius:8px; padding:5px 11px; }
-  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(201,168,76,0.65); padding-right:8px; border-right:1px solid rgba(201,168,76,0.2); }
+  .nav-trackers { display:flex; align-items:center; gap:7px; background:rgba(220,195,146,0.07); border:1px solid rgba(220,195,146,0.13); border-radius:8px; padding:5px 11px; }
+  .nav-trackers-lbl { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(220,195,146,0.65); padding-right:8px; border-right:1px solid rgba(220,195,146,0.2); }
   .nav-sep { color:rgba(255,255,255,0.18); }
   @media(max-width:600px) { .site-nav-links{display:none;} .site-nav{padding:0 20px;} }
 
@@ -149,14 +149,14 @@
   input[type="number"], input[type="text"], select { width:100%; background:var(--navy-light); border:1px solid var(--border); border-radius:10px; padding:15px 16px; color:var(--cream); font-family:'Outfit',sans-serif; font-size:1rem; font-weight:300; outline:none; transition:border-color .2s,box-shadow .2s; appearance:none; }
   input.has-prefix { padding-left:30px; }
   input.has-suffix { padding-right:48px; }
-  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.1); }
+  input:focus, select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(220,195,146,0.1); }
   input::-webkit-outer-spin-button,input::-webkit-inner-spin-button { -webkit-appearance:none; }
   .input-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:end; }
   @media(max-width:520px) { .input-row{grid-template-columns:1fr;} }
 
   .step-nav { display:flex; gap:10px; margin-top:36px; }
-  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.28); transition:transform .15s,box-shadow .2s; }
-  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(201,168,76,0.42); }
+  .btn-next { padding:14px 34px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); border:none; border-radius:10px; color:var(--navy); font-family:'Outfit',sans-serif; font-weight:500; font-size:0.93rem; cursor:pointer; box-shadow:0 4px 20px rgba(220,195,146,0.28); transition:transform .15s,box-shadow .2s; }
+  .btn-next:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 6px 26px rgba(220,195,146,0.42); }
   .btn-next:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; transform:none; }
   .btn-back { padding:14px 22px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.88rem; cursor:pointer; transition:all .15s; }
   .btn-back:hover { border-color:rgba(255,255,255,0.25); color:var(--cream-dim); }
@@ -192,7 +192,7 @@
 
   .btn-restart { width:100%; padding:13px; background:transparent; border:1px solid rgba(255,255,255,0.08); border-radius:10px; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.82rem; cursor:pointer; transition:all .18s; margin-top:6px; }
   .btn-restart:hover { border-color:rgba(255,255,255,0.2); color:var(--cream-dim); }
-  .disclaimer { font-size:0.7rem; color:rgba(245,240,232,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
+  .disclaimer { font-size:0.7rem; color:rgba(237,237,237,0.18); line-height:1.6; text-align:center; padding:16px 0 24px; }
 
   /* SEO CONTENT */
   .seo-section { max-width:768px; margin:0 auto; padding:40px 48px 60px; }
@@ -221,7 +221,7 @@
   .footer-links a, .footer-links button.link-btn { display:inline-flex; align-items:center; padding:6px 0; color:var(--muted); text-decoration:none; font-size:0.75rem; transition:color .15s; background:none; border:none; font-family:'Outfit',sans-serif; cursor:pointer; }
   .footer-links a:hover, .footer-links button.link-btn:hover { color:var(--gold); }
   .btn-bug { display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--border-soft); background:none; color:var(--muted); font-family:'Outfit',sans-serif; font-size:0.75rem; cursor:pointer; transition:all .15s; }
-  .btn-bug:hover { border-color:rgba(201,168,76,0.3); color:var(--cream); }
+  .btn-bug:hover { border-color:rgba(220,195,146,0.3); color:var(--cream); }
   @media(max-width:600px) { footer{padding:20px;} .seo-section{padding:36px 24px 50px;} }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -360,29 +360,29 @@
 
 <!-- About Modal -->
 <div id="modal-about" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('about')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">About VestlyFi</div>
-      <button onclick="closeModal('about')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">About VestlyFi</div>
+      <button onclick="closeModal('about')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
       <p style="margin-bottom:16px;">VestlyFi is a collection of financial calculators built for people who want straight answers, not a sales pitch.</p>
       <p style="margin-bottom:16px;">Most financial tools are either too complex, hidden behind a paywall, or designed to funnel you into a product. We built VestlyFi because we think everyone deserves access to the same math that financial advisors charge hundreds of dollars to explain.</p>
       <p style="margin-bottom:16px;">Every calculator runs entirely in your browser. We never see the numbers you enter.</p>
-      <p>Questions? <span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+      <p>Questions? <span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
 
 <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;overflow-y:auto;padding:40px 20px;" onclick="if(event.target===this)closeModal('privacy')">
-  <div style="max-width:540px;margin:0 auto;background:#111827;border:1px solid rgba(201,168,76,0.2);border-radius:16px;padding:36px;">
+  <div style="max-width:540px;margin:0 auto;background:#1b1b1b;border:1px solid rgba(220,195,146,0.2);border-radius:16px;padding:36px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#e8c97a;">Privacy Policy</div>
-      <button onclick="closeModal('privacy')" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;color:#ecd9b2;">Privacy Policy</div>
+      <button onclick="closeModal('privacy')" style="background:none;border:none;color:#6a6a6a;font-size:1.6rem;cursor:pointer;line-height:1;margin-left:16px;">×</button>
     </div>
-    <div style="color:rgba(245,240,232,0.65);font-size:0.88rem;line-height:1.8;">
-      <p style="margin-bottom:16px;"><strong style="color:#f5f0e8;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
-      <p style="margin-bottom:0;"><strong style="color:#f5f0e8;">Contact</strong><br><span style="color:#c9a84c;">VestlyFi@gmail.com</span></p>
+    <div style="color:#a1a1a1;font-size:0.88rem;line-height:1.8;">
+      <p style="margin-bottom:16px;"><strong style="color:#ededed;">Your Numbers Stay Private</strong><br>All calculations run in your browser. The numbers you enter are only stored if you choose to save a result to your account.</p>
+      <p style="margin-bottom:0;"><strong style="color:#ededed;">Contact</strong><br><span style="color:#dcc392;">VestlyFi@gmail.com</span></p>
     </div>
   </div>
 </div>
@@ -564,8 +564,8 @@ function calculate(birthYear, pia) {
       <div class="chart-box"><canvas id="ssChart"></canvas></div>
       <div class="chart-legend">
         <span${s62.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#5bb8f5;"></span>Claim at ${s62.age}</span>
-        <span${sFra.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#c9a84c;"></span>Claim at ${sFra.label.replace('FRA ','').replace('Age ','')}</span>
-        <span${s70.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#4ade80;"></span>Claim at ${s70.age}</span>
+        <span${sFra.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#dcc392;"></span>Claim at ${sFra.label.replace('FRA ','').replace('Age ','')}</span>
+        <span${s70.passed ? ' style="opacity:0.4;"' : ''}><span class="lg-swatch" style="background:#5cc28e;"></span>Claim at ${s70.age}</span>
       </div>
 
       <!-- ============================================================
@@ -600,7 +600,7 @@ function calculate(birthYear, pia) {
   requestAnimationFrame(() => {
     const canvas = document.getElementById('ssChart');
     if (!canvas) return;
-    const colors = ['#5bb8f5', '#c9a84c', '#4ade80'];
+    const colors = ['#5bb8f5', '#dcc392', '#5cc28e'];
     const fmtAxis = v => v >= 1e6 ? '$' + (v / 1e6).toFixed(1) + 'M' : '$' + Math.round(v / 1000) + 'k';
     new Chart(canvas.getContext('2d'), {
       type: 'line',
@@ -608,7 +608,7 @@ function calculate(birthYear, pia) {
         labels: chartAges,
         datasets: series.map((data, i) => ({
           label: 'Claim at ' + [s62.age, (fraM % 12 === 0 ? fraY : fraLabel(fraM)), s70.age][i],
-          data, borderColor: strat[i].passed ? 'rgba(245,240,232,0.2)' : colors[i], backgroundColor: 'transparent',
+          data, borderColor: strat[i].passed ? 'rgba(237,237,237,0.2)' : colors[i], backgroundColor: 'transparent',
           borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, tension: 0.15
         }))
       },
@@ -617,11 +617,11 @@ function calculate(birthYear, pia) {
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: { backgroundColor: '#141d35', borderColor: 'rgba(201,168,76,0.2)', borderWidth: 1, titleColor: 'rgba(245,240,232,0.5)', bodyColor: '#e8c97a', padding: 10, callbacks: { title: i => 'By age ' + i[0].label, label: i => ' ' + i.dataset.label + ': ' + dollars(i.raw) } }
+          tooltip: { backgroundColor: '#131313', borderColor: 'rgba(220,195,146,0.2)', borderWidth: 1, titleColor: '#808080', bodyColor: '#ecd9b2', padding: 10, callbacks: { title: i => 'By age ' + i[0].label, label: i => ' ' + i.dataset.label + ': ' + dollars(i.raw) } }
         },
         scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family: 'Outfit', size: 10 }, maxTicksLimit: 8, padding: 8 } },
-          y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(245,240,232,0.3)', font: { family: 'Outfit', size: 10 }, padding: 8, callback: fmtAxis } }
+          x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#545454', font: { family: 'Outfit', size: 10 }, maxTicksLimit: 8, padding: 8 } },
+          y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#545454', font: { family: 'Outfit', size: 10 }, padding: 8, callback: fmtAxis } }
         }
       }
     });
@@ -671,22 +671,22 @@ async function renderShareCanvas() {
   const ctx = canvas.getContext('2d'); ctx.scale(SC, SC);
   try { await document.fonts.load('700 40px Outfit'); await document.fonts.load('600 22px Outfit'); await document.fonts.load('400 19px Outfit'); await document.fonts.load('700 30px "Exo 2"'); await document.fonts.ready; } catch (e) {}
 
-  const accent = ['#5bb8f5', '#c9a84c', '#4ade80'];
+  const accent = ['#5bb8f5', '#dcc392', '#5cc28e'];
   const fraCol = d.sFra.label.replace('FRA ', '').replace('Age ', '');
 
   // background
-  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0e1530'); bg.addColorStop(1, '#080c1a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-  const g1 = ctx.createRadialGradient(W * 0.15, -100, 0, W * 0.15, -100, 540); g1.addColorStop(0, 'rgba(201,168,76,0.13)'); g1.addColorStop(1, 'transparent'); ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(201,168,76,0.18)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2);
+  const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#1b1b1b'); bg.addColorStop(1, '#0b0b0b'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  const g1 = ctx.createRadialGradient(W * 0.15, -100, 0, W * 0.15, -100, 540); g1.addColorStop(0, 'rgba(220,195,146,0.13)'); g1.addColorStop(1, 'transparent'); ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(220,195,146,0.18)'; ctx.lineWidth = 2; ctx.strokeRect(1, 1, W - 2, H - 2);
   ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
 
   // header
-  ctx.font = '700 30px "Exo 2",sans-serif'; ctx.fillStyle = '#c9a84c'; ctx.fillText('VestlyFi', PAD, 58);
-  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(201,168,76,0.85)'; drawSpacedText(ctx, 'SOCIAL SECURITY BREAK-EVEN', PAD, 98, 2);
+  ctx.font = '700 30px "Exo 2",sans-serif'; ctx.fillStyle = '#dcc392'; ctx.fillText('VestlyFi', PAD, 58);
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(220,195,146,0.85)'; drawSpacedText(ctx, 'SOCIAL SECURITY BREAK-EVEN', PAD, 98, 2);
   let headline = `Claiming at 62 vs ${fraCol} vs 70`;
   let hs = 40; ctx.font = '600 40px Outfit,sans-serif'; while (ctx.measureText(headline).width > W - PAD * 2 && hs > 26) { hs -= 2; ctx.font = '600 ' + hs + 'px Outfit,sans-serif'; }
-  ctx.fillStyle = '#f5f0e8'; ctx.fillText(headline, PAD, 148);
-  ctx.font = '400 19px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.5)'; ctx.fillText(`Full retirement benefit ${dollars(d.pia)}/mo  ·  FRA ${d.fraLabelStr}`, PAD, 180);
+  ctx.fillStyle = '#ededed'; ctx.fillText(headline, PAD, 148);
+  ctx.font = '400 19px Outfit,sans-serif'; ctx.fillStyle = '#808080'; ctx.fillText(`Full retirement benefit ${dollars(d.pia)}/mo  ·  FRA ${d.fraLabelStr}`, PAD, 180);
 
   // benefit cards
   const cardY = 206, cardH = 96, gap = 20, cardW = (W - PAD * 2 - gap * 2) / 3;
@@ -695,27 +695,27 @@ async function renderShareCanvas() {
     ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.beginPath(); ctx.roundRect(bx, cardY, cardW, cardH, 12); ctx.fill();
     ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.stroke();
     ctx.textAlign = 'left';
-    ctx.font = '600 13px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+    ctx.font = '600 13px Outfit,sans-serif'; ctx.fillStyle = '#757575';
     drawSpacedText(ctx, ('CLAIM AT ' + s.label.replace('FRA ', '').replace('Age ', '')).toUpperCase(), bx + 20, cardY + 32, 1);
     ctx.font = '700 30px Outfit,sans-serif'; ctx.fillStyle = accent[i]; ctx.fillText(dollars(s.monthly), bx + 20, cardY + 68);
-    ctx.font = '400 14px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.4)'; ctx.fillText(`${s.pct}% of full benefit`, bx + 20, cardY + 88);
+    ctx.font = '400 14px Outfit,sans-serif'; ctx.fillStyle = '#6a6a6a'; ctx.fillText(`${s.pct}% of full benefit`, bx + 20, cardY + 88);
   });
 
   // table
   const tblTop = cardY + cardH + 42, rowH = 44, liveX = PAD + 6;
   const span = W - PAD * 2, colR = [PAD + span * 0.50, PAD + span * 0.75, W - PAD - 6];
-  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.45)';
+  ctx.font = '600 15px Outfit,sans-serif'; ctx.fillStyle = '#757575';
   ctx.textAlign = 'left'; drawSpacedText(ctx, 'IF YOU LIVE TO', liveX, tblTop, 1);
   ctx.textAlign = 'right'; ['62', fraCol, '70'].forEach((c, i) => ctx.fillText('Claim ' + c, colR[i], tblTop));
   ctx.strokeStyle = 'rgba(255,255,255,0.09)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, tblTop + 14); ctx.lineTo(W - PAD, tblTop + 14); ctx.stroke();
   d.rows.forEach((r, ri) => {
     const ry = tblTop + 32 + ri * rowH;
-    ctx.textAlign = 'left'; ctx.font = '400 20px Outfit,sans-serif'; ctx.fillStyle = 'rgba(245,240,232,0.72)'; ctx.fillText('Age ' + r.age, liveX, ry);
+    ctx.textAlign = 'left'; ctx.font = '400 20px Outfit,sans-serif'; ctx.fillStyle = '#b0b0b0'; ctx.fillText('Age ' + r.age, liveX, ry);
     ctx.textAlign = 'right';
     r.vals.forEach((v, ci) => {
       const win = ci === r.winIdx;
       ctx.font = (win ? '700 20px' : '400 20px') + ' Outfit,sans-serif';
-      ctx.fillStyle = win ? accent[ci] : 'rgba(245,240,232,0.78)';
+      ctx.fillStyle = win ? accent[ci] : '#bdbdbd';
       ctx.fillText(dollars(v), colR[ci], ry);
     });
     if (ri < d.rows.length - 1) { ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(PAD, ry + 14); ctx.lineTo(W - PAD, ry + 14); ctx.stroke(); }
@@ -734,13 +734,13 @@ function downloadShareImage() {
     if (w) { w.document.write(`<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}img{max-width:100%;}</style></head><body><img src="${dataUrl}"></body></html>`); w.document.close(); }
   } else {
     const a = document.createElement('a'); a.download = 'vestlyfi-social-security-break-even.png'; a.href = dataUrl; a.click();
-    msg.style.color = '#4ade80'; msg.textContent = 'Downloaded!';
+    msg.style.color = '#5cc28e'; msg.textContent = 'Downloaded!';
   }
 }
 async function copyShareImage() {
   const canvas = document.getElementById('shareCanvas'), msg = document.getElementById('shareMsg');
-  try { canvas.toBlob(async blob => { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); msg.style.color = '#4ade80'; msg.textContent = 'Copied to clipboard!'; }); }
-  catch (e) { msg.style.color = '#f87171'; msg.textContent = 'Copy not supported; use Download instead.'; }
+  try { canvas.toBlob(async blob => { await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]); msg.style.color = '#5cc28e'; msg.textContent = 'Copied to clipboard!'; }); }
+  catch (e) { msg.style.color = '#e8706a'; msg.textContent = 'Copy not supported; use Download instead.'; }
 }
 
 document.addEventListener('keydown', function(e) {
@@ -755,43 +755,43 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); }
 </script>
 
 <div id="shareModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:24px;width:100%;max-width:660px;">
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:24px;width:100%;max-width:660px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
-      <div style="font-size:1.1rem;font-weight:500;color:#f5f0e8;font-family:'Outfit',sans-serif;">Share your results</div>
-      <button onclick="closeShareModal()" style="background:none;border:none;color:rgba(245,240,232,0.4);font-size:1.5rem;cursor:pointer;line-height:1;">×</button>
+      <div style="font-size:1.1rem;font-weight:500;color:#ededed;font-family:'Outfit',sans-serif;">Share your results</div>
+      <button onclick="closeShareModal()" style="background:none;border:none;color:#6a6a6a;font-size:1.5rem;cursor:pointer;line-height:1;">×</button>
     </div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A shareable image of your total-collected-by-age table.</div>
-    <div style="background:#0a0f1e;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;margin-bottom:16px;min-height:140px;display:flex;align-items:center;justify-content:center;">
-      <div id="shareGenerating" style="color:rgba(245,240,232,0.4);font-size:0.85rem;font-family:'Outfit',sans-serif;">Generating image…</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:18px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">A shareable image of your total-collected-by-age table.</div>
+    <div style="background:#0b0b0b;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;margin-bottom:16px;min-height:140px;display:flex;align-items:center;justify-content:center;">
+      <div id="shareGenerating" style="color:#6a6a6a;font-size:0.85rem;font-family:'Outfit',sans-serif;">Generating image…</div>
       <img id="sharePreviewImg" alt="Share preview" style="display:none;max-width:100%;border-radius:6px;">
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Close</button>
-      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
-      <button onclick="copyShareImage()" style="padding:12px 18px;background:#1a2540;color:#f5f0e8;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy</button>
+      <button onclick="closeShareModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Close</button>
+      <button id="shareDownloadBtn" onclick="downloadShareImage()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Download</button>
+      <button onclick="copyShareImage()" style="padding:12px 18px;background:#262626;color:#ededed;border:1px solid rgba(255,255,255,0.07);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Copy</button>
     </div>
-    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:16px;color:#4ade80;font-family:'Outfit',sans-serif;"></div>
+    <div id="shareMsg" style="font-size:0.8rem;margin-top:10px;min-height:16px;color:#5cc28e;font-family:'Outfit',sans-serif;"></div>
   </div>
 </div>
 <canvas id="shareCanvas" style="display:none"></canvas>
 
 <div id="bugModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#111827;border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
-    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#f5f0e8;font-family:'Outfit',sans-serif;">Report a Bug</div>
-    <div style="font-size:0.82rem;color:rgba(245,240,232,0.35);margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
+  <div style="background:#1b1b1b;border:1px solid rgba(220,195,146,0.15);border-radius:16px;padding:28px;width:100%;max-width:460px;">
+    <div style="font-size:1.1rem;font-weight:500;margin-bottom:6px;color:#ededed;font-family:'Outfit',sans-serif;">Report a Bug</div>
+    <div style="font-size:0.82rem;color:#5f5f5f;margin-bottom:24px;line-height:1.5;font-family:'Outfit',sans-serif;font-weight:300;">Found something broken? Let us know and we'll get it fixed.</div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e05c5c">*</span></label>
-      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">What went wrong? <span style="color:#e8706a">*</span></label>
+      <textarea id="bugDescription" rows="4" placeholder="Describe what happened and what you expected to happen…" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;resize:vertical;line-height:1.5;"></textarea>
     </div>
     <div style="margin-bottom:14px;">
-      <label style="display:block;font-size:0.75rem;color:rgba(245,240,232,0.35);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
-      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#141d35;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#f5f0e8;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
+      <label style="display:block;font-size:0.75rem;color:#5f5f5f;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;font-family:'Outfit',sans-serif;">Email</label>
+      <input type="email" id="bugEmail" placeholder="you@example.com" style="width:100%;padding:11px 14px;background:#131313;border:1px solid rgba(255,255,255,0.07);border-radius:9px;color:#ededed;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:300;outline:none;">
     </div>
     <input type="hidden" id="bugPage">
     <div id="bugErr" style="font-size:0.8rem;margin-top:8px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;margin-top:8px;">
-      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:rgba(245,240,232,0.35);border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
-      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#c9a84c;color:#0a0f1e;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
+      <button onclick="closeBugModal()" style="padding:12px 18px;background:none;border:1px solid rgba(255,255,255,0.07);color:#5f5f5f;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;cursor:pointer;">Cancel</button>
+      <button id="bugSubmitBtn" onclick="submitBugReport()" style="flex:1;padding:12px;background:#dcc392;color:#0b0b0b;border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;">Send Report</button>
     </div>
   </div>
 </div>
@@ -814,13 +814,13 @@ async function submitBugReport() {
   const page = document.getElementById('bugPage').value;
   const errEl = document.getElementById('bugErr');
   const btn = document.getElementById('bugSubmitBtn');
-  if (!description) { errEl.style.color='#e05c5c'; errEl.textContent='Please describe the bug before submitting.'; return; }
+  if (!description) { errEl.style.color='#e8706a'; errEl.textContent='Please describe the bug before submitting.'; return; }
   btn.textContent = 'Sending…'; btn.disabled = true; errEl.textContent = '';
   try {
     const res = await fetch('https://formspree.io/f/xjgaydej', { method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify({ description, email: email||'Not provided', page, userAgent: navigator.userAgent }) });
-    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#4caf7d'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
+    if (res.ok) { btn.textContent='Sent!'; errEl.style.color='#5cc28e'; errEl.textContent="Thanks, we'll look into it."; setTimeout(()=>closeBugModal(),2000); }
     else throw new Error();
-  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e05c5c'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
+  } catch(e) { btn.textContent='Send Report'; btn.disabled=false; errEl.style.color='#e8706a'; errEl.textContent='Something went wrong. Try again or email vestlyfi@gmail.com.'; }
 }
 document.addEventListener('DOMContentLoaded', () => {
   const el = document.getElementById('bugModal');

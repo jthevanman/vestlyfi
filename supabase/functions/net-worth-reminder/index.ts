@@ -108,10 +108,10 @@ function emailHtml(opts: {
   const p = `style="margin:0 0 16px"`;
   return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#ffffff">
 <div style="max-width:520px;margin:0 auto;padding:28px 24px;border:1px solid #e3e1dc;border-radius:8px;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#22252e;text-align:left">
-<p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#8a6d1f">VestlyFi</p>
+<p style="margin:0 0 20px;font-size:18px;font-weight:bold;color:#1b1b1b">VestlyFi</p>
 <p ${p}>It's time to log your ${opts.monthName} net worth. You last logged a snapshot on ${plainDate(opts.lastDate, opts.today)}.</p>
 <p style="margin:0 0 24px">A few minutes of updated balances keeps your trend line honest.</p>
-<p style="margin:0 0 8px"><a href="${trackerUrl}" style="display:inline-block;padding:12px 22px;background:#c9a84c;color:#0a0f1e;font-weight:bold;text-decoration:none;border-radius:8px">Update my net worth</a></p>
+<p style="margin:0 0 8px"><a href="${trackerUrl}" style="display:inline-block;padding:12px 22px;background:#1b1b1b;color:#ffffff;font-weight:bold;text-decoration:none;border-radius:8px">Update my net worth</a></p>
 <p style="margin:28px 0 0;font-size:12px;color:#8b8e98">You're getting this because you track your net worth on VestlyFi. We send at most one reminder a month, on the 1st, and only when you haven't logged a snapshot in over ${DORMANT_DAYS} days. <a href="${unsubscribeUrl(opts.token)}" style="color:#8b8e98">Unsubscribe</a></p>
 </div></body></html>`;
 }
