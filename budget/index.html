@@ -102,8 +102,7 @@ input, select { font-family:inherit; }
 .hero { display:grid; grid-template-columns:minmax(0,1fr); gap:32px; margin-top:36px; align-items:center; }
 @media (min-width:900px) { .hero { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:56px; margin-top:64px; } }
 .eyebrow { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:600; }
-.land-title { font-size:clamp(1.7rem, 4vw, 2.5rem); font-weight:500; line-height:1.15; letter-spacing:-0.015em; margin:12px 0 14px; }
-.land-sub { font-size:1rem; color:var(--cream-dim); line-height:1.5; margin-bottom:26px; }
+.land-title { font-size:clamp(1.7rem, 4vw, 2.5rem); font-weight:500; line-height:1.15; letter-spacing:-0.015em; margin:12px 0 28px; }
 .hero-ctas { display:flex; flex-wrap:wrap; gap:10px; }
 .hero-ctas .btn { height:48px; padding:0 22px; font-size:0.92rem; text-decoration:none; }
 /* Preview cards: the tracker's own look, not clickable */
@@ -129,20 +128,17 @@ input, select { font-family:inherit; }
 .land-tiles { display:grid; grid-template-columns:minmax(0,1fr); gap:28px; margin-top:64px; }
 @media (min-width:760px) { .land-tiles { grid-template-columns:repeat(3, minmax(0,1fr)); gap:20px; } }
 .tile-cap { font-size:1rem; font-weight:500; margin-bottom:12px; }
+.tile-wrap { display:flex; flex-direction:column; }
+.tile-wrap .lv { flex:1; display:flex; flex-direction:column; justify-content:center; }
 .lv-amount { font-size:2.1rem; font-weight:500; text-align:center; padding:6px 0 16px; }
 .lv-cats { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; text-align:center; }
 .lv-cat { font-size:0.7rem; color:var(--cream-dim); display:flex; flex-direction:column; align-items:center; gap:6px; }
 .lv-cat .s-ic { width:42px; height:42px; }
 .lv-cat.on .s-ic.tint { background:var(--h); color:#131313; }
 .lv-save { margin-top:16px; height:40px; border-radius:999px; background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:600; }
-.land-faq { margin:72px 0 24px; max-width:640px; }
-.land-faq details { border-top:1px solid var(--line); }
-.land-faq details:last-child { border-bottom:1px solid var(--line); }
-.land-faq summary { cursor:pointer; padding:16px 0; font-size:0.95rem; font-weight:500; list-style:none; display:flex; justify-content:space-between; gap:12px; }
-.land-faq summary::-webkit-details-marker { display:none; }
-.land-faq summary::after { content:'+'; color:var(--muted); font-weight:400; }
-.land-faq details[open] summary::after { content:'\2212'; }
-.land-faq p { font-size:0.88rem; color:var(--cream-dim); line-height:1.6; padding:0 0 16px; }
+.land-close { margin:88px auto 40px; max-width:620px; text-align:center; }
+.land-close p { font-size:clamp(1.1rem, 2.4vw, 1.35rem); line-height:1.5; color:var(--cream); margin-bottom:26px; }
+.land-close .btn { height:48px; padding:0 24px; font-size:0.92rem; text-decoration:none; }
 /* Sample budget: the one banner while it's open */
 .sample-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; margin-bottom:16px; border-radius:8px; background:var(--surface); font-size:0.84rem; color:var(--cream-dim); }
 .sample-bar b { color:var(--cream); font-weight:500; }
@@ -660,7 +656,6 @@ input, select { font-family:inherit; }
       <div class="hero-text">
         <div class="eyebrow">Budget tracker</div>
         <h1 class="land-title">The best way to stay on top of your money is tracking it yourself.</h1>
-        <p class="land-sub">No bank linking. Every purchase passes in front of you.</p>
         <div class="hero-ctas">
           <a class="btn btn-gold" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fbudget%2F">Create free account</a>
           <button class="btn btn-ghost" type="button" onclick="startSample()">See a sample budget</button>
@@ -671,10 +666,9 @@ input, select { font-family:inherit; }
 
     <section class="land-tiles" id="landTiles"></section>
 
-    <section class="land-faq">
-      <details><summary>Why not link my bank?</summary><p>Automatic trackers fill in your spending for you, which makes it easy to stop noticing it. Typing each purchase takes seconds and keeps you aware of where the money goes.</p></details>
-      <details><summary>How long does it take?</summary><p>About as long as paying. Add it right after, or from the Budget icon on your phone's home screen.</p></details>
-      <details><summary>Is it free?</summary><p>Yes, with the same account as the net worth and debt trackers. No trial, and nothing to upgrade to.</p></details>
+    <section class="land-close">
+      <p>Automatic trackers fill in your spending for you, which makes it easy to stop noticing it. Typing each purchase takes seconds and keeps you aware of where the money goes.</p>
+      <a class="btn btn-gold" id="ctaSignup2" href="/signin/?mode=signup&amp;next=%2Fbudget%2F">Create free account</a>
     </section>
   </div>
 </div>
@@ -930,6 +924,7 @@ function liveAccounts(){ return accounts.filter(a => !a.archived).sort((a,b)=>a.
 // Signing in and creating an account happen on /signin/, shared by every tracker.
 function signinHref(mode){ return '/signin/?mode=' + mode + '&next=' + encodeURIComponent(location.pathname + location.search); }
 document.getElementById('ctaSignup').href = signinHref('signup');
+document.getElementById('ctaSignup2').href = signinHref('signup');
 document.getElementById('ctaSignin').href = signinHref('signin');
 async function signOut(){ closeAcctMenu(); await sb.auth.signOut(); }
 
