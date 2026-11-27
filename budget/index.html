@@ -91,23 +91,58 @@ input, select { font-family:inherit; }
 .hidden { display:none !important; }
 
 /* ── Auth ── */
-#authScreen { min-height:100vh; display:flex; justify-content:center; padding:calc(48px + env(safe-area-inset-top)) 16px 56px; }
+#authScreen { min-height:100vh; display:flex; justify-content:center; padding:calc(20px + env(safe-area-inset-top)) 16px 40px; }
 .auth-panel { width:100%; max-width:460px; }
-/* Landing: what a signed-out visitor sees */
-.eyebrow { margin-top:28px; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:600; }
-.land-title { font-size:1.75rem; font-weight:500; line-height:1.22; letter-spacing:-0.01em; margin:10px 0 12px; }
-.land-sub { font-size:0.95rem; color:var(--cream-dim); line-height:1.55; margin-bottom:26px; }
-.sample-link { display:block; margin:14px auto 0; border:none; background:none; color:var(--cream-dim); font:inherit; font-size:0.88rem; text-decoration:underline; text-underline-offset:3px; cursor:pointer; padding:6px; }
-.sample-link:hover { color:var(--cream); }
-.land-points { margin-top:40px; }
-.lp { display:flex; flex-direction:column; gap:3px; padding:14px 0; border-top:1px solid var(--line); }
-.lp b { font-size:0.92rem; font-weight:500; }
-.lp span { font-size:0.85rem; color:var(--cream-dim); line-height:1.5; }
-.land-faq { margin-top:36px; }
-.land-faq h2 { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:6px; }
-.lf { padding:14px 0; border-top:1px solid var(--line); }
-.lf h3 { font-size:0.92rem; font-weight:500; margin-bottom:5px; }
-.lf p { font-size:0.85rem; color:var(--cream-dim); line-height:1.6; }
+/* Landing: what a signed-out visitor sees. Mostly pictures of the real
+   tracker, drawn from the sample budget, with as few words as possible. */
+.landing { width:100%; max-width:1040px; }
+.land-top { display:flex; align-items:center; justify-content:space-between; }
+.land-signin { color:var(--cream-dim); font-size:0.9rem; text-decoration:none; padding:8px 4px; }
+.land-signin:hover { color:var(--cream); }
+.hero { display:grid; grid-template-columns:minmax(0,1fr); gap:32px; margin-top:36px; align-items:center; }
+@media (min-width:900px) { .hero { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:56px; margin-top:64px; } }
+.eyebrow { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+.land-title { font-size:clamp(1.7rem, 4vw, 2.5rem); font-weight:500; line-height:1.15; letter-spacing:-0.015em; margin:12px 0 14px; }
+.land-sub { font-size:1rem; color:var(--cream-dim); line-height:1.5; margin-bottom:26px; }
+.hero-ctas { display:flex; flex-wrap:wrap; gap:10px; }
+.hero-ctas .btn { height:48px; padding:0 22px; font-size:0.92rem; text-decoration:none; }
+/* Preview cards: the tracker's own look, not clickable */
+.lv { background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:18px; pointer-events:none; user-select:none; }
+.lv-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.lv-month { font-size:1.05rem; font-weight:500; }
+.lv-tag { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:2px 8px; }
+.lv-stats { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+.lv-k { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+.lv-v { font-size:1.35rem; font-weight:500; margin-top:3px; }
+.lv-v.up { color:var(--green); }
+.lv-row { display:flex; align-items:center; gap:12px; padding:10px 0; }
+.lv-row + .lv-row { border-top:1px solid var(--line); }
+.lv-main { flex:1; min-width:0; }
+.lv-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:0.9rem; }
+.lv-top span:last-child { font-weight:500; white-space:nowrap; }
+.lv-top small { color:var(--muted); font-weight:400; font-size:0.74rem; }
+.lv-meta { font-size:0.74rem; color:var(--muted); margin-top:2px; display:flex; align-items:center; gap:5px; }
+.lv-meta svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.lv-track { height:6px; border-radius:999px; background:var(--surface); margin-top:7px; overflow:hidden; }
+.lv-fill { display:block; height:100%; border-radius:999px; background:var(--green); }
+.lv-amt.in { color:var(--green); }
+.land-tiles { display:grid; grid-template-columns:minmax(0,1fr); gap:28px; margin-top:64px; }
+@media (min-width:760px) { .land-tiles { grid-template-columns:repeat(3, minmax(0,1fr)); gap:20px; } }
+.tile-cap { font-size:1rem; font-weight:500; margin-bottom:12px; }
+.lv-amount { font-size:2.1rem; font-weight:500; text-align:center; padding:6px 0 16px; }
+.lv-cats { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; text-align:center; }
+.lv-cat { font-size:0.7rem; color:var(--cream-dim); display:flex; flex-direction:column; align-items:center; gap:6px; }
+.lv-cat .s-ic { width:42px; height:42px; }
+.lv-cat.on .s-ic.tint { background:var(--h); color:#131313; }
+.lv-save { margin-top:16px; height:40px; border-radius:999px; background:var(--accent); color:var(--on-accent); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:600; }
+.land-faq { margin:72px 0 24px; max-width:640px; }
+.land-faq details { border-top:1px solid var(--line); }
+.land-faq details:last-child { border-bottom:1px solid var(--line); }
+.land-faq summary { cursor:pointer; padding:16px 0; font-size:0.95rem; font-weight:500; list-style:none; display:flex; justify-content:space-between; gap:12px; }
+.land-faq summary::-webkit-details-marker { display:none; }
+.land-faq summary::after { content:'+'; color:var(--muted); font-weight:400; }
+.land-faq details[open] summary::after { content:'\2212'; }
+.land-faq p { font-size:0.88rem; color:var(--cream-dim); line-height:1.6; padding:0 0 16px; }
 /* Sample budget: the one banner while it's open */
 .sample-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; margin-bottom:16px; border-radius:8px; background:var(--surface); font-size:0.84rem; color:var(--cream-dim); }
 .sample-bar b { color:var(--cream); font-weight:500; }
@@ -615,28 +650,31 @@ input, select { font-family:inherit; }
 
 <!-- ══ SIGN IN ══ -->
 <div id="authScreen" class="hidden">
-  <div class="auth-panel">
-    <a class="brand" href="/">VestlyFi</a>
-    <div class="eyebrow">Budget tracker</div>
-    <h1 class="land-title">The best way to stay on top of your money is tracking it yourself.</h1>
-    <p class="land-sub">Log each purchase in a few taps. No bank linking, so every dollar passes in front of you.</p>
-    <div class="auth-ctas">
-      <a class="btn btn-gold btn-block" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fbudget%2F">Create free account</a>
-      <a class="btn btn-ghost btn-block" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fbudget%2F">Sign in</a>
-    </div>
-    <button class="sample-link" type="button" onclick="startSample()">See a sample budget</button>
+  <div class="landing">
+    <header class="land-top">
+      <a class="brand" href="/">VestlyFi</a>
+      <a class="land-signin" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fbudget%2F">Sign in</a>
+    </header>
 
-    <div class="land-points">
-      <div class="lp"><b>A few taps per purchase</b><span>Pick a category, type the amount. Repeating bills add themselves.</span></div>
-      <div class="lp"><b>Nothing connects to your bank</b><span>You decide what goes in, so you notice what goes out.</span></div>
-      <div class="lp"><b>One free account</b><span>The same login as the net worth and debt trackers.</span></div>
-    </div>
+    <section class="hero">
+      <div class="hero-text">
+        <div class="eyebrow">Budget tracker</div>
+        <h1 class="land-title">The best way to stay on top of your money is tracking it yourself.</h1>
+        <p class="land-sub">No bank linking. Every purchase passes in front of you.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-gold" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fbudget%2F">Create free account</a>
+          <button class="btn btn-ghost" type="button" onclick="startSample()">See a sample budget</button>
+        </div>
+      </div>
+      <div class="hero-visual" id="landHero" aria-label="A sample month in the budget tracker"></div>
+    </section>
+
+    <section class="land-tiles" id="landTiles"></section>
 
     <section class="land-faq">
-      <h2>Questions</h2>
-      <div class="lf"><h3>Why not link my bank?</h3><p>Automatic trackers fill in your spending for you, which makes it easy to stop noticing it. Typing each purchase takes seconds and keeps you aware of where the money goes.</p></div>
-      <div class="lf"><h3>How long does it take?</h3><p>About as long as paying. Add it right after, or from the Budget icon on your phone's home screen.</p></div>
-      <div class="lf"><h3>Is it free?</h3><p>Yes. No trial, and nothing to upgrade to.</p></div>
+      <details><summary>Why not link my bank?</summary><p>Automatic trackers fill in your spending for you, which makes it easy to stop noticing it. Typing each purchase takes seconds and keeps you aware of where the money goes.</p></details>
+      <details><summary>How long does it take?</summary><p>About as long as paying. Add it right after, or from the Budget icon on your phone's home screen.</p></details>
+      <details><summary>Is it free?</summary><p>Yes, with the same account as the net worth and debt trackers. No trial, and nothing to upgrade to.</p></details>
     </section>
   </div>
 </div>
@@ -939,7 +977,7 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); instal
 window.addEventListener('appinstalled', () => { installPrompt = null; syncInstallUI(); toast('Installed. Open Budget from your home screen.'); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/budget/sw.js', { scope:'/budget/' }).catch(e => console.error(e));
 
-function showAuth(){ document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
+function showAuth(){ renderLanding(); document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
 function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
 
 async function boot(session){
@@ -2093,7 +2131,7 @@ function buildSample(){
   const G = [['g1','Income','income',['Paycheck','Other income']], ['g2','Housing','expense',['Rent or mortgage','Utilities','Internet and phone','Home maintenance']],
     ['g3','Food','expense',['Groceries','Dining out']], ['g4','Transportation','expense',['Gas','Car payment','Car insurance','Parking and transit']],
     ['g5','Personal','expense',['Shopping','Subscriptions','Entertainment','Health','Gifts']], ['g6','Transfers','transfer',['To savings or investing','Between my accounts']]];
-  const targets = { 'Groceries':600, 'Dining out':250, 'Gas':180, 'Shopping':200, 'Entertainment':120, 'Subscriptions':40 };
+  const targets = { 'Groceries':600, 'Dining out':250, 'Gas':180, 'Car insurance':130, 'Shopping':200, 'Entertainment':120, 'Subscriptions':40 };
   const groups = [], cats = [], id = {};
   G.forEach(([gid, name, kind, subs], gi) => {
     groups.push({ id:gid, name, kind, hidden:false, sort_order:gi + 1, icon:null });
@@ -2126,6 +2164,45 @@ function buildSample(){
   const recurring = [rule('r1','Rent',-1850,'Rent or mortgage','a2','monthly',1), rule('r2','Paycheck',3250,'Paycheck','a2','biweekly',15),
     rule('r3','To savings',-500,'To savings or investing','a2','monthly',2), rule('r4','Electric',-140,'Utilities','a2','monthly',9,true), rule('r5','Netflix',-15.49,'Subscriptions','a1','monthly',11)];
   return { groups, cats, accounts, tx, recurring };
+}
+/* The landing page's pictures: the sample budget's current month, drawn
+   with the tracker's own icons and colors. Drawn once, before any sample. */
+let landingDrawn = false;
+function renderLanding(){
+  if (landingDrawn) return; landingDrawn = true;
+  const S = buildSample(), gOf = id => S.groups.find(g => g.id === id), cOf = id => S.cats.find(c => c.id === id);
+  const start = ymd(firstOfMonth(new Date())), now = S.tx.filter(t => t.date >= start);
+  const kind = t => (gOf((cOf(t.category_id) || {}).group_id) || {}).kind;
+  const income = now.filter(t => kind(t) === 'income').reduce((a, t) => a + t.amount, 0);
+  const spent = -now.filter(t => kind(t) === 'expense').reduce((a, t) => a + t.amount, 0);
+  const saved = -now.filter(t => (cOf(t.category_id) || {}).counts_as_saving).reduce((a, t) => a + t.amount, 0);
+  const ic = (g, on) => `<span class="s-ic tint" style="--h:${groupHue(g)}">${groupIcon(g)}</span>`;
+  const LOOP = '<svg viewBox="0 0 24 24"><path d="M17 2.5l3 3-3 3"/><path d="M4 11.5v-1a5 5 0 0 1 5-5h11"/><path d="M7 21.5l-3-3 3-3"/><path d="M20 12.5v1a5 5 0 0 1-5 5H4"/></svg>';
+  // Hero: this month at a glance, then each category against its target.
+  const rows = S.groups.filter(g => g.kind === 'expense').map(g => {
+    const ids = S.cats.filter(c => c.group_id === g.id).map(c => c.id);
+    const sp = -now.filter(t => ids.includes(t.category_id)).reduce((a, t) => a + t.amount, 0);
+    const tg = S.cats.filter(c => c.group_id === g.id).reduce((a, c) => a + (c.monthly_target || 0), 0);
+    return { g, sp, tg };
+  }).filter(r => r.sp > 0).sort((x, y) => (y.tg ? 1 : 0) - (x.tg ? 1 : 0) || y.sp - x.sp).slice(0, 4);
+  document.getElementById('landHero').innerHTML = `<div class="lv">
+    <div class="lv-head"><span class="lv-month">${new Date().toLocaleDateString(VestlyCurrency.locale(), { month:'long', year:'numeric' })}</span><span class="lv-tag">Sample</span></div>
+    <div class="lv-stats">
+      <div><div class="lv-k">Income</div><div class="lv-v up">${moneyWhole(income)}</div></div>
+      <div><div class="lv-k">Spent</div><div class="lv-v">${moneyWhole(spent)}</div></div>
+      <div><div class="lv-k">Saved &amp; invested</div><div class="lv-v up">${moneyWhole(saved)}</div></div>
+      <div><div class="lv-k">Money out</div><div class="lv-v">${moneyWhole(spent + saved)}</div></div>
+    </div>
+    ${rows.map(r => `<div class="lv-row">${ic(r.g)}<div class="lv-main"><div class="lv-top"><span>${escHtml(r.g.name)}</span><span>${r.tg ? moneyWhole(Math.max(0, r.tg - r.sp)) + ' <small>left</small>' : moneyWhole(r.sp) + ' <small>spent</small>'}</span></div>${r.tg ? `<div class="lv-track"><span class="lv-fill" style="width:${Math.min(100, r.sp / r.tg * 100).toFixed(0)}%"></span></div>` : ''}</div></div>`).join('')}
+  </div>`;
+  // Three tiles: adding a purchase, bills that repeat, where it went.
+  const pick = ['Housing','Food','Transportation'].map(n => S.groups.find(g => g.name === n));
+  const addTile = `<div class="lv"><div class="lv-amount">${money(23.5)}</div><div class="lv-cats">${pick.map(g => `<div class="lv-cat${g.name === 'Food' ? ' on' : ''}">${ic(g)}<span>${escHtml(g.name)}</span></div>`).join('')}</div><div class="lv-save">Save</div></div>`;
+  const recTile = `<div class="lv">${S.recurring.filter(r => ['Rent','Paycheck','Netflix'].includes(r.description)).map(r => { const g = gOf(cOf(r.category_id).group_id); return `<div class="lv-row">${ic(g)}<div class="lv-main"><div class="lv-top"><span>${escHtml(r.description)}</span><span class="lv-amt${r.amount > 0 ? ' in' : ''}">${r.amount > 0 ? '+' : ''}${money(Math.abs(r.amount))}</span></div><div class="lv-meta">${LOOP}${r.frequency === 'biweekly' ? 'Every 2 weeks' : 'Every month'}</div></div></div>`; }).join('')}</div>`;
+  const recent = now.filter(t => t.amount < 0 && kind(t) === 'expense').sort((x, y) => y.date.localeCompare(x.date)).slice(0, 3);
+  const txTile = `<div class="lv">${recent.map(t => { const c = cOf(t.category_id), g = gOf(c.group_id); return `<div class="lv-row">${ic(g)}<div class="lv-main"><div class="lv-top"><span>${escHtml(t.description)}</span><span>${money(-t.amount)}</span></div><div class="lv-meta">${escHtml(c.name)}</div></div></div>`; }).join('')}</div>`;
+  document.getElementById('landTiles').innerHTML = [[addTile, 'Log it in a few taps'], [recTile, 'Bills add themselves'], [txTile, 'See every dollar']]
+    .map(([v, cap]) => `<div class="tile-wrap"><div class="tile-cap">${cap}</div>${v}</div>`).join('');
 }
 function startSample(){
   sample = true; SAMPLE = buildSample(); user = null;
