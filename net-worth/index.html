@@ -1052,6 +1052,20 @@ const DONUT_COLORS=['#dcc392','#5cc28e','#7aa7ff','#b39af5','#f0a35e','#e88ab8',
 // address, such as ?update=1 from the monthly reminder email.
 function rememberAccount(){try{localStorage.setItem('vf_has_account','1');}catch(e){}}
 function signinHref(mode){return'/signin/?mode='+mode+'&next='+encodeURIComponent(location.pathname+location.search);}
+// ── ONE BANNER AT A TIME ──
+// Never more than one banner on screen. They are listed most important first;
+// the first that wants to show wins and the rest wait until it is dismissed.
+const BANNERS=['demoBanner','newLook','linkBanner'];
+function oneBanner(){
+  let shown=false;
+  for(const id of BANNERS){
+    const el=document.getElementById(id);if(!el)continue;
+    const on=!el.hidden&&getComputedStyle(el).display!=='none';
+    if(on&&shown){if(id==='newLook')el.hidden=true;else el.style.display='none';}
+    if(on)shown=true;
+  }
+}
+
 // ── NEW LOOK NOTE ──
 // The tracker moved from navy to charcoal. People who used it before see a
 // one-time note; accounts made after the launch never do, and the note stops
@@ -1064,11 +1078,13 @@ function maybeShowNewLook(user){
   if(now-launch>60*864e5)return;
   if(!user||!user.created_at||new Date(user.created_at)>=launch)return;
   document.getElementById('newLook').hidden=false;
+  oneBanner();
 }
 function dismissNewLook(){
   document.getElementById('newLook').hidden=true;
   try{localStorage.setItem(NEWLOOK_KEY,'1');}catch(e){}
   track('nw_newlook_dismiss');
+  renderLinkBanner();   // the next banner in line, if any
 }
 function fromReminder(){const q=new URLSearchParams(location.search);return q.has('update')||q.get('utm_campaign')==='nw-monthly';}
 document.getElementById('ctaSignup').href=signinHref('signup');
@@ -1177,7 +1193,7 @@ function startDemo(){
   linksTableReady=false; // keeps the tie-your-debts banner hidden
   showApp();
   document.getElementById('userEmail').textContent='Sample data';document.querySelector('.acct-who-label').textContent='Viewing';
-  document.getElementById('demoBanner').style.display='flex';
+  document.getElementById('demoBanner').style.display='flex';oneBanner();
   document.getElementById('loadingState').style.display='none';
   document.getElementById('mainContent').style.display='flex';
   renderAll();
@@ -1342,6 +1358,7 @@ function renderLinkBanner(){
   const n=unansweredDebts().length;
   document.getElementById('linkBannerMain').textContent=n===1?"1 of your debts isn't tied to anything yet.":`${n} of your debts aren't tied to anything yet.`;
   el.style.display='flex';
+  oneBanner();
 }
 
 // The × hides it now and snoozes every unanswered debt, so it stays gone

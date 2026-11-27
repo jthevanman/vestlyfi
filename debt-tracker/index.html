@@ -741,7 +741,7 @@ function findLinkedConflicts(){
 
 function renderConflicts(){
   const box=document.getElementById('nwConflict');
-  if(!nwConflicts.length){box.style.display='none';return;}
+  if(!nwConflicts.length){box.style.display='none';if(myDebts.length&&typeof nwLiabLatest==='object')updateSyncBanner();return;}
   document.getElementById('nwConflictRows').innerHTML=nwConflicts.map(c=>`
     <div class="nw-conflict-row">
       <div class="nw-conflict-info">
@@ -791,7 +791,8 @@ function updateSyncBanner(){
   pendingNwImports=Object.keys(nwLiabLatest)
     .filter(k=>nwLiabLatest[k].value>0&&!linked.has(k)&&!named.has(k)&&!dismissed.has(k))
     .map(k=>nwLiabLatest[k].label);
-  if(!pendingNwImports.length){banner.style.display='none';return;}
+  // One banner at a time: the mismatch box above outranks this one.
+  if(!pendingNwImports.length||document.getElementById('nwConflict').style.display!=='none'){banner.style.display='none';return;}
   const n=pendingNwImports.length;
   document.getElementById('nwSyncCount').textContent=n;
   const preview=pendingNwImports.slice(0,3).map(escHtml).join(', ')+(n>3?'…':'');
