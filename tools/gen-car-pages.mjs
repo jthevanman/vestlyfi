@@ -233,6 +233,7 @@ const EXTRA_CSS = `<style>
 .sched td.hl,.sched .hl td{color:var(--gold-light);font-weight:500;}
 .sched tr:last-child td{font-weight:inherit;color:var(--cream-dim);}
 .sched tr.hl td{color:var(--gold-light);}
+@media(max-width:480px){.sched th,.sched td{padding:10px 8px;}.sched{display:block;overflow-x:auto;}}
 </style>`;
 
 // The hub (current === null) links every score. Score pages link only their
