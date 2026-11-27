@@ -3,7 +3,7 @@
    signed-in screen:
      <aside data-vf-nav data-active="budget"></aside>
      <script src="/assets/app-nav.js"></script>
-   data-active: dashboard (shown as Home) | networth | budget | debts
+   data-active: dashboard (shown as Dashboard) | networth | budget | debts
    Hidden at 768px and below, where the same places show as a bottom tab bar.
 
    Each tracker has a dropdown of quick actions. They are links with a query
@@ -79,7 +79,7 @@
   };
   // [key, label, href, badge, quick actions as [label, action]]
   const NAV = [
-    { items:[['dashboard', 'Home', '/dashboard/', 'Beta']] },
+    { items:[['dashboard', 'Dashboard', '/dashboard/', 'Beta']] },
     { cap:'Trackers', items:[
       ['networth', 'Net worth', '/net-worth/', null, [['Update values', 'update'], ['Add asset or liability', 'add'], ['Share my net worth', 'share']]],
       ['budget', 'Budget', '/budget/', 'Beta', [['Add spending', 'spent'], ['Add income', 'received'], ['Categories & targets', 'manage']]],
@@ -104,7 +104,7 @@
     const isOpen = key => openSet ? openSet.has(key) : key === active;
     el.classList.add('vf-nav');
     el.setAttribute('aria-label', 'VestlyFi tools');
-    el.innerHTML = '<a class="vf-brand" href="/dashboard/">VestlyFi</a>' + NAV.map(g =>
+    el.innerHTML = '<a class="vf-brand" href="/">VestlyFi</a>' + NAV.map(g =>
       (g.cap ? `<div class="vf-cap">${g.cap}</div>` : '') +
       g.items.map(([key, label, href, badge, acts]) => {
         const row = `<div class="vf-row${acts ? ' has-sub' : ''}"><a class="vf-item" href="${href}"${key === active ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${I[key]}</svg><span>${label}</span>${badge ? `<span class="vf-badge">${badge}</span>` : ''}</a>` +

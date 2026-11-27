@@ -159,6 +159,7 @@ export const NAV = `<nav class="site-nav">
     <a href="/calculators/" class="active">Calculators</a>
     <a href="/create-a-diagram/">Diagrams</a>
     <a href="/net-worth/">Net Worth Tracker</a>
+    <a href="/budget/">Budget Tracker</a>
     <a href="/account/">Account</a>
   </div>
 </nav>`;
