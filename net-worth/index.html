@@ -1060,7 +1060,7 @@ function oneBanner(){
 // one-time note; accounts made after the launch never do, and the note stops
 // showing on its own 60 days after launch. Set NEWLOOK_LAUNCH to the day the
 // charcoal theme goes live.
-const NEWLOOK_LAUNCH='2026-12-01',NEWLOOK_KEY='vf_newlook_seen';
+const NEWLOOK_LAUNCH='2026-11-27',NEWLOOK_KEY='vf_newlook_seen';
 function maybeShowNewLook(user){
   try{if(localStorage.getItem(NEWLOOK_KEY))return;}catch(e){return;}
   const launch=new Date(NEWLOOK_LAUNCH+'T00:00:00'),now=new Date();
