@@ -4,7 +4,7 @@
      <aside data-vf-nav data-active="budget"></aside>
      <script src="/assets/app-nav.js"></script>
    data-active: dashboard (shown as Home) | networth | budget | debts
-   Hidden at 768px and below, where each page keeps its own phone layout.
+   Hidden at 768px and below, where the same places show as a bottom tab bar.
 
    Each tracker has a dropdown of quick actions. They are links with a query
    (?update=1, ?add=spent ...) that the tracker page acts on when it loads.
@@ -51,6 +51,25 @@
 .vf-sub a svg { flex:0 0 auto; width:13px; height:13px; fill:none; stroke:var(--nv-dim); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .vf-sub a:hover svg { stroke:currentColor; }
 @media (max-width:768px) { .vf-nav { display:none !important; } }
+
+/* Phones: the same four places as a tab bar along the bottom. Pages lift
+   anything pinned to the bottom by var(--vf-tabs-h) (0 on desktop). */
+:root { --vf-tabs-h:0px; }
+.vf-tabs { display:none; }
+@media (max-width:768px) {
+  :root { --vf-tabs-h:calc(60px + env(safe-area-inset-bottom)); }
+  .vf-tabs {
+    --nv-bg:#0b0b0b; --nv-line:rgba(255,255,255,0.08); --nv-item:#8d8d8d; --nv-on:#ededed; --nv-accent:#dcc392;
+    display:flex; position:fixed; left:0; right:0; bottom:0; z-index:90; height:var(--vf-tabs-h); padding-bottom:env(safe-area-inset-bottom);
+    background:var(--nv-bg); border-top:1px solid var(--nv-line); font-family:'Outfit',sans-serif;
+  }
+  :root[data-theme="light"] .vf-tabs { --nv-bg:#ffffff; --nv-line:rgba(0,0,0,0.09); --nv-item:#7b7b7b; --nv-on:#1b1b1b; --nv-accent:#1b1b1b; }
+  .vf-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:var(--nv-item); text-decoration:none; font-size:0.68rem; font-weight:500; -webkit-tap-highlight-color:transparent; }
+  .vf-tab svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .vf-tab[aria-current="page"] { color:var(--nv-on); }
+  .vf-tab[aria-current="page"] svg { color:var(--nv-accent); }
+  .vf-tabs-pad { padding-bottom:var(--vf-tabs-h); }
+}
 `;
   const I = {
     dashboard:'<rect x="3.5" y="3.5" width="7" height="9" rx="2"/><rect x="13.5" y="3.5" width="7" height="5" rx="2"/><rect x="13.5" y="11.5" width="7" height="9" rx="2"/><rect x="3.5" y="15.5" width="7" height="5" rx="2"/>',
@@ -94,6 +113,17 @@
         return row + sub;
       }).join('')
     ).join('');
+
+    // Phones: the bottom tab bar, next to the menu so it shows and hides with
+    // the signed-in screen. Its container gets room at the bottom for it.
+    if (!el.parentNode.querySelector('.vf-tabs')) {
+      const tabs = document.createElement('nav');
+      tabs.className = 'vf-tabs'; tabs.setAttribute('aria-label', 'VestlyFi tools');
+      tabs.innerHTML = NAV.flatMap(g => g.items).map(([key, label, href]) =>
+        `<a class="vf-tab" href="${href}"${key === active ? ' aria-current="page"' : ''}><svg viewBox="0 0 24 24" aria-hidden="true">${I[key]}</svg><span>${label}</span></a>`).join('');
+      el.after(tabs);
+      el.parentNode.classList.add('vf-tabs-pad');
+    }
 
     el.addEventListener('click', e => {
       const tg = e.target.closest('.vf-toggle');
