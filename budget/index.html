@@ -91,8 +91,27 @@ input, select { font-family:inherit; }
 .hidden { display:none !important; }
 
 /* ── Auth ── */
-#authScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:calc(24px + env(safe-area-inset-top)) 16px 24px; }
-.auth-panel { width:100%; max-width:380px; }
+#authScreen { min-height:100vh; display:flex; justify-content:center; padding:calc(48px + env(safe-area-inset-top)) 16px 56px; }
+.auth-panel { width:100%; max-width:460px; }
+/* Landing: what a signed-out visitor sees */
+.eyebrow { margin-top:28px; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+.land-title { font-size:1.75rem; font-weight:500; line-height:1.22; letter-spacing:-0.01em; margin:10px 0 12px; }
+.land-sub { font-size:0.95rem; color:var(--cream-dim); line-height:1.55; margin-bottom:26px; }
+.sample-link { display:block; margin:14px auto 0; border:none; background:none; color:var(--cream-dim); font:inherit; font-size:0.88rem; text-decoration:underline; text-underline-offset:3px; cursor:pointer; padding:6px; }
+.sample-link:hover { color:var(--cream); }
+.land-points { margin-top:40px; }
+.lp { display:flex; flex-direction:column; gap:3px; padding:14px 0; border-top:1px solid var(--line); }
+.lp b { font-size:0.92rem; font-weight:500; }
+.lp span { font-size:0.85rem; color:var(--cream-dim); line-height:1.5; }
+.land-faq { margin-top:36px; }
+.land-faq h2 { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:6px; }
+.lf { padding:14px 0; border-top:1px solid var(--line); }
+.lf h3 { font-size:0.92rem; font-weight:500; margin-bottom:5px; }
+.lf p { font-size:0.85rem; color:var(--cream-dim); line-height:1.6; }
+/* Sample budget: the one banner while it's open */
+.sample-bar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 16px; margin-bottom:16px; border-radius:8px; background:var(--surface); font-size:0.84rem; color:var(--cream-dim); }
+.sample-bar b { color:var(--cream); font-weight:500; }
+.sample-bar .btn { margin-left:auto; padding:8px 16px; }
 .brand { font-family:'Exo 2',sans-serif; font-size:1.15rem; color:var(--accent); text-decoration:none; }
 .auth-title { font-size:1.4rem; font-weight:400; margin:18px 0 6px; }
 .auth-sub { font-size:0.85rem; color:var(--muted); line-height:1.55; margin-bottom:22px; }
@@ -118,7 +137,7 @@ input, select { font-family:inherit; }
 .btn-danger { background:none; color:var(--red); font-weight:500; }
 .btn-block { width:100%; }
 .auth-ctas { display:flex; flex-direction:column; gap:10px; }
-.auth-ctas .btn { height:48px; }
+.auth-ctas .btn { height:48px; text-decoration:none; }
 .link-btn { background:none; border:none; color:var(--muted); font-size:0.78rem; cursor:pointer; padding:4px 2px; }
 .link-btn:hover { color:var(--cream); }
 
@@ -598,12 +617,27 @@ input, select { font-family:inherit; }
 <div id="authScreen" class="hidden">
   <div class="auth-panel">
     <a class="brand" href="/">VestlyFi</a>
-    <h1 class="auth-title">Budget tracker</h1>
-    <p class="auth-sub">See where your money goes each month. Free, and no bank linking.</p>
+    <div class="eyebrow">Budget tracker</div>
+    <h1 class="land-title">The best way to stay on top of your money is tracking it yourself.</h1>
+    <p class="land-sub">Log each purchase in a few taps. No bank linking, so every dollar passes in front of you.</p>
     <div class="auth-ctas">
       <a class="btn btn-gold btn-block" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fbudget%2F">Create free account</a>
       <a class="btn btn-ghost btn-block" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fbudget%2F">Sign in</a>
     </div>
+    <button class="sample-link" type="button" onclick="startSample()">See a sample budget</button>
+
+    <div class="land-points">
+      <div class="lp"><b>A few taps per purchase</b><span>Pick a category, type the amount. Repeating bills add themselves.</span></div>
+      <div class="lp"><b>Nothing connects to your bank</b><span>You decide what goes in, so you notice what goes out.</span></div>
+      <div class="lp"><b>One free account</b><span>The same login as the net worth and debt trackers.</span></div>
+    </div>
+
+    <section class="land-faq">
+      <h2>Questions</h2>
+      <div class="lf"><h3>Why not link my bank?</h3><p>Automatic trackers fill in your spending for you, which makes it easy to stop noticing it. Typing each purchase takes seconds and keeps you aware of where the money goes.</p></div>
+      <div class="lf"><h3>How long does it take?</h3><p>About as long as paying. Add it right after, or from the Budget icon on your phone's home screen.</p></div>
+      <div class="lf"><h3>Is it free?</h3><p>Yes. No trial, and nothing to upgrade to.</p></div>
+    </section>
   </div>
 </div>
 
@@ -626,6 +660,8 @@ input, select { font-family:inherit; }
         </div>
       </div>
     </div>
+
+    <div class="sample-bar hidden" id="sampleBar"><span><b>Sample budget.</b> Nothing here is saved.</span><button class="btn btn-gold" type="button" onclick="sampleSignup()">Create free account</button><button class="link-btn" type="button" onclick="exitSample()">Back</button></div>
 
     <div class="install-card hidden" id="installCard" role="region" aria-label="Install the app">
       <img class="ic-icon" src="/budget/icon-192.png" alt="">
@@ -907,7 +943,12 @@ function showAuth(){ document.getElementById('appScreen').classList.add('hidden'
 function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
 
 async function boot(session){
-  if (!session || !session.user) { user = null; booted = false; showAuth(); return; }
+  if (!session || !session.user) {
+    user = null; booted = false;
+    if (sample) return;
+    if (new URLSearchParams(location.search).has('sample')) { startSample(); return; }
+    showAuth(); return;
+  }
   if (booted && user && user.id === session.user.id) return;
   user = session.user; booted = true;
   document.getElementById('userEmail').textContent = user.email || '';
@@ -948,7 +989,7 @@ async function loadRecurring(){
 
 sb.auth.getSession().then(({ data }) => boot(data.session));
 sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'SIGNED_OUT') { user = null; booted = false; showAuth(); return; }
+  if (event === 'SIGNED_OUT') { user = null; booted = false; if (!sample) showAuth(); return; }
   if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') boot(session);
 });
 
@@ -966,6 +1007,10 @@ async function loadMeta(){
 
 async function loadMonth(){
   const start = ymd(viewMonth), end = ymd(lastOfMonth(viewMonth));
+  if (sample) {
+    monthTx = SAMPLE.tx.filter(t => t.date >= start && t.date <= end).sort((a, b) => b.date.localeCompare(a.date) || b.created_at.localeCompare(a.created_at));
+    pendingTx = []; render(); return;
+  }
   const [{ data, error }, pend] = await Promise.all([
     sb.from('budget_transactions').select('*')
       .gte('date', start).lte('date', end)
@@ -2036,6 +2081,75 @@ async function saveEdit(){
     if (done) done(res.data);
   } finally { btn.disabled = false; }
 }
+
+/* ══ SAMPLE BUDGET ══
+   Signed-out visitors can open the real tracker filled with a made-up three
+   months, from "See a sample budget" or a link ending in ?sample. Nothing
+   touches the database: the sample lives in memory, and anything that would
+   save sends the visitor to Create account instead. Same starter categories
+   as a new account (seed_budget_defaults). */
+let sample = false, SAMPLE = null;
+function buildSample(){
+  const G = [['g1','Income','income',['Paycheck','Other income']], ['g2','Housing','expense',['Rent or mortgage','Utilities','Internet and phone','Home maintenance']],
+    ['g3','Food','expense',['Groceries','Dining out']], ['g4','Transportation','expense',['Gas','Car payment','Car insurance','Parking and transit']],
+    ['g5','Personal','expense',['Shopping','Subscriptions','Entertainment','Health','Gifts']], ['g6','Transfers','transfer',['To savings or investing','Between my accounts']]];
+  const targets = { 'Groceries':600, 'Dining out':250, 'Gas':180, 'Shopping':200, 'Entertainment':120, 'Subscriptions':40 };
+  const groups = [], cats = [], id = {};
+  G.forEach(([gid, name, kind, subs], gi) => {
+    groups.push({ id:gid, name, kind, hidden:false, sort_order:gi + 1, icon:null });
+    subs.forEach((cn, ci) => { const c = { id:gid + 'c' + (ci + 1), group_id:gid, name:cn, monthly_target:targets[cn] ?? null, hidden:false, sort_order:ci + 1, icon:null, counts_as_saving:cn === 'To savings or investing' }; cats.push(c); id[cn] = c.id; });
+  });
+  const accounts = [
+    { id:'a1', name:'Chase card', kind:'credit_card', archived:false, sort_order:1, created_at:'2026-01-01T00:00:00Z' },
+    { id:'a2', name:'Checking', kind:'checking', archived:false, sort_order:2, created_at:'2026-01-02T00:00:00Z' },
+    { id:'a3', name:'Savings', kind:'savings', archived:false, sort_order:3, created_at:'2026-01-03T00:00:00Z' }];
+  // [day, subcategory, amount (negative = money out), description, account]
+  const plan = [[1,'Paycheck',3250,'Paycheck','a2'], [15,'Paycheck',3250,'Paycheck','a2'], [1,'Rent or mortgage',-1850,'Rent','a2'], [2,'To savings or investing',-500,'To savings','a2'],
+    [3,'Subscriptions',-11.99,'Spotify','a1'], [4,'Groceries',-132.48,"Trader Joe's",'a1'], [6,'Dining out',-23.5,'Chipotle','a1'], [7,'Gas',-46.2,'Shell','a1'],
+    [9,'Utilities',-142.3,'Electric','a2'], [11,'Subscriptions',-15.49,'Netflix','a1'], [11,'Groceries',-87.15,'Costco','a1'], [12,'Internet and phone',-70,'Internet','a2'],
+    [13,'Dining out',-6.75,'Coffee','a1'], [16,'Shopping',-64,'Target','a1'], [18,'Groceries',-118.9,"Trader Joe's",'a1'], [19,'Entertainment',-32,'Movie night','a1'],
+    [20,'Car insurance',-128,'Car insurance','a2'], [21,'Gas',-41.85,'Shell','a1'], [22,'Dining out',-58.4,'Dinner out','a1'], [25,'Groceries',-96.3,'Safeway','a1'],
+    [27,'Health',-25,'Pharmacy','a1'], [28,'Shopping',-39.99,'Amazon','a1']];
+  const fixed = ['Rent or mortgage','To savings or investing','Subscriptions','Internet and phone','Car insurance','Paycheck'];
+  const tx = [], today = new Date(); let n = 0;
+  for (let back = 2; back >= 0; back--) {
+    const m = new Date(today.getFullYear(), today.getMonth() - back, 1), last = lastOfMonth(m).getDate();
+    plan.forEach(([d, cn, amt, desc, acct], i) => {
+      const dt = new Date(m.getFullYear(), m.getMonth(), Math.min(d, last));
+      if (dt > today) return;
+      const wobble = fixed.includes(cn) ? 1 : 1 + ((i * 7 + back * 3) % 9 - 4) / 40;   // everyday spending varies a little month to month
+      tx.push({ id:'t' + (++n), date:ymd(dt), amount:Math.round(amt * wobble * 100) / 100, category_id:id[cn], account_id:acct, description:desc, pending:false, created_at:new Date(dt.getTime() + i * 60000).toISOString(), recurring_id:null });
+    });
+  }
+  const nextOn = d => { const t = new Date(today.getFullYear(), today.getMonth(), d); return ymd(t > today ? t : new Date(today.getFullYear(), today.getMonth() + 1, d)); };
+  const rule = (rid, description, amount, cn, acct, frequency, day, varies) => ({ id:rid, description, amount, category_id:id[cn], account_id:acct, frequency, next_date:nextOn(day), anchor_day:day, amount_varies:!!varies, active:true });
+  const recurring = [rule('r1','Rent',-1850,'Rent or mortgage','a2','monthly',1), rule('r2','Paycheck',3250,'Paycheck','a2','biweekly',15),
+    rule('r3','To savings',-500,'To savings or investing','a2','monthly',2), rule('r4','Electric',-140,'Utilities','a2','monthly',9,true), rule('r5','Netflix',-15.49,'Subscriptions','a1','monthly',11)];
+  return { groups, cats, accounts, tx, recurring };
+}
+function startSample(){
+  sample = true; SAMPLE = buildSample(); user = null;
+  groups = SAMPLE.groups; cats = SAMPLE.cats; accounts = SAMPLE.accounts; recurring = SAMPLE.recurring;
+  recentTx = SAMPLE.tx.slice().reverse().map(t => ({ category_id:t.category_id, account_id:t.account_id }));
+  viewMonth = firstOfMonth(new Date());
+  document.getElementById('userEmail').textContent = 'Sample data';
+  const who = document.querySelector('.acct-who-label'); if (who) who.textContent = 'Viewing';
+  document.getElementById('installCard').classList.add('hidden');   // one banner at a time
+  document.getElementById('sampleBar').classList.remove('hidden');
+  showApp(); loadMonth(); window.scrollTo(0, 0);
+  try { if (typeof gtag === 'function') gtag('event', 'bd_sample_open'); } catch (e) {}
+}
+function sampleSignup(){
+  try { if (typeof gtag === 'function') gtag('event', 'bd_sample_signup_click'); } catch (e) {}
+  location.href = '/signin/?mode=signup&next=%2Fbudget%2F';
+}
+function exitSample(){ location.href = location.pathname; }
+// Anything that would save goes to Create account while the sample is open.
+['saveTx','deleteTx','saveTargets','stopRecurring','setArchived','saveEdit','createAccountFromSheet','insertAccount','postDueRecurring','installApp'].forEach(name => {
+  const real = window[name]; if (typeof real !== 'function') return;
+  window[name] = function(...args){ if (sample) { sampleSignup(); return; } return real.apply(this, args); };
+});
+{ const realSignOut = window.signOut; window.signOut = function(...args){ if (sample) { exitSample(); return; } return realSignOut.apply(this, args); }; }
 </script>
 </body>
 </html>
