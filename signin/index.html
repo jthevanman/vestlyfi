@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sign in | VestlyFi</title>
+<meta name="description" content="Sign in or create your free VestlyFi account. One account for the net worth, budget and debt trackers.">
+<!-- One sign-in page for every tracker. Not a search landing page. -->
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0b0b0b">
+<script>
+// Visiting any page with ?internal=1 marks this browser as the site owner's, so
+// its visits stay out of Google Analytics. ?internal=0 undoes it. This has to
+// run before the analytics config below.
+try{var vfq=new URLSearchParams(location.search);if(vfq.has('internal')){if(vfq.get('internal')==='0')localStorage.removeItem('vf_internal');else localStorage.setItem('vf_internal','1');}if(localStorage.getItem('vf_internal')==='1')window['ga-disable-G-NPZ7QVQQNS']=true;}catch(e){}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NPZ7QVQQNS"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-NPZ7QVQQNS');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<script src="/assets/theme.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body { background:var(--page); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; -webkit-font-smoothing:antialiased; min-height:100vh; display:flex; flex-direction:column; }
+.wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:32px 16px; }
+.panel { width:100%; max-width:400px; }
+.brand { font-family:'Exo 2',sans-serif; font-size:1.2rem; color:var(--accent); text-decoration:none; }
+h1 { font-size:1.55rem; font-weight:500; letter-spacing:-0.01em; margin:22px 0 6px; }
+.sub { font-size:0.88rem; color:var(--cream-dim); line-height:1.55; margin-bottom:24px; }
+
+/* Create account | Sign in */
+.tabs { display:flex; gap:4px; padding:4px; border-radius:999px; background:var(--surface); margin-bottom:22px; }
+.tab { flex:1; height:36px; border:none; border-radius:999px; background:none; color:var(--cream-dim); font:inherit; font-size:0.86rem; font-weight:500; cursor:pointer; transition:background .15s, color .15s; }
+.tab.on { background:var(--surface-2); color:var(--cream); }
+:root[data-theme="light"] .tab.on { background:var(--bg); box-shadow:0 1px 3px rgba(0,0,0,0.12); }
+
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:0.7rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.field input { width:100%; height:48px; padding:0 16px; border-radius:12px; border:1px solid transparent; background:var(--surface); color:var(--cream); font:inherit; font-size:16px; outline:none; }
+.field input:focus { border-color:var(--accent); }
+.pw { position:relative; }
+.pw input { padding-right:64px; }
+.pw button { position:absolute; right:8px; top:50%; transform:translateY(-50%); border:none; background:none; color:var(--muted); font:inherit; font-size:0.78rem; cursor:pointer; padding:6px 8px; }
+.pw button:hover { color:var(--cream); }
+
+.btn { width:100%; height:48px; margin-top:6px; border:none; border-radius:999px; background:var(--accent); color:var(--on-accent); font:inherit; font-size:0.95rem; font-weight:600; cursor:pointer; transition:background .15s; }
+.btn:hover { background:var(--accent-light); }
+.btn:disabled { opacity:0.6; cursor:default; }
+.msg { font-size:0.82rem; min-height:20px; margin-top:10px; text-align:center; color:var(--cream-dim); line-height:1.5; }
+.msg.err { color:var(--red); }
+.msg.ok { color:var(--green); }
+.alt { text-align:center; margin-top:12px; }
+.link { border:none; background:none; color:var(--cream-dim); font:inherit; font-size:0.84rem; cursor:pointer; padding:4px; }
+.link:hover { color:var(--cream); text-decoration:underline; }
+.form-title { font-size:1.15rem; font-weight:500; margin-bottom:6px; }
+.form-sub { font-size:0.86rem; color:var(--cream-dim); line-height:1.6; margin-bottom:20px; }
+.form-sub strong { color:var(--cream); font-weight:500; word-break:break-all; }
+.hidden { display:none !important; }
+
+footer { display:flex; justify-content:center; gap:20px; padding:20px 16px calc(20px + env(safe-area-inset-bottom)); font-size:0.78rem; }
+footer a { color:var(--muted); text-decoration:none; }
+footer a:hover { color:var(--cream); }
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <div class="panel">
+    <a class="brand" href="/">VestlyFi</a>
+    <h1 id="title">Create your free account</h1>
+    <p class="sub">One account for the net worth, budget and debt trackers.</p>
+
+    <div class="tabs" id="tabs" role="tablist">
+      <button class="tab" type="button" data-tab="signup" onclick="switchTab('signup')">Create account</button>
+      <button class="tab" type="button" data-tab="signin" onclick="switchTab('signin')">Sign in</button>
+    </div>
+
+    <!-- Create account -->
+    <div id="signupForm">
+      <div id="signupFields">
+        <div class="field"><label for="suEmail">Email</label><input type="email" id="suEmail" name="email" autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field"><label for="suPassword">Password</label><div class="pw"><input type="password" id="suPassword" name="new-password" autocomplete="new-password" placeholder="At least 6 characters"><button type="button" onclick="togglePw('suPassword',this)" aria-label="Show password">Show</button></div></div>
+        <button class="btn" id="suBtn" type="button" onclick="signUp()">Create account</button>
+        <div class="msg" id="suMsg"></div>
+      </div>
+      <div id="signupSent" class="hidden">
+        <h2 class="form-title">Check your email</h2>
+        <p class="form-sub">We sent a link to <strong id="sentEmail"></strong>. Click it and you're signed in. It can take a minute, and it may land in spam.</p>
+        <div class="alt"><button type="button" class="link" onclick="resendConfirmation('sentMsg')">Didn't get it? Resend the email</button></div>
+        <div class="msg" id="sentMsg"></div>
+        <div class="alt"><button type="button" class="link" onclick="resetSignupForm()">Use a different email</button></div>
+        <div class="alt"><button type="button" class="link" onclick="switchTab('signin')">Opened the link on another device? Sign in</button></div>
+      </div>
+    </div>
+
+    <!-- Sign in -->
+    <div id="signinForm" class="hidden">
+      <div class="field"><label for="siEmail">Email</label><input type="email" id="siEmail" name="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div class="field"><label for="siPassword">Password</label><div class="pw"><input type="password" id="siPassword" name="password" autocomplete="current-password"><button type="button" onclick="togglePw('siPassword',this)" aria-label="Show password">Show</button></div></div>
+      <button class="btn" id="siBtn" type="button" onclick="signIn()">Sign in</button>
+      <div class="msg" id="siMsg"></div>
+      <div class="alt" id="resendWrap" style="display:none"><button type="button" class="link" onclick="resendConfirmation('siMsg')">Resend the confirmation email</button></div>
+      <div class="alt"><button type="button" class="link" onclick="showReset()">Forgot your password?</button></div>
+    </div>
+
+    <!-- Forgot password -->
+    <div id="resetForm" class="hidden">
+      <h2 class="form-title">Reset your password</h2>
+      <p class="form-sub">Enter the email you signed up with and we'll send you a link to set a new password.</p>
+      <div class="field"><label for="rsEmail">Email</label><input type="email" id="rsEmail" autocomplete="email" placeholder="you@example.com"></div>
+      <button class="btn" type="button" onclick="requestReset()">Send reset link</button>
+      <div class="msg" id="rsMsg"></div>
+      <div class="alt"><button type="button" class="link" onclick="switchTab('signin')">Back to sign in</button></div>
+    </div>
+
+    <!-- New password (from the reset email) -->
+    <div id="newPwForm" class="hidden">
+      <h2 class="form-title">Set a new password</h2>
+      <p class="form-sub">You're verified. Choose a new password for your account.</p>
+      <div class="field"><label for="npPassword">New password</label><input type="password" id="npPassword" autocomplete="new-password" placeholder="At least 6 characters"></div>
+      <div class="field"><label for="npConfirm">Confirm password</label><input type="password" id="npConfirm" autocomplete="new-password" placeholder="Type it again"></div>
+      <button class="btn" type="button" onclick="updatePassword()">Update password</button>
+      <div class="msg" id="npMsg"></div>
+    </div>
+  </div>
+</main>
+
+<footer><a href="/">VestlyFi home</a><a href="/privacy/">Privacy</a></footer>
+
+<script>
+/* The one sign-in page for every tracker.
+   /signin/?next=/budget/        where to go after signing in (default: Home)
+   /signin/?mode=reset           opens on Forgot password
+   /signin/?mode=signup|signin   which tab to open (default: Create account for
+                                 someone new, Sign in for someone who has used a
+                                 tracker in this browser)
+   Email links (confirm email, reset password) come back here and forward on.
+   Analytics events keep their nw_ names so the signup funnel stays
+   comparable with the months before this page; `from` says which tracker
+   sent the person here. Events carry codes and counts only, never an email. */
+const landingHash = window.location.hash || '';   // read before Supabase consumes it
+const { createClient } = supabase;
+const sb = createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
+function track(name, params){ try { if (typeof gtag === 'function') gtag('event', name, params || {}); } catch (e) {} }
+
+const q = new URLSearchParams(location.search);
+// Only same-site paths: "/budget/" yes, "//evil.com" or "https://..." no.
+const next = (() => { const n = q.get('next') || ''; return /^\/(?!\/)[^\s\\]*$/.test(n) && !/^\/signin\//.test(n) ? n : '/dashboard/'; })();
+const FROM = { 'net-worth':'networth', budget:'budget', dashboard:'home', 'debt-tracker':'debts', account:'account' };
+const from = FROM[next.split('/')[1]] || 'other';
+const back = () => window.location.origin + '/signin/?next=' + encodeURIComponent(next);
+function go(){ location.replace(next); }
+
+const $ = id => document.getElementById(id);
+const setMsg = (id, text, cls) => { const m = $(id); m.className = 'msg' + (cls ? ' ' + cls : ''); m.textContent = text; };
+function rememberAccount(){ try { localStorage.setItem('vf_has_account', '1'); } catch (e) {} }
+// Supabase's short error code (e.g. invalid_credentials), never its message, for analytics.
+function errCode(e){ return String((e && (e.code || e.status)) || 'unknown').slice(0, 40); }
+function errText(e){
+  const c = errCode(e);
+  if (c === 'over_email_send_rate_limit' || c === 'over_request_rate_limit' || c === '429') return 'Too many attempts just now. Wait a minute and try again.';
+  if (/failed to fetch|networkerror|load failed/i.test((e && e.message) || '')) return 'Could not reach the server. Check your connection and try again.';
+  return (e && e.message) || 'Something went wrong. Please try again.';
+}
+
+/* ── Which form shows ── */
+function defaultTab(){
+  const m = q.get('mode'); if (m === 'signup' || m === 'signin') return m;
+  try { if (localStorage.getItem('vf_has_account') === '1' || localStorage.getItem('vf_currency')) return 'signin'; } catch (e) {}
+  return 'signup';
+}
+function show(view){
+  ['signupForm', 'signinForm', 'resetForm', 'newPwForm'].forEach(id => $(id).classList.toggle('hidden', id !== view));
+  $('tabs').classList.toggle('hidden', view === 'resetForm' || view === 'newPwForm');
+}
+function setTab(t){
+  show(t === 'signup' ? 'signupForm' : 'signinForm');
+  document.querySelectorAll('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  $('title').textContent = t === 'signup' ? 'Create your free account' : 'Welcome back';
+}
+function switchTab(t){ setTab(t); track('nw_auth_tab', { tab:t, from }); }
+function showReset(){ show('resetForm'); setMsg('rsMsg', ''); const e = $('siEmail').value.trim(); if (e) $('rsEmail').value = e; $('title').textContent = 'Forgot your password?'; }
+function togglePw(id, btn){ const el = $(id), s = el.type === 'password'; el.type = s ? 'text' : 'password'; btn.textContent = s ? 'Hide' : 'Show'; btn.setAttribute('aria-label', s ? 'Hide password' : 'Show password'); }
+
+/* ── Sign in ── */
+async function signIn(){
+  const email = $('siEmail').value.trim(), password = $('siPassword').value, btn = $('siBtn');
+  if (!email || !password) { setMsg('siMsg', 'Enter your email and password.', 'err'); return; }
+  setMsg('siMsg', 'Signing in…'); $('resendWrap').style.display = 'none'; btn.disabled = true;
+  let error = null;
+  try { ({ error } = await sb.auth.signInWithPassword({ email, password })); } catch (e) { error = e; }
+  btn.disabled = false;
+  if (!error) return;   // the SIGNED_IN handler below takes over
+  if (errCode(error) === 'email_not_confirmed' || /not confirmed/i.test(error.message || '')) {
+    setMsg('siMsg', 'Confirm your email first. Click the link we sent you, or resend it below.', 'err');
+    pendingEmail = email; $('resendWrap').style.display = '';
+  } else setMsg('siMsg', errText(error), 'err');
+  track('nw_signin_error', { code:errCode(error), from });
+}
+
+/* ── Create account ── */
+let pendingEmail = '', resendAt = 0;
+function showSent(email){ $('sentEmail').textContent = email; setMsg('sentMsg', ''); $('signupFields').classList.add('hidden'); $('signupSent').classList.remove('hidden'); $('title').textContent = 'Almost there'; }
+function resetSignupForm(){ $('signupSent').classList.add('hidden'); $('signupFields').classList.remove('hidden'); setMsg('suMsg', ''); setTab('signup'); }
+async function signUp(){
+  const email = $('suEmail').value.trim(), password = $('suPassword').value, btn = $('suBtn');
+  if (btn.disabled) return;
+  if (!email) { setMsg('suMsg', 'Please enter your email.', 'err'); track('nw_signup_error', { code:'email_missing', from }); return; }
+  if (password.length < 6) { setMsg('suMsg', 'Password must be at least 6 characters.', 'err'); track('nw_signup_error', { code:'password_short', from }); return; }
+  setMsg('suMsg', 'Creating account…'); btn.disabled = true;
+  let data = null, error = null;
+  try { ({ data, error } = await sb.auth.signUp({ email, password, options:{ emailRedirectTo:back() } })); } catch (e) { error = e; }
+  btn.disabled = false;
+  if (error) { setMsg('suMsg', errText(error), 'err'); track('nw_signup_error', { code:errCode(error), from }); return; }
+  // A session straight away means no email step; the SIGNED_IN handler takes over.
+  if (data && data.session) { setMsg('suMsg', ''); track('nw_signup_submit', { method:'email', from }); return; }
+  // An address that already has an account comes back looking like a success
+  // but with no identities, and no email is sent. Sign them in if the password
+  // is right; otherwise move them to Sign in with the address filled in.
+  if (data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    setMsg('suMsg', 'You already have an account. Signing you in…');
+    let sErr = null;
+    try { ({ error:sErr } = await sb.auth.signInWithPassword({ email, password })); } catch (e) { sErr = e; }
+    if (!sErr) { track('nw_signup_existing', { result:'signed_in', from }); return; }
+    setMsg('suMsg', ''); setTab('signin'); $('siEmail').value = email;
+    setMsg('siMsg', 'You already have an account with this email. Enter your password, or use "Forgot your password?".', 'err');
+    track('nw_signup_existing', { result:'needs_password', from }); return;
+  }
+  pendingEmail = email; showSent(email); track('nw_signup_submit', { method:'email', from });
+}
+async function resendConfirmation(msgId){
+  if (!pendingEmail) return;
+  if (Date.now() - resendAt < 60000) { setMsg(msgId, 'Just sent. Give it a minute before trying again.'); return; }
+  resendAt = Date.now(); setMsg(msgId, 'Sending…');
+  let error = null;
+  try { ({ error } = await sb.auth.resend({ type:'signup', email:pendingEmail, options:{ emailRedirectTo:back() } })); } catch (e) { error = e; }
+  if (error) { resendAt = 0; setMsg(msgId, errText(error), 'err'); track('nw_signup_resend', { ok:0, from }); }
+  else { setMsg(msgId, 'Sent. Check your inbox and your spam folder.', 'ok'); track('nw_signup_resend', { ok:1, from }); }
+}
+
+/* ── Forgot password ── */
+async function requestReset(){
+  const email = $('rsEmail').value.trim();
+  if (!email) { setMsg('rsMsg', 'Please enter your email.', 'err'); return; }
+  setMsg('rsMsg', 'Sending…');
+  let error = null;
+  try { ({ error } = await sb.auth.resetPasswordForEmail(email, { redirectTo:back() })); } catch (e) { error = e; }
+  if (error) setMsg('rsMsg', errText(error), 'err');
+  else setMsg('rsMsg', 'Check your email for a reset link. It can take a minute; check spam too.', 'ok');
+}
+let recovery = /type=recovery/.test(landingHash);
+function showNewPw(){ show('newPwForm'); $('title').textContent = 'Set a new password'; }
+async function updatePassword(){
+  const pw = $('npPassword').value, cf = $('npConfirm').value;
+  if (pw !== cf) { setMsg('npMsg', 'Passwords do not match.', 'err'); return; }
+  if (pw.length < 6) { setMsg('npMsg', 'Password must be at least 6 characters.', 'err'); return; }
+  setMsg('npMsg', 'Updating…');
+  const { error } = await sb.auth.updateUser({ password:pw });
+  if (error) { setMsg('npMsg', errText(error), 'err'); return; }
+  setMsg('npMsg', 'Password updated. Taking you in…', 'ok');
+  recovery = false; rememberAccount();
+  setTimeout(go, 700);
+}
+
+// An expired or already-used email link comes back with an error in the address.
+function handleDeadLink(){
+  if (!/[#&]error(_code)?=/.test(landingHash)) return false;
+  setTab('signin');
+  setMsg('siMsg', 'That email link has expired or was already used. If you confirmed your email, sign in here. If not, create your account again to get a new link.', 'err');
+  if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+  track('nw_auth_link_error', { code:(landingHash.match(/error_code=([a-z0-9_]+)/) || [])[1] || 'unknown', from });
+  return true;
+}
+
+[['siEmail', signIn], ['siPassword', signIn], ['suEmail', signUp], ['suPassword', signUp], ['rsEmail', requestReset], ['npPassword', updatePassword], ['npConfirm', updatePassword]]
+  .forEach(([id, fn]) => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') fn(); }));
+
+/* ── Start ── */
+setTab(defaultTab());
+if (q.get('mode') === 'reset') showReset();
+let initDone = false;
+(async () => {
+  const { data:{ session } } = await sb.auth.getSession();
+  if (recovery) showNewPw();
+  else if (session && session.user) {
+    // Already signed in, or just arrived from the confirmation email.
+    rememberAccount();
+    if (/type=signup/.test(landingHash)) track('nw_signup_confirmed', { from });
+    go(); return;
+  } else {
+    const dead = handleDeadLink();
+    track('nw_auth_view', { tab:dead ? 'signin' : defaultTab(), from });
+  }
+  initDone = true;
+})();
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') { recovery = true; showNewPw(); return; }
+  if (recovery || !initDone) return;
+  if (event === 'SIGNED_IN' && session && session.user) {
+    rememberAccount();
+    const age = Date.now() - new Date(session.user.created_at || 0).getTime();
+    track('nw_login', { method:(session.user.app_metadata && session.user.app_metadata.provider) || 'email', account:age < 864e5 ? 'new' : 'returning', from });
+    setTimeout(go, 150);   // let the analytics hit leave first
+  }
+});
+</script>
+</body>
+</html>

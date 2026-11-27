@@ -426,8 +426,8 @@ let currentUser = null;
 (async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session?.user) {
-    // Not logged in; redirect to net worth page which has the auth UI
-    window.location.href = '/net-worth/';
+    // Not signed in: the shared sign-in page brings them back here.
+    window.location.href = '/signin/?mode=signin&next=%2Faccount%2F';
     return;
   }
   currentUser = session.user;
@@ -439,7 +439,7 @@ let currentUser = null;
 
 sb.auth.onAuthStateChange((event, session) => {
   if (event === 'SIGNED_OUT') {
-    window.location.href = '/net-worth/';
+    window.location.href = '/signin/?mode=signin&next=%2Faccount%2F';
   }
 });
 

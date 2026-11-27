@@ -68,6 +68,10 @@ body{background:var(--navy);color:var(--cream);font-family:'Outfit',sans-serif;f
 .auth-field input:focus{border-color:var(--gold);}
 .btn-auth{width:100%;padding:12px;margin-top:6px;background:var(--gold);color:var(--navy);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:background .15s;}
 .btn-auth:hover{background:var(--gold-light);}
+.auth-ctas{display:flex;flex-direction:column;gap:10px;}
+.auth-ctas a{display:block;text-align:center;text-decoration:none;margin-top:0;}
+.btn-auth-2{padding:12px;border:1px solid var(--border);border-radius:9px;color:var(--cream);font-size:0.9rem;font-weight:500;}
+.btn-auth-2:hover{background:var(--gold-dim);}
 .auth-msg{font-size:0.78rem;margin-top:10px;text-align:center;min-height:18px;}
 .auth-msg.err{color:var(--red);}
 .auth-msg.ok{color:var(--green);}
@@ -323,40 +327,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
     </div>
     <div class="auth-card">
       <h2>Track your <em>progress</em></h2>
-      <p class="auth-card-sub">Sign in to save your debts, set extra payments, and watch your payoff date move closer.</p>
-      <div class="auth-tabs" id="authTabs">
-        <button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button>
-        <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
-      </div>
-      <div id="signinForm">
-        <div class="auth-field"><label>Email</label><input type="email" id="siEmail" placeholder="you@example.com"></div>
-        <div class="auth-field"><label>Password</label><input type="password" id="siPassword" placeholder="••••••••"></div>
-        <button class="btn-auth" onclick="signIn()">Sign In</button>
-        <div class="auth-alt"><button type="button" class="auth-link" onclick="showResetForm()">Forgot your password?</button></div>
-        <div class="auth-msg" id="siMsg"></div>
-      </div>
-      <div id="signupForm" style="display:none">
-        <div class="auth-field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
-        <div class="auth-field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 6 characters"></div>
-        <div class="auth-field"><label>Confirm Password</label><input type="password" id="suPasswordConfirm" placeholder="Re-enter your password"></div>
-        <button class="btn-auth" onclick="signUp()">Create Account</button>
-        <div class="auth-msg" id="suMsg"></div>
-      </div>
-      <div id="resetForm" style="display:none">
-        <p class="auth-form-title">Reset your password</p>
-        <p class="auth-form-sub">Enter the email you signed up with and we'll send you a link to set a new password.</p>
-        <div class="auth-field"><label>Email</label><input type="email" id="rsEmail" placeholder="you@example.com"></div>
-        <button class="btn-auth" onclick="requestReset()">Send reset link</button>
-        <div class="auth-alt"><button type="button" class="auth-link" onclick="showSigninForm()">← Back to sign in</button></div>
-        <div class="auth-msg" id="rsMsg"></div>
-      </div>
-      <div id="newPasswordForm" style="display:none">
-        <p class="auth-form-title">Set a new password</p>
-        <p class="auth-form-sub">You're verified. Choose a new password for your account.</p>
-        <div class="auth-field"><label>New Password</label><input type="password" id="npPassword" placeholder="At least 6 characters"></div>
-        <div class="auth-field"><label>Confirm Password</label><input type="password" id="npPasswordConfirm" placeholder="Re-enter your password"></div>
-        <button class="btn-auth" onclick="updatePassword()">Update password</button>
-        <div class="auth-msg" id="npMsg"></div>
+      <p class="auth-card-sub">Create a free account to save your debts, set extra payments, and watch your payoff date move closer.</p>
+      <div class="auth-ctas">
+        <a class="btn-auth" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fdebt-tracker%2F">Create free account</a>
+        <a class="btn-auth-2" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fdebt-tracker%2F">Sign in</a>
       </div>
     </div>
   </div>
@@ -613,6 +587,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border-soft);paddi
 
 <script>
 const{createClient}=supabase;
+// Reset and expired email links belong to the shared sign-in page.
+if(/type=recovery|[#&]error(_code)?=/.test(location.hash))location.replace('/signin/?next=%2Fdebt-tracker%2F'+location.hash);
 const sb=createClient('https://bgbxninvpfhizjalicee.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnYnhuaW52cGZoaXpqYWxpY2VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwOTg1NzMsImV4cCI6MjA4ODY3NDU3M30.W74cdfwClaYMC1YVyh4zRp-8ylqvFN61cCpSERe2tWg');
 
 const REC_DISMISS_KEY='vf_debt_rec_dismissed';
@@ -678,68 +654,12 @@ function simPortfolio(debts,useExtra){
   return totals;
 }
 
-/* ── AUTH ── */
-function switchAuthTab(t){
-  document.getElementById('authTabs').style.display='flex';
-  ['resetForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.querySelectorAll('#dashLocked .auth-tab').forEach((x,i)=>x.classList.toggle('active',(t==='signin'&&i===0)||(t==='signup'&&i===1)));
-  document.getElementById('signinForm').style.display=t==='signin'?'block':'none';
-  document.getElementById('signupForm').style.display=t==='signup'?'block':'none';
-}
-function showSigninForm(){switchAuthTab('signin');}
-function showResetForm(){
-  document.getElementById('authTabs').style.display='none';
-  ['signinForm','signupForm','newPasswordForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('resetForm').style.display='block';
-  document.getElementById('rsMsg').textContent='';
-  const si=document.getElementById('siEmail').value.trim();if(si)document.getElementById('rsEmail').value=si;
-}
-function showNewPasswordForm(){
-  document.getElementById('authTabs').style.display='none';
-  ['signinForm','signupForm','resetForm'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById('newPasswordForm').style.display='block';
-  showDashLocked();
-}
-async function requestReset(){
-  const email=document.getElementById('rsEmail').value.trim(),msg=document.getElementById('rsMsg');
-  if(!email){msg.className='auth-msg err';msg.textContent='Please enter your email.';return;}
-  msg.className='auth-msg';msg.textContent='Sending…';
-  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/debt-tracker/'});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Check your email for a reset link; check spam too.';}
-}
-async function updatePassword(){
-  const pw=document.getElementById('npPassword').value,cf=document.getElementById('npPasswordConfirm').value,msg=document.getElementById('npMsg');
-  if(pw!==cf){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
-  if(pw.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
-  msg.className='auth-msg';msg.textContent='Updating…';
-  const{error}=await sb.auth.updateUser({password:pw});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;return;}
-  msg.className='auth-msg ok';msg.textContent='Password updated! Loading your dashboard…';
-  recoveryMode=false;if(history.replaceState)history.replaceState(null,'',window.location.pathname);
-  setTimeout(async()=>{const{data:{session}}=await sb.auth.getSession();if(session?.user)await onSignedIn(session);else{switchAuthTab('signin');document.getElementById('siMsg').className='auth-msg ok';document.getElementById('siMsg').textContent='Password updated. Please sign in.';}},800);
-}
-['siEmail','siPassword'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signIn();}));
-['suEmail','suPassword','suPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')signUp();}));
-document.getElementById('rsEmail').addEventListener('keydown',e=>{if(e.key==='Enter')requestReset();});
-['npPassword','npPasswordConfirm'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')updatePassword();}));
-
-async function signIn(){
-  const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPassword').value,msg=document.getElementById('siMsg');
-  msg.className='auth-msg';msg.textContent='Signing in…';
-  const{error}=await sb.auth.signInWithPassword({email,password});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Success!';}
-}
-async function signUp(){
-  const email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPassword').value,confirm=document.getElementById('suPasswordConfirm').value,msg=document.getElementById('suMsg');
-  if(password!==confirm){msg.className='auth-msg err';msg.textContent='Passwords do not match.';return;}
-  if(password.length<6){msg.className='auth-msg err';msg.textContent='Password must be at least 6 characters.';return;}
-  msg.className='auth-msg';msg.textContent='Creating account…';
-  const{error}=await sb.auth.signUp({email,password});
-  if(error){msg.className='auth-msg err';msg.textContent=error.message;}
-  else{msg.className='auth-msg ok';msg.textContent='Account created! Check your email to confirm, then sign in.';}
-}
+/* ── AUTH ──
+   Signing in and creating an account happen on /signin/, shared by every
+   tracker; it sends people back here with any action still in the address. */
+function signinHref(mode){return'/signin/?mode='+mode+'&next='+encodeURIComponent(location.pathname+location.search);}
+document.getElementById('ctaSignup').href=signinHref('signup');
+document.getElementById('ctaSignin').href=signinHref('signin');
 async function signOut(){await sb.auth.signOut();}
 function showDashLocked(){document.getElementById('dashLocked').style.display='block';document.getElementById('dashApp').style.display='none';}
 function showDashApp(){document.getElementById('dashLocked').style.display='none';document.getElementById('dashApp').style.display='block';}
@@ -757,18 +677,14 @@ async function onSignedIn(session){currentUser=session.user;showDashApp();setUse
 window.VF_ACTIONS={add:()=>openDebtModal(),share:()=>{if(myDebts.length)openShareModal();}};
 function openFromLink(){const q=new URLSearchParams(location.search);const act=['add','share'].find(k=>q.has(k));if(!act)return;q.delete(act);if(history.replaceState)history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''));window.VF_ACTIONS[act]();}
 
-let initDone=false,recoveryMode=false;
-if(window.location.hash.includes('type=recovery'))recoveryMode=true;
+let initDone=false;
 (async()=>{
   const{data:{session}}=await sb.auth.getSession();
-  if(recoveryMode){showNewPasswordForm();}
-  else if(session?.user){await onSignedIn(session);}
+  if(session?.user){await onSignedIn(session);}
   else{showDashLocked();}
   initDone=true;
 })();
 sb.auth.onAuthStateChange(async(event,session)=>{
-  if(event==='PASSWORD_RECOVERY'){recoveryMode=true;showNewPasswordForm();return;}
-  if(recoveryMode&&event==='SIGNED_IN')return;
   if(!initDone&&event==='SIGNED_IN')return;
   if(event==='SIGNED_IN'&&session?.user){await onSignedIn(session);}
   else if(event==='SIGNED_OUT'){currentUser=null;myDebts=[];myHistory=[];showDashLocked();}

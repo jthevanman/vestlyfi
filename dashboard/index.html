@@ -67,6 +67,8 @@ a { color:inherit; }
 .btn-ghost { background:var(--surface); color:var(--cream-dim); font-weight:500; }
 .btn-ghost:hover { background:var(--surface-2); color:var(--cream); }
 .btn-block { width:100%; }
+.auth-ctas { display:flex; flex-direction:column; gap:10px; }
+.auth-ctas .btn { height:48px; }
 .btn svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .link-btn { background:none; border:none; color:var(--accent); font-size:0.8rem; cursor:pointer; padding:0; }
 
@@ -472,12 +474,12 @@ body.drag-on { user-select:none; -webkit-user-select:none; cursor:grabbing; }
   <div class="auth-panel">
     <a class="brand" href="/">VestlyFi</a>
     <h1 class="auth-title">Dashboard</h1>
-    <p class="auth-sub">Your net worth and budget in one place. Same login as the net worth tracker.</p>
-    <div class="field"><label for="siEmail">Email</label><input id="siEmail" type="email" autocomplete="email"></div>
-    <div class="field"><label for="siPassword">Password</label><input id="siPassword" type="password" autocomplete="current-password"></div>
-    <button class="btn btn-gold btn-block" onclick="signIn()">Sign in</button>
-    <div class="msg" id="siMsg"></div>
-    <p class="auth-alt">No account yet? <a href="/net-worth/">Create one on the net worth tracker</a>. Or <button class="link-btn" onclick="startSample()">see it with sample data</button>.</p>
+    <p class="auth-sub">Your net worth and budget in one place.</p>
+    <div class="auth-ctas">
+      <a class="btn btn-gold btn-block" id="ctaSignup" href="/signin/?mode=signup&amp;next=%2Fdashboard%2F">Create free account</a>
+      <a class="btn btn-ghost btn-block" id="ctaSignin" href="/signin/?mode=signin&amp;next=%2Fdashboard%2F">Sign in</a>
+    </div>
+    <p class="auth-alt">Or <button class="link-btn" onclick="startSample()">see it with sample data</button>.</p>
   </div>
 </div>
 
@@ -1494,13 +1496,10 @@ document.addEventListener('click', e => { if (!e.target.closest('.acct-wrap')) c
 /* ── Auth and loading ── */
 function showAuth(){ document.getElementById('appScreen').classList.add('hidden'); document.getElementById('authScreen').classList.remove('hidden'); }
 function showApp(){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('appScreen').classList.remove('hidden'); }
-async function signIn(){
-  const msg = document.getElementById('siMsg');
-  msg.className = 'msg'; msg.textContent = 'Signing in…';
-  const { error } = await sb.auth.signInWithPassword({ email:document.getElementById('siEmail').value.trim(), password:document.getElementById('siPassword').value });
-  if (error) { msg.className = 'msg err'; msg.textContent = error.message; }
-}
-['siEmail', 'siPassword'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); }));
+// Signing in and creating an account happen on /signin/, shared by every tracker.
+function signinHref(mode){ return '/signin/?mode=' + mode + '&next=' + encodeURIComponent(location.pathname + location.search); }
+document.getElementById('ctaSignup').href = signinHref('signup');
+document.getElementById('ctaSignin').href = signinHref('signin');
 async function signOut(){ closeAcctMenu(); if (sample) return exitSample(); await sb.auth.signOut(); }
 
 async function loadAll(){

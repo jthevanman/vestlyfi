@@ -84,7 +84,7 @@
     <div class="vfs-field"><label>Email</label><input type="email" data-f="siEmail" placeholder="you@example.com"></div>
     <div class="vfs-field"><label>Password</label><input type="password" data-f="siPassword" placeholder="••••••••"></div>
     <button type="button" class="vfs-btn-auth" data-action="signin">Sign In &amp; Save</button>
-    <div class="vfs-alt"><a class="vfs-link" href="/net-worth/">Forgot your password?</a></div>
+    <div class="vfs-alt"><a class="vfs-link" href="/signin/?mode=reset&amp;next=${encodeURIComponent(location.pathname)}">Forgot your password?</a></div>
     <div class="vfs-msg" data-msg="signin"></div>
   </div>
 </div>`;

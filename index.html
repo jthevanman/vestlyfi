@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// Email links (confirm email, reset password) that Supabase returns to the
+// site's main address go to the shared sign-in page, which completes them.
+if(/access_token=|type=(signup|recovery)|[#&]error_code=/.test(location.hash))location.replace('/signin/'+location.hash);
+</script>
 <meta name="impact-site-verification" value="9abdeb23-64b1-41d3-8f9c-5ebfaba7c6c7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VestlyFi | Net Worth Tracker</title>
