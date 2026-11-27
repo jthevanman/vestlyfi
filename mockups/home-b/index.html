@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage mockup B | VestlyFi</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Exo+2:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/mockups/mock.css">
+<style>
+/* B: lead with the dashboard */
+.hero { display:grid; grid-template-columns:minmax(0,1fr); gap:40px; padding:64px 0 24px; }
+.hero h1 { font-size:clamp(2rem, 4.8vw, 3.2rem); font-weight:500; line-height:1.1; letter-spacing:-0.02em; margin:14px 0 18px; max-width:620px; }
+.hero p { font-size:1.05rem; line-height:1.55; max-width:500px; margin-bottom:28px; }
+.ctas { display:flex; gap:10px; flex-wrap:wrap; }
+/* The dashboard preview: a window onto Home */
+.dash { background:var(--raised); border-radius:12px; box-shadow:0 30px 60px -30px rgba(0,0,0,0.9); padding:14px; display:grid; grid-template-columns:minmax(0,1fr); gap:12px; }
+@media (min-width:760px) { .dash { grid-template-columns:1fr 1fr 1fr; } .dash .wide { grid-column:1 / -1; } }
+.dash .card { box-shadow:none; }
+.dash-bar { grid-column:1 / -1; display:flex; align-items:center; gap:10px; padding:2px 4px 6px; }
+.dash-bar b { font-weight:500; }
+.dash-bar .dot { width:9px; height:9px; border-radius:50%; background:var(--surface-2); }
+.wt { font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:10px; }
+.big { font-size:1.9rem; font-weight:500; letter-spacing:-0.015em; }
+.trio { padding:88px 0 0; display:grid; grid-template-columns:minmax(0,1fr); }
+.feat { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; align-items:center; padding:36px 0; border-top:1px solid var(--line); }
+@media (min-width:860px) { .feat { grid-template-columns:5fr 6fr; gap:56px; } }
+.feat h2 { font-size:1.55rem; font-weight:500; margin:8px 0 10px; }
+.feat p { line-height:1.55; margin-bottom:18px; max-width:420px; }
+.feat .card { max-width:520px; }
+.calc { padding:72px 0 0; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.chips a { padding:10px 16px; border-radius:999px; background:var(--surface); color:var(--cream-dim); text-decoration:none; font-size:0.88rem; }
+.chips a:hover { background:var(--surface-2); color:var(--cream); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">VestlyFi</a>
+    <nav class="links"><a href="/calculators/">Calculators</a><a href="/create-a-diagram/">Diagrams</a><a href="/net-worth/">Net Worth Tracker</a><a href="/budget/">Budget Tracker</a></nav>
+    <a class="pill sm ghost" href="/signin/">Sign in</a>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Your money in one place</div>
+      <h1>The whole picture, typed in by you.</h1>
+      <p class="muted">Net worth, budget and debts on one dashboard. You enter every number, so you always know what it means.</p>
+      <div class="ctas"><a class="pill gold" href="/signin/?mode=signup">Create free account</a><a class="pill ghost" href="/dashboard/?sample">Open the sample dashboard</a></div>
+    </div>
+
+    <div class="dash" aria-label="A sample dashboard">
+      <div class="dash-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b style="margin-left:8px">Dashboard</b><small class="muted" style="margin-left:auto">Sample</small></div>
+      <div class="card"><div class="wt">Net worth total</div><div class="big">$237,361</div><div class="up" style="font-size:0.82rem">+$6,281 since Oct 26</div></div>
+      <div class="card"><div class="wt">This month</div><div class="k">Income</div><div class="v up">$6,500</div><div class="k" style="margin-top:8px">Spent</div><div class="v">$2,973</div></div>
+      <div class="card"><div class="wt">Debt paydown</div><div class="big down" style="font-size:1.5rem">$326,308</div><div style="font-size:0.8rem" class="muted">left to pay · <span class="up">5% paid off</span></div><div class="track"><span class="fill" style="width:5%"></span></div></div>
+      <div class="card wide"><div class="wt">Net worth chart</div><svg class="chart" viewBox="0 0 600 120" aria-hidden="true"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#dcc392" stop-opacity=".2"/><stop offset="1" stop-color="#dcc392" stop-opacity="0"/></linearGradient></defs><path d="M0 100 L55 92 L110 94 L164 78 L218 76 L273 80 L327 62 L382 56 L436 58 L491 44 L545 34 L600 30 L600 120 L0 120 Z" fill="url(#g)"/><polyline points="0,100 55,92 110,94 164,78 218,76 273,80 327,62 382,56 436,58 491,44 545,34 600,30" fill="none" stroke="#dcc392" stroke-width="2.2" stroke-linejoin="round"/></svg></div>
+    </div>
+  </section>
+
+  <section class="trio">
+    <div class="feat">
+      <div><div class="eyebrow">Net worth tracker</div><h2>Watch the one number that adds it all up</h2><p class="muted">Log balances once a month and see where you're heading.</p><a class="pill gold sm" href="/net-worth/">Track net worth</a></div>
+      <div class="card"><div class="k">Net worth</div><div class="v" style="font-size:1.8rem">$230,500</div><div class="up" style="font-size:0.84rem">+$80,900 over 11 months</div></div>
+    </div>
+    <div class="feat">
+      <div><div class="eyebrow">Budget tracker</div><h2>See every dollar as it leaves</h2><p class="muted">A few taps per purchase. Bills that repeat add themselves.</p><a class="pill gold sm" href="/budget/">Start a budget</a></div>
+      <div class="card">
+        <div class="row"><span class="ic" style="--h:#f0a35e"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-2 6 0 8v10"/></svg></span><div class="main"><div class="top-line"><span>Safeway</span><span>$103.52</span></div><small>Groceries</small></div></div>
+        <div class="row"><span class="ic" style="--h:#7aa7ff"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span><div class="main"><div class="top-line"><span>Rent</span><span>$1,850.00</span></div><small>Every month</small></div></div>
+      </div>
+    </div>
+    <div class="feat">
+      <div><div class="eyebrow">Debt tracker</div><h2>Pay it down, watch it shrink</h2><p class="muted">Set an extra payment and see your payoff date move closer.</p><a class="pill gold sm" href="/debt-tracker/">Track debts</a></div>
+      <div class="card">
+        <div class="row"><div class="main"><div class="top-line"><span>Car loan</span><span>$15,520 <small>28% paid</small></span></div><div class="track"><span class="fill" style="width:28%"></span></div></div></div>
+        <div class="row"><div class="main"><div class="top-line"><span>Student loan</span><span>$15,200 <small>29% paid</small></span></div><div class="track"><span class="fill" style="width:29%"></span></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc">
+    <div class="eyebrow">Calculators</div>
+    <div class="chips"><a href="/retirement/">Retirement</a><a href="/mortgage-payoff/">Mortgage payoff</a><a href="/coast-fire/">Coast FIRE</a><a href="/compound-interest/">Compound interest</a><a href="/house-affordability/">House affordability</a><a href="/car-affordability/">Car affordability</a><a href="/calculators/quarterly-tax/">Quarterly tax</a><a href="/calculators/">All calculators</a></div>
+  </section>
+
+  <footer><span>© 2026 VestlyFi</span><a href="/privacy/">Privacy</a></footer>
+</div>
+<nav class="switch"><span>Mockup</span><a href="/mockups/home-a/">A</a><a class="on" href="/mockups/home-b/">B</a><a href="/mockups/home-c/">C</a></nav>
+</body>
+</html>

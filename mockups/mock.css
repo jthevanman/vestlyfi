@@ -1,0 +1,58 @@
+/* Shared styles for the homepage mockups (not used by the live site). */
+* { margin:0; padding:0; box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body { background:var(--page); color:var(--cream); font-family:'Outfit',sans-serif; font-weight:400; -webkit-font-smoothing:antialiased; }
+a { color:inherit; }
+.wrap { max-width:1120px; margin:0 auto; padding:0 20px; }
+
+/* Header */
+.top { display:flex; align-items:center; gap:28px; height:68px; }
+.logo { font-family:'Exo 2',sans-serif; font-weight:700; font-size:1.3rem; color:var(--accent); text-decoration:none; }
+.links { display:flex; gap:22px; margin-left:auto; font-size:0.88rem; }
+.links a { color:var(--cream-dim); text-decoration:none; }
+.links a:hover { color:var(--cream); }
+.pill { display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 22px; border-radius:999px; font-size:0.92rem; font-weight:600; text-decoration:none; border:none; cursor:pointer; white-space:nowrap; }
+.pill.gold { background:var(--accent); color:var(--on-accent); }
+.pill.gold:hover { background:var(--accent-light); }
+.pill.ghost { background:var(--surface); color:var(--cream); }
+.pill.ghost:hover { background:var(--surface-2); }
+.pill.sm { height:36px; padding:0 16px; font-size:0.84rem; }
+@media (max-width:860px) { .links { display:none; } .top .pill.sm { margin-left:auto; } }
+
+.eyebrow { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:600; }
+.muted { color:var(--cream-dim); }
+
+/* Preview cards: the trackers' own look */
+.card { background:var(--bg); border-radius:8px; box-shadow:var(--shadow); padding:18px; }
+.k { font-size:0.64rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+.v { font-size:1.35rem; font-weight:500; margin-top:3px; }
+.up { color:var(--green); } .down { color:var(--red); }
+.row { display:flex; align-items:center; gap:12px; padding:10px 0; }
+.row + .row { border-top:1px solid var(--line); }
+.row .main { flex:1; min-width:0; }
+.row .top-line { display:flex; justify-content:space-between; gap:8px; font-size:0.9rem; }
+.row .top-line span:last-child { font-weight:500; white-space:nowrap; }
+.row small { color:var(--muted); font-size:0.74rem; }
+.ic { flex:0 0 auto; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--h) 20%, var(--bg)); color:var(--h); }
+.ic svg { width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.track { height:6px; border-radius:999px; background:var(--surface); margin-top:7px; overflow:hidden; }
+.fill { display:block; height:100%; border-radius:999px; background:var(--green); }
+.chart { width:100%; height:auto; display:block; }
+
+/* Hairline list of tools */
+.list a { display:flex; align-items:center; gap:16px; padding:18px 4px; border-top:1px solid var(--line); text-decoration:none; }
+.list a:last-child { border-bottom:1px solid var(--line); }
+.list a:hover { background:rgba(var(--tint),0.025); }
+.list b { font-weight:500; font-size:1rem; min-width:200px; }
+.list span { color:var(--cream-dim); font-size:0.88rem; flex:1; }
+.list i { font-style:normal; color:var(--muted); }
+@media (max-width:640px) { .list a { flex-wrap:wrap; gap:4px 12px; } .list b { min-width:0; flex:1 0 100%; } }
+
+footer { display:flex; gap:20px; padding:40px 0 calc(90px + env(safe-area-inset-bottom)); color:var(--muted); font-size:0.8rem; }
+footer a { color:var(--muted); text-decoration:none; }
+
+/* Mockup switcher (only on mockups) */
+.switch { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:50; display:flex; gap:4px; padding:4px; border-radius:999px; background:var(--raised); box-shadow:0 10px 30px -10px rgba(0,0,0,0.7); border:1px solid var(--line); font-size:0.8rem; }
+.switch span { padding:8px 12px; color:var(--muted); }
+.switch a { padding:8px 14px; border-radius:999px; text-decoration:none; color:var(--cream-dim); }
+.switch a.on { background:var(--surface-2); color:var(--cream); }

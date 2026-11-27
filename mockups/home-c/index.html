@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homepage mockup C | VestlyFi</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Exo+2:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/mockups/mock.css">
+<style>
+/* C: minimal. A big line, three numbers, then everything as a clean list. */
+.hero { padding:96px 0 56px; }
+.hero h1 { font-size:clamp(2.4rem, 7vw, 5rem); font-weight:500; line-height:1.02; letter-spacing:-0.03em; max-width:900px; }
+.hero h1 span { color:var(--accent); }
+.hero .ctas { display:flex; gap:10px; flex-wrap:wrap; margin-top:34px; }
+.nums { display:grid; grid-template-columns:minmax(0,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+@media (min-width:760px) { .nums { grid-template-columns:repeat(3, minmax(0,1fr)); } .nums > div + div { border-left:1px solid var(--line); } }
+.nums > div { padding:26px 24px 26px 0; }
+@media (min-width:760px) { .nums > div + div { padding-left:24px; } }
+@media (max-width:759px) { .nums > div + div { border-top:1px solid var(--line); } }
+.nums .n { font-size:clamp(1.8rem, 4vw, 2.6rem); font-weight:500; letter-spacing:-0.02em; margin:6px 0 4px; }
+.nums small { color:var(--muted); font-size:0.82rem; }
+.group { padding:72px 0 0; }
+.group h2 { font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:8px; }
+.list a b { font-size:1.15rem; }
+.list .tag { flex:0 0 auto; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); border:1px solid color-mix(in srgb, var(--accent) 40%, transparent); border-radius:999px; padding:3px 9px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="logo" href="/">VestlyFi</a>
+    <nav class="links"><a href="/calculators/">Calculators</a><a href="/create-a-diagram/">Diagrams</a><a href="/net-worth/">Net Worth Tracker</a><a href="/budget/">Budget Tracker</a></nav>
+    <a class="pill sm ghost" href="/signin/">Sign in</a>
+  </header>
+
+  <section class="hero">
+    <h1>Know your numbers. <span>Enter them yourself.</span></h1>
+    <div class="ctas"><a class="pill gold" href="/signin/?mode=signup">Create free account</a><a class="pill ghost" href="/dashboard/?sample">See a sample</a></div>
+  </section>
+
+  <section class="nums" aria-label="Sample numbers">
+    <div><div class="k">Net worth</div><div class="n">$230,500</div><small class="up">+$80,900 this year</small></div>
+    <div><div class="k">Spent this month</div><div class="n">$2,973</div><small>of $6,500 income</small></div>
+    <div><div class="k">Debt paid off</div><div class="n">$23,500</div><small>since January</small></div>
+  </section>
+
+  <section class="group">
+    <h2>Trackers</h2>
+    <div class="list">
+      <a href="/net-worth/"><b>Net worth</b><span>What you own minus what you owe, month by month.</span><i>›</i></a>
+      <a href="/budget/"><b>Budget</b><span>Every purchase in a few taps. See where it all goes.</span><span class="tag">New</span><i>›</i></a>
+      <a href="/debt-tracker/"><b>Debts</b><span>Extra payments and your payoff date.</span><i>›</i></a>
+    </div>
+  </section>
+
+  <section class="group">
+    <h2>Calculators</h2>
+    <div class="list">
+      <a href="/retirement/"><b>Retirement</b><span>When you can retire on what you save.</span><i>›</i></a>
+      <a href="/mortgage-payoff/"><b>Mortgage payoff</b><span>Pay it off in 5, 10 or 15 years.</span><i>›</i></a>
+      <a href="/coast-fire/"><b>Coast FIRE</b><span>When you can stop saving for retirement.</span><i>›</i></a>
+      <a href="/house-affordability/"><b>House affordability</b><span>How much house your income buys.</span><i>›</i></a>
+      <a href="/calculators/"><b>All calculators</b><span>Tax, car, compound interest and more.</span><i>›</i></a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 VestlyFi</span><a href="/privacy/">Privacy</a></footer>
+</div>
+<nav class="switch"><span>Mockup</span><a href="/mockups/home-a/">A</a><a href="/mockups/home-b/">B</a><a class="on" href="/mockups/home-c/">C</a></nav>
+</body>
+</html>
